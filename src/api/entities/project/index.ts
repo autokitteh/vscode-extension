@@ -2,23 +2,23 @@ import { Project, BuildProjectResponse, Error } from "./types";
 import { appConfig } from "../../appConfig";
 import { IApiClient } from "../../axios/apiClient";
 import { get, pick } from "lodash";
-export interface IProfileApiClient {
+export interface IProjectApiClient {
 	list(ownerId: string): Promise<Project[] | undefined>;
 	buildProject(ownerId: string): Promise<BuildProjectResponse>;
 }
 
-export class ProfileApiClient implements IProfileApiClient {
+export class ProjectApiClient implements IProjectApiClient {
 	apiBase: string;
-	profileApiClient: IApiClient;
+	projectApiClient: IApiClient;
 
-	constructor(profileApiClient: IApiClient) {
-		this.apiBase = appConfig.profileApiBase;
-		this.profileApiClient = profileApiClient;
+	constructor(projectApiClient: IApiClient) {
+		this.apiBase = appConfig.projectApiBase;
+		this.projectApiClient = projectApiClient;
 	}
 
 	async list(ownerId: string): Promise<Project[] | undefined> {
 		try {
-			const response = await this.profileApiClient.post(`${this.apiBase}/ListForOwner`, {
+			const response = await this.projectApiClient.post(`${this.apiBase}/ListForOwner`, {
 				ownerId,
 			});
 			const projects = get(response, "projects", undefined);
@@ -30,7 +30,7 @@ export class ProfileApiClient implements IProfileApiClient {
 
 	async buildProject(projectId: string): Promise<BuildProjectResponse> {
 		try {
-			const response = await this.profileApiClient.post("/Build", {
+			const response = await this.projectApiClient.post("/Build", {
 				projectId,
 			});
 			const { buildId, error } = pick(response, ["buildId", "error"]) as {
@@ -45,18 +45,18 @@ export class ProfileApiClient implements IProfileApiClient {
 	}
 }
 
-export default class ProfileService {
-	profileApiClient: IProfileApiClient;
+export default class ProjectService {
+	projectApiClient: IProjectApiClient;
 
-	constructor(profileApiClient: IProfileApiClient) {
-		this.profileApiClient = profileApiClient;
+	constructor(projectApiClient: IProjectApiClient) {
+		this.projectApiClient = projectApiClient;
 	}
 
 	async list(ownerId: string): Promise<Project[] | undefined> {
-		return this.profileApiClient.list(ownerId);
+		return this.projectApiClient.list(ownerId);
 	}
 
 	async buildProject(projectId: string): Promise<BuildProjectResponse> {
-		return this.profileApiClient.buildProject(projectId);
+		return this.projectApiClient.buildProject(projectId);
 	}
 }

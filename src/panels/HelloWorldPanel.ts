@@ -1,7 +1,7 @@
 import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn } from "vscode";
 import { getUri } from "../utilities/getUri";
 import { getNonce } from "../utilities/getNonce";
-import { profileService } from "../services";
+import { projectService } from "../services";
 
 /**
  * This class manages the state and behavior of HelloWorld webview panels.
@@ -55,7 +55,7 @@ export class HelloWorldPanel {
 				// Panel title
 				"Hello World",
 				// The editor column the panel should be displayed in
-				ViewColumn.One,
+				ViewColumn.Two,
 				// Extra panel configurations
 				{
 					// Enable JavaScript in the webview
@@ -143,7 +143,7 @@ export class HelloWorldPanel {
 
 				switch (command) {
 					case "hello":
-						const res = await profileService.list("u:265f8e2091b811ee858f12584eb0c4b8");
+						const res = await projectService.list("u:130f562491dc11eea44612584eb0c4b9");
 						console.log(res);
 						window.showInformationMessage(text);
 						return;
