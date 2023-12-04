@@ -6,18 +6,14 @@ import { EXTENSION_CONSTANT } from "./constants";
 import { LeftPanelWebview } from "./panels/webview-provider";
 
 export function activate(context: ExtensionContext) {
-	// Create the show hello world command
 	const showHelloWorldCommand = commands.registerCommand("hello-world.showHelloWorld", () => {
 		HelloWorldPanel.render(context.extensionUri);
 	});
-
-	// Add command to the extension context
 	context.subscriptions.push(showHelloWorldCommand);
 
-	const leftPanelWebViewProvider = new LeftPanelWebview(context?.extensionUri, {});
 	let view = vscode.window.registerWebviewViewProvider(
 		EXTENSION_CONSTANT.LEFT_PANEL_WEBVIEW_ID,
-		leftPanelWebViewProvider
+		new LeftPanelWebview(context.extensionUri, {})
 	);
 	context.subscriptions.push(view);
 

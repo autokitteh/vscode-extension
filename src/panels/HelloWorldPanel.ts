@@ -1,15 +1,6 @@
-import {
-	Disposable,
-	Webview,
-	WebviewPanel,
-	window,
-	Uri,
-	ViewColumn,
-	WebviewViewProvider,
-} from "vscode";
-import { getUri } from "../utilities/getUri";
-import { getNonce } from "../utilities/getNonce";
-import { projectService } from "../services";
+import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn } from "vscode";
+import { htmlView } from "./htmlView";
+import { messageListener } from "./messageListener";
 
 /**
  * This class manages the state and behavior of HelloWorld webview panels.
@@ -40,7 +31,7 @@ export class HelloWorldPanel {
 		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
 		// Set the HTML content for the webview panel
-		this._panel.webview.html = this._getHtmlForWebview(this._panel.webview, extensionUri);
+		this._panel.webview.html = htmlView(this._panel.webview, extensionUri);
 		// Set an event listener to listen for messages passed from the webview context
 		this._setWebviewMessageListener(this._panel.webview);
 	}
@@ -72,6 +63,7 @@ export class HelloWorldPanel {
 					localResourceRoots: [
 						Uri.joinPath(extensionUri, "out"),
 						Uri.joinPath(extensionUri, "webview-ui/build"),
+						Uri.joinPath(extensionUri, "webview-ui/node_modules/@vscode/codicons/dist"),
 					],
 				}
 			);
@@ -99,44 +91,6 @@ export class HelloWorldPanel {
 	}
 
 	/**
-	 * Defines and returns the HTML that should be rendered within the webview panel.
-	 *
-	 * @remarks This is also the place where references to the React webview build files
-	 * are created and inserted into the webview HTML.
-	 *
-	 * @param webview A reference to the extension webview
-	 * @param extensionUri The URI of the directory containing the extension
-	 * @returns A template string literal containing the HTML that should be
-	 * rendered within the webview panel
-	 */
-	private _getHtmlForWebview(webview: Webview, extensionUri: Uri) {
-		// The CSS file from the React build output
-		const stylesUri = getUri(webview, extensionUri, ["webview-ui", "build", "assets", "index.css"]);
-		// The JS file from the React build output
-		const scriptUri = getUri(webview, extensionUri, ["webview-ui", "build", "assets", "index.js"]);
-
-		const nonce = getNonce();
-
-		// Tip: Install the es6-string-html VS Code extension to enable code highlighting below
-		return /*html*/ `
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-          <link rel="stylesheet" type="text/css" href="${stylesUri}">
-          <title>Hello World</title>
-        </head>
-        <body>
-          <div id="root"></div>
-          <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
-        </body>
-      </html>
-    `;
-	}
-
-	/**
 	 * Sets up an event listener to listen for messages passed from the webview context and
 	 * executes code based on the message that is recieved.
 	 *
@@ -144,23 +98,6 @@ export class HelloWorldPanel {
 	 * @param context A reference to the extension context
 	 */
 	private async _setWebviewMessageListener(webview: Webview) {
-		webview.onDidReceiveMessage(
-			async (message: any) => {
-				const command = message.command;
-				const text = message.text;
-
-				switch (command) {
-					case "hello":
-						const res = await projectService.list("u:130f562491dc11eea44612584eb0c4b9");
-						console.log(res);
-						window.showInformationMessage(text);
-						return;
-					// Add more switch case statements here as more webview message commands
-					// are created within the webview context (i.e. inside media/main.js)
-				}
-			},
-			undefined,
-			this._disposables
-		);
+		webview.onDidReceiveMessage(messageListener, undefined, this._disposables);
 	}
 }
