@@ -14,10 +14,13 @@ function App() {
 	return (
 		<main>
 			<div className="flex flex-row w-full">
-				<div className="text-red-600 flex-5">
-					<AKLogo className="w-24 h-24" />
+				<div className="mr-8">
+					<div className="flex items-center">
+						<AKLogo className="w-12 h-12" />{" "}
+						<div className="text-white font-bold ml-4 text-lg">Autokitteh</div>
+					</div>
 				</div>
-				<div className="text-red-600 flex-1">
+				<div className="flex-1">
 					<VSCodePanels>
 						<VSCodePanelTab id="tab-1">
 							{" "}
@@ -58,8 +61,6 @@ function App() {
 					</VSCodePanels>
 				</div>
 			</div>
-			<h2>Test</h2>
-			<button>Test</button>
 		</main>
 	);
 }
