@@ -16,7 +16,26 @@
 				"command": "autokitteh.v2.applyManifest",
 				"title": "Autokitteh V2: Apply Manifest"
 			}
-		]
+		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "webview",
+					"title": "Example for webview",
+					"icon": "./resources/autokitteh.svg"
+				}
+			]
+		},
+		"views": {
+			"webview": [
+				{
+					"type": "webview",
+					"id": "left-panel-webview",
+					"name": "Webview",
+					"icon": "./resources/autokitteh.svg"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"install:all": "npm install && cd webview-ui && npm install",

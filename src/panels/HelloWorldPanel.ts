@@ -1,4 +1,12 @@
-import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn } from "vscode";
+import {
+	Disposable,
+	Webview,
+	WebviewPanel,
+	window,
+	Uri,
+	ViewColumn,
+	WebviewViewProvider,
+} from "vscode";
 import { getUri } from "../utilities/getUri";
 import { getNonce } from "../utilities/getNonce";
 import { projectService } from "../services";
@@ -32,7 +40,7 @@ export class HelloWorldPanel {
 		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
 		// Set the HTML content for the webview panel
-		this._panel.webview.html = this._getWebviewContent(this._panel.webview, extensionUri);
+		this._panel.webview.html = this._getHtmlForWebview(this._panel.webview, extensionUri);
 		// Set an event listener to listen for messages passed from the webview context
 		this._setWebviewMessageListener(this._panel.webview);
 	}
@@ -46,7 +54,7 @@ export class HelloWorldPanel {
 	public static render(extensionUri: Uri) {
 		if (HelloWorldPanel.currentPanel) {
 			// If the webview panel already exists reveal it
-			HelloWorldPanel.currentPanel._panel.reveal(ViewColumn.One);
+			HelloWorldPanel.currentPanel._panel.reveal(ViewColumn.Two);
 		} else {
 			// If a webview panel does not already exist create and show a new one
 			const panel = window.createWebviewPanel(
@@ -101,7 +109,7 @@ export class HelloWorldPanel {
 	 * @returns A template string literal containing the HTML that should be
 	 * rendered within the webview panel
 	 */
-	private _getWebviewContent(webview: Webview, extensionUri: Uri) {
+	private _getHtmlForWebview(webview: Webview, extensionUri: Uri) {
 		// The CSS file from the React build output
 		const stylesUri = getUri(webview, extensionUri, ["webview-ui", "build", "assets", "index.css"]);
 		// The JS file from the React build output
