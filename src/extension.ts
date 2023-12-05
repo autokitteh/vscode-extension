@@ -56,6 +56,8 @@ export function activate(context: ExtensionContext) {
 
 			output.clear();
 
+			// @TODO: Check if the current directory contains an autokitteh.yaml file and main.star file.
+			// For a reference implementation, see in the `src/panels/messageListener.ts` file.
 			const resp = await manifestService.applyManifest(text);
 			if (resp.error) {
 				const msg = `apply: ${resp.stage ? `${resp.stage}: ` : ""}${resp.error}`;

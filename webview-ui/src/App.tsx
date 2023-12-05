@@ -48,6 +48,14 @@ function App() {
 		});
 	};
 
+	const validatePath = () => {
+		vscode.postMessage({
+			command: "isReadyToBuild",
+			name: projectName,
+			projectDirectory: directory,
+		});
+	};
+
 	return (
 		<main>
 			<div className="flex flex-row w-full">
@@ -104,6 +112,9 @@ function App() {
 							</div>
 							<div>
 								<button onClick={submit}>Submit</button>
+							</div>
+							<div className="block">
+								<button onClick={validatePath}>Check if project already exist</button>
 							</div>
 						</VSCodePanelView>
 						<VSCodePanelView id="view-2">{messagesFromExtension}</VSCodePanelView>
