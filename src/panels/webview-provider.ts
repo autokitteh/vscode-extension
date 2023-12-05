@@ -1,6 +1,7 @@
 import { WebviewViewProvider, WebviewView, Uri, window, Disposable } from "vscode";
 import { htmlView } from "./htmlView";
 import { messageListener } from "./messageListener";
+import { Message } from "./ViewLoader";
 
 export class LeftPanelWebview implements WebviewViewProvider {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -8,7 +9,6 @@ export class LeftPanelWebview implements WebviewViewProvider {
 
 	private _disposables: Disposable[] = [];
 
-	//called when a view first becomes visible
 	resolveWebviewView(webviewView: WebviewView): void | Thenable<void> {
 		webviewView.webview.options = {
 			enableScripts: true,
@@ -21,5 +21,10 @@ export class LeftPanelWebview implements WebviewViewProvider {
 
 	private activateMessageListener() {
 		this._view.webview.onDidReceiveMessage(messageListener, undefined, this._disposables);
+	}
+
+	public postMessageToWebview<T extends Message = Message>(message: T) {
+		// post message from extension to webview
+		this._view.webview.postMessage(message);
 	}
 }

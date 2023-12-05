@@ -4,6 +4,7 @@ import * as vscode from "vscode";
 import { manifestService } from "./services";
 import { EXTENSION_CONSTANT } from "./constants";
 import { LeftPanelWebview } from "./panels/webview-provider";
+import { CommonMessage } from "./panels/ViewLoader";
 
 export function activate(context: ExtensionContext) {
 	const showHelloWorldCommand = commands.registerCommand("hello-world.showHelloWorld", () => {
@@ -11,11 +12,38 @@ export function activate(context: ExtensionContext) {
 	});
 	context.subscriptions.push(showHelloWorldCommand);
 
+	const leftPane = new LeftPanelWebview(context.extensionUri, {});
+
 	let view = vscode.window.registerWebviewViewProvider(
 		EXTENSION_CONSTANT.LEFT_PANEL_WEBVIEW_ID,
-		new LeftPanelWebview(context.extensionUri, {})
+		leftPane
 	);
 	context.subscriptions.push(view);
+
+	vscode.commands.registerCommand("extension.sendMessage", () => {
+		vscode.window
+			.showInputBox({
+				prompt: "Send message to Webview",
+			})
+			.then((result) => {
+				if (vscode.workspace.workspaceFolders !== undefined) {
+					let wf = vscode.workspace.workspaceFolders[0].uri.path;
+					let f = vscode.workspace.workspaceFolders[0].uri.fsPath;
+
+					const message = wf;
+
+					vscode.window.showInformationMessage(message);
+					leftPane.postMessageToWebview<CommonMessage>({
+						type: "COMMON",
+						payload: wf,
+					});
+				} else {
+					const message = "YOUR-EXTENSION: Working folder not found, open a folder an try again";
+
+					vscode.window.showErrorMessage(message);
+				}
+			});
+	});
 
 	let output = vscode.window.createOutputChannel("autokitteh");
 

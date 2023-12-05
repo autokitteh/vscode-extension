@@ -15,6 +15,11 @@
 			{
 				"command": "autokitteh.v2.applyManifest",
 				"title": "Autokitteh V2: Apply Manifest"
+			},
+			{
+				"command": "extension.sendMessage",
+				"title": "Send Message to Webview",
+				"category": "Webview React"
 			}
 		],
 		"viewsContainers": {

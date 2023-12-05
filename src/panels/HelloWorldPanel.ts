@@ -54,7 +54,7 @@ export class HelloWorldPanel {
 				// Panel title
 				"Hello World",
 				// The editor column the panel should be displayed in
-				ViewColumn.Two,
+				ViewColumn.One,
 				// Extra panel configurations
 				{
 					// Enable JavaScript in the webview
