@@ -10,14 +10,14 @@ main {
 	height: 100%;
 }
 
-#icons {
+#iconWrapper {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
 }
 
-#icons .icon {
+#iconWrapper .icon {
 	width: 50px;
 	padding: 10px;
 	font-size: 14px;
@@ -26,6 +26,6 @@ main {
 	text-align: center;
 }
 
-#icons .icon .codicon {
+/* #iconWrapper .icon .codicon {
 	font-size: 24px;
-}
+} */

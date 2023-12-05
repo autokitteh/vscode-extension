@@ -58,38 +58,64 @@ function App() {
 
 	return (
 		<main>
-			<div className="flex flex-row w-full">
-				<div className="mr-8">
+			<div className="flex flex-col w-full">
+				<div className="flex mr-8">
 					<div className="flex items-center">
 						<AKLogo className="w-12 h-12" />{" "}
 						<div className="text-white font-bold ml-4 text-lg">Autokitteh</div>
 					</div>
 				</div>
+
+				<div className="flex">
+					<button onClick={validatePath}>Check if project already exist</button>
+				</div>
 				<div className="flex-1">
+					<div id="menu">
+						<div id="iconWrapper pointer">
+							<div className="icon">
+								<i className="codicon codicon-add !text-4xl"></i>
+							</div>
+						</div>
+						<div id="iconWrapper pointer">
+							<div className="icon">
+								<i className="codicon codicon-tools !text-4xl"></i>
+							</div>
+						</div>
+						<div id="iconWrapper pointer">
+							<div className="icon">
+								<i className="codicon codicon-symbol-interface !text-4xl"></i>
+							</div>
+						</div>
+						<div id="iconWrapper pointer">
+							<div className="icon">
+								<i className="codicon codicon-graph-line !text-4xl"></i>
+							</div>
+						</div>
+					</div>
 					<VSCodePanels>
 						<VSCodePanelTab id="tab-1">
-							<div id="icons">
+							<div id="iconWrapper">
 								<div className="icon">
 									<i className="codicon codicon-add"></i>
 								</div>
 							</div>
 						</VSCodePanelTab>
 						<VSCodePanelTab id="tab-2">
-							<div id="icons">
+							<div id="iconWrapper">
 								<div className="icon">
 									<i className="codicon codicon-tools"></i>
 								</div>
 							</div>
 						</VSCodePanelTab>
 						<VSCodePanelTab id="tab-3">
-							<div id="icons">
+							<div id="iconWrapper">
 								<div className="icon">
 									<i className="codicon codicon-symbol-interface"></i>
 								</div>
 							</div>
 						</VSCodePanelTab>
 						<VSCodePanelTab id="tab-4">
-							<div id="icons">
+							<div id="iconWrapper">
 								<div className="icon">
 									<i className="codicon codicon-graph-line"></i>
 								</div>
@@ -112,9 +138,6 @@ function App() {
 							</div>
 							<div>
 								<button onClick={submit}>Submit</button>
-							</div>
-							<div className="block">
-								<button onClick={validatePath}>Check if project already exist</button>
 							</div>
 						</VSCodePanelView>
 						<VSCodePanelView id="view-2">{messagesFromExtension}</VSCodePanelView>
