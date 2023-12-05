@@ -1,4 +1,4 @@
-export type MessageType = "COMMON";
+export type MessageType = "COMMON" | "THEME";
 
 export interface Message {
 	type: MessageType;
@@ -8,4 +8,8 @@ export interface Message {
 export interface CommonMessage extends Message {
 	type: "COMMON";
 	payload: string;
+}
+export interface ThemeMessage extends Message {
+	type: "THEME";
+	payload: number;
 }

@@ -40,10 +40,9 @@ export const messageListener = async (message: any) => {
 
 		// Check if the project is ready to be built - if so, build it
 		case "isReadyToBuild":
-			const projectName = "reviewkitteh";
 			console.log(editorLangId === "yaml");
-			console.log(fs.existsSync(`${currentFileDir}/${projectName}/autokitteh.yaml`));
-			console.log(fs.existsSync(`${currentFileDir}/${projectName}/main.star`));
+			console.log(fs.existsSync(`${currentFileDir}/autokitteh.yaml`));
+			console.log(fs.existsSync(`${currentFileDir}/main.star`));
 			break;
 	}
 };

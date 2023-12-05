@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import { manifestService } from "./services";
 import { EXTENSION_CONSTANT } from "./constants";
 import { LeftPanelWebview } from "./panels/webview-provider";
-import { CommonMessage } from "./types/message";
+import { CommonMessage, ThemeMessage } from "./types/message";
 
 export function activate(context: ExtensionContext) {
 	const showHelloWorldCommand = commands.registerCommand("hello-world.showHelloWorld", () => {
@@ -33,6 +33,16 @@ export function activate(context: ExtensionContext) {
 					leftPane.postMessageToWebview<CommonMessage>({
 						type: "COMMON",
 						payload: wf,
+					});
+
+					const getTheme = (): number => {
+						const theme = window.activeColorTheme.kind;
+						return theme;
+					};
+
+					leftPane.postMessageToWebview<ThemeMessage>({
+						type: "THEME",
+						payload: getTheme(),
 					});
 				} else {
 					const message = "YOUR-EXTENSION: Working folder not found, open a folder an try again";

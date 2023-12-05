@@ -1,27 +1,37 @@
-import { vscode } from "./utilities/vscode";
+import { vscodeWrapper } from "./utilities/vscode";
 import { VSCodePanels, VSCodePanelTab, VSCodePanelView } from "@vscode/webview-ui-toolkit/react";
 import "./App.css";
-import AKLogo from "../assets/images/autokitteh-logo.svg?react";
+import AKLogoBlack from "../assets/images/ak-logo-black.svg?react";
+import AKLogoWhite from "../assets/images/ak-logo-white.svg?react";
 import { useEffect, useState, useCallback } from "react";
-import { CommonMessage, Message } from "../../src/types/message";
+import { CommonMessage, ThemeMessage, Message } from "../../src/types/message";
 
 function App() {
 	function handleHowdyClick() {
-		vscode.postMessage({
+		vscodeWrapper.postMessage({
 			command: "hello",
 			text: "Hey there partner! 🤠",
 		});
 	}
-
 	const [messagesFromExtension, setMessagesFromExtension] = useState<string[]>([]);
+
+	/*** THEME_TYPES:
+	 * 1 - light
+	 * 2 - dark
+	 * 3 - high contrast
+	 */
+	const [themeVisualType, setThemeVisualType] = useState<number | undefined>(undefined);
 
 	const handleMessagesFromExtension = useCallback(
 		(event: MessageEvent<Message>) => {
 			if (event.data.type === "COMMON") {
-				const message = event.data as CommonMessage;
-				setDirectory(message.payload);
-
-				console.log(message);
+				const { payload } = event.data as CommonMessage;
+				setDirectory(payload);
+			}
+			console.log("message", event);
+			if (event.data.type === "THEME") {
+				const { payload } = event.data as ThemeMessage;
+				setThemeVisualType(payload);
 			}
 		},
 		[messagesFromExtension]
@@ -41,7 +51,7 @@ function App() {
 	const [directory, setDirectory] = useState("");
 
 	const submit = () => {
-		vscode.postMessage({
+		vscodeWrapper.postMessage({
 			command: "submitNewProject",
 			name: projectName,
 			projectDirectory: directory,
@@ -49,25 +59,34 @@ function App() {
 	};
 
 	const validatePath = () => {
-		vscode.postMessage({
+		vscodeWrapper.postMessage({
 			command: "isReadyToBuild",
 			name: projectName,
 			projectDirectory: directory,
 		});
 	};
 
+	const Logo = ({ className }: { className: string }) =>
+		themeVisualType === 2 ? (
+			<AKLogoWhite className={className} />
+		) : (
+			<AKLogoBlack className={className} />
+		);
+
 	return (
 		<main>
 			<div className="flex flex-col w-full">
 				<div className="flex mr-8">
 					<div className="flex items-center">
-						<AKLogo className="w-12 h-12" />{" "}
-						<div className="text-white font-bold ml-4 text-lg">Autokitteh</div>
+						<Logo className="w-12 h-12" />
+						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">Autokitteh</div>
 					</div>
 				</div>
 
 				<div className="flex">
-					<button onClick={validatePath}>Check if project already exist</button>
+					<button onClick={validatePath}>
+						Check if project already exist in current directory
+					</button>
 				</div>
 				<div className="flex-1">
 					<div id="menu">
