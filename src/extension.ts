@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import { manifestService } from "./services";
 import { EXTENSION_CONSTANT } from "./constants";
 import { LeftPanelWebview } from "./panels/webview-provider";
-import { CommonMessage } from "./panels/ViewLoader";
+import { CommonMessage } from "./types/message";
 
 export function activate(context: ExtensionContext) {
 	const showHelloWorldCommand = commands.registerCommand("hello-world.showHelloWorld", () => {
@@ -22,17 +22,14 @@ export function activate(context: ExtensionContext) {
 
 	vscode.commands.registerCommand("extension.sendMessage", () => {
 		vscode.window
+			// @TODO: extract to a separate file
 			.showInputBox({
 				prompt: "Send message to Webview",
 			})
 			.then((result) => {
 				if (vscode.workspace.workspaceFolders !== undefined) {
 					let wf = vscode.workspace.workspaceFolders[0].uri.path;
-					let f = vscode.workspace.workspaceFolders[0].uri.fsPath;
-
-					const message = wf;
-
-					vscode.window.showInformationMessage(message);
+					vscode.window.showInformationMessage(wf);
 					leftPane.postMessageToWebview<CommonMessage>({
 						type: "COMMON",
 						payload: wf,
@@ -48,6 +45,7 @@ export function activate(context: ExtensionContext) {
 	let output = vscode.window.createOutputChannel("autokitteh");
 
 	context.subscriptions.push(
+		// @TODO: extract this registerCommand to a separate file
 		vscode.commands.registerCommand("autokitteh.v2.applyManifest", async () => {
 			if (!vscode.window.activeTextEditor) {
 				return; // no editor

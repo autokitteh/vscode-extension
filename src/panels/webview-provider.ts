@@ -1,7 +1,7 @@
 import { WebviewViewProvider, WebviewView, Uri, window, Disposable } from "vscode";
 import { htmlView } from "./htmlView";
 import { messageListener } from "./messageListener";
-import { Message } from "./ViewLoader";
+import { Message } from "../types/message";
 
 export class LeftPanelWebview implements WebviewViewProvider {
 	// eslint-disable-next-line @typescript-eslint/naming-convention

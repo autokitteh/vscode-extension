@@ -2,8 +2,8 @@ import { vscode } from "./utilities/vscode";
 import { VSCodePanels, VSCodePanelTab, VSCodePanelView } from "@vscode/webview-ui-toolkit/react";
 import "./App.css";
 import AKLogo from "../assets/images/autokitteh-logo.svg?react";
-import { useRef, useEffect, useState, useCallback } from "react";
-import { CommonMessage, Message } from "./Message";
+import { useEffect, useState, useCallback } from "react";
+import { CommonMessage, Message } from "../../src/types/message";
 
 function App() {
 	function handleHowdyClick() {
@@ -39,14 +39,6 @@ function App() {
 
 	const [projectName, setProjectName] = useState("");
 	const [directory, setDirectory] = useState("");
-
-	const ref = useRef<HTMLInputElement>(null);
-
-	useEffect(() => {
-		if (ref.current !== null) {
-			console.log(ref.current);
-		}
-	}, [ref]);
 
 	const submit = () => {
 		vscode.postMessage({
