@@ -1,6 +1,8 @@
 import { commands, ExtensionContext } from "vscode";
 import { HelloWorldPanel } from "./panels/HelloWorldPanel";
 import * as vscode from "vscode";
+import * as path from "path";
+import * as fs from "fs";
 import { manifestService } from "./services";
 import { EXTENSION_CONSTANT } from "./constants";
 import { LeftPanelWebview } from "./panels/webview-provider";
@@ -24,6 +26,13 @@ export function activate(context: ExtensionContext) {
 	const disposable = vscode.commands.registerCommand("autokitteh.v2.buildFolder", function () {
 		console.log("Directory Uri", context.extensionUri.path);
 		console.log("Project root Uri", context.extensionPath);
+
+		const mainStarPath = path.join(context.extensionUri.path, "main.star");
+
+		if (!fs.existsSync(mainStarPath)) {
+			vscode.window.showErrorMessage("main.star not found");
+			return;
+		}
 	});
 
 	context.subscriptions.push(disposable);
