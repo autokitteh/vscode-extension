@@ -15,11 +15,18 @@ export function activate(context: ExtensionContext) {
 
 	const leftPane = new LeftPanelWebview(context.extensionUri, {});
 
-	let view = vscode.window.registerWebviewViewProvider(
+	const view = vscode.window.registerWebviewViewProvider(
 		EXTENSION_CONSTANT.LEFT_PANEL_WEBVIEW_ID,
 		leftPane
 	);
 	context.subscriptions.push(view);
+
+	const disposable = vscode.commands.registerCommand("autokitteh.v2.buildFolder", function () {
+		console.log("Directory Uri", context.extensionUri.path);
+		console.log("Project root Uri", context.extensionPath);
+	});
+
+	context.subscriptions.push(disposable);
 
 	/*** On change:
 	 * Send the theme to the webview (light/dark)

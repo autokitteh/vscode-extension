@@ -20,8 +20,20 @@
 				"command": "extension.sendMessage",
 				"title": "Send Message to Webview",
 				"category": "Webview React"
+			},
+			{
+				"command": "autokitteh.v2.buildFolder",
+				"title": "Build autokitteh"
 			}
 		],
+		"menus": {
+			"explorer/context": [
+				{
+					"command": "autokitteh.v2.buildFolder",
+					"when": "resourceLangId == yaml && resourceFilename =~ /autokitteh.yaml/"
+				}
+			]
+		},
 		"viewsContainers": {
 			"activitybar": [
 				{
