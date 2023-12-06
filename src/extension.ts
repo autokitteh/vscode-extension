@@ -1,10 +1,11 @@
-import { commands, ExtensionContext, window } from "vscode";
+import { commands, ExtensionContext } from "vscode";
 import { HelloWorldPanel } from "./panels/HelloWorldPanel";
 import * as vscode from "vscode";
 import { manifestService } from "./services";
 import { EXTENSION_CONSTANT } from "./constants";
 import { LeftPanelWebview } from "./panels/webview-provider";
 import { CommonMessage, ThemeMessage } from "./types/message";
+import { Theme } from "./enums/theme";
 
 export function activate(context: ExtensionContext) {
 	const showHelloWorldCommand = commands.registerCommand("hello-world.showHelloWorld", () => {
@@ -20,29 +21,31 @@ export function activate(context: ExtensionContext) {
 	);
 	context.subscriptions.push(view);
 
+	/*** On change:
+	 * Send the theme to the webview (light/dark)
+	 */
+	vscode.window.onDidChangeActiveColorTheme((editor) => {
+		if (editor) {
+			leftPane.postMessageToWebview<ThemeMessage>({
+				type: "THEME",
+				payload: editor.kind as number as Theme,
+			});
+		}
+	});
+
 	vscode.commands.registerCommand("extension.sendMessage", () => {
 		vscode.window
 			// @TODO: extract to a separate file
 			.showInputBox({
 				prompt: "Send message to Webview",
 			})
-			.then((result) => {
+			.then(() => {
 				if (vscode.workspace.workspaceFolders !== undefined) {
 					let wf = vscode.workspace.workspaceFolders[0].uri.path;
 					vscode.window.showInformationMessage(wf);
 					leftPane.postMessageToWebview<CommonMessage>({
 						type: "COMMON",
 						payload: wf,
-					});
-
-					const getTheme = (): number => {
-						const theme = window.activeColorTheme.kind;
-						return theme;
-					};
-
-					leftPane.postMessageToWebview<ThemeMessage>({
-						type: "THEME",
-						payload: getTheme(),
 					});
 				} else {
 					const message = "YOUR-EXTENSION: Working folder not found, open a folder an try again";

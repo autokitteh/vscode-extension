@@ -2,6 +2,8 @@ import { WebviewViewProvider, WebviewView, Uri, window, Disposable } from "vscod
 import { htmlView } from "./htmlView";
 import { messageListener } from "./messageListener";
 import { Message } from "../types/message";
+import { getTheme } from "../utilities/getTheme";
+import { Theme } from "../enums/theme";
 
 export class LeftPanelWebview implements WebviewViewProvider {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -16,6 +18,15 @@ export class LeftPanelWebview implements WebviewViewProvider {
 		};
 		webviewView.webview.html = htmlView(webviewView.webview, this.extensionPath);
 		this._view = webviewView;
+
+		/*** On load:
+		 * Send the theme to the webview (light/dark)
+		 */
+		this._view.webview.postMessage({
+			type: "THEME",
+			payload: getTheme() as Theme,
+		});
+
 		this.activateMessageListener();
 	}
 

@@ -4,9 +4,9 @@ import * as path from "path";
 import * as vscode from "vscode";
 import * as fs from "fs";
 import { get } from "lodash";
-const editorLangId = vscode.window.activeTextEditor?.document.languageId;
 
 export const messageListener = async (message: any) => {
+	const editorLangId = vscode.window.activeTextEditor?.document.languageId;
 	const command = message.command;
 	const text = message.text;
 	const dirPath = path.join(`${message.projectDirectory}/${message.name}`);
@@ -43,6 +43,11 @@ export const messageListener = async (message: any) => {
 			console.log(editorLangId === "yaml");
 			console.log(fs.existsSync(`${currentFileDir}/autokitteh.yaml`));
 			console.log(fs.existsSync(`${currentFileDir}/main.star`));
+			break;
+
+		// Open webview panel to add a new project
+		case "openAddWebviewPane":
+			vscode.commands.executeCommand("hello-world.showHelloWorld");
 			break;
 	}
 };

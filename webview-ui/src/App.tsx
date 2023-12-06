@@ -1,5 +1,4 @@
 import { vscodeWrapper } from "./utilities/vscode";
-import { VSCodePanels, VSCodePanelTab, VSCodePanelView } from "@vscode/webview-ui-toolkit/react";
 import "./App.css";
 import AKLogoBlack from "../assets/images/ak-logo-black.svg?react";
 import AKLogoWhite from "../assets/images/ak-logo-white.svg?react";
@@ -15,11 +14,6 @@ function App() {
 	}
 	const [messagesFromExtension, setMessagesFromExtension] = useState<string[]>([]);
 
-	/*** THEME_TYPES:
-	 * 1 - light
-	 * 2 - dark
-	 * 3 - high contrast
-	 */
 	const [themeVisualType, setThemeVisualType] = useState<number | undefined>(undefined);
 
 	const handleMessagesFromExtension = useCallback(
@@ -28,7 +22,6 @@ function App() {
 				const { payload } = event.data as CommonMessage;
 				setDirectory(payload);
 			}
-			console.log("message", event);
 			if (event.data.type === "THEME") {
 				const { payload } = event.data as ThemeMessage;
 				setThemeVisualType(payload);
@@ -50,19 +43,9 @@ function App() {
 	const [projectName, setProjectName] = useState("");
 	const [directory, setDirectory] = useState("");
 
-	const submit = () => {
-		vscodeWrapper.postMessage({
-			command: "submitNewProject",
-			name: projectName,
-			projectDirectory: directory,
-		});
-	};
-
 	const validatePath = () => {
 		vscodeWrapper.postMessage({
 			command: "isReadyToBuild",
-			name: projectName,
-			projectDirectory: directory,
 		});
 	};
 
@@ -72,6 +55,12 @@ function App() {
 		) : (
 			<AKLogoBlack className={className} />
 		);
+
+	const openAddWebviewPane = () => {
+		vscodeWrapper.postMessage({
+			command: "openAddWebviewPane",
+		});
+	};
 
 	return (
 		<main>
@@ -90,79 +79,27 @@ function App() {
 				</div>
 				<div className="flex-1">
 					<div id="menu">
-						<div id="iconWrapper pointer">
-							<div className="icon">
+						<div className="flex pointer" onClick={openAddWebviewPane}>
+							<div className="w-12 p-2.5">
 								<i className="codicon codicon-add !text-4xl"></i>
 							</div>
 						</div>
-						<div id="iconWrapper pointer">
-							<div className="icon">
+						<div className="flex pointer">
+							<div className="w-12 p-2.5">
 								<i className="codicon codicon-tools !text-4xl"></i>
 							</div>
 						</div>
-						<div id="iconWrapper pointer">
-							<div className="icon">
+						<div className="flex pointer">
+							<div className="w-12 p-2.5">
 								<i className="codicon codicon-symbol-interface !text-4xl"></i>
 							</div>
 						</div>
-						<div id="iconWrapper pointer">
-							<div className="icon">
+						<div className="flex pointer">
+							<div className="w-12 p-2.5">
 								<i className="codicon codicon-graph-line !text-4xl"></i>
 							</div>
 						</div>
 					</div>
-					<VSCodePanels>
-						<VSCodePanelTab id="tab-1">
-							<div id="iconWrapper">
-								<div className="icon">
-									<i className="codicon codicon-add"></i>
-								</div>
-							</div>
-						</VSCodePanelTab>
-						<VSCodePanelTab id="tab-2">
-							<div id="iconWrapper">
-								<div className="icon">
-									<i className="codicon codicon-tools"></i>
-								</div>
-							</div>
-						</VSCodePanelTab>
-						<VSCodePanelTab id="tab-3">
-							<div id="iconWrapper">
-								<div className="icon">
-									<i className="codicon codicon-symbol-interface"></i>
-								</div>
-							</div>
-						</VSCodePanelTab>
-						<VSCodePanelTab id="tab-4">
-							<div id="iconWrapper">
-								<div className="icon">
-									<i className="codicon codicon-graph-line"></i>
-								</div>
-							</div>
-						</VSCodePanelTab>
-						<VSCodePanelView id="view-1">
-							<div>
-								Pick a directory:
-								<input
-									type="text"
-									className="text-white"
-									disabled
-									value={directory}
-									onChange={(e) => setDirectory(e.target.value)}
-								/>
-							</div>
-							<div>
-								Type the project name here (sub-directory):
-								<input type="text" onChange={(e) => setProjectName(e.target.value)} />
-							</div>
-							<div>
-								<button onClick={submit}>Submit</button>
-							</div>
-						</VSCodePanelView>
-						<VSCodePanelView id="view-2">{messagesFromExtension}</VSCodePanelView>
-						<VSCodePanelView id="view-3">Debug content.</VSCodePanelView>
-						<VSCodePanelView id="view-4">Terminal content.</VSCodePanelView>
-					</VSCodePanels>
 				</div>
 			</div>
 		</main>
