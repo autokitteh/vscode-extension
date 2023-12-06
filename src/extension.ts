@@ -14,7 +14,6 @@ export function activate(context: ExtensionContext) {
 		HelloWorldPanel.render(context.extensionUri);
 	});
 	context.subscriptions.push(showHelloWorldCommand);
-
 	const leftPane = new LeftPanelWebview(context.extensionUri, {});
 
 	const view = vscode.window.registerWebviewViewProvider(
@@ -23,17 +22,17 @@ export function activate(context: ExtensionContext) {
 	);
 	context.subscriptions.push(view);
 
-	const disposable = vscode.commands.registerCommand("autokitteh.v2.buildFolder", function () {
-		console.log("Directory Uri", context.extensionUri.path);
-		console.log("Project root Uri", context.extensionPath);
+	const disposable = vscode.commands.registerCommand(
+		"autokitteh.v2.buildFolder",
+		async function (folder) {
+			const mainStarPath = folder.path.replace("autokitteh.yaml", "main.star");
 
-		const mainStarPath = path.join(context.extensionUri.path, "main.star");
-
-		if (!fs.existsSync(mainStarPath)) {
-			vscode.window.showErrorMessage("main.star not found");
-			return;
+			if (!fs.existsSync(mainStarPath)) {
+				vscode.window.showErrorMessage("main.star not found");
+				return;
+			}
 		}
-	});
+	);
 
 	context.subscriptions.push(disposable);
 
