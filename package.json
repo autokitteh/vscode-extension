@@ -24,6 +24,14 @@
 			{
 				"command": "autokitteh.v2.buildFolder",
 				"title": "Build autokitteh"
+			},
+			{
+				"command": "sample-tree-view.refreshEntry",
+				"title": "Refresh",
+				"icon": {
+					"light": "resources/autokitteh.svg",
+					"dark": "resources/autokitteh.svg"
+				}
 			}
 		],
 		"menus": {
@@ -32,6 +40,13 @@
 					"command": "autokitteh.v2.buildFolder",
 					"when": "resourceLangId == yaml && resourceFilename =~ /autokitteh.yaml/"
 				}
+			],
+			"view/title": [
+				{
+					"command": "sample-tree-view.refreshEntry",
+					"when": "view == sample-tree-view",
+					"group": "navigation"
+				}
 			]
 		},
 		"viewsContainers": {
@@ -39,6 +54,11 @@
 				{
 					"id": "webview",
 					"title": "Example for webview",
+					"icon": "./resources/autokitteh.svg"
+				},
+				{
+					"id": "sample-tree-view",
+					"title": "Node Dependencies",
 					"icon": "./resources/autokitteh.svg"
 				}
 			]
@@ -50,6 +70,12 @@
 					"id": "left-panel-webview",
 					"name": "Webview",
 					"icon": "./resources/autokitteh.svg"
+				}
+			],
+			"sample-tree-view": [
+				{
+					"id": "sample-tree-view",
+					"name": "Node Dependencies"
 				}
 			]
 		}

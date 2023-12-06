@@ -8,6 +8,7 @@ import { EXTENSION_CONSTANT } from "./constants";
 import { LeftPanelWebview } from "./panels/webview-provider";
 import { CommonMessage, ThemeMessage } from "./types/message";
 import { Theme } from "./enums/theme";
+import { TreeDataProvider } from "./providers/tree";
 
 export function activate(context: ExtensionContext) {
 	const showHelloWorldCommand = commands.registerCommand("hello-world.showHelloWorld", () => {
@@ -35,6 +36,7 @@ export function activate(context: ExtensionContext) {
 	);
 
 	context.subscriptions.push(disposable);
+	vscode.window.registerTreeDataProvider("sample-tree-view", new TreeDataProvider());
 
 	/*** On change:
 	 * Send the theme to the webview (light/dark)
