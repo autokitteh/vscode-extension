@@ -1,13 +1,14 @@
-import { commands, ExtensionContext } from "vscode";
-import { AutokittehWebview } from "@panels";
-import * as vscode from "vscode";
+require("module-alias/register");
+
+import { Theme } from "@enums/index";
+import { AutokittehSidebar, AutokittehWebview } from "@panels/index";
+import { TreeDataProvider } from "@providers/index";
+import { LEFT_PANEL_WEBVIEW_ID } from "@constants/webviews";
+import { manifestService } from "@services/services";
 import * as fs from "fs";
-import { manifestService } from "@services";
-import { EXTENSION_CONSTANT } from "@constants";
-import { AutokittehSidebar } from "@panels";
-import { CommonMessage, ThemeMessage } from "types";
-import { Theme } from "@enums";
-import { TreeDataProvider } from "@providers";
+import { CommonMessage, ThemeMessage } from "@type/index";
+import * as vscode from "vscode";
+import { commands, ExtensionContext } from "vscode";
 
 export function activate(context: ExtensionContext) {
 	const showHelloWorldCommand = commands.registerCommand("hello-world.showHelloWorld", () => {
@@ -16,10 +17,7 @@ export function activate(context: ExtensionContext) {
 	context.subscriptions.push(showHelloWorldCommand);
 	const leftPane = new AutokittehSidebar(context.extensionUri, {});
 
-	const view = vscode.window.registerWebviewViewProvider(
-		EXTENSION_CONSTANT.LEFT_PANEL_WEBVIEW_ID,
-		leftPane
-	);
+	const view = vscode.window.registerWebviewViewProvider(LEFT_PANEL_WEBVIEW_ID, leftPane);
 	context.subscriptions.push(view);
 
 	const disposable = vscode.commands.registerCommand(

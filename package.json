@@ -108,6 +108,17 @@
 	"dependencies": {
 		"axios": "^1.6.2",
 		"js-yaml": "^4.1.0",
-		"lodash": "^4.17.21"
+		"lodash": "^4.17.21",
+		"module-alias": "^2.2.3"
+	},
+	"_moduleAliases": {
+		"@panels": "out/panels",
+		"@type": "out/type",
+		"@enums": "out/enums",
+		"@utilities": "out/utilities",
+		"@api": "out/api",
+		"@providers": "out/providers",
+		"@services/services": "out/services/services.js",
+		"@constants/webviews": "out/constants/webviews.js"
 	}
 }

@@ -1,7 +1,7 @@
 import Axios, { AxiosError, AxiosInstance } from "axios";
-import { RequestConfig } from "types";
+import { RequestConfig } from "@type/index";
 import { handleErrorResponse } from "@api/axios";
-import { baseApi } from "@api";
+import { baseApi } from "@api/index";
 
 export interface IApiClient {
 	post<TRequest, TResponse>(

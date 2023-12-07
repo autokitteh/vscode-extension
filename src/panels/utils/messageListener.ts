@@ -1,5 +1,5 @@
 import { window } from "vscode";
-import { projectService } from "@services";
+import { projectService } from "@services/services";
 import * as path from "path";
 import * as vscode from "vscode";
 import * as fs from "fs";

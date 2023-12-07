@@ -1,3 +1,3 @@
-import { Theme } from "enums/theme";
+import { Theme } from "@enums/theme";
 
 export { Theme };

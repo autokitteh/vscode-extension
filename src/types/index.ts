@@ -1,5 +1,5 @@
-import { Org } from "types/organization";
-import { HttpHeaders, RequestConfig } from "types/api";
-import { MessageType, Message, CommonMessage, ThemeMessage } from "types/message";
+import { Org } from "./organization";
+import { HttpHeaders, RequestConfig } from "./api";
+import { MessageType, Message, CommonMessage, ThemeMessage } from "./message";
 
 export { HttpHeaders, RequestConfig, MessageType, Message, CommonMessage, ThemeMessage, Org };

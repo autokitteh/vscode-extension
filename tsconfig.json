@@ -1,26 +1,25 @@
 {
 	"compilerOptions": {
 		"module": "commonjs",
+		"moduleResolution": "node",
 		"target": "es6",
 		"outDir": "out",
 		"lib": ["es6", "dom"],
 		"sourceMap": true,
-		"rootDir": "src",
 		"strict": true,
-		"baseUrl": "./src",
+		"baseUrl": "src",
 		"paths": {
-			"@panels": ["panels/index"],
-			"@types/entities": ["types/entities"],
-			"@types": ["types/index"],
-			"@enums": ["enums/index"],
-			"@utils": ["utilities/index"],
-			"@api": ["api/index"],
-			"@api/entities": ["api/entities"],
-			"@api/axios": ["api/axios/"],
-			"@providers": ["providers/index"],
-			"@services": ["services"],
-			"@constants": ["constants"]
+			"@/*": ["./*"],
+			"@panels/*": ["panels/*"],
+			"@services/*": ["services/*"],
+			"@constants/*": ["constants/*"],
+			"@type/*": ["types/*"],
+			"@enums/*": ["enums/*"],
+			"@utilities/*": ["utilities/*"],
+			"@api/*": ["api/*"],
+			"@providers/*": ["providers/*"]
 		}
 	},
+	"include": ["./src"],
 	"exclude": ["node_modules", ".vscode-test", "webview-ui"]
 }

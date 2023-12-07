@@ -1,9 +1,9 @@
-import { vscodeWrapper } from "./utilities/vscode";
-import "./App.css";
+import { useCallback, useEffect, useState } from "react";
+import { CommonMessage, Message, ThemeMessage } from "../../src/types/message";
 import AKLogoBlack from "../assets/images/ak-logo-black.svg?react";
 import AKLogoWhite from "../assets/images/ak-logo-white.svg?react";
-import { useEffect, useState, useCallback } from "react";
-import { CommonMessage, ThemeMessage, Message } from "../../src/types/message";
+import "./App.css";
+import { vscodeWrapper } from "./utilities/vscode";
 
 function App() {
 	function handleHowdyClick() {
