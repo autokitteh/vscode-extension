@@ -1,4 +1,4 @@
-import { Environment } from "./types";
+import { Environment } from "types/entities/environments";
 import { appConfig } from "@api";
 import { IApiClient } from "@api/axios";
 import { get } from "lodash";

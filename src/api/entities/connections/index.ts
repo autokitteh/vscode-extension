@@ -1,4 +1,4 @@
-import { Connection, Value } from "./types";
+import { Value, Connection } from "types/entities/connections";
 import { appConfig } from "@api";
 import { IApiClient } from "@api/axios";
 import { get } from "lodash";

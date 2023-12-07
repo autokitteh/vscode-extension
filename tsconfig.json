@@ -10,6 +10,7 @@
 		"baseUrl": "./src",
 		"paths": {
 			"@panels": ["panels/index"],
+			"@types/entities": ["types/entities"],
 			"@types": ["types/index"],
 			"@enums": ["enums/index"],
 			"@utils": ["utilities/index"],

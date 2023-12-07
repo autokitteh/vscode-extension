@@ -1,7 +1,7 @@
 import { WebviewViewProvider, WebviewView, Uri, window, Disposable } from "vscode";
 import { htmlView } from "./utils/htmlView";
 import { messageListener } from "./utils/messageListener";
-import { Message } from "@types";
+import { Message } from "types";
 import { getTheme } from "@utils";
 import { Theme } from "@enums";
 

@@ -5,7 +5,7 @@ import * as fs from "fs";
 import { manifestService } from "@services";
 import { EXTENSION_CONSTANT } from "@constants";
 import { AutokittehSidebar } from "@panels";
-import { CommonMessage, ThemeMessage } from "@types";
+import { CommonMessage, ThemeMessage } from "types";
 import { Theme } from "@enums";
 import { TreeDataProvider } from "@providers";
 

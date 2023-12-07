@@ -1,5 +1,5 @@
 import Axios, { AxiosError, AxiosInstance } from "axios";
-import { RequestConfig } from "@types";
+import { RequestConfig } from "types";
 import { handleErrorResponse } from "@api/axios";
 import { baseApi } from "@api";
 

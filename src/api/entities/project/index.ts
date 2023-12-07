@@ -1,4 +1,4 @@
-import { Project, BuildProjectResponse, Error } from "./types";
+import { Project, BuildProjectResponse, Error } from "types/entities/project";
 import { appConfig } from "@api";
 import { IApiClient } from "@api/axios";
 import { get, pick } from "lodash";
