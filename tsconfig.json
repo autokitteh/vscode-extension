@@ -11,13 +11,23 @@
 		"paths": {
 			"@/*": ["./*"],
 			"@panels/*": ["panels/*"],
+			"@panels": ["panels/index"],
 			"@services/*": ["services/*"],
+			"@services": ["services/index"],
 			"@constants/*": ["constants/*"],
+			"@vscommands/*": ["vscommands/*"],
+			"@vscommands": ["vscommands/index"],
+			"@constants": ["constants/index"],
 			"@type/*": ["types/*"],
+			"@type": ["types/index"],
 			"@enums/*": ["enums/*"],
+			"@enums": ["enums/index"],
 			"@utilities/*": ["utilities/*"],
+			"@utilities": ["utilities/index"],
 			"@api/*": ["api/*"],
-			"@providers/*": ["providers/*"]
+			"@api": ["api/index"],
+			"@providers/*": ["providers/*"],
+			"@providers": ["providers/index"]
 		}
 	},
 	"include": ["./src"],

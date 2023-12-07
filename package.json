@@ -119,6 +119,7 @@
 		"@api": "out/api",
 		"@providers": "out/providers",
 		"@services/services": "out/services/services.js",
-		"@constants/webviews": "out/constants/webviews.js"
+		"@constants/webviews": "out/constants/webviews.js",
+		"@vscommands": "out/vscommands"
 	}
 }

@@ -1,3 +1,1 @@
-import { TreeDataProvider } from "@providers/tree";
-
-export { TreeDataProvider };
+export { TreeDataProvider } from "@providers/tree";

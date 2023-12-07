@@ -1,5 +1,5 @@
 import { Value, Connection } from "@type/entities/connections";
-import { appConfig } from "@api/index";
+import { appConfig } from "@api";
 import { IApiClient } from "@api/axios";
 import { get } from "lodash";
 export interface IConnectionpiClient {

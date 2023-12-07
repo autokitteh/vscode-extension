@@ -1,5 +1,5 @@
 import { ApplyResponse } from "@type/entities/manifest";
-import { appConfig } from "@api/index";
+import { appConfig } from "@api";
 import { IApiClient } from "@api/axios";
 import * as yaml from "js-yaml";
 

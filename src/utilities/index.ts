@@ -1,5 +1,3 @@
-import { getNonce } from "@utilities/getNonce";
-import { getTheme } from "@utilities/getTheme";
-import { getUri } from "@utilities/getUri";
-
-export { getNonce, getTheme, getUri };
+export { getNonce } from "@utilities/getNonce";
+export { getTheme } from "@utilities/getTheme";
+export { getUri } from "@utilities/getUri";

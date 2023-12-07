@@ -1,5 +1,5 @@
 import { Project, BuildProjectResponse, Error } from "@type/entities/project";
-import { appConfig } from "@api/index";
+import { appConfig } from "@api";
 import { IApiClient } from "@api/axios";
 import { get, pick } from "lodash";
 interface IProjectApiClient {

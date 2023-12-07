@@ -1,7 +1,7 @@
 import Axios, { AxiosError, AxiosInstance } from "axios";
-import { RequestConfig } from "@type/index";
+import { RequestConfig } from "@type";
 import { handleErrorResponse } from "@api/axios";
-import { baseApi } from "@api/index";
+import { baseApi } from "@api";
 
 export interface IApiClient {
 	post<TRequest, TResponse>(
@@ -14,7 +14,7 @@ export interface IApiClient {
 	get<TResponse>(path: string): Promise<TResponse>;
 }
 
-export default class ApiClient implements IApiClient {
+export class ApiClient implements IApiClient {
 	private client: AxiosInstance;
 
 	protected createAxiosClient(): AxiosInstance {

@@ -1,4 +1,4 @@
-import { ApiClient } from "@api/index";
+import { ApiClient } from "@api";
 import { ManifestApiClient, ManifestService } from "@api/entities";
 import { ProjectService, ProjectApiClient } from "@api/entities";
 
