@@ -4,38 +4,33 @@ import { Theme } from "@enums";
 import { AutokittehSidebar, AutokittehWebview } from "@panels";
 import { TreeDataProvider } from "@providers";
 import { LEFT_PANEL_WEBVIEW_ID } from "@constants/webviews";
-import * as fs from "fs";
-import { CommonMessage, ThemeMessage } from "@type";
+import { ThemeMessage } from "@type";
 import * as vscode from "vscode";
 import { commands, ExtensionContext } from "vscode";
-import { applyManifest } from "@vscommands";
+import { applyManifest, buildOnRightClick, sendMessageToExtension } from "@vscommands";
 
 export function activate(context: ExtensionContext) {
+	/*** Show the webview as a pane using the "autokitteh react: Show" action from the command palette  */
 	const showHelloWorldCommand = commands.registerCommand("hello-world.showHelloWorld", () => {
 		AutokittehWebview.render(context.extensionUri);
 	});
 	context.subscriptions.push(showHelloWorldCommand);
 
+	/*** Add the webview as a sidebar */
 	const leftPane = new AutokittehSidebar(context.extensionUri, {});
 	const view = vscode.window.registerWebviewViewProvider(LEFT_PANEL_WEBVIEW_ID, leftPane);
 	context.subscriptions.push(view);
 
+	/*** Contextual menu "Build autokitteh" on a right click on an "autokitteh.yaml" file in the file explorer */
 	const disposable = vscode.commands.registerCommand(
 		"autokitteh.v2.buildFolder",
-		async function (folder) {
-			const mainStarPath = folder.path.replace("autokitteh.yaml", "main.star");
-
-			if (!fs.existsSync(mainStarPath)) {
-				vscode.window.showErrorMessage("main.star not found");
-				return;
-			}
-		}
+		buildOnRightClick
 	);
 
 	context.subscriptions.push(disposable);
 	vscode.window.registerTreeDataProvider("sample-tree-view", new TreeDataProvider());
 
-	/*** On change:
+	/*** On theme change:
 	 * Send the theme to the webview (light/dark)
 	 */
 	vscode.window.onDidChangeActiveColorTheme((editor) => {
@@ -47,30 +42,11 @@ export function activate(context: ExtensionContext) {
 		}
 	});
 
-	vscode.commands.registerCommand("extension.sendMessage", () => {
-		vscode.window
-			// @TODO: extract to a separate file
-			.showInputBox({
-				prompt: "Send message to Webview",
-			})
-			.then(() => {
-				if (vscode.workspace.workspaceFolders !== undefined) {
-					let wf = vscode.workspace.workspaceFolders[0].uri.path;
-					vscode.window.showInformationMessage(wf);
-					leftPane.postMessageToWebview<CommonMessage>({
-						type: "COMMON",
-						payload: wf,
-					});
-				} else {
-					const message = "YOUR-EXTENSION: Working folder not found, open a folder an try again";
+	/*** Send data from the extension to the webview */
+	vscode.commands.registerCommand("extension.sendMessage", sendMessageToExtension(leftPane));
 
-					vscode.window.showErrorMessage(message);
-				}
-			});
-	});
-
+	/*** Build manifest using "Autokitteh V2: Apply Manifest" action from the command palette  */
 	context.subscriptions.push(
-		// @TODO: extract this registerCommand to a separate file
 		vscode.commands.registerCommand("autokitteh.v2.applyManifest", applyManifest)
 	);
 }
