@@ -1,8 +1,8 @@
 import { Project, BuildProjectResponse, Error } from "./types";
-import { appConfig } from "../../appConfig";
-import { IApiClient } from "../../axios/apiClient";
+import { appConfig } from "@api";
+import { IApiClient } from "@api/axios";
 import { get, pick } from "lodash";
-export interface IProjectApiClient {
+interface IProjectApiClient {
 	list(ownerId: string): Promise<Project[] | undefined>;
 	buildProject(ownerId: string): Promise<BuildProjectResponse>;
 }

@@ -1,21 +1,20 @@
 import { commands, ExtensionContext } from "vscode";
-import { HelloWorldPanel } from "./panels/HelloWorldPanel";
+import { AutokittehWebview } from "@panels";
 import * as vscode from "vscode";
-import * as path from "path";
 import * as fs from "fs";
-import { manifestService } from "./services";
-import { EXTENSION_CONSTANT } from "./constants";
-import { LeftPanelWebview } from "./panels/webview-provider";
-import { CommonMessage, ThemeMessage } from "./types/message";
-import { Theme } from "./enums/theme";
-import { TreeDataProvider } from "./providers/tree";
+import { manifestService } from "@services";
+import { EXTENSION_CONSTANT } from "@constants";
+import { AutokittehSidebar } from "@panels";
+import { CommonMessage, ThemeMessage } from "@types";
+import { Theme } from "@enums";
+import { TreeDataProvider } from "@providers";
 
 export function activate(context: ExtensionContext) {
 	const showHelloWorldCommand = commands.registerCommand("hello-world.showHelloWorld", () => {
-		HelloWorldPanel.render(context.extensionUri);
+		AutokittehWebview.render(context.extensionUri);
 	});
 	context.subscriptions.push(showHelloWorldCommand);
-	const leftPane = new LeftPanelWebview(context.extensionUri, {});
+	const leftPane = new AutokittehSidebar(context.extensionUri, {});
 
 	const view = vscode.window.registerWebviewViewProvider(
 		EXTENSION_CONSTANT.LEFT_PANEL_WEBVIEW_ID,

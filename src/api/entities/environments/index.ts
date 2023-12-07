@@ -1,9 +1,9 @@
 import { Environment } from "./types";
-import { AxiosResponse } from "../../axios/types";
-import { appConfig } from "../../appConfig";
-import { IApiClient } from "../../axios/apiClient";
+import { appConfig } from "@api";
+import { IApiClient } from "@api/axios";
 import { get } from "lodash";
-export interface IEnvironmentApiClient {
+
+interface IEnvironmentApiClient {
 	listEnvironments(ownerId: string): Promise<Environment[] | undefined>;
 }
 

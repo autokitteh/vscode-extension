@@ -1,9 +1,11 @@
-import ApiClient from "./api/axios/apiClient";
-import ManifestService, { ManifestApiClient } from "./api/entities/manifest";
-import ProjectService, { ProjectApiClient } from "./api/entities/project";
+import { ApiClient } from "@api";
+import { ManifestApiClient, ManifestService } from "@api/entities";
+import { ProjectService, ProjectApiClient } from "@api/entities";
 
 const projectApiClient = new ProjectApiClient(new ApiClient());
-export const projectService = new ProjectService(projectApiClient);
+const projectService = new ProjectService(projectApiClient);
 
 const manifestApiClient = new ManifestApiClient(new ApiClient());
-export const manifestService = new ManifestService(manifestApiClient);
+const manifestService = new ManifestService(manifestApiClient);
+
+export { projectService, manifestService };

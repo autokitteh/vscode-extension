@@ -1,6 +1,6 @@
 import { Uri, Webview } from "vscode";
-import { getUri } from "../utilities/getUri";
-import { getNonce } from "../utilities/getNonce";
+import { getUri } from "@utils";
+import { getNonce } from "@utils";
 
 export const htmlView = (webview: Webview, extensionUri: Uri) => {
 	// Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.

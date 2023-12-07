@@ -1,9 +1,9 @@
 import { ApplyResponse } from "./types";
-import { appConfig } from "../../appConfig";
-import { IApiClient } from "../../axios/apiClient";
+import { appConfig } from "@api";
+import { IApiClient } from "@api/axios";
 import * as yaml from "js-yaml";
 
-export interface IManifestApiClient {
+interface IManifestApiClient {
 	applyManifest(test: string): Promise<ApplyResponse>;
 }
 

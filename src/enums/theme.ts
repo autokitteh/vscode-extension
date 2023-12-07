@@ -9,5 +9,3 @@ export enum Theme {
 	DARK = 2,
 	HIGH_CONTRAST,
 }
-
-export const ThemeType = typeof Theme;

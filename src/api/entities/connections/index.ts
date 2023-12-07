@@ -1,6 +1,6 @@
 import { Connection, Value } from "./types";
-import { appConfig } from "../../appConfig";
-import { IApiClient } from "../../axios/apiClient";
+import { appConfig } from "@api";
+import { IApiClient } from "@api/axios";
 import { get } from "lodash";
 export interface IConnectionpiClient {
 	list(parentId: string): Promise<Connection[] | undefined>;

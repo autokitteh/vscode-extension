@@ -1,11 +1,11 @@
 import { WebviewViewProvider, WebviewView, Uri, window, Disposable } from "vscode";
-import { htmlView } from "./htmlView";
-import { messageListener } from "./messageListener";
-import { Message } from "../types/message";
-import { getTheme } from "../utilities/getTheme";
-import { Theme } from "../enums/theme";
+import { htmlView } from "./utils/htmlView";
+import { messageListener } from "./utils/messageListener";
+import { Message } from "@types";
+import { getTheme } from "@utils";
+import { Theme } from "@enums";
 
-export class LeftPanelWebview implements WebviewViewProvider {
+export class AutokittehSidebar implements WebviewViewProvider {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	constructor(private readonly extensionPath: Uri, private data: any, private _view: any = null) {}
 
