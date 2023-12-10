@@ -6,18 +6,28 @@ import "./App.css";
 import { vscodeWrapper } from "./utilities/vscode";
 
 function App() {
+	/**
+	 * Handles the click event for the "Howdy" button - sending a message back to the extension.
+	 */
 	function handleHowdyClick() {
 		vscodeWrapper.postMessage({
 			command: "hello",
 			text: "Hey there partner! 🤠",
 		});
 	}
+
 	const [messagesFromExtension, setMessagesFromExtension] = useState<string[]>([]);
 
 	const [themeVisualType, setThemeVisualType] = useState<number | undefined>(undefined);
 
+	/**
+	 * Handles incoming messages from the extension.
+	 * @param {MessageEvent<Message>} event - The message event.
+	 */
 	const handleMessagesFromExtension = useCallback(
 		(event: MessageEvent<Message>) => {
+			console.log(event.data);
+
 			if (event.data.type === "COMMON") {
 				const { payload } = event.data as CommonMessage;
 				setDirectory(payload);
@@ -31,11 +41,18 @@ function App() {
 	);
 
 	useEffect(() => {
+		/**
+		 * Adds an event listener for incoming messages from the extension.
+		 * @param {MessageEvent<Message>} event - The message event.
+		 */
 		window.addEventListener("message", (event: MessageEvent<Message>) => {
 			handleMessagesFromExtension(event);
 		});
 
 		return () => {
+			/**
+			 * Removes the event listener for incoming messages from the extension.
+			 */
 			window.removeEventListener("message", handleMessagesFromExtension);
 		};
 	}, [handleMessagesFromExtension]);
@@ -43,12 +60,20 @@ function App() {
 	const [projectName, setProjectName] = useState("");
 	const [directory, setDirectory] = useState("");
 
+	/**
+	 * Sends a message to the extension to validate the path.
+	 */
 	const validatePath = () => {
 		vscodeWrapper.postMessage({
 			command: "isReadyToBuild",
 		});
 	};
 
+	/**
+	 * Renders the appropriate logo based on the theme visual type.
+	 * @param {string} className - The class name for the logo component.
+	 * @returns {JSX.Element} The logo component.
+	 */
 	const Logo = ({ className }: { className: string }) =>
 		themeVisualType === 2 ? (
 			<AKLogoWhite className={className} />
@@ -56,6 +81,9 @@ function App() {
 			<AKLogoBlack className={className} />
 		);
 
+	/**
+	 * Opens the add webview pane in the extension.
+	 */
 	const openAddWebviewPane = () => {
 		vscodeWrapper.postMessage({
 			command: "openAddWebviewPane",

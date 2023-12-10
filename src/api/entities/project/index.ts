@@ -16,10 +16,10 @@ export class ProjectApiClient implements IProjectApiClient {
 		this.projectApiClient = projectApiClient;
 	}
 
-	async list(ownerId: string): Promise<Project[] | undefined> {
+	async list(userId: string): Promise<Project[] | undefined> {
 		try {
 			const response = await this.projectApiClient.post(`${this.apiBase}/ListForOwner`, {
-				ownerId,
+				ownerId: userId,
 			});
 			const projects = get(response, "projects", undefined);
 			return projects ? (projects as Project[]) : undefined;
@@ -52,8 +52,8 @@ export default class ProjectService {
 		this.projectApiClient = projectApiClient;
 	}
 
-	async list(ownerId: string): Promise<Project[] | undefined> {
-		return this.projectApiClient.list(ownerId);
+	async list(userId: string): Promise<Project[] | undefined> {
+		return this.projectApiClient.list(userId);
 	}
 
 	async buildProject(projectId: string): Promise<BuildProjectResponse> {

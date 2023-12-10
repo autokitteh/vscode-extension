@@ -26,7 +26,7 @@
 				"title": "Build autokitteh"
 			},
 			{
-				"command": "sample-tree-view.refreshEntry",
+				"command": "myTreeView.refresh",
 				"title": "Refresh",
 				"icon": {
 					"light": "resources/autokitteh.svg",
@@ -43,8 +43,8 @@
 			],
 			"view/title": [
 				{
-					"command": "sample-tree-view.refreshEntry",
-					"when": "view == sample-tree-view",
+					"command": "myTreeView.refresh",
+					"when": "view == myTreeView",
 					"group": "navigation"
 				}
 			]
@@ -57,7 +57,7 @@
 					"icon": "./resources/autokitteh.svg"
 				},
 				{
-					"id": "sample-tree-view",
+					"id": "myTreeView",
 					"title": "Node Dependencies",
 					"icon": "./resources/autokitteh.svg"
 				}
@@ -72,9 +72,9 @@
 					"icon": "./resources/autokitteh.svg"
 				}
 			],
-			"sample-tree-view": [
+			"myTreeView": [
 				{
-					"id": "sample-tree-view",
+					"id": "myTreeView",
 					"name": "Node Dependencies"
 				}
 			]
@@ -97,8 +97,8 @@
 		"@types/lodash": "^4.14.202",
 		"@types/node": "^12.11.7",
 		"@types/vscode": "^1.46.0",
-		"@typescript-eslint/eslint-plugin": "^4.14.1",
-		"@typescript-eslint/parser": "^4.14.1",
+		"@typescript-eslint/eslint-plugin": "^4.33.0",
+		"@typescript-eslint/parser": "^4.33.0",
 		"eslint": "^7.19.0",
 		"glob": "^7.1.6",
 		"prettier": "^2.2.1",

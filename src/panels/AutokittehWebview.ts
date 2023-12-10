@@ -1,6 +1,7 @@
 import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn } from "vscode";
 import { htmlView } from "@panels/utils/htmlView";
 import { messageListener } from "@panels/utils/messageListener";
+import { Message } from "@type/message";
 
 /**
  * This class manages the state and behavior of HelloWorld webview panels.
@@ -23,7 +24,7 @@ export class AutokittehWebview {
 	 * @param panel A reference to the webview panel
 	 * @param extensionUri The URI of the directory containing the extension
 	 */
-	private constructor(panel: WebviewPanel, extensionUri: Uri) {
+	public constructor(panel: WebviewPanel, extensionUri: Uri) {
 		this._panel = panel;
 
 		// Set an event listener to listen for when the panel is disposed (i.e. when the user closes
@@ -99,5 +100,11 @@ export class AutokittehWebview {
 	 */
 	private async _setWebviewMessageListener(webview: Webview) {
 		webview.onDidReceiveMessage(messageListener, undefined, this._disposables);
+	}
+
+
+	public postMessageToWebview<T extends Message = Message>(message: T) {
+		// post message from extension to webview
+		this._panel.webview.postMessage(message);
 	}
 }

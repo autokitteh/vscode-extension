@@ -4,7 +4,7 @@ import { IApiClient } from "@api/axios";
 import { get } from "lodash";
 
 interface IEnvironmentApiClient {
-	listEnvironments(ownerId: string): Promise<Environment[] | undefined>;
+	list(projectId: string): Promise<Environment[] | undefined>;
 }
 
 export class EnvironmentsApiClient implements IEnvironmentApiClient {
@@ -16,10 +16,10 @@ export class EnvironmentsApiClient implements IEnvironmentApiClient {
 		this.apiClient = environmentApiClient;
 	}
 
-	async listEnvironments(parentId: string): Promise<Environment[] | undefined> {
+	async list(projectId: string): Promise<Environment[] | undefined> {
 		try {
 			const response = await this.apiClient.post("/List", {
-				parentId,
+				parentId: projectId,
 			});
 			const environments = get(response, "envs", []);
 			return environments;
@@ -36,7 +36,7 @@ export default class EnvironmentService {
 		this.environmentApiClient = environmentApiClient;
 	}
 
-	async getProjects(ownerId: string): Promise<Environment[] | undefined> {
-		return this.environmentApiClient.listEnvironments(ownerId);
+	async list(projectId: string): Promise<Environment[] | undefined> {
+		return this.environmentApiClient.list(projectId);
 	}
 }

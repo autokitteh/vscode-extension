@@ -19,7 +19,7 @@ export const sendMessageToWebview = (leftPane: AutokittehSidebar): any => {
 			} else {
 				const message = "YOUR-EXTENSION: Working folder not found, open a folder an try again";
 
-				vscode.window.showErrorMessage(message);
+				// vscode.window.showErrorMessage(message);
 			}
 		});
 };

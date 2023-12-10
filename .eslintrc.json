@@ -42,7 +42,8 @@
 		"curly": "warn",
 		"eqeqeq": "warn",
 		"no-throw-literal": "warn",
-		"semi": "off"
+		"semi": "off",
+		"max-len": ["error", { "code": 100, "tabWidth": 2, "ignoreComments": true }]
 	},
 	"ignorePatterns": ["webview-ui/**"]
 }

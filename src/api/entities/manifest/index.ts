@@ -11,9 +11,9 @@ export class ManifestApiClient implements IManifestApiClient {
 	apiBase: string;
 	apiClient: IApiClient;
 
-	constructor(environmentApiClient: IApiClient) {
+	constructor(manifestApiClient: IApiClient) {
 		this.apiBase = appConfig.manifestApiBase;
-		this.apiClient = environmentApiClient;
+		this.apiClient = manifestApiClient;
 	}
 
 	async applyManifest(text: string): Promise<ApplyResponse> {
@@ -27,13 +27,13 @@ export class ManifestApiClient implements IManifestApiClient {
 }
 
 export default class ManifestService {
-	environmentApiClient: IManifestApiClient;
+	manifestApiClient: IManifestApiClient;
 
-	constructor(environmentApiClient: IManifestApiClient) {
-		this.environmentApiClient = environmentApiClient;
+	constructor(manifestApiClient: IManifestApiClient) {
+		this.manifestApiClient = manifestApiClient;
 	}
 
 	async applyManifest(text: string): Promise<ApplyResponse> {
-		return this.environmentApiClient.applyManifest(text);
+		return this.manifestApiClient.applyManifest(text);
 	}
 }
