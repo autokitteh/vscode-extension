@@ -1,3 +1,3 @@
-export { Org } from "./organization";
 export { HttpHeaders, RequestConfig } from "./api";
-export { MessageType, Message, CommonMessage, ThemeMessage } from "./message";
+export { Message, MessageType } from "./message";
+export { Org } from "./organization";

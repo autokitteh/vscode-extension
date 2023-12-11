@@ -1,7 +1,7 @@
-import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn } from "vscode";
 import { htmlView } from "@panels/utils/htmlView";
 import { messageListener } from "@panels/utils/messageListener";
 import { Message } from "@type/message";
+import { Disposable, Uri, ViewColumn, Webview, WebviewPanel, window } from "vscode";
 
 /**
  * This class manages the state and behavior of HelloWorld webview panels.

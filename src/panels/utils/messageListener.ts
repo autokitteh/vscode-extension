@@ -1,9 +1,9 @@
-import { window } from "vscode";
-import { projectService } from "@services/services";
-import * as path from "path";
-import * as vscode from "vscode";
 import * as fs from "fs";
+import * as path from "path";
+import { projectService } from "@services/services";
 import { get } from "lodash";
+import { window } from "vscode";
+import * as vscode from "vscode";
 
 export const messageListener = async (message: any) => {
 	const editorLangId = vscode.window.activeTextEditor?.document.languageId;

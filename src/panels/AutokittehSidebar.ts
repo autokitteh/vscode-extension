@@ -1,9 +1,9 @@
-import { WebviewViewProvider, WebviewView, Uri, window, Disposable } from "vscode";
+import { Theme } from "@enums";
 import { htmlView } from "@panels/utils/htmlView";
 import { messageListener } from "@panels/utils/messageListener";
 import { Message } from "@type";
 import { getTheme } from "@utilities";
-import { Theme } from "@enums";
+import { Disposable, Uri, WebviewView, WebviewViewProvider, window } from "vscode";
 
 export class AutokittehSidebar implements WebviewViewProvider {
 	// eslint-disable-next-line @typescript-eslint/naming-convention

@@ -1,13 +1,9 @@
-import { ApplyResponse } from "@type/entities/manifest";
 import { appConfig } from "@api";
 import { IApiClient } from "@api/axios";
+import { ApplyResponse } from "@type/entities/manifest";
 import * as yaml from "js-yaml";
 
-interface IManifestApiClient {
-	applyManifest(test: string): Promise<ApplyResponse>;
-}
-
-export class ManifestApiClient implements IManifestApiClient {
+export class ManifestService {
 	apiBase: string;
 	apiClient: IApiClient;
 
@@ -23,17 +19,5 @@ export class ManifestApiClient implements IManifestApiClient {
 			console.error(exception);
 			return Promise.reject("invalid manifest");
 		}
-	}
-}
-
-export default class ManifestService {
-	manifestApiClient: IManifestApiClient;
-
-	constructor(manifestApiClient: IManifestApiClient) {
-		this.manifestApiClient = manifestApiClient;
-	}
-
-	async applyManifest(text: string): Promise<ApplyResponse> {
-		return this.manifestApiClient.applyManifest(text);
 	}
 }

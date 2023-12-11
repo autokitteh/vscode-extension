@@ -5,7 +5,7 @@
 		"ecmaVersion": 6,
 		"sourceType": "module"
 	},
-	"plugins": ["@typescript-eslint"],
+	"plugins": ["@typescript-eslint", "import"],
 	"rules": {
 		"@typescript-eslint/naming-convention": [
 			"error",
@@ -43,7 +43,37 @@
 		"eqeqeq": "warn",
 		"no-throw-literal": "warn",
 		"semi": "off",
-		"max-len": ["error", { "code": 100, "tabWidth": 2, "ignoreComments": true }]
+		"max-len": ["error", { "code": 100, "tabWidth": 2, "ignoreComments": true }],
+		"comma-spacing": ["error", { "before": false, "after": true }],
+		"import/order": [
+			"error",
+			{
+				"alphabetize": {
+					"caseInsensitive": true,
+					"order": "asc"
+				},
+				"groups": ["external", "builtin", "parent", ["sibling", "index"]],
+				"newlines-between": "never",
+				"pathGroups": [
+					{
+						"group": "external",
+						"pattern": "react",
+						"position": "before"
+					},
+					{
+						"group": "builtin",
+						"pattern": "**",
+						"position": "after"
+					},
+					{
+						"group": "external",
+						"pattern": "./**",
+						"position": "after"
+					}
+				],
+				"pathGroupsExcludedImportTypes": ["builtin"]
+			}
+		]
 	},
 	"ignorePatterns": ["webview-ui/**"]
 }

@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
-import { CommonMessage, Message, ThemeMessage } from "../../src/types/message";
+import { vscodeWrapper } from "./utilities/vscode";
+import { Message, MessageType } from "../../src/types/message";
 import AKLogoBlack from "../assets/images/ak-logo-black.svg?react";
 import AKLogoWhite from "../assets/images/ak-logo-white.svg?react";
+
 import "./App.css";
-import { vscodeWrapper } from "./utilities/vscode";
+
+import { useCallback, useEffect, useState } from "react";
 
 function App() {
 	/**
@@ -28,13 +30,13 @@ function App() {
 		(event: MessageEvent<Message>) => {
 			console.log(event.data);
 
-			if (event.data.type === "COMMON") {
-				const { payload } = event.data as CommonMessage;
-				setDirectory(payload);
+			if (event.data.type === MessageType.common) {
+				const { payload } = event.data as Message;
+				setDirectory(payload as string);
 			}
-			if (event.data.type === "THEME") {
-				const { payload } = event.data as ThemeMessage;
-				setThemeVisualType(payload);
+			if (event.data.type === MessageType.theme) {
+				const { payload } = event.data as Message;
+				setThemeVisualType(payload as number);
 			}
 		},
 		[messagesFromExtension]

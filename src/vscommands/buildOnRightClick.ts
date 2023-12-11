@@ -1,5 +1,5 @@
-import * as vscode from "vscode";
 import * as fs from "fs";
+import * as vscode from "vscode";
 
 export const buildOnRightClick = async (folder: { path: string }) => {
 	const mainStarPath = folder.path.replace("autokitteh.yaml", "main.star");

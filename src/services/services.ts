@@ -1,25 +1,31 @@
 import { ApiClient } from "@api";
 import {
-    IntegrationApiClient,
-    IntegrationService,
-    ManifestApiClient, ManifestService,
-    OrganizationApiClient, OrganizationService, UserApiClient, UserService
+	DeploymentService,
+	EnvironmentService,
+	IntegrationService,
+	ManifestService,
+	OrganizationService,
+	ProjectService,
+	UserService,
 } from "@api/entities";
-import { ProjectService, ProjectApiClient } from "@api/entities";
 
-const projectApiClient = new ProjectApiClient(new ApiClient());
-const projectService = new ProjectService(projectApiClient);
+// Create a single instance of ApiClient
+const apiClient = new ApiClient();
 
-const manifestApiClient = new ManifestApiClient(new ApiClient());
-const manifestService = new ManifestService(manifestApiClient);
+const projectService = new ProjectService(apiClient);
+const manifestService = new ManifestService(apiClient);
+const organizationService = new OrganizationService(apiClient);
+const integrationService = new IntegrationService(apiClient);
+const userService = new UserService(apiClient);
+const environmentService = new EnvironmentService(apiClient);
+const deploymentService = new DeploymentService(apiClient);
 
-const organizationApiClient = new OrganizationApiClient(new ApiClient());
-const organizationService = new OrganizationService(organizationApiClient);
-
-const integrationApiClient = new IntegrationApiClient(new ApiClient());
-const integrationService = new IntegrationService(integrationApiClient);
-
-const userApiClient = new UserApiClient(new ApiClient());
-const userService = new UserService(userApiClient);
-
-export { projectService, manifestService, organizationService, integrationService, userService };
+export {
+	deploymentService,
+	environmentService,
+	integrationService,
+	manifestService,
+	organizationService,
+	projectService,
+	userService,
+};

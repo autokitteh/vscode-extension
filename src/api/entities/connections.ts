@@ -1,14 +1,9 @@
-import { Value, Connection } from "@type/entities/connections";
 import { appConfig } from "@api";
 import { IApiClient } from "@api/axios";
+import { Connection, Value } from "@type/entities/connections";
 import { get } from "lodash";
-export interface IConnectionpiClient {
-	list(parentId: string): Promise<Connection[] | undefined>;
-	getConnection(connectionId: string): Promise<Connection | undefined>;
-	useConnection(connectionId: string): Promise<{ values: { [k: string]: Value } }>;
-}
 
-export class ConnectionpiClient implements IConnectionpiClient {
+export class ConnectionService {
 	apiBase: string;
 	connectionApiClient: IApiClient;
 
@@ -49,21 +44,5 @@ export class ConnectionpiClient implements IConnectionpiClient {
 		} catch (error) {
 			return { values: {} };
 		}
-	}
-}
-
-export default class ConnectionService {
-	connectionApiClient: IConnectionpiClient;
-
-	constructor(connectionApiClient: IConnectionpiClient) {
-		this.connectionApiClient = connectionApiClient;
-	}
-
-	async list(parentId: string): Promise<Connection[] | undefined> {
-		return this.connectionApiClient.list(parentId);
-	}
-
-	async getConnection(connectionId: string): Promise<Connection | undefined> {
-		return this.connectionApiClient.getConnection(connectionId);
 	}
 }

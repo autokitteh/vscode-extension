@@ -1,15 +1,9 @@
-export type MessageType = "COMMON" | "THEME";
+export enum MessageType {
+	common = "COMMON",
+	theme = "THEME",
+}
 
-export interface Message {
+export type Message = {
 	type: MessageType;
-	payload?: any;
-}
-
-export interface CommonMessage extends Message {
-	type: "COMMON";
-	payload: string;
-}
-export interface ThemeMessage extends Message {
-	type: "THEME";
-	payload: number;
-}
+	payload?: string | object | number;
+};

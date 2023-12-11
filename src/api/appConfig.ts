@@ -9,4 +9,5 @@ export const appConfig = {
 	integrationApiBase: `${baseApi}/${urlPrefix}integrations.v1.IntegrationsService`,
 	userApiBase: `${baseApi}/${urlPrefix}users.v1.UsersService`,
 	manifestApiBase: `${urlPrefix}x/apply`,
+	deploymentApiBase: `${baseApi}/${urlPrefix}deployments.v1.DeploymentsService`,
 };

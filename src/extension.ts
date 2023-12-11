@@ -1,17 +1,19 @@
 require("module-alias/register");
 
+import { LEFT_PANEL_WEBVIEW_ID } from "@constants/webviews";
 import { Theme } from "@enums";
 import { AutokittehSidebar, AutokittehWebview, MyTreeStrProvider } from "@panels";
-import { LEFT_PANEL_WEBVIEW_ID } from "@constants/webviews";
-import { ThemeMessage } from "@type";
-import { commands, ExtensionContext, window as vscodeWindow } from "vscode"; // combined import
-import { applyManifest, buildOnRightClick, sendMessageToExtension } from "@vscommands";
 import {
-	organizationService,
+	deploymentService,
+	environmentService,
 	integrationService,
+	organizationService,
 	projectService,
 	userService,
 } from "@services/services";
+import { Message, MessageType } from "@type";
+import { applyManifest, buildOnRightClick, sendMessageToExtension } from "@vscommands";
+import { commands, ExtensionContext, window as vscodeWindow } from "vscode"; // combined import
 import * as vscode from "vscode";
 
 export async function activate(context: ExtensionContext) {
@@ -35,8 +37,8 @@ export async function activate(context: ExtensionContext) {
 	 */
 	vscodeWindow.onDidChangeActiveColorTheme((editor) => {
 		if (editor) {
-			leftPane.postMessageToWebview<ThemeMessage>({
-				type: "THEME",
+			leftPane.postMessageToWebview<Message>({
+				type: MessageType.theme,
 				payload: editor.kind as number as Theme,
 			});
 		}
@@ -48,12 +50,11 @@ export async function activate(context: ExtensionContext) {
 	const organization = await organizationService.getOrganizationByName(organizations![0]);
 	const integrations = await integrationService.list(organization!.orgId);
 	const projects = await projectService.list(myUser!.userId);
+	const projectsArr = projects?.map((int) => int.name) as string[];
+	const environments = await environmentService.list(projects![0].projectId);
+	const deployments = await deploymentService.list(environments![0].envId);
 
-	console.log("integrations", projects);
-
-	const intNamesArray = projects?.map((int) => int.name) as string[];
-
-	const myTree = new MyTreeStrProvider(intNamesArray);
+	const myTree = new MyTreeStrProvider(projectsArr);
 
 	const treeView = vscodeWindow.registerTreeDataProvider("myTreeView", myTree);
 	context.subscriptions.push(treeView);
@@ -72,8 +73,8 @@ export async function activate(context: ExtensionContext) {
 		if (AutokittehWebview.currentPanel) {
 			// Send the message to the webview
 			AutokittehWebview.currentPanel.postMessageToWebview({
-				type: "COMMON",
-				payload: label,
+				type: MessageType.common,
+				payload: deployments,
 			});
 		} else {
 			// Handle the case where the webview is not open

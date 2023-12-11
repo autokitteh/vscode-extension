@@ -1,13 +1,9 @@
-import { Project, BuildProjectResponse, Error } from "@type/entities/project";
 import { appConfig } from "@api";
 import { IApiClient } from "@api/axios";
+import { BuildProjectResponse, Error, Project } from "@type/entities/project";
 import { get, pick } from "lodash";
-interface IProjectApiClient {
-	list(ownerId: string): Promise<Project[] | undefined>;
-	buildProject(ownerId: string): Promise<BuildProjectResponse>;
-}
 
-export class ProjectApiClient implements IProjectApiClient {
+export class ProjectService {
 	apiBase: string;
 	projectApiClient: IApiClient;
 
@@ -42,21 +38,5 @@ export class ProjectApiClient implements IProjectApiClient {
 			console.error(exception);
 			return {};
 		}
-	}
-}
-
-export default class ProjectService {
-	projectApiClient: IProjectApiClient;
-
-	constructor(projectApiClient: IProjectApiClient) {
-		this.projectApiClient = projectApiClient;
-	}
-
-	async list(userId: string): Promise<Project[] | undefined> {
-		return this.projectApiClient.list(userId);
-	}
-
-	async buildProject(projectId: string): Promise<BuildProjectResponse> {
-		return this.projectApiClient.buildProject(projectId);
 	}
 }

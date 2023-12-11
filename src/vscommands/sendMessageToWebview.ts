@@ -1,6 +1,6 @@
-import * as vscode from "vscode";
 import { AutokittehSidebar } from "@panels";
-import { CommonMessage } from "@type";
+import { Message, MessageType } from "@type";
+import * as vscode from "vscode";
 
 export const sendMessageToWebview = (leftPane: AutokittehSidebar): any => {
 	vscode.window
@@ -12,8 +12,8 @@ export const sendMessageToWebview = (leftPane: AutokittehSidebar): any => {
 				// Workspace Uri
 				let wf = vscode.workspace.workspaceFolders[0].uri.path;
 				vscode.window.showInformationMessage(wf);
-				leftPane.postMessageToWebview<CommonMessage>({
-					type: "COMMON",
+				leftPane.postMessageToWebview<Message>({
+					type: MessageType.common,
 					payload: wf,
 				});
 			} else {

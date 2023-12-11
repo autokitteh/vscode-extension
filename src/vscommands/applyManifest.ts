@@ -1,5 +1,5 @@
-import * as vscode from "vscode";
 import { manifestService } from "@services/services";
+import * as vscode from "vscode";
 
 export const applyManifest = async () => {
 	let output = vscode.window.createOutputChannel("autokitteh");
