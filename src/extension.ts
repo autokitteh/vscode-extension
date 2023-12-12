@@ -32,18 +32,33 @@ export async function activate(context: ExtensionContext) {
 		}
 	});
 
-	const TreeLeafCommand = vscode.commands.registerCommand("myExtension.myCommand", (label) => {
+	/*** On webview open:
+	 * - Render the view
+	 * - Send the theme to the webview (light/dark)
+	 */
+	const openProjectCommand = vscode.commands.registerCommand("autokitteh.openWebview", (label) => {
 		AutokittehProjectWebview.render(context.extensionUri);
+
+		const theme = vscodeWindow.activeColorTheme.kind as number as Theme;
+		if (AutokittehProjectWebview.currentPanel) {
+			AutokittehProjectWebview.currentPanel.postMessageToWebview<Message>({
+				type: MessageType.theme,
+				payload: theme,
+			});
+		}
 	});
 
-	context.subscriptions.push(TreeLeafCommand);
+	context.subscriptions.push(openProjectCommand);
 
 	const { projectNamesStrArr, deployments } = await fetchData();
 
-	const myTree = new MyTreeStrProvider(projectNamesStrArr);
+	const projectsTree = new MyTreeStrProvider(projectNamesStrArr);
 
-	const treeView = vscodeWindow.registerTreeDataProvider("autokittehSidebarTree", myTree);
-	context.subscriptions.push(treeView);
+	const projectsSidebarTree = vscodeWindow.registerTreeDataProvider(
+		"autokittehSidebarTree",
+		projectsTree
+	);
+	context.subscriptions.push(projectsSidebarTree);
 
 	const connection = {
 		isRunning: false,
@@ -56,7 +71,7 @@ export async function activate(context: ExtensionContext) {
 	vscode.commands.registerCommand("autokittehSidebarTree.startPolling", () => {
 		pollData(
 			connection,
-			myTree,
+			projectsTree,
 			deployments,
 			AutokittehProjectWebview.currentPanel,
 			projectNamesStrArr
@@ -66,8 +81,6 @@ export async function activate(context: ExtensionContext) {
 	vscode.commands.registerCommand("autokittehSidebarTree.stopPolling", () => {
 		stopPolling(connection);
 	});
-
-	context.subscriptions.push(TreeLeafCommand);
 
 	/*** Build manifest using "Autokitteh V2: Apply Manifest" action from the command palette  */
 	context.subscriptions.push(
