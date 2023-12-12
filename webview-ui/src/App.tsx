@@ -27,8 +27,8 @@ function App() {
 	}
 
 	const [messagesFromExtension, setMessagesFromExtension] = useState<string[]>([]);
-	const [deployments, setDeployments] = useState<Deployment[]>([]);
-	const [projectName, setProjectName] = useState<string>("");
+	const [deployments, setDeployments] = useState<Deployment[] | string>("Loading...");
+	const [projectName, setProjectName] = useState<string>("Loading...");
 	const [directory, setDirectory] = useState<string>("");
 	const [themeVisualType, setThemeVisualType] = useState<number | undefined>(undefined);
 
@@ -48,7 +48,11 @@ function App() {
 					setThemeVisualType(payload);
 					break;
 				case MessageType.deployments:
-					setDeployments(payload);
+					if (payload.length){
+						setDeployments(payload);
+					} else {
+						setDeployments("No deployments found")
+					}
 					break;
 				case MessageType.projectName:
 					setProjectName(payload);
@@ -129,13 +133,13 @@ function App() {
 						<AKTableHeaderCell>Build-ID (Optional)</AKTableHeaderCell>
 						<AKTableHeaderCell>Actions</AKTableHeaderCell>
 					</AKTableHeader>
-					{deployments.length === 0 && (
-						<AKTableEmptyMessage>No deployments found</AKTableEmptyMessage>
+					{(typeof deployments === "string") && (
+						<AKTableEmptyMessage>{deployments}</AKTableEmptyMessage>
 					)}
-					{deployments.map((deployment) => (
+					{Array.isArray(deployments) && deployments.map((deployment) => (
 						<AKTableRow key={deployment.deploymentId}>
 							<AKTableCell>
-								{moment(deployment.createdAt).format("HH:mm:ss YYYY-MM-DD")}
+								{moment(deployment.createdAt).fromNow()}
 							</AKTableCell>
 							<AKTableCell>{deployment.state}</AKTableCell>
 							<AKTableCell>0</AKTableCell>

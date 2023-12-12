@@ -64,14 +64,6 @@
 			]
 		},
 		"views": {
-			"webview": [
-				{
-					"type": "webview",
-					"id": "left-panel-webview",
-					"name": "Webview",
-					"icon": "./resources/autokitteh.svg"
-				}
-			],
 			"myTreeView": [
 				{
 					"id": "myTreeView",
