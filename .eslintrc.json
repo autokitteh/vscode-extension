@@ -74,6 +74,5 @@
 				"pathGroupsExcludedImportTypes": ["builtin"]
 			}
 		]
-	},
-	"ignorePatterns": ["webview-ui/**"]
+	}
 }

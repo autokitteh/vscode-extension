@@ -1,16 +1,18 @@
-import { AKTable } from "./components/AKTable/AKTable";
+import { useCallback, useEffect, useState } from "react";
+import { AKButton } from "./components";
+import {
+	AKTable,
+	AKTableEmptyMessage,
+	AKTableCell,
+	AKTableHeader,
+	AKTableRow,
+} from "./components/AKTable";
 import { vscodeWrapper } from "./utilities/vscode";
+import moment from "moment";
 import { Message, MessageType, Deployment } from "../../src/types";
 import AKLogoBlack from "../assets/images/ak-logo-black.svg?react";
 import AKLogoWhite from "../assets/images/ak-logo-white.svg?react";
-
 import "./App.css";
-
-import { useCallback, useEffect, useState } from "react";
-import { AKTableCell, AKTableHeader, AKTableRow } from "./components/AKTable";
-import moment from "moment";
-import { AKTableEmptyMessage } from "./components/AKTable";
-import { AKButton } from "./components";
 
 function App() {
 	/**
