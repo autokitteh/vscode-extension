@@ -1,4 +1,12 @@
-import { EventEmitter, TreeDataProvider, TreeItem, Event, TreeItemCollapsibleState } from "vscode";
+import { CONNECT_TO_AUTOKITTEH, OPEN_PROJECT_WEBVIEW } from "@constants/index";
+import {
+	EventEmitter,
+	TreeDataProvider,
+	TreeItem,
+	Event,
+	TreeItemCollapsibleState,
+	workspace,
+} from "vscode";
 
 export class MyTreeStrProvider implements TreeDataProvider<TreeItem> {
 	private _onDidChangeTreeData: EventEmitter<TreeItem | undefined | void> = new EventEmitter<
@@ -21,9 +29,10 @@ export class MyTreeStrProvider implements TreeDataProvider<TreeItem> {
 	}
 
 	getTreeItem(element: TreeItem): TreeItem {
+		const isConnected = workspace.getConfiguration().get("autokitteh.serviceEnabled");
 		if (element !== this.rootNode) {
 			element.command = {
-				command: "autokitteh.openWebview",
+				command: isConnected ? OPEN_PROJECT_WEBVIEW : CONNECT_TO_AUTOKITTEH,
 				title: "Open project",
 				// Pass the label or any other data you need from the element object
 				arguments: [element.label],

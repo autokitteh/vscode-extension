@@ -6,12 +6,35 @@ import { Theme } from "@enums";
 import { AutokittehProjectWebview, MyTreeStrProvider } from "@panels";
 import { Message, MessageType } from "@type";
 import { applyManifest, buildOnRightClick } from "@vscommands";
-import { commands, ExtensionContext, window as vscodeWindow } from "vscode";
-import * as vscode from "vscode";
+import {
+	commands,
+	ExtensionContext,
+	window,
+	workspace,
+	ConfigurationTarget,
+	Disposable,
+} from "vscode";
 
 export async function activate(context: ExtensionContext) {
+	/**
+	 * Sets the connection status in the settings of VSCode.
+	 * @param {boolean} isRunning - The running status of the connection.
+	 * @returns {Promise<void>}
+	 */
+	const setConnetionInSettings = async (isRunning: boolean) => {
+		await workspace
+			.getConfiguration()
+			.update("autokitteh.serviceEnabled", isRunning, ConfigurationTarget.Global);
+		connection.isRunning = isRunning;
+	};
+
+	setConnetionInSettings(false);
+
+	let currentSidebarTree: Disposable;
+
+	let currentProjectView: typeof AutokittehProjectWebview;
 	const projectWebview = commands.registerCommand("autokitteh.ShowProject", () => {
-		AutokittehProjectWebview.render(context.extensionUri);
+		currentProjectView = AutokittehProjectWebview.render(context.extensionUri);
 	});
 	context.subscriptions.push(projectWebview);
 
@@ -23,9 +46,9 @@ export async function activate(context: ExtensionContext) {
 	/*** On theme change:
 	 * Send the theme to the webview (light/dark)
 	 */
-	vscodeWindow.onDidChangeActiveColorTheme((editor) => {
-		if (editor && AutokittehProjectWebview.currentPanel) {
-			AutokittehProjectWebview.currentPanel.postMessageToWebview<Message>({
+	window.onDidChangeActiveColorTheme((editor) => {
+		if (editor && currentProjectView.currentPanel) {
+			currentProjectView.currentPanel.postMessageToWebview<Message>({
 				type: MessageType.theme,
 				payload: editor.kind as number as Theme,
 			});
@@ -36,50 +59,78 @@ export async function activate(context: ExtensionContext) {
 	 * - Render the view
 	 * - Send the theme to the webview (light/dark)
 	 */
-	const openProjectCommand = vscode.commands.registerCommand("autokitteh.openWebview", (label) => {
-		AutokittehProjectWebview.render(context.extensionUri);
+	const openProjectCommand = commands.registerCommand("autokitteh.openWebview", (label) => {
+		currentProjectView = AutokittehProjectWebview.render(context.extensionUri);
 
-		const theme = vscodeWindow.activeColorTheme.kind as number as Theme;
-		if (AutokittehProjectWebview.currentPanel) {
-			AutokittehProjectWebview.currentPanel.postMessageToWebview<Message>({
+		const theme = window.activeColorTheme.kind as number as Theme;
+		if (currentProjectView.currentPanel) {
+			currentProjectView.currentPanel.postMessageToWebview<Message>({
 				type: MessageType.theme,
 				payload: theme,
 			});
+			pushDataToWebview(currentProjectView, connection);
 		}
 	});
 
 	context.subscriptions.push(openProjectCommand);
 
-	const { projectNamesStrArr, deployments } = await fetchData();
+	const updateSidebarTree = (newTree: MyTreeStrProvider): Disposable => {
+		const projectsSidebarTree = window.registerTreeDataProvider("autokittehSidebarTree", newTree);
 
-	const projectsTree = new MyTreeStrProvider(projectNamesStrArr);
+		context.subscriptions.push(projectsSidebarTree);
+		return projectsSidebarTree;
+	};
 
-	const projectsSidebarTree = vscodeWindow.registerTreeDataProvider(
-		"autokittehSidebarTree",
-		projectsTree
-	);
-	context.subscriptions.push(projectsSidebarTree);
+	const disconnectedTree = new MyTreeStrProvider(["Click here to connect"]);
+	updateSidebarTree(disconnectedTree);
 
 	const connection = {
-		isRunning: false,
+		isRunning: workspace.getConfiguration().get("autokitteh.serviceEnabled") as boolean,
 		timer: undefined,
 	} as LocalhostConnection;
-	await vscode.workspace
-		.getConfiguration()
-		.update("autokitteh.enabled", false, vscode.ConfigurationTarget.Global);
 
-	vscode.commands.registerCommand("autokittehSidebarTree.startPolling", () => {
-		pollData(
-			connection,
-			projectsTree,
-			deployments,
-			AutokittehProjectWebview.currentPanel,
-			projectNamesStrArr
-		);
+	/**
+	 * Pushes data to a webview panel.
+	 * @param {typeof AutokittehProjectWebview | undefined} webviewPanel - The webview panel to push data to.
+	 * @param {LocalhostConnection} connection - The connection object.
+	 * @returns {Promise<void>} A promise that resolves when the data is pushed to the webview panel.
+	 */
+	const pushDataToWebview = async (
+		webviewPanel: typeof AutokittehProjectWebview | undefined,
+		connection: LocalhostConnection
+	) => {
+		// Fetch data from the server
+		const { projectNamesStrArr, deployments } = await fetchData();
+		// Create a new tree provider using the fetched project names
+		const projectsTree = new MyTreeStrProvider(projectNamesStrArr);
+		// Update the current sidebar tree with the new projects tree
+		currentSidebarTree = updateSidebarTree(projectsTree);
+
+		if (webviewPanel) {
+			// Poll data from the connection and update the webview panel
+			pollData(
+				connection,
+				currentSidebarTree,
+				deployments,
+				webviewPanel.currentPanel,
+				projectNamesStrArr
+			);
+		}
+	};
+
+	commands.registerCommand("autokittehSidebarTree.startPolling", async () => {
+		await setConnetionInSettings(true);
+		await pushDataToWebview(currentProjectView, connection);
 	});
 
-	vscode.commands.registerCommand("autokittehSidebarTree.stopPolling", () => {
+	commands.registerCommand("autokittehSidebarTree.stopPolling", async () => {
+		await setConnetionInSettings(false);
+		updateSidebarTree(disconnectedTree);
 		stopPolling(connection);
+
+		if (currentProjectView.currentPanel) {
+			currentProjectView.currentPanel.dispose();
+		}
 	});
 
 	/*** Build manifest using "Autokitteh V2: Apply Manifest" action from the command palette  */

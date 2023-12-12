@@ -10,7 +10,7 @@
 		"configuration": {
 			"title": "autokitteh",
 			"properties": {
-			  "autokitteh.enabled": {
+			  "autokitteh.serviceEnabled": {
 				"type": "boolean",
 				"default": false,
 				"description": "enable autokitteh"
@@ -47,12 +47,12 @@
 			"view/title": [
 				{
 					"command": "autokittehSidebarTree.startPolling",
-					"when": "view == autokittehSidebarTree && !config.autokitteh.enabled",
+					"when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled",
 					"group": "navigation"
 				  },
 				  {
 					"command": "autokittehSidebarTree.stopPolling",
-					"when": "view == autokittehSidebarTree && config.autokitteh.enabled",
+					"when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled",
 					"group": "navigation"
 				  }
 			]
@@ -116,7 +116,7 @@
 		"@controllers": "out/controllers",
 		"@providers": "out/providers",
 		"@services/services": "out/services/services.js",
-		"@constants/webviews": "out/constants/webviews.js",
+		"@constants": "out/constants",
 		"@vscommands": "out/vscommands"
 	}
 }

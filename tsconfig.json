@@ -16,7 +16,6 @@
 			"@constants/*": ["constants/*"],
 			"@vscommands/*": ["vscommands/*"],
 			"@vscommands": ["vscommands/index"],
-			"@constants": ["constants/index"],
 			"@type/*": ["types/*"],
 			"@type": ["types/index"],
 			"@enums/*": ["enums/*"],

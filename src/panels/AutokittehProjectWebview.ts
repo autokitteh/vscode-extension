@@ -45,8 +45,8 @@ export class AutokittehProjectWebview {
 	 */
 	public static render(extensionUri: Uri) {
 		if (AutokittehProjectWebview.currentPanel) {
-			// If the webview panel already exists reveal it
-			AutokittehProjectWebview.currentPanel._panel.reveal(ViewColumn.Two);
+			// Do nothing
+			return AutokittehProjectWebview;
 		} else {
 			// If a webview panel does not already exist create and show a new one
 			const panel = window.createWebviewPanel(
@@ -70,6 +70,7 @@ export class AutokittehProjectWebview {
 			);
 
 			AutokittehProjectWebview.currentPanel = new AutokittehProjectWebview(panel, extensionUri);
+			return AutokittehProjectWebview;
 		}
 	}
 
