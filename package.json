@@ -1,37 +1,40 @@
 {
-	"name": "autokitteh-vscode",
-	"description": "A hello world sample extension to demonstrate using React + Vite with the Webview UI Toolkit for VS Code.",
+	"name": "vscode-v2",
+	"description": "AutoKitteh is an open-source automation framework designed to simplify the process of automating tasks across various environments and tools. Its primary focus is on providing a versatile and user-friendly platform for automating operations, particularly in DevOps and software development contexts.",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.75.0"
 	},
 	"main": "./out/extension.js",
 	"contributes": {
+		"configuration": {
+			"title": "autokitteh",
+			"properties": {
+			  "autokitteh.enabled": {
+				"type": "boolean",
+				"default": false,
+				"description": "enable autokitteh"
+			  }
+		  }
+		},
 		"commands": [
-			{
-				"command": "hello-world.showHelloWorld",
-				"title": "autokitteh react: Show"
-			},
 			{
 				"command": "autokitteh.v2.applyManifest",
 				"title": "Autokitteh V2: Apply Manifest"
-			},
-			{
-				"command": "extension.sendMessage",
-				"title": "Send Message to Webview",
-				"category": "Webview React"
 			},
 			{
 				"command": "autokitteh.v2.buildFolder",
 				"title": "Build autokitteh"
 			},
 			{
-				"command": "myTreeView.refresh",
-				"title": "Refresh",
-				"icon": {
-					"light": "resources/autokitteh.svg",
-					"dark": "resources/autokitteh.svg"
-				}
+			  "command": "autokittehSidebarTree.startPolling",
+			  "title": "Autokitteh: Connect to server",
+			  "icon": "$(debug-stop)"
+			},
+			{
+			  "command": "autokittehSidebarTree.stopPolling",
+			  "title": "Autokitteh: Disconnect from server",
+			  "icon": "$(link)"
 			}
 		],
 		"menus": {
@@ -43,31 +46,31 @@
 			],
 			"view/title": [
 				{
-					"command": "myTreeView.refresh",
-					"when": "view == myTreeView",
+					"command": "autokittehSidebarTree.startPolling",
+					"when": "view == autokittehSidebarTree && !config.autokitteh.enabled",
 					"group": "navigation"
-				}
+				  },
+				  {
+					"command": "autokittehSidebarTree.stopPolling",
+					"when": "view == autokittehSidebarTree && config.autokitteh.enabled",
+					"group": "navigation"
+				  }
 			]
 		},
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "webview",
-					"title": "Example for webview",
-					"icon": "./resources/autokitteh.svg"
-				},
-				{
-					"id": "myTreeView",
-					"title": "Node Dependencies",
+					"id": "autokittehSidebarTree",
+					"title": "Autokitteh",
 					"icon": "./resources/autokitteh.svg"
 				}
 			]
 		},
 		"views": {
-			"myTreeView": [
+			"autokittehSidebarTree": [
 				{
-					"id": "myTreeView",
-					"name": "Node Dependencies"
+					"id": "autokittehSidebarTree",
+					"name": "AK Server"
 				}
 			]
 		}

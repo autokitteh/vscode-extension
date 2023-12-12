@@ -4,22 +4,22 @@ import { Message } from "@type/message";
 import { Disposable, Uri, ViewColumn, Webview, WebviewPanel, window } from "vscode";
 
 /**
- * This class manages the state and behavior of HelloWorld webview panels.
+ * This class manages the state and behavior of AutokittehProjectWebview webview panels.
  *
  * It contains all the data and methods for:
  *
- * - Creating and rendering HelloWorld webview panels
+ * - Creating and rendering AutokittehProjectWebview webview panels
  * - Properly cleaning up and disposing of webview resources when the panel is closed
  * - Setting the HTML (and by proxy CSS/JavaScript) content of the webview panel
  * - Setting message listeners so data can be passed between the webview and extension
  */
-export class AutokittehWebview {
-	public static currentPanel: AutokittehWebview | undefined;
+export class AutokittehProjectWebview {
+	public static currentPanel: AutokittehProjectWebview | undefined;
 	private readonly _panel: WebviewPanel;
 	private _disposables: Disposable[] = [];
 
 	/**
-	 * The HelloWorldPanel class private constructor (called only from the render method).
+	 * The AutokittehProjectWebview class private constructor (called only from the render method).
 	 *
 	 * @param panel A reference to the webview panel
 	 * @param extensionUri The URI of the directory containing the extension
@@ -44,16 +44,16 @@ export class AutokittehWebview {
 	 * @param extensionUri The URI of the directory containing the extension.
 	 */
 	public static render(extensionUri: Uri) {
-		if (AutokittehWebview.currentPanel) {
+		if (AutokittehProjectWebview.currentPanel) {
 			// If the webview panel already exists reveal it
-			AutokittehWebview.currentPanel._panel.reveal(ViewColumn.Two);
+			AutokittehProjectWebview.currentPanel._panel.reveal(ViewColumn.Two);
 		} else {
 			// If a webview panel does not already exist create and show a new one
 			const panel = window.createWebviewPanel(
 				// Panel view type
-				"showHelloWorld",
+				"autokittehShowProject",
 				// Panel title
-				"Hello World",
+				"Autokitteh Project",
 				// The editor column the panel should be displayed in
 				ViewColumn.One,
 				// Extra panel configurations
@@ -69,7 +69,7 @@ export class AutokittehWebview {
 				}
 			);
 
-			AutokittehWebview.currentPanel = new AutokittehWebview(panel, extensionUri);
+			AutokittehProjectWebview.currentPanel = new AutokittehProjectWebview(panel, extensionUri);
 		}
 	}
 
@@ -77,7 +77,7 @@ export class AutokittehWebview {
 	 * Cleans up and disposes of webview resources when the webview panel is closed.
 	 */
 	public dispose() {
-		AutokittehWebview.currentPanel = undefined;
+		AutokittehProjectWebview.currentPanel = undefined;
 
 		// Dispose of the current webview panel
 		this._panel.dispose();
@@ -101,7 +101,6 @@ export class AutokittehWebview {
 	private async _setWebviewMessageListener(webview: Webview) {
 		webview.onDidReceiveMessage(messageListener, undefined, this._disposables);
 	}
-
 
 	public postMessageToWebview<T extends Message = Message>(message: T) {
 		// post message from extension to webview

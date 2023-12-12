@@ -47,7 +47,7 @@ export const messageListener = async (message: any) => {
 
 		// Open webview panel to add a new project
 		case "openAddWebviewPane":
-			vscode.commands.executeCommand("hello-world.showHelloWorld");
+			vscode.commands.executeCommand("autokitteh.ShowProject");
 			break;
 	}
 };

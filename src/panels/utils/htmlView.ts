@@ -34,7 +34,7 @@ export const htmlView = (webview: Webview, extensionUri: Uri) => {
 	  
       <link rel="stylesheet" type="text/css" href="${stylesUri}">
       <link rel="stylesheet" type="text/css" href="${codiconsUri}">
-      <title>Hello World</title>
+      <title>Autokitteh</title>
     </head>
     <body>
       <div id="root"></div>
