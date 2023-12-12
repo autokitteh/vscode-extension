@@ -5,5 +5,5 @@ interface AKTableRowProps {
 }
 
 export const AKTableRow = ({ children }: AKTableRowProps) => {
-	return <div className="flex justify-around bg-tab-active-foreground w-[80rem]">{children}</div>;
+	return <tr className="bg-tab-active-foreground">{children}</tr>;
 };

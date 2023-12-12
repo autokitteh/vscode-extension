@@ -6,8 +6,8 @@ interface AKTableHeaderProps {
 
 export const AKTableHeader = ({ children }: AKTableHeaderProps) => {
 	return (
-		<div className="flex justify-around bg-vscode-editorGroup-dropBackground w-[80rem] font-bold">
+		<tr className="bg-vscode-editorGroup-dropBackground font-bold">
 			{children}
-		</div>
+		</tr>
 	);
 };

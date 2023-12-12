@@ -7,8 +7,8 @@ interface AKTableProps {
 }
 
 export const AKTable = ({ children, classes }: AKTableProps) => {
-	const baseClass = ["w-full flex flex-col"];
+	const baseClass = ["w-full"];
 	const tableClass = clsx(baseClass, [classes]);
 
-	return <div className={tableClass}>{children}</div>;
+	return <table className={tableClass}>{children}</table>;
 };

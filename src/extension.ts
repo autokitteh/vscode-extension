@@ -1,19 +1,12 @@
 require("module-alias/register");
 
 import { LEFT_PANEL_WEBVIEW_ID } from "@constants/webviews";
+import { fetchData } from "@controllers";
 import { Theme } from "@enums";
 import { AutokittehSidebar, AutokittehWebview, MyTreeStrProvider } from "@panels";
-import {
-	deploymentService,
-	environmentService,
-	integrationService,
-	organizationService,
-	projectService,
-	userService,
-} from "@services/services";
 import { Message, MessageType } from "@type";
 import { applyManifest, buildOnRightClick, sendMessageToExtension } from "@vscommands";
-import { commands, ExtensionContext, window as vscodeWindow } from "vscode"; // combined import
+import { commands, ExtensionContext, window as vscodeWindow } from "vscode";
 import * as vscode from "vscode";
 
 export async function activate(context: ExtensionContext) {
@@ -36,55 +29,64 @@ export async function activate(context: ExtensionContext) {
 	 * Send the theme to the webview (light/dark)
 	 */
 	vscodeWindow.onDidChangeActiveColorTheme((editor) => {
-		if (editor) {
-			leftPane.postMessageToWebview<Message>({
+		if (editor && AutokittehWebview.currentPanel) {
+			AutokittehWebview.currentPanel.postMessageToWebview<Message>({
 				type: MessageType.theme,
 				payload: editor.kind as number as Theme,
 			});
 		}
 	});
 
-	const organizations = await organizationService.list();
-	const myUser = await userService.getUserByName("george");
-
-	const organization = await organizationService.getOrganizationByName(organizations![0]);
-	const integrations = await integrationService.list(organization!.orgId);
-	const projects = await projectService.list(myUser!.userId);
-	const projectsArr = projects?.map((int) => int.name) as string[];
-	const environments = await environmentService.list(projects![0].projectId);
-	const deployments = await deploymentService.list(environments![0].envId);
-
-	const myTree = new MyTreeStrProvider(projectsArr);
-
-	const treeView = vscodeWindow.registerTreeDataProvider("myTreeView", myTree);
-	context.subscriptions.push(treeView);
-
-	// Register a command to refresh the tree view
-	context.subscriptions.push(
-		vscode.commands.registerCommand("myTreeView.refresh", () => {
-			myTree.refresh();
-		})
-	);
-
 	const TreeLeafCommand = vscode.commands.registerCommand("myExtension.myCommand", (label) => {
 		AutokittehWebview.render(context.extensionUri);
 
 		// Check if the current panel exists
+		// if (AutokittehWebview.currentPanel) {
+		// 	// Send the message to the webview
+		// 	AutokittehWebview.currentPanel.postMessageToWebview({
+		// 		type: MessageType.deployments,
+		// 		payload: deployments,
+		// 	});
+		// 	AutokittehWebview.currentPanel.postMessageToWebview({
+		// 		type: MessageType.projectName,
+		// 		payload: projectNamesStrArr![0],
+		// 	});
+		// } else {
+		// 	// Handle the case where the webview is not open
+		// 	vscode.window.showInformationMessage("The webview is not open.");
+		// }
+	});
+
+	context.subscriptions.push(TreeLeafCommand);
+
+	const myTimer = setInterval(async () => {
+		const { projectNamesStrArr, deployments } = await fetchData();
+
+		const myTree = new MyTreeStrProvider(projectNamesStrArr);
+
+		const treeView = vscodeWindow.registerTreeDataProvider("myTreeView", myTree);
+		context.subscriptions.push(treeView);
+		// context.subscriptions.push(
+		// 	vscode.commands.registerCommand("myTreeView.refresh", () => {
+		// 		myTree.refresh();
+		// 	})
+		// );
+
 		if (AutokittehWebview.currentPanel) {
-			// Send the message to the webview
 			AutokittehWebview.currentPanel.postMessageToWebview({
 				type: MessageType.deployments,
 				payload: deployments,
 			});
 			AutokittehWebview.currentPanel.postMessageToWebview({
 				type: MessageType.projectName,
-				payload: projects![0].name,
+				payload: projectNamesStrArr![0],
 			});
-		} else {
-			// Handle the case where the webview is not open
-			vscode.window.showInformationMessage("The webview is not open.");
 		}
-	});
+	}, 1000);
+
+	// setTimeout(() => {
+	// 	clearInterval(myTimer);
+	// }, 22000);
 
 	context.subscriptions.push(TreeLeafCommand);
 

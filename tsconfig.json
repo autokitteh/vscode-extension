@@ -26,7 +26,9 @@
 			"@api/*": ["api/*"],
 			"@api": ["api/index"],
 			"@providers/*": ["providers/*"],
-			"@providers": ["providers/index"]
+			"@providers": ["providers/index"],
+			"@controllers/*": ["controllers/*"],
+			"@controllers": ["controllers/index"]
 		}
 	},
 	"include": ["./src"],

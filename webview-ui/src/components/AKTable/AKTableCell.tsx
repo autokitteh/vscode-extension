@@ -5,5 +5,5 @@ interface AKCellProps {
 }
 
 export const AKTableCell = ({ children }: AKCellProps) => {
-	return <div className="flex-1 flex justify-center p-1">{children}</div>;
+	return <td className="text-center p-1">{children}</td>;
 };

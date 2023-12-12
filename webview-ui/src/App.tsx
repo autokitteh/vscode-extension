@@ -6,6 +6,7 @@ import {
 	AKTableCell,
 	AKTableHeader,
 	AKTableRow,
+	AKTableHeaderCell,
 } from "./components/AKTable";
 import { vscodeWrapper } from "./utilities/vscode";
 import moment from "moment";
@@ -43,7 +44,7 @@ function App() {
 				case MessageType.common:
 					setDirectory(payload);
 					break;
-				case MessageType.theme:
+				case MessageType.theme:					
 					setThemeVisualType(payload);
 					break;
 				case MessageType.deployments:
@@ -89,12 +90,10 @@ function App() {
 	 * @param {string} className - The class name for the logo component.
 	 * @returns {JSX.Element} The logo component.
 	 */
-	const Logo = ({ className }: { className: string }) =>
-		themeVisualType === 2 ? (
-			<AKLogoWhite className={className} />
-		) : (
-			<AKLogoBlack className={className} />
-		);
+	const Logo = ({ className }: { className: string }) => 
+		(themeVisualType === 2) ? <AKLogoWhite className={className} fill="white" /> : 
+			<AKLogoBlack className={className}/>;
+		
 
 	/**
 	 * Opens the add webview pane in the extension.
@@ -124,11 +123,11 @@ function App() {
 				</div>
 				<AKTable classes="mt-4">
 					<AKTableHeader>
-						<AKTableCell>Deploy Time</AKTableCell>
-						<AKTableCell>Status</AKTableCell>
-						<AKTableCell>Sessions</AKTableCell>
-						<AKTableCell>Build-ID (Optional)</AKTableCell>
-						<AKTableCell>Actions</AKTableCell>
+						<AKTableHeaderCell>Deploy Time</AKTableHeaderCell>
+						<AKTableHeaderCell>Status</AKTableHeaderCell>
+						<AKTableHeaderCell>Sessions</AKTableHeaderCell>
+						<AKTableHeaderCell>Build-ID (Optional)</AKTableHeaderCell>
+						<AKTableHeaderCell>Actions</AKTableHeaderCell>
 					</AKTableHeader>
 					{deployments.length === 0 && (
 						<AKTableEmptyMessage>No deployments found</AKTableEmptyMessage>

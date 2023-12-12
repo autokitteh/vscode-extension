@@ -118,6 +118,7 @@
 		"@enums": "out/enums",
 		"@utilities": "out/utilities",
 		"@api": "out/api",
+		"@controllers": "out/controllers",
 		"@providers": "out/providers",
 		"@services/services": "out/services/services.js",
 		"@constants/webviews": "out/constants/webviews.js",
