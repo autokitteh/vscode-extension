@@ -5,5 +5,5 @@ interface AKTableEmptyMessageProps {
 }
 
 export const AKTableEmptyMessage = ({ children }: AKTableEmptyMessageProps) => {
-	return <div className="w-full flex flex-col">{children}</div>;
+	return <div className="w-full text-center m-4">{children}</div>;
 };
