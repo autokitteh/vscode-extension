@@ -73,8 +73,12 @@ export async function activate(context: ExtensionContext) {
 		if (AutokittehWebview.currentPanel) {
 			// Send the message to the webview
 			AutokittehWebview.currentPanel.postMessageToWebview({
-				type: MessageType.common,
+				type: MessageType.deployments,
 				payload: deployments,
+			});
+			AutokittehWebview.currentPanel.postMessageToWebview({
+				type: MessageType.projectName,
+				payload: projects![0].name,
 			});
 		} else {
 			// Handle the case where the webview is not open

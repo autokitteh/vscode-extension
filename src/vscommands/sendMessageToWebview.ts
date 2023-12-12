@@ -3,7 +3,7 @@ import { Message, MessageType } from "@type";
 import * as vscode from "vscode";
 
 export const sendMessageToWebview = (leftPane: AutokittehSidebar): any => {
-	vscode.window
+	/* vscode.window
 		.showInputBox({
 			prompt: "Send message to Webview",
 		})
@@ -22,4 +22,5 @@ export const sendMessageToWebview = (leftPane: AutokittehSidebar): any => {
 				// vscode.window.showErrorMessage(message);
 			}
 		});
+		*/
 };

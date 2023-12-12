@@ -1,11 +1,16 @@
+import { AKTable } from "./components/AKTable/AKTable";
 import { vscodeWrapper } from "./utilities/vscode";
-import { Message, MessageType } from "../../src/types/message";
+import { Message, MessageType, Deployment } from "../../src/types";
 import AKLogoBlack from "../assets/images/ak-logo-black.svg?react";
 import AKLogoWhite from "../assets/images/ak-logo-white.svg?react";
 
 import "./App.css";
 
 import { useCallback, useEffect, useState } from "react";
+import { AKTableCell, AKTableHeader, AKTableRow } from "./components/AKTable";
+import moment from "moment";
+import { AKTableEmptyMessage } from "./components/AKTable";
+import { AKButton } from "./components";
 
 function App() {
 	/**
@@ -19,7 +24,9 @@ function App() {
 	}
 
 	const [messagesFromExtension, setMessagesFromExtension] = useState<string[]>([]);
-
+	const [deployments, setDeployments] = useState<Deployment[]>([]);
+	const [projectName, setProjectName] = useState<string>("");
+	const [directory, setDirectory] = useState<string>("");
 	const [themeVisualType, setThemeVisualType] = useState<number | undefined>(undefined);
 
 	/**
@@ -28,15 +35,22 @@ function App() {
 	 */
 	const handleMessagesFromExtension = useCallback(
 		(event: MessageEvent<Message>) => {
-			console.log(event.data);
+			const { payload } = event.data as Message;
 
-			if (event.data.type === MessageType.common) {
-				const { payload } = event.data as Message;
-				setDirectory(payload as string);
-			}
-			if (event.data.type === MessageType.theme) {
-				const { payload } = event.data as Message;
-				setThemeVisualType(payload as number);
+			switch (event.data.type) {
+				case MessageType.common:
+					setDirectory(payload);
+					break;
+				case MessageType.theme:
+					setThemeVisualType(payload);
+					break;
+				case MessageType.deployments:
+					setDeployments(payload);
+					break;
+				case MessageType.projectName:
+					setProjectName(payload);
+					break;
+				default:
 			}
 		},
 		[messagesFromExtension]
@@ -58,9 +72,6 @@ function App() {
 			window.removeEventListener("message", handleMessagesFromExtension);
 		};
 	}, [handleMessagesFromExtension]);
-
-	const [projectName, setProjectName] = useState("");
-	const [directory, setDirectory] = useState("");
 
 	/**
 	 * Sends a message to the extension to validate the path.
@@ -98,39 +109,40 @@ function App() {
 				<div className="flex mr-8">
 					<div className="flex items-center">
 						<Logo className="w-12 h-12" />
-						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">Autokitteh</div>
+						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">{projectName}</div>
+						<AKButton classes="mx-4">
+							<div className="codicon codicon-tools mr-2"></div>
+							Build
+						</AKButton>
+						<AKButton>
+							<div className="codicon codicon-play mr-2"></div>
+							Deploy
+						</AKButton>
 					</div>
 				</div>
-
-				<div className="flex">
-					<button onClick={validatePath}>
-						Check if project already exist in current directory
-					</button>
-				</div>
-				<div className="flex-1">
-					<div id="menu">
-						<div className="flex pointer" onClick={openAddWebviewPane}>
-							<div className="w-12 p-2.5">
-								<i className="codicon codicon-add !text-4xl"></i>
-							</div>
-						</div>
-						<div className="flex pointer">
-							<div className="w-12 p-2.5">
-								<i className="codicon codicon-tools !text-4xl"></i>
-							</div>
-						</div>
-						<div className="flex pointer">
-							<div className="w-12 p-2.5">
-								<i className="codicon codicon-symbol-interface !text-4xl"></i>
-							</div>
-						</div>
-						<div className="flex pointer">
-							<div className="w-12 p-2.5">
-								<i className="codicon codicon-graph-line !text-4xl"></i>
-							</div>
-						</div>
-					</div>
-				</div>
+				<AKTable classes="mt-4">
+					<AKTableHeader>
+						<AKTableCell>Deploy Time</AKTableCell>
+						<AKTableCell>Status</AKTableCell>
+						<AKTableCell>Sessions</AKTableCell>
+						<AKTableCell>Build-ID (Optional)</AKTableCell>
+						<AKTableCell>Actions</AKTableCell>
+					</AKTableHeader>
+					{deployments.length === 0 && (
+						<AKTableEmptyMessage>No deployments found</AKTableEmptyMessage>
+					)}
+					{deployments.map((deployment) => (
+						<AKTableRow key={deployment.deploymentId}>
+							<AKTableCell>
+								{moment(deployment.createdAt).format("HH:mm:ss YYYY-MM-DD")}
+							</AKTableCell>
+							<AKTableCell>{deployment.state}</AKTableCell>
+							<AKTableCell>0</AKTableCell>
+							<AKTableCell>{deployment.buildId}</AKTableCell>
+							<AKTableCell>TODO</AKTableCell>
+						</AKTableRow>
+					))}
+				</AKTable>
 			</div>
 		</main>
 	);

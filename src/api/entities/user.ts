@@ -23,16 +23,4 @@ export class UserService {
 			return undefined;
 		}
 	}
-
-	async getUserByID(id: string): Promise<User | undefined> {
-		try {
-			const response = (await this.userApiClient.post(`${this.apiBase}/Get`, {
-				orgId: id,
-			})) as User;
-			return response;
-		} catch (exception) {
-			console.error(exception);
-			return undefined;
-		}
-	}
 }
