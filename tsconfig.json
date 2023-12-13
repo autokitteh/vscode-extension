@@ -8,6 +8,7 @@
 		"sourceMap": true,
 		"strict": true,
 		"baseUrl": "src",
+		"skipLibCheck": true,
 		"paths": {
 			"@panels/*": ["panels/*"],
 			"@panels": ["panels/index"],
@@ -27,9 +28,10 @@
 			"@providers/*": ["providers/*"],
 			"@providers": ["providers/index"],
 			"@controllers/*": ["controllers/*"],
-			"@controllers": ["controllers/index"]
+			"@controllers": ["controllers/index"],
+			"@ak-proto-ts/*": ["autokitteh/proto/gen/ts/autokitteh/*"]
 		}
 	},
 	"include": ["./src"],
-	"exclude": ["node_modules", ".vscode-test", "webview-ui"]
+	"exclude": ["node_modules", ".vscode-test", "webview-ui", "./src/autokitteh"]
 }

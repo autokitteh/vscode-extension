@@ -1,3 +1,4 @@
+// TODO: Get types from ak-proto-ts
 import { Deployment } from "@type";
 
 export enum MessageType {

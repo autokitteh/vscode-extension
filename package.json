@@ -102,6 +102,8 @@
 		"vscode-test": "^1.5.0"
 	},
 	"dependencies": {
+		"@connectrpc/connect": "^1.1.4",
+		"@connectrpc/connect-node": "^1.1.4",
 		"axios": "^1.6.2",
 		"js-yaml": "^4.1.0",
 		"lodash": "^4.17.21",
@@ -117,6 +119,7 @@
 		"@providers": "out/providers",
 		"@services/services": "out/services/services.js",
 		"@constants": "out/constants",
-		"@vscommands": "out/vscommands"
+		"@vscommands": "out/vscommands",
+		"@ak-proto-ts": "out/autokitteh/proto/gen/ts/autokitteh"
 	}
 }

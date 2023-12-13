@@ -3,7 +3,7 @@ import { AKWebview, MyTreeStrProvider } from "@panels/index";
 import { LocalhostConnection } from "@type/connection";
 import { refreshSidebarTree } from "@utilities/refreshSidebarTree";
 import { ExtensionContext } from "vscode";
-import { pollData } from "../connection";
+import { pollData } from "../../connection";
 
 /**
  * Pushes data to a webview panel.

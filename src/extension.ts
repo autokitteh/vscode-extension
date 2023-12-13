@@ -1,8 +1,8 @@
 require("module-alias/register");
 
 import { setConnetionSettings, stopPolling } from "./connection";
-import { pushDataToWebview } from "@controllers/setupDataPolling";
 import { AKWebview, MyTreeStrProvider } from "@panels";
+import { pushDataToWebview } from "@panels/utils/setupDataPolling";
 import { LocalhostConnection } from "@type/connection";
 import { refreshSidebarTree } from "@utilities/refreshSidebarTree";
 import { applyManifest, buildOnRightClick } from "@vscommands";

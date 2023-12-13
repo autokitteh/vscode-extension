@@ -1,8 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { projectService } from "@services/services";
 import { get } from "lodash";
-import { window } from "vscode";
 import * as vscode from "vscode";
 
 export const messageListener = async (message: any) => {
@@ -13,12 +11,6 @@ export const messageListener = async (message: any) => {
 	const currentFileDir = get(vscode, "workspace.workspaceFolders[0].uri.path", undefined);
 
 	switch (command) {
-		case "hello":
-			const res = await projectService.list("u:130f562491dc11eea44612584eb0c4b9");
-			console.log(res);
-			window.showInformationMessage(text);
-			break;
-
 		case "submitNewProject":
 			console.log(message);
 			const content = "exampleContent";

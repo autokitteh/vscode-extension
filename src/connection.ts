@@ -1,6 +1,7 @@
-import { AKWebview, MyTreeStrProvider } from "@panels/index";
+import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
+import { AKWebview } from "@panels/index";
 import { IntervalTimer, LocalhostConnection } from "@type/connection";
-import { Deployment, MessageType } from "@type/index";
+import { MessageType } from "@type/index";
 import { workspace, ConfigurationTarget } from "vscode";
 
 /**

@@ -43,7 +43,7 @@
 		"eqeqeq": "warn",
 		"no-throw-literal": "warn",
 		"semi": "off",
-		"max-len": ["error", { "code": 100, "tabWidth": 2, "ignoreComments": true }],
+		"max-len": ["error", { "code": 120, "tabWidth": 2, "ignoreComments": true }],
 		"comma-spacing": ["error", { "before": false, "after": true }],
 		"import/order": [
 			"error",
