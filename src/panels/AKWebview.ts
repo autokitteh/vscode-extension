@@ -4,22 +4,22 @@ import { Message } from "@type/message";
 import { Disposable, Uri, ViewColumn, Webview, WebviewPanel, window } from "vscode";
 
 /**
- * This class manages the state and behavior of AutokittehProjectWebview webview panels.
+ * This class manages the state and behavior of AKWebview webview panels.
  *
  * It contains all the data and methods for:
  *
- * - Creating and rendering AutokittehProjectWebview webview panels
+ * - Creating and rendering AKWebview webview panels
  * - Properly cleaning up and disposing of webview resources when the panel is closed
  * - Setting the HTML (and by proxy CSS/JavaScript) content of the webview panel
  * - Setting message listeners so data can be passed between the webview and extension
  */
-export class AutokittehProjectWebview {
-	public static currentPanel: AutokittehProjectWebview | undefined;
+export class AKWebview {
+	public static currentPanel: AKWebview | undefined;
 	private readonly _panel: WebviewPanel;
 	private _disposables: Disposable[] = [];
 
 	/**
-	 * The AutokittehProjectWebview class private constructor (called only from the render method).
+	 * The AKWebview class private constructor (called only from the render method).
 	 *
 	 * @param panel A reference to the webview panel
 	 * @param extensionUri The URI of the directory containing the extension
@@ -44,9 +44,9 @@ export class AutokittehProjectWebview {
 	 * @param extensionUri The URI of the directory containing the extension.
 	 */
 	public static render(extensionUri: Uri) {
-		if (AutokittehProjectWebview.currentPanel) {
+		if (AKWebview.currentPanel) {
 			// Do nothing
-			return AutokittehProjectWebview;
+			return AKWebview;
 		} else {
 			// If a webview panel does not already exist create and show a new one
 			const panel = window.createWebviewPanel(
@@ -69,8 +69,8 @@ export class AutokittehProjectWebview {
 				}
 			);
 
-			AutokittehProjectWebview.currentPanel = new AutokittehProjectWebview(panel, extensionUri);
-			return AutokittehProjectWebview;
+			AKWebview.currentPanel = new AKWebview(panel, extensionUri);
+			return AKWebview;
 		}
 	}
 
@@ -78,8 +78,6 @@ export class AutokittehProjectWebview {
 	 * Cleans up and disposes of webview resources when the webview panel is closed.
 	 */
 	public dispose() {
-		AutokittehProjectWebview.currentPanel = undefined;
-
 		// Dispose of the current webview panel
 		this._panel.dispose();
 

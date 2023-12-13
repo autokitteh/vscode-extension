@@ -10,12 +10,12 @@
 		"configuration": {
 			"title": "autokitteh",
 			"properties": {
-			  "autokitteh.serviceEnabled": {
-				"type": "boolean",
-				"default": false,
-				"description": "enable autokitteh"
-			  }
-		  }
+				"autokitteh.serviceEnabled": {
+					"type": "boolean",
+					"default": false,
+					"description": "enable autokitteh"
+				}
+			}
 		},
 		"commands": [
 			{
@@ -27,14 +27,14 @@
 				"title": "Build autokitteh"
 			},
 			{
-			  "command": "autokittehSidebarTree.startPolling",
-			  "title": "Autokitteh: Connect to server",
-			  "icon": "$(debug-stop)"
+				"command": "autokittehSidebarTree.startPolling",
+				"title": "Autokitteh: Connect to server",
+				"icon": "$(debug-stop)"
 			},
 			{
-			  "command": "autokittehSidebarTree.stopPolling",
-			  "title": "Autokitteh: Disconnect from server",
-			  "icon": "$(link)"
+				"command": "autokittehSidebarTree.stopPolling",
+				"title": "Autokitteh: Disconnect from server",
+				"icon": "$(link)"
 			}
 		],
 		"menus": {
@@ -49,12 +49,12 @@
 					"command": "autokittehSidebarTree.startPolling",
 					"when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled",
 					"group": "navigation"
-				  },
-				  {
+				},
+				{
 					"command": "autokittehSidebarTree.stopPolling",
 					"when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled",
 					"group": "navigation"
-				  }
+				}
 			]
 		},
 		"viewsContainers": {

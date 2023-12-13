@@ -6,7 +6,7 @@ import {
 } from "@services/services";
 import { Deployment } from "@type/index";
 
-export const fetchData = async (): Promise<{
+export const fetchBaseData = async (): Promise<{
 	deployments: Deployment[];
 	projectNamesStrArr: string[];
 }> => {

@@ -1,20 +1,14 @@
-import { AutokittehProjectWebview, MyTreeStrProvider } from "@panels/index";
+import { AKWebview, MyTreeStrProvider } from "@panels/index";
+import { IntervalTimer, LocalhostConnection } from "@type/connection";
 import { Deployment, MessageType } from "@type/index";
-import { Disposable } from "vscode";
-
-type IntervalTimer = ReturnType<typeof setInterval>;
-
-export type LocalhostConnection = {
-	isRunning: boolean;
-	timer: IntervalTimer | undefined;
-};
+import { workspace, ConfigurationTarget } from "vscode";
 
 /**
  * Stops polling for project data using the provided connection.
  * @param {LocalhostConnection} connection - The connection object.
  * @returns {void}
  */
-export const stopPolling = async (connection: LocalhostConnection) => {
+export const stopPolling = (connection: LocalhostConnection): void => {
 	clearInterval(connection.timer as IntervalTimer);
 };
 
@@ -22,14 +16,13 @@ export const stopPolling = async (connection: LocalhostConnection) => {
  * Refreshes the projects tree and webview with the latest data.
  * @param {Disposable} myTree - The projects tree provider.
  * @param {Deployment[]} deployments - The deployments data.
- * @param {AutokittehProjectWebview} currentPanel - The current webview panel.
+ * @param {AKWebview} currentPanel - The current webview panel.
  * @param {string[]} projectNamesStrArr - The project names array.
  * @returns {Promise<void>}
  */
 const refreshInfo = async (
-	myTree: Disposable,
 	deployments: Deployment[],
-	currentPanel: AutokittehProjectWebview | undefined,
+	currentPanel: AKWebview | undefined,
 	projectNamesStrArr: string[]
 ) => {
 	if (currentPanel) {
@@ -49,20 +42,33 @@ const refreshInfo = async (
  * @param {LocalhostConnection} connection - The connection object.
  * @param {Disposable} projectsTree - The projects tree provider.
  * @param {any[]} deployments - The deployments data.
- * @param {AutokittehProjectWebview} currentPanel - The current webview panel.
+ * @param {AKWebview} currentPanel - The current webview panel.
  * @param {string[]} projectNamesStrArr - The project names array.
  * @returns {void}
  */
-export const pollData = async (
+export const pollData = (
 	connection: LocalhostConnection,
-	myTree: Disposable,
 	deployments: Deployment[],
-	currentPanel: AutokittehProjectWebview | undefined,
+	currentPanel: AKWebview | undefined,
 	projectNamesStrArr: string[]
 ) => {
 	clearInterval(connection.timer as IntervalTimer);
 	connection.timer = setInterval(
-		() => refreshInfo(myTree, deployments, currentPanel, projectNamesStrArr),
+		() => refreshInfo(deployments, currentPanel, projectNamesStrArr),
 		1000
 	);
+};
+
+/**
+ * Sets the connection status in the settings of VSCode.
+ * @param {boolean} isRunning - The running status of the connection.
+ * @param {LocalhostConnection} connection - connection for the manipulation
+ * @returns {Promise<void>}
+ */
+export const setConnetionSettings = async (connection: LocalhostConnection, isRunning: boolean) => {
+	await workspace
+		.getConfiguration()
+		.update("autokitteh.serviceEnabled", isRunning, ConfigurationTarget.Global);
+	connection.isRunning = isRunning;
+	return connection;
 };

@@ -44,10 +44,5 @@ export const messageListener = async (message: any) => {
 			console.log(fs.existsSync(`${currentFileDir}/autokitteh.yaml`));
 			console.log(fs.existsSync(`${currentFileDir}/main.star`));
 			break;
-
-		// Open webview panel to add a new project
-		case "openAddWebviewPane":
-			vscode.commands.executeCommand("autokitteh.ShowProject");
-			break;
 	}
 };

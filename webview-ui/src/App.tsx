@@ -1,36 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { AKButton } from "./components";
-import {
-	AKTable,
-	AKTableEmptyMessage,
-	AKTableCell,
-	AKTableHeader,
-	AKTableRow,
-	AKTableHeaderCell,
-} from "./components/AKTable";
+import Deployments from "./sections/AKDeployments";
 import { vscodeWrapper } from "./utilities/vscode";
-import moment from "moment";
 import { Message, MessageType, Deployment } from "../../src/types";
 import AKLogoBlack from "../assets/images/ak-logo-black.svg?react";
 import AKLogoWhite from "../assets/images/ak-logo-white.svg?react";
 import "./App.css";
 
 function App() {
-	/**
-	 * Handles the click event for the "Howdy" button - sending a message back to the extension.
-	 */
-	function handleHowdyClick() {
-		vscodeWrapper.postMessage({
-			command: "hello",
-			text: "Hey there partner! 🤠",
-		});
-	}
-
 	const [messagesFromExtension, setMessagesFromExtension] = useState<string[]>([]);
-	const [deployments, setDeployments] = useState<Deployment[] | string>("Loading...");
-	const [projectName, setProjectName] = useState<string>("Loading...");
+	const [deployments, setDeployments] = useState<Deployment[] | undefined>();
+	const [projectName, setProjectName] = useState<string | undefined>();
 	const [directory, setDirectory] = useState<string>("");
-	const [themeVisualType, setThemeVisualType] = useState<number | undefined>(undefined);
+	const [themeVisualType, setThemeVisualType] = useState<number | undefined>();
 
 	/**
 	 * Handles incoming messages from the extension.
@@ -44,15 +26,11 @@ function App() {
 				case MessageType.common:
 					setDirectory(payload);
 					break;
-				case MessageType.theme:					
+				case MessageType.theme:
 					setThemeVisualType(payload);
 					break;
 				case MessageType.deployments:
-					if (payload.length){
-						setDeployments(payload);
-					} else {
-						setDeployments("No deployments found")
-					}
+					setDeployments(payload);
 					break;
 				case MessageType.projectName:
 					setProjectName(payload);
@@ -94,10 +72,12 @@ function App() {
 	 * @param {string} className - The class name for the logo component.
 	 * @returns {JSX.Element} The logo component.
 	 */
-	const Logo = ({ className }: { className: string }) => 
-		(themeVisualType === 2) ? <AKLogoWhite className={className} fill="white" /> : 
-			<AKLogoBlack className={className}/>;
-		
+	const Logo = ({ className }: { className: string }) =>
+		themeVisualType === 2 ? (
+			<AKLogoWhite className={className} fill="white" />
+		) : (
+			<AKLogoBlack className={className} />
+		);
 
 	/**
 	 * Opens the add webview pane in the extension.
@@ -125,29 +105,7 @@ function App() {
 						</AKButton>
 					</div>
 				</div>
-				<AKTable classes="mt-4">
-					<AKTableHeader>
-						<AKTableHeaderCell>Deploy Time</AKTableHeaderCell>
-						<AKTableHeaderCell>Status</AKTableHeaderCell>
-						<AKTableHeaderCell>Sessions</AKTableHeaderCell>
-						<AKTableHeaderCell>Build-ID (Optional)</AKTableHeaderCell>
-						<AKTableHeaderCell>Actions</AKTableHeaderCell>
-					</AKTableHeader>
-					{(typeof deployments === "string") && (
-						<AKTableEmptyMessage>{deployments}</AKTableEmptyMessage>
-					)}
-					{Array.isArray(deployments) && deployments.map((deployment) => (
-						<AKTableRow key={deployment.deploymentId}>
-							<AKTableCell>
-								{moment(deployment.createdAt).fromNow()}
-							</AKTableCell>
-							<AKTableCell>{deployment.state}</AKTableCell>
-							<AKTableCell>0</AKTableCell>
-							<AKTableCell>{deployment.buildId}</AKTableCell>
-							<AKTableCell>TODO</AKTableCell>
-						</AKTableRow>
-					))}
-				</AKTable>
+				<Deployments deployments={deployments} />
 			</div>
 		</main>
 	);

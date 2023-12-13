@@ -14,7 +14,7 @@ export class ManifestService {
 
 	async applyManifest(text: string): Promise<ApplyResponse> {
 		try {
-			return await this.apiClient.post("", yaml.load(text));
+			return await this.apiClient.post(`${this.apiBase}/x/apply`, yaml.load(text));
 		} catch (exception) {
 			console.error(exception);
 			return Promise.reject("invalid manifest");

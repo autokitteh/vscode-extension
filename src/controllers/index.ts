@@ -1,1 +1,1 @@
-export { fetchData } from "@controllers/fetchData";
+export { fetchBaseData as fetchData } from "@controllers/fetchData";

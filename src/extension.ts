@@ -1,131 +1,65 @@
 require("module-alias/register");
 
-import { LocalhostConnection, pollData, stopPolling } from "./connection";
-import { fetchData } from "@controllers";
-import { Theme } from "@enums";
-import { AutokittehProjectWebview, MyTreeStrProvider } from "@panels";
-import { Message, MessageType } from "@type";
+import { setConnetionSettings, stopPolling } from "./connection";
+import { pushDataToWebview } from "@controllers/setupDataPolling";
+import { AKWebview, MyTreeStrProvider } from "@panels";
+import { LocalhostConnection } from "@type/connection";
+import { refreshSidebarTree } from "@utilities/refreshSidebarTree";
 import { applyManifest, buildOnRightClick } from "@vscommands";
-import {
-	commands,
-	ExtensionContext,
-	window,
-	workspace,
-	ConfigurationTarget,
-	Disposable,
-} from "vscode";
+import { changeTheme, themeWatcher } from "@vscommands/themeHandler";
+import { commands, ExtensionContext, workspace } from "vscode";
 
 export async function activate(context: ExtensionContext) {
-	/**
-	 * Sets the connection status in the settings of VSCode.
-	 * @param {boolean} isRunning - The running status of the connection.
-	 * @returns {Promise<void>}
-	 */
-	const setConnetionInSettings = async (isRunning: boolean) => {
-		await workspace
-			.getConfiguration()
-			.update("autokitteh.serviceEnabled", isRunning, ConfigurationTarget.Global);
-		connection.isRunning = isRunning;
-	};
+	let connection = {
+		isRunning: workspace.getConfiguration().get("autokitteh.serviceEnabled") as boolean,
+		timer: undefined,
+	} as LocalhostConnection;
 
-	setConnetionInSettings(false);
+	connection = await setConnetionSettings(connection, false);
 
-	let currentSidebarTree: Disposable;
+	let currentSidebarTree: AKWebview;
 
-	let currentProjectView: typeof AutokittehProjectWebview;
-	const projectWebview = commands.registerCommand("autokitteh.ShowProject", () => {
-		currentProjectView = AutokittehProjectWebview.render(context.extensionUri);
-	});
-	context.subscriptions.push(projectWebview);
+	let currentProjectView: typeof AKWebview;
 
 	/*** Contextual menu "Build autokitteh" on a right click on an "autokitteh.yaml" file in the file explorer */
-	const disposable = commands.registerCommand("autokitteh.v2.buildFolder", buildOnRightClick);
+	const buildAutokitteh = commands.registerCommand("autokitteh.v2.buildFolder", buildOnRightClick);
 
-	context.subscriptions.push(disposable);
-
-	/*** On theme change:
-	 * Send the theme to the webview (light/dark)
-	 */
-	window.onDidChangeActiveColorTheme((editor) => {
-		if (editor && currentProjectView.currentPanel) {
-			currentProjectView.currentPanel.postMessageToWebview<Message>({
-				type: MessageType.theme,
-				payload: editor.kind as number as Theme,
-			});
-		}
-	});
+	context.subscriptions.push(buildAutokitteh);
 
 	/*** On webview open:
 	 * - Render the view
 	 * - Send the theme to the webview (light/dark)
 	 */
-	const openProjectCommand = commands.registerCommand("autokitteh.openWebview", (label) => {
-		currentProjectView = AutokittehProjectWebview.render(context.extensionUri);
+	const openProjectCommand = commands.registerCommand("autokitteh.openWebview", async (label) => {
+		currentProjectView = AKWebview.render(context.extensionUri);
+		changeTheme(currentProjectView);
 
-		const theme = window.activeColorTheme.kind as number as Theme;
-		if (currentProjectView.currentPanel) {
-			currentProjectView.currentPanel.postMessageToWebview<Message>({
-				type: MessageType.theme,
-				payload: theme,
-			});
-			pushDataToWebview(currentProjectView, connection);
-		}
+		currentSidebarTree = await pushDataToWebview(
+			currentProjectView,
+			connection,
+			currentSidebarTree,
+			context
+		);
 	});
 
 	context.subscriptions.push(openProjectCommand);
 
-	const updateSidebarTree = (newTree: MyTreeStrProvider): Disposable => {
-		const projectsSidebarTree = window.registerTreeDataProvider("autokittehSidebarTree", newTree);
-
-		context.subscriptions.push(projectsSidebarTree);
-		return projectsSidebarTree;
-	};
-
 	const disconnectedTree = new MyTreeStrProvider(["Click here to connect"]);
-	updateSidebarTree(disconnectedTree);
-
-	const connection = {
-		isRunning: workspace.getConfiguration().get("autokitteh.serviceEnabled") as boolean,
-		timer: undefined,
-	} as LocalhostConnection;
-
-	/**
-	 * Pushes data to a webview panel.
-	 * @param {typeof AutokittehProjectWebview | undefined} webviewPanel - The webview panel to push data to.
-	 * @param {LocalhostConnection} connection - The connection object.
-	 * @returns {Promise<void>} A promise that resolves when the data is pushed to the webview panel.
-	 */
-	const pushDataToWebview = async (
-		webviewPanel: typeof AutokittehProjectWebview | undefined,
-		connection: LocalhostConnection
-	) => {
-		// Fetch data from the server
-		const { projectNamesStrArr, deployments } = await fetchData();
-		// Create a new tree provider using the fetched project names
-		const projectsTree = new MyTreeStrProvider(projectNamesStrArr);
-		// Update the current sidebar tree with the new projects tree
-		currentSidebarTree = updateSidebarTree(projectsTree);
-
-		if (webviewPanel) {
-			// Poll data from the connection and update the webview panel
-			pollData(
-				connection,
-				currentSidebarTree,
-				deployments,
-				webviewPanel.currentPanel,
-				projectNamesStrArr
-			);
-		}
-	};
+	refreshSidebarTree(disconnectedTree, context);
 
 	commands.registerCommand("autokittehSidebarTree.startPolling", async () => {
-		await setConnetionInSettings(true);
-		await pushDataToWebview(currentProjectView, connection);
+		connection = await setConnetionSettings(connection, true);
+		currentSidebarTree = await pushDataToWebview(
+			currentProjectView,
+			connection,
+			currentSidebarTree,
+			context
+		);
 	});
 
 	commands.registerCommand("autokittehSidebarTree.stopPolling", async () => {
-		await setConnetionInSettings(false);
-		updateSidebarTree(disconnectedTree);
+		connection = await setConnetionSettings(connection, false);
+		refreshSidebarTree(disconnectedTree, context);
 		stopPolling(connection);
 
 		if (currentProjectView.currentPanel) {
