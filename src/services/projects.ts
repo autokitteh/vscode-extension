@@ -1,7 +1,7 @@
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { projectsClient } from "@api/grpc/clients";
 
-export class ProjectController {
+export class ProjectsService {
 	static async listForUser(userId: string): Promise<Project[]> {
 		const projectsResponse = await projectsClient.listForOwner({
 			ownerId: userId,

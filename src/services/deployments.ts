@@ -3,7 +3,7 @@ import { deploymentsClient } from "@api/grpc/clients";
 import { flattenArray } from "@utilities/flattenArray";
 import { get } from "lodash";
 
-export class DeploymentController {
+export class DeploymentsService {
 	static async listForEnvironments(environmentsIds: string[]): Promise<Deployment[]> {
 		const deploymentsPromises = environmentsIds.map(
 			async (envId) =>

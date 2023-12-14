@@ -1,126 +1,126 @@
 {
-	"name": "vscode-v2",
-	"description": "AutoKitteh is an open-source automation framework designed to simplify the process of automating tasks across various environments and tools. Its primary focus is on providing a versatile and user-friendly platform for automating operations, particularly in DevOps and software development contexts.",
-	"version": "0.0.1",
-	"engines": {
-		"vscode": "^1.75.0"
-	},
-	"main": "./dist/extension.js",
-	"contributes": {
-		"configuration": {
-			"title": "autokitteh",
-			"properties": {
-				"autokitteh.serviceEnabled": {
-					"type": "boolean",
-					"default": false,
-					"description": "enable autokitteh"
-				}
-			}
-		},
-		"commands": [
-			{
-				"command": "autokitteh.v2.applyManifest",
-				"title": "Autokitteh V2: Apply Manifest"
-			},
-			{
-				"command": "autokitteh.v2.buildFolder",
-				"title": "Build autokitteh"
-			},
-			{
-				"command": "autokittehSidebarTree.startPolling",
-				"title": "Autokitteh: Connect to server",
-				"icon": "./resources/sidebar/top-panel-connect.svg"
-			},
-			{
-				"command": "autokittehSidebarTree.stopPolling",
-				"title": "Autokitteh: Disconnect from server",
-				"icon": "./resources/sidebar/top-panel-disconnect.svg"
-			}
-		],
-		"menus": {
-			"explorer/context": [
-				{
-					"command": "autokitteh.v2.buildFolder",
-					"when": "resourceLangId == yaml && resourceFilename =~ /autokitteh.yaml/"
-				}
-			],
-			"view/title": [
-				{
-					"command": "autokittehSidebarTree.startPolling",
-					"when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled",
-					"group": "navigation"
-				},
-				{
-					"command": "autokittehSidebarTree.stopPolling",
-					"when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled",
-					"group": "navigation"
-				}
-			]
-		},
-		"viewsContainers": {
-			"activitybar": [
-				{
-					"id": "autokittehSidebarTree",
-					"title": "Autokitteh",
-					"icon": "./resources/sidebar/ak-sidebar-icon.svg"
-				}
-			]
-		},
-		"views": {
-			"autokittehSidebarTree": [
-				{
-					"id": "autokittehSidebarTree",
-					"name": "AK Server"
-				}
-			]
-		}
-	},
-	"scripts": {
-		"install:all": "npm install && cd webview-ui && npm install",
-		"start:webview": "cd webview-ui && npm run start",
-		"build:webview": "cd webview-ui && npm run build",
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts"
-	},
-	"devDependencies": {
-		"@githubocto/tailwind-vscode": "^1.0.5",
-		"@types/glob": "^7.1.3",
-		"@types/js-yaml": "^4.0.9",
-		"@types/lodash": "^4.14.202",
-		"@types/node": "^12.11.7",
-		"@types/vscode": "^1.46.0",
-		"@typescript-eslint/eslint-plugin": "^4.33.0",
-		"@typescript-eslint/parser": "^4.33.0",
-		"eslint": "^7.19.0",
-		"eslint-plugin-import": "^2.29.0",
-		"glob": "^7.1.6",
-		"prettier": "^2.2.1",
-		"typescript": "^4.1.3",
-		"vscode-test": "^1.5.0"
-	},
-	"dependencies": {
-		"@connectrpc/connect": "^1.1.4",
-		"@connectrpc/connect-node": "^1.1.4",
-		"axios": "^1.6.2",
-		"js-yaml": "^4.1.0",
-		"lodash": "^4.17.21",
-		"module-alias": "^2.2.3"
-	},
-	"_moduleAliases": {
-		"@views": "dist/views",
-		"@type": "dist/types",
-		"@enums": "dist/enums",
-		"@utilities": "dist/utilities",
-		"@api": "dist/api",
-		"@controllers": "dist/controllers",
-		"@providers": "dist/providers",
-		"@models": "dist/models",
-		"@services": "dist/services",
-		"@constants": "dist/constants",
-		"@vscommands": "dist/vscommands",
-		"@ak-proto-ts": "dist/autokitteh/proto/gen/ts/autokitteh"
-	}
+    "_moduleAliases": {
+        "@ak-proto-ts": "dist/autokitteh/proto/gen/ts/autokitteh",
+        "@api": "dist/api",
+        "@connection": "dist/connection.js",
+        "@constants": "dist/constants",
+        "@controllers": "dist/controllers",
+        "@enums": "dist/enums",
+        "@providers": "dist/providers",
+        "@services": "dist/services",
+        "@type": "dist/types",
+        "@utilities": "dist/utilities",
+        "@views": "dist/views",
+        "@vscommands": "dist/vscommands"
+    },
+    "contributes": {
+        "commands": [
+            {
+                "command": "autokitteh.v2.applyManifest",
+                "title": "Autokitteh V2: Apply Manifest"
+            },
+            {
+                "command": "autokitteh.v2.buildFolder",
+                "title": "Build autokitteh"
+            },
+            {
+                "command": "autokittehSidebarTree.startPolling",
+                "icon": "./resources/sidebar/top-panel-connect.svg",
+                "title": "Autokitteh: Connect to server"
+            },
+            {
+                "command": "autokittehSidebarTree.stopPolling",
+                "icon": "./resources/sidebar/top-panel-disconnect.svg",
+                "title": "Autokitteh: Disconnect from server"
+            }
+        ],
+        "configuration": {
+            "properties": {
+                "autokitteh.serviceEnabled": {
+                    "default": false,
+                    "description": "enable autokitteh",
+                    "type": "boolean"
+                }
+            },
+            "title": "autokitteh"
+        },
+        "menus": {
+            "explorer/context": [
+                {
+                    "command": "autokitteh.v2.buildFolder",
+                    "when": "resourceLangId == yaml && resourceFilename =~ /autokitteh.yaml/"
+                }
+            ],
+            "view/title": [
+                {
+                    "command": "autokittehSidebarTree.startPolling",
+                    "group": "navigation",
+                    "when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
+                },
+                {
+                    "command": "autokittehSidebarTree.stopPolling",
+                    "group": "navigation",
+                    "when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled"
+                }
+            ]
+        },
+        "views": {
+            "autokittehSidebarTree": [
+                {
+                    "id": "autokittehSidebarTree",
+                    "name": "AK Server"
+                }
+            ]
+        },
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "icon": "./resources/sidebar/ak-sidebar-icon.svg",
+                    "id": "autokittehSidebarTree",
+                    "title": "Autokitteh"
+                }
+            ]
+        }
+    },
+    "dependencies": {
+        "@connectrpc/connect": "^1.1.4",
+        "@connectrpc/connect-node": "^1.1.4",
+        "axios": "^1.6.2",
+        "js-yaml": "^4.1.0",
+        "lodash": "^4.17.21",
+        "module-alias": "^2.2.3"
+    },
+    "description": "AutoKitteh is an open-source automation framework designed to simplify the process of automating tasks across various environments and tools. Its primary focus is on providing a versatile and user-friendly platform for automating operations, particularly in DevOps and software development contexts.",
+    "devDependencies": {
+        "@githubocto/tailwind-vscode": "^1.0.5",
+        "@types/glob": "^7.1.3",
+        "@types/js-yaml": "^4.0.9",
+        "@types/lodash": "^4.14.202",
+        "@types/node": "^12.11.7",
+        "@types/vscode": "^1.46.0",
+        "@typescript-eslint/eslint-plugin": "^4.33.0",
+        "@typescript-eslint/parser": "^4.33.0",
+        "eslint": "^7.19.0",
+        "eslint-plugin-import": "^2.29.0",
+        "glob": "^7.1.6",
+        "prettier": "^2.2.1",
+        "typescript": "^4.1.3",
+        "vscode-test": "^1.5.0"
+    },
+    "engines": {
+        "vscode": "^1.75.0"
+    },
+    "main": "./dist/extension.js",
+    "name": "vscode-v2",
+    "scripts": {
+        "build:webview": "cd webview-ui && npm run build",
+        "compile": "tsc -p ./",
+        "install:all": "npm install && cd webview-ui && npm install",
+        "lint": "eslint src --ext ts",
+        "pretest": "npm run compile && npm run lint",
+        "start:webview": "cd webview-ui && npm run start",
+        "vscode:prepublish": "npm run compile",
+        "watch": "tsc -watch -p ./"
+    },
+    "version": "0.0.1"
 }

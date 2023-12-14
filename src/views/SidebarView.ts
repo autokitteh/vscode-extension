@@ -1,4 +1,4 @@
-import { CONNECT_TO_AUTOKITTEH, OPEN_PROJECT_WEBVIEW } from "@constants/index";
+import { CONNECT_TO_AUTOKITTEH, OPEN_PROJECT_WEBVIEW } from "@constants";
 import {
 	EventEmitter,
 	TreeDataProvider,

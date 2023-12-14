@@ -1,6 +1,6 @@
 import { Theme } from "@enums/theme";
 import { Message, MessageType } from "@type/message";
-import { ProjectWebview } from "@views/index";
+import { ProjectWebview } from "@views";
 import { window } from "vscode";
 
 export const changeTheme = (

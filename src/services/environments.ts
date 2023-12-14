@@ -1,10 +1,9 @@
 import { Env } from "@ak-proto-ts/envs/v1/env_pb";
-import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { environmentsClient } from "@api/grpc/clients";
 import { flattenArray } from "@utilities/flattenArray";
 import { get } from "lodash";
 
-export class EnvironmentController {
+export class EnvironmentsService {
 	static async listForProjects(projectsIds: string[]): Promise<Env[]> {
 		const environmentsPromises = projectsIds.map(async (projectId) => {
 			const environments = await environmentsClient.list({

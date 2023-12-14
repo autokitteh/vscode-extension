@@ -1,14 +1,14 @@
 import { User } from "@ak-proto-ts/users/v1/user_pb";
 import { authClient } from "@api/grpc/clients";
-import { UserController } from "@controllers/users";
+import { UsersService } from "@services/users";
 
 const DEBUG_USER_NAME = "george";
 
-export class AuthorizationController {
+export class AuthorizationService {
 	static async whoAmI(): Promise<User | undefined> {
 		const isDebug = process.env.DEBUG_MODE === "true";
 		if (isDebug) {
-			return await UserController.getByName(DEBUG_USER_NAME);
+			return await UsersService.getByName(DEBUG_USER_NAME);
 		}
 		return (await authClient.whoAmI({}))?.user;
 	}

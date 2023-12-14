@@ -1,14 +1,14 @@
 import { manifestClient } from "@api/grpc/clients";
-import * as vscode from "vscode";
+import { window } from "vscode";
 
 export const applyManifest = async () => {
-	let output = vscode.window.createOutputChannel("autokitteh");
+	let output = window.createOutputChannel("autokitteh");
 
-	if (!vscode.window.activeTextEditor) {
+	if (!window.activeTextEditor) {
 		return; // no editor
 	}
 
-	let { document } = vscode.window.activeTextEditor;
+	let { document } = window.activeTextEditor;
 	const text = document.getText();
 
 	output.clear();
@@ -19,14 +19,14 @@ export const applyManifest = async () => {
 
 		output.appendLine(msg);
 
-		vscode.window.showErrorMessage("apply failed, check outout");
+		window.showErrorMessage("apply failed, check outout");
 	} else {
 		(resp.logs || []).forEach((l) =>
 			output.appendLine(`${l.msg} ${l.data ? ` (${JSON.stringify(l.data)})` : ""}`)
 		);
 		(resp.operations || []).forEach((o: any) => output.appendLine(`operation: ${o.description}`));
 
-		vscode.window.showInformationMessage("Manifest applied");
+		window.showInformationMessage("Manifest applied");
 	}
 
 	output.show();
