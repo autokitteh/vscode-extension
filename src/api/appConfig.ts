@@ -1,4 +1,6 @@
-export const baseApi = "http://localhost:9980";
+import { HOST_URL } from "@constants/api";
+
+export const baseApi = HOST_URL;
 const urlPrefix = "autokitteh.";
 export const appConfig = {
 	accessToken: "<KEY>",

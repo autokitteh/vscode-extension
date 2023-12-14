@@ -1,5 +1,5 @@
 // TODO: Get types from ak-proto-ts
-import { Deployment } from "@type";
+import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 
 export enum MessageType {
 	common = "COMMON",

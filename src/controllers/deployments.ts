@@ -1,17 +1,16 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
-import { Env } from "@ak-proto-ts/envs/v1/env_pb";
-import { deploymentsClient } from "@services/services";
+import { deploymentsClient } from "@api/grpc/clients";
 import { flattenArray } from "@utilities/flattenArray";
 import { get } from "lodash";
 
-export class DeploymentsService {
-	static async listForEnvironments(environments: Env[]): Promise<Deployment[]> {
-		const deploymentsPromises = environments.map(async (environment) => {
-			const deployments = await deploymentsClient.list({
-				envId: environment.envId,
-			});
-			return deployments;
-		});
+export class DeploymentController {
+	static async listForEnvironments(environmentsIds: string[]): Promise<Deployment[]> {
+		const deploymentsPromises = environmentsIds.map(
+			async (envId) =>
+				await deploymentsClient.list({
+					envId,
+				})
+		);
 
 		const deploymentsResponses = await Promise.allSettled(deploymentsPromises);
 

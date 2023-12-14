@@ -1,4 +1,4 @@
-# `panels` Directory
+# `views` Directory
 
 This directory contains all of the webview-related code that will be executed within the extension context. It can be thought of as the place where all of the "backend" code of a webview panel is contained.
 

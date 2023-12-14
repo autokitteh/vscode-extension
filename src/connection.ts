@@ -1,40 +1,49 @@
-import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
-import { AKWebview } from "@panels/index";
+import { AuthorizationController } from "@controllers/auth";
+import { EnvironmentController, DeploymentController } from "@controllers/index";
+import { ProjectController } from "@controllers/projects";
 import { IntervalTimer, LocalhostConnection } from "@type/connection";
 import { MessageType } from "@type/index";
+import { getIds } from "@utilities/getIds";
+import { ProjectWebview, TreeProvider } from "@views/index";
+import { refreshSidebarTree } from "@views/trees/refreshSidebarTree";
 import { workspace, ConfigurationTarget } from "vscode";
 
-/**
- * Stops polling for project data using the provided connection.
- * @param {LocalhostConnection} connection - The connection object.
- * @returns {void}
- */
 export const stopPolling = (connection: LocalhostConnection): void => {
 	clearInterval(connection.timer as IntervalTimer);
 };
 
-/**
- * Refreshes the projects tree and webview with the latest data.
- * @param {Disposable} myTree - The projects tree provider.
- * @param {Deployment[]} deployments - The deployments data.
- * @param {AKWebview} currentPanel - The current webview panel.
- * @param {string[]} projectNamesStrArr - The project names array.
- * @returns {Promise<void>}
- */
-const refreshInfo = async (
-	deployments: Deployment[],
-	currentPanel?: AKWebview | undefined,
-	selectedProject?: string
-) => {
-	if (currentPanel) {
-		currentPanel.postMessageToWebview({
-			type: MessageType.deployments,
-			payload: deployments,
-		});
-		currentPanel.postMessageToWebview({
-			type: MessageType.projectName,
-			payload: selectedProject,
-		});
+const refreshInfo = async (currentPanel?: ProjectWebview | undefined, selectedProject?: string) => {
+	const myUser = await AuthorizationController.whoAmI();
+
+	if (myUser && myUser.userId) {
+		/**** Refresh Sidebar - extract to separate func - controller.refreshSidebar */
+		const projects = await ProjectController.listForUser(myUser.userId);
+		const projectsTree = new TreeProvider(await ProjectController.listForTree(myUser.userId));
+		refreshSidebarTree(projectsTree);
+
+		/**** Refresh ProjectView - extract to separate func - controller.refreshProjectView */
+		if (projects.length) {
+			if (currentPanel) {
+				const environments = await EnvironmentController.listForProjects(
+					getIds(projects, "projectId")
+				);
+
+				if (environments.length) {
+					const deployments = await DeploymentController.listForEnvironments(
+						getIds(environments, "envId")
+					);
+
+					currentPanel.postMessageToWebview({
+						type: MessageType.deployments,
+						payload: deployments,
+					});
+					currentPanel.postMessageToWebview({
+						type: MessageType.projectName,
+						payload: selectedProject,
+					});
+				}
+			}
+		}
 	}
 };
 
@@ -43,21 +52,17 @@ const refreshInfo = async (
  * @param {LocalhostConnection} connection - The connection object.
  * @param {Disposable} projectsTree - The projects tree provider.
  * @param {any[]} deployments - The deployments data.
- * @param {AKWebview} currentPanel - The current webview panel.
+ * @param {ProjectWebview} currentPanel - The current webview panel.
  * @param {string[]} projectNamesStrArr - The project names array.
  * @returns {void}
  */
 export const pollData = (
 	connection: LocalhostConnection,
-	deployments: Deployment[],
-	currentPanel?: AKWebview | undefined,
+	currentPanel?: ProjectWebview | undefined,
 	selectedProject?: string
 ) => {
 	clearInterval(connection.timer as IntervalTimer);
-	connection.timer = setInterval(
-		() => refreshInfo(deployments, currentPanel, selectedProject),
-		1000
-	);
+	connection.timer = setInterval(() => refreshInfo(currentPanel, selectedProject), 1000);
 };
 
 /**

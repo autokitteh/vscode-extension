@@ -1,26 +1,24 @@
 import { Env } from "@ak-proto-ts/envs/v1/env_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
-import { environmentsClient } from "@services/services";
+import { environmentsClient } from "@api/grpc/clients";
 import { flattenArray } from "@utilities/flattenArray";
 import { get } from "lodash";
 
-export class EnvironmentService {
-	static async listForProjects(projects: Project[]): Promise<Env[]> {
-		const environmentsPromises = projects.map(async (project) => {
+export class EnvironmentController {
+	static async listForProjects(projectsIds: string[]): Promise<Env[]> {
+		const environmentsPromises = projectsIds.map(async (projectId) => {
 			const environments = await environmentsClient.list({
-				parentId: project.projectId,
+				parentId: projectId,
 			});
 			return environments;
 		});
 
 		const environmentsResponses = await Promise.allSettled(environmentsPromises);
 
-		const environments = flattenArray<Env>(
+		return flattenArray<Env>(
 			environmentsResponses
 				.filter((response) => response.status === "fulfilled")
 				.map((response) => get(response, "value.envs", []))
 		);
-
-		return environments;
 	}
 }

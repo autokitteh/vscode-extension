@@ -1,25 +1,25 @@
-import { htmlView } from "@panels/utils/htmlView";
-import { messageListener } from "@panels/utils/messageListener";
 import { Message } from "@type/message";
+import { htmlView } from "@views/utils/htmlView";
+import { messageListener } from "@views/utils/messageListener";
 import { Disposable, Uri, ViewColumn, Webview, WebviewPanel, window } from "vscode";
 
 /**
- * This class manages the state and behavior of AKWebview webview panels.
+ * This class manages the state and behavior of ProjectWebview webview panels.
  *
  * It contains all the data and methods for:
  *
- * - Creating and rendering AKWebview webview panels
+ * - Creating and rendering ProjectWebview webview panels
  * - Properly cleaning up and disposing of webview resources when the panel is closed
  * - Setting the HTML (and by proxy CSS/JavaScript) content of the webview panel
  * - Setting message listeners so data can be passed between the webview and extension
  */
-export class AKWebview {
-	public static currentPanel: AKWebview | undefined;
+export class ProjectWebview {
+	public static currentPanel: ProjectWebview | undefined;
 	private readonly _panel: WebviewPanel;
 	private _disposables: Disposable[] = [];
 
 	/**
-	 * The AKWebview class private constructor (called only from the render method).
+	 * The ProjectWebview class private constructor (called only from the render method).
 	 *
 	 * @param panel A reference to the webview panel
 	 * @param extensionUri The URI of the directory containing the extension
@@ -27,13 +27,8 @@ export class AKWebview {
 	public constructor(panel: WebviewPanel, extensionUri: Uri) {
 		this._panel = panel;
 
-		// Set an event listener to listen for when the panel is disposed (i.e. when the user closes
-		// the panel or when the panel is closed programmatically)
 		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
-
-		// Set the HTML content for the webview panel
 		this._panel.webview.html = htmlView(this._panel.webview, extensionUri);
-		// Set an event listener to listen for messages passed from the webview context
 		this._setWebviewMessageListener(this._panel.webview);
 	}
 
@@ -44,33 +39,26 @@ export class AKWebview {
 	 * @param extensionUri The URI of the directory containing the extension.
 	 */
 	public static render(extensionUri: Uri) {
-		if (AKWebview.currentPanel) {
-			// Do nothing
-			return AKWebview;
+		if (ProjectWebview.currentPanel) {
+			// Do nothing in case the webview is already open
+			return ProjectWebview;
 		} else {
-			// If a webview panel does not already exist create and show a new one
 			const panel = window.createWebviewPanel(
-				// Panel view type
 				"autokittehShowProject",
-				// Panel title
 				"Autokitteh Project",
-				// The editor column the panel should be displayed in
 				ViewColumn.One,
-				// Extra panel configurations
 				{
-					// Enable JavaScript in the webview
 					enableScripts: true,
-					// Restrict the webview to only load resources from the `out` and `webview-ui/build` directories
 					localResourceRoots: [
-						Uri.joinPath(extensionUri, "out"),
+						Uri.joinPath(extensionUri, "dist"),
 						Uri.joinPath(extensionUri, "webview-ui/build"),
 						Uri.joinPath(extensionUri, "webview-ui/node_modules/@vscode/codicons/dist"),
 					],
 				}
 			);
 
-			AKWebview.currentPanel = new AKWebview(panel, extensionUri);
-			return AKWebview;
+			ProjectWebview.currentPanel = new ProjectWebview(panel, extensionUri);
+			return ProjectWebview;
 		}
 	}
 
@@ -78,10 +66,8 @@ export class AKWebview {
 	 * Cleans up and disposes of webview resources when the webview panel is closed.
 	 */
 	public dispose() {
-		// Dispose of the current webview panel
 		this._panel.dispose();
 
-		// Dispose of all disposables (i.e. commands) for the current webview panel
 		while (this._disposables.length) {
 			const disposable = this._disposables.pop();
 			if (disposable) {
@@ -102,7 +88,6 @@ export class AKWebview {
 	}
 
 	public postMessageToWebview<T extends Message = Message>(message: T) {
-		// post message from extension to webview
 		this._panel.webview.postMessage(message);
 	}
 }

@@ -8,7 +8,7 @@ import {
 	workspace,
 } from "vscode";
 
-export class MyTreeStrProvider implements TreeDataProvider<TreeItem> {
+export class TreeProvider implements TreeDataProvider<TreeItem> {
 	private _onDidChangeTreeData: EventEmitter<TreeItem | undefined | void> = new EventEmitter<
 		TreeItem | undefined | void
 	>();
@@ -34,7 +34,6 @@ export class MyTreeStrProvider implements TreeDataProvider<TreeItem> {
 			element.command = {
 				command: isConnected ? OPEN_PROJECT_WEBVIEW : CONNECT_TO_AUTOKITTEH,
 				title: "Open project",
-				// Pass the label or any other data you need from the element object
 				arguments: [element.label],
 			};
 		}
@@ -43,10 +42,8 @@ export class MyTreeStrProvider implements TreeDataProvider<TreeItem> {
 
 	getChildren(element?: TreeItem): Thenable<TreeItem[]> {
 		if (element) {
-			// Return children of the given element
 			return Promise.resolve(this.childNodeMap.get(element) || []);
 		} else {
-			// If no element is provided, return the root node
 			return Promise.resolve([this.rootNode]);
 		}
 	}

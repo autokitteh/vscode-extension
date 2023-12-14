@@ -5,7 +5,7 @@
 	"engines": {
 		"vscode": "^1.75.0"
 	},
-	"main": "./out/extension.js",
+	"main": "./dist/extension.js",
 	"contributes": {
 		"configuration": {
 			"title": "autokitteh",
@@ -29,12 +29,12 @@
 			{
 				"command": "autokittehSidebarTree.startPolling",
 				"title": "Autokitteh: Connect to server",
-				"icon": "$(debug-stop)"
+				"icon": "./resources/sidebar/top-panel-connect.svg"
 			},
 			{
 				"command": "autokittehSidebarTree.stopPolling",
 				"title": "Autokitteh: Disconnect from server",
-				"icon": "$(link)"
+				"icon": "./resources/sidebar/top-panel-disconnect.svg"
 			}
 		],
 		"menus": {
@@ -62,7 +62,7 @@
 				{
 					"id": "autokittehSidebarTree",
 					"title": "Autokitteh",
-					"icon": "./resources/autokitteh.svg"
+					"icon": "./resources/sidebar/ak-sidebar-icon.svg"
 				}
 			]
 		},
@@ -110,16 +110,17 @@
 		"module-alias": "^2.2.3"
 	},
 	"_moduleAliases": {
-		"@panels": "out/panels",
-		"@type": "out/types",
-		"@enums": "out/enums",
-		"@utilities": "out/utilities",
-		"@api": "out/api",
-		"@controllers": "out/controllers",
-		"@providers": "out/providers",
-		"@services": "out/services",
-		"@constants": "out/constants",
-		"@vscommands": "out/vscommands",
-		"@ak-proto-ts": "out/autokitteh/proto/gen/ts/autokitteh"
+		"@views": "dist/views",
+		"@type": "dist/types",
+		"@enums": "dist/enums",
+		"@utilities": "dist/utilities",
+		"@api": "dist/api",
+		"@controllers": "dist/controllers",
+		"@providers": "dist/providers",
+		"@models": "dist/models",
+		"@services": "dist/services",
+		"@constants": "dist/constants",
+		"@vscommands": "dist/vscommands",
+		"@ak-proto-ts": "dist/autokitteh/proto/gen/ts/autokitteh"
 	}
 }

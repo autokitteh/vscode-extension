@@ -1,10 +1,10 @@
 import { Theme } from "@enums/theme";
-import { AKWebview } from "@panels/index";
 import { Message, MessageType } from "@type/message";
+import { ProjectWebview } from "@views/index";
 import { window } from "vscode";
 
 export const changeTheme = (
-	currentWebview: typeof AKWebview | undefined,
+	currentWebview: typeof ProjectWebview | undefined,
 	editorThemeKind?: number
 ) => {
 	if (currentWebview && currentWebview.currentPanel) {
@@ -17,7 +17,7 @@ export const changeTheme = (
 	}
 };
 
-export const themeWatcher = (currentWebview: typeof AKWebview | undefined) => {
+export const themeWatcher = (currentWebview: typeof ProjectWebview | undefined) => {
 	/*** On theme change:
 	 * Send the theme to the webview (light/dark)
 	 */

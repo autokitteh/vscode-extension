@@ -1,4 +1,4 @@
-import { manifestClient } from "@services/services";
+import { manifestClient } from "@api/grpc/clients";
 import * as vscode from "vscode";
 
 export const applyManifest = async () => {
@@ -13,8 +13,6 @@ export const applyManifest = async () => {
 
 	output.clear();
 
-	// @TODO: Check if the current directory contains an autokitteh.yaml file and main.star file.
-	// For a reference implementation, see in the `src/panels/messageListener.ts` file.
 	const resp = await manifestClient.applyManifest(text);
 	if (resp.error) {
 		const msg = `apply: ${resp.stage ? `${resp.stage}: ` : ""}${resp.error}`;
