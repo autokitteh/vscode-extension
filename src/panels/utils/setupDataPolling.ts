@@ -1,4 +1,4 @@
-import { fetchData as fetchBaseData } from "@controllers/index";
+import { fetchBaseData } from "@controllers/index";
 import { AKWebview, MyTreeStrProvider } from "@panels/index";
 import { LocalhostConnection } from "@type/connection";
 import { refreshSidebarTree } from "@utilities/refreshSidebarTree";

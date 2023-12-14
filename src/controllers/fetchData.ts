@@ -1,52 +1,31 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
-import {
-	authService,
-	deploymentsService,
-	environmentsService,
-	projectsService,
-	usersService,
-} from "@services/services";
-import { flattenArray } from "@utilities/flattenArray";
-import { get } from "lodash";
+import { AuthService } from "@services/auth";
+import { DeploymentsService } from "@services/deployments";
+import { EnvironmentService } from "@services/environments";
+import { ProjectService } from "@services/projects";
 
 export const fetchBaseData = async (): Promise<{
 	deployments: Deployment[];
 	projectNamesStrArr: string[];
 }> => {
-	// TODO: Refactor to manage possible errors, and reduce the depth of the promises calls below
-	const myUser = await authService.whoAmI({});
-	let projects;
 	try {
-		projects = await projectsService.listForOwner({ ownerId: myUser.user?.userId });
-	} catch (e) {
-		console.error(e);
-	}
-	if (projects?.projects) {
-		const projectNamesStrArr = projects?.projects.map((project) => project.name);
-		const environments = flattenArray(
-			await Promise.all(
-				projects.projects.map((project) =>
-					environmentsService.list({
-						parentId: project.projectId,
-					})
-				)
-			),
-			"envs"
-		);
-		if (!environments) {
-			return { projectNamesStrArr, deployments: [] };
+		const myUser = await AuthService.whoAmI();
+		const projects = await ProjectService.listForUser(myUser);
+
+		if (projects.length) {
+			const projectNamesStrArr = projects.map((project) => project.name);
+			const environments = await EnvironmentService.listForProjects(projects);
+
+			if (!environments || !environments.length) {
+				return { projectNamesStrArr, deployments: [] };
+			}
+			const deployments = await DeploymentsService.listForEnvironments(environments);
+
+			return { projectNamesStrArr, deployments };
 		}
-		const deployments = flattenArray(
-			await Promise.all(
-				environments.map((environment) =>
-					deploymentsService.list({
-						envId: get(environment, "envId"),
-					})
-				)
-			),
-			"deployments"
-		) as Deployment[];
-		return { projectNamesStrArr, deployments };
+	} catch (error) {
+		console.error(error);
 	}
+
 	return { projectNamesStrArr: [], deployments: [] };
 };

@@ -13,11 +13,11 @@ const transport = createConnectTransport({
 	httpVersion: "1.1",
 });
 
-export const projectsService = createPromiseClient(ProjectsService, transport);
-export const usersService = createPromiseClient(UsersService, transport);
-export const environmentsService = createPromiseClient(EnvsService, transport);
-export const deploymentsService = createPromiseClient(DeploymentsService, transport);
-export const authService = createPromiseClient(AuthService, transport);
+export const projectsClient = createPromiseClient(ProjectsService, transport);
+export const usersClient = createPromiseClient(UsersService, transport);
+export const environmentsClient = createPromiseClient(EnvsService, transport);
+export const deploymentsClient = createPromiseClient(DeploymentsService, transport);
+export const authClient = createPromiseClient(AuthService, transport);
 
 const apiClient = new ApiClient();
-export const manifestService = new ManifestService(apiClient);
+export const manifestClient = new ManifestService(apiClient);

@@ -117,7 +117,7 @@
 		"@api": "out/api",
 		"@controllers": "out/controllers",
 		"@providers": "out/providers",
-		"@services/services": "out/services/services.js",
+		"@services": "out/services",
 		"@constants": "out/constants",
 		"@vscommands": "out/vscommands",
 		"@ak-proto-ts": "out/autokitteh/proto/gen/ts/autokitteh"

@@ -12,7 +12,6 @@ export const messageListener = async (message: any) => {
 
 	switch (command) {
 		case "submitNewProject":
-			console.log(message);
 			const content = "exampleContent";
 			const filePath = path.join(`${message.projectDirectory}/${message.name}`, "test.yaml");
 
