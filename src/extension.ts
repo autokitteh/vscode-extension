@@ -17,8 +17,6 @@ export async function activate(context: ExtensionContext) {
 
 	connection = await setConnetionSettings(connection, false);
 
-	let currentSidebarTree: AKWebview;
-
 	let currentProjectView: typeof AKWebview;
 
 	/*** Contextual menu "Build autokitteh" on a right click on an "autokitteh.yaml" file in the file explorer */
@@ -30,36 +28,29 @@ export async function activate(context: ExtensionContext) {
 	 * - Render the view
 	 * - Send the theme to the webview (light/dark)
 	 */
-	const openProjectCommand = commands.registerCommand("autokitteh.openWebview", async (label) => {
-		currentProjectView = AKWebview.render(context.extensionUri);
-		changeTheme(currentProjectView);
+	const openProjectCommand = commands.registerCommand(
+		"autokitteh.openWebview",
+		async (selectedProject) => {
+			currentProjectView = AKWebview.render(context.extensionUri);
+			changeTheme(currentProjectView);
 
-		currentSidebarTree = await pushDataToWebview(
-			currentProjectView,
-			connection,
-			currentSidebarTree,
-			context
-		);
-	});
+			await pushDataToWebview(currentProjectView, connection, selectedProject);
+		}
+	);
 
 	context.subscriptions.push(openProjectCommand);
 
 	const disconnectedTree = new MyTreeStrProvider(["Click here to connect"]);
-	refreshSidebarTree(disconnectedTree, context);
+	refreshSidebarTree(disconnectedTree);
 
 	commands.registerCommand("autokittehSidebarTree.startPolling", async () => {
 		connection = await setConnetionSettings(connection, true);
-		currentSidebarTree = await pushDataToWebview(
-			currentProjectView,
-			connection,
-			currentSidebarTree,
-			context
-		);
+		await pushDataToWebview(currentProjectView, connection);
 	});
 
 	commands.registerCommand("autokittehSidebarTree.stopPolling", async () => {
 		connection = await setConnetionSettings(connection, false);
-		refreshSidebarTree(disconnectedTree, context);
+		refreshSidebarTree(disconnectedTree);
 		stopPolling(connection);
 
 		if (currentProjectView.currentPanel) {

@@ -23,8 +23,8 @@ export const stopPolling = (connection: LocalhostConnection): void => {
  */
 const refreshInfo = async (
 	deployments: Deployment[],
-	currentPanel: AKWebview | undefined,
-	projectNamesStrArr: string[]
+	currentPanel?: AKWebview | undefined,
+	selectedProject?: string
 ) => {
 	if (currentPanel) {
 		currentPanel.postMessageToWebview({
@@ -33,7 +33,7 @@ const refreshInfo = async (
 		});
 		currentPanel.postMessageToWebview({
 			type: MessageType.projectName,
-			payload: projectNamesStrArr![0],
+			payload: selectedProject,
 		});
 	}
 };
@@ -50,12 +50,12 @@ const refreshInfo = async (
 export const pollData = (
 	connection: LocalhostConnection,
 	deployments: Deployment[],
-	currentPanel: AKWebview | undefined,
-	projectNamesStrArr: string[]
+	currentPanel?: AKWebview | undefined,
+	selectedProject?: string
 ) => {
 	clearInterval(connection.timer as IntervalTimer);
 	connection.timer = setInterval(
-		() => refreshInfo(deployments, currentPanel, projectNamesStrArr),
+		() => refreshInfo(deployments, currentPanel, selectedProject),
 		1000
 	);
 };

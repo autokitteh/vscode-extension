@@ -1,15 +1,5 @@
 import { AKWebview, MyTreeStrProvider } from "@panels/index";
-import { ExtensionContext, window } from "vscode";
+import { window } from "vscode";
 
-export const refreshSidebarTree = (
-	newTree: MyTreeStrProvider,
-	context: ExtensionContext
-): AKWebview => {
-	const projectsSidebarTree = window.registerTreeDataProvider(
-		"autokittehSidebarTree",
-		newTree
-	) as AKWebview;
-
-	context.subscriptions.push(projectsSidebarTree);
-	return projectsSidebarTree;
-};
+export const refreshSidebarTree = (newTree: MyTreeStrProvider) =>
+	window.registerTreeDataProvider("autokittehSidebarTree", newTree);

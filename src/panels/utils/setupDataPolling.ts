@@ -2,7 +2,6 @@ import { fetchBaseData } from "@controllers/index";
 import { AKWebview, MyTreeStrProvider } from "@panels/index";
 import { LocalhostConnection } from "@type/connection";
 import { refreshSidebarTree } from "@utilities/refreshSidebarTree";
-import { ExtensionContext } from "vscode";
 import { pollData } from "../../connection";
 
 /**
@@ -14,17 +13,15 @@ import { pollData } from "../../connection";
 export const pushDataToWebview = async (
 	webviewPanel: typeof AKWebview | undefined,
 	connection: LocalhostConnection,
-	currentSidebarTree: AKWebview,
-	context: ExtensionContext
+	selectedProject?: string
 ) => {
 	// Fetch data from the server
 	const { projectNamesStrArr, deployments } = await fetchBaseData();
 	// Create a new tree provider using the fetched project names
 	const projectsTree = new MyTreeStrProvider(projectNamesStrArr);
 	// Update the current sidebar tree with the new projects tree
-	if (webviewPanel) {
-		// Poll data from the connection and update the webview panel
-		pollData(connection, deployments, webviewPanel.currentPanel, projectNamesStrArr);
-	}
-	return refreshSidebarTree(projectsTree, context);
+	pollData(connection, deployments, webviewPanel?.currentPanel, selectedProject);
+
+	// @TODO: Move into poll data
+	refreshSidebarTree(projectsTree);
 };
