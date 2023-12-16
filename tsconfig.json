@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"baseUrl": "src",
+		"esModuleInterop": true,
 		"lib": ["es2021", "dom"],
 		"module": "commonjs",
 		"moduleResolution": "node",
@@ -16,6 +17,7 @@
 			"@controllers/*": ["controllers/*"],
 			"@enums": ["enums/index"],
 			"@enums/*": ["enums/*"],
+			"@i18n/*": ["i18n/*"],
 			"@providers": ["providers/index"],
 			"@providers/*": ["providers/*"],
 			"@services": ["services/index"],
@@ -29,6 +31,7 @@
 			"@vscommands": ["vscommands/index"],
 			"@vscommands/*": ["vscommands/*"]
 		},
+		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,

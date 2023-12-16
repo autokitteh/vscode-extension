@@ -1,0 +1,6 @@
+{
+    "userNotDefined": "User not defined",
+    "projectNotFound": "Not found projects",
+    "showProjectDetails": "Click on a project to show its details",
+    "environmentsNotDefinedForProject": "Environments not defined for this project"
+}

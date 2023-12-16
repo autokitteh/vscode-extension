@@ -1,3 +1,3 @@
 export { ProjectWebview } from "@views/ProjectWebview";
 export { TreeProvider } from "@views/SidebarView";
-export { MessageHandler } from "@views/MessageHandler";
+export { MessageHandler } from "@views/utils/MessageHandler";

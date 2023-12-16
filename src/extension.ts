@@ -1,6 +1,8 @@
 require("module-alias/register");
 
 import { AppSync } from "@controllers/AppSync";
+import { initTranslate } from "@i18n/init";
+import { SharedContext } from "@services/context";
 import { LocalhostConnection } from "@type/connection";
 import { ProjectWebview } from "@views";
 import { applyManifest, buildOnRightClick, themeWatcher } from "@vscommands";
@@ -11,6 +13,9 @@ export async function activate(context: ExtensionContext) {
 		isRunning: workspace.getConfiguration().get("autokitteh.serviceEnabled") as boolean,
 		timer: undefined,
 	} as LocalhostConnection;
+
+	SharedContext.context = context;
+	SharedContext.i18n = initTranslate();
 
 	connection = await AppSync.stopPolling(connection);
 
