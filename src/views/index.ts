@@ -1,3 +1,4 @@
 export { ProjectWebview } from "@views/ProjectWebview";
 export { TreeProvider } from "@views/SidebarView";
 export { MessageHandler } from "@views/utils/MessageHandler";
+export { EmptySidebarTree } from "@views/EmptySidebarTree";

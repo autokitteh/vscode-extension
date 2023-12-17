@@ -1,2 +1,6 @@
 export { OPEN_PROJECT_WEBVIEW, CONNECT_TO_AUTOKITTEH } from "@constants/trees-actions";
-export { DEFAULT_USERNAME, DEFAULT_SERVER_URL } from "@constants/extension-configuration";
+export {
+	DEFAULT_USERNAME,
+	DEFAULT_SERVER_URL,
+	EXT_PUBLISHER,
+} from "@constants/extension-configuration";

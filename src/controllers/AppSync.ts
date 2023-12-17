@@ -1,10 +1,9 @@
 import { Project } from "@controllers/Project";
 import { Sidebar } from "@controllers/Sidebar";
-import { translate } from "@i18n/translation";
 import { AuthorizationService } from "@services/auth";
 import { IntervalTimer, LocalhostConnection } from "@type/connection";
-import { ProjectWebview, TreeProvider } from "@views";
-import { ConfigurationTarget, workspace } from "vscode";
+import { EmptySidebarTree, ProjectWebview } from "@views";
+import { ConfigurationTarget, workspace, window } from "vscode";
 
 export class AppSync {
 	static pollData = async (
@@ -23,11 +22,8 @@ export class AppSync {
 		connection: LocalhostConnection,
 		currentPanel?: ProjectWebview | undefined
 	): Promise<LocalhostConnection> => {
+		window.registerTreeDataProvider("autokittehSidebarTree", new EmptySidebarTree());
 		connection = await this.setConnetionSettings(connection, false);
-
-		const disconnectedTree = new TreeProvider([translate().t("projects.clickHere")]);
-		Sidebar.refreshSidebarTree(disconnectedTree);
-
 		if (currentPanel) {
 			currentPanel.dispose();
 		}

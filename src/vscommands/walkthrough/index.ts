@@ -1,2 +1,2 @@
 export { setUsername, getUsername } from "@vscommands/walkthrough/username";
-export { setAKEndpoint, getAKEndpoint, connectAK } from "@vscommands/walkthrough/server";
+export { setBaseURL, getBaseURL, connectAK } from "@vscommands/walkthrough/server";

@@ -2,5 +2,6 @@
     "userNotDefined": "User not defined",
     "projectNotFound": "Not found projects",
     "showProjectDetails": "Click on a project to show its details",
-    "environmentsNotDefinedForProject": "Environments not defined for this project"
+    "environmentsNotDefinedForProject": "Environments not defined for this project",
+    "badHostURL": "It seems that the host address in the configuration is wrong.\nGo to settings->autokitteh and set the BaseURL in the following format: http://URL:PORT"
 }

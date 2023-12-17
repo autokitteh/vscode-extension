@@ -1,14 +1,15 @@
 require("module-alias/register");
 
+import { EXT_PUBLISHER } from "@constants";
 import { AppSync } from "@controllers/AppSync";
 import { LocalhostConnection } from "@type/connection";
 import { ProjectWebview } from "@views";
 import { applyManifest, buildOnRightClick, themeWatcher } from "@vscommands";
 import {
-	getAKEndpoint,
+	getBaseURL,
 	getUsername,
 	setUsername,
-	setAKEndpoint,
+	setBaseURL,
 	connectAK,
 } from "@vscommands/walkthrough";
 import { commands, ExtensionContext, workspace } from "vscode";
@@ -18,8 +19,6 @@ export async function activate(context: ExtensionContext) {
 		isRunning: workspace.getConfiguration().get("autokitteh.serviceEnabled") as boolean,
 		timer: undefined,
 	} as LocalhostConnection;
-
-	connection = await AppSync.stopPolling(connection);
 
 	let currentProjectView: typeof ProjectWebview;
 
@@ -56,19 +55,21 @@ export async function activate(context: ExtensionContext) {
 
 	context.subscriptions.push(commands.registerCommand("autokitteh.v2.setUsername", setUsername));
 
-	context.subscriptions.push(
-		commands.registerCommand("autokitteh.v2.getAKEndpoint", getAKEndpoint)
-	);
+	context.subscriptions.push(commands.registerCommand("autokitteh.v2.getBaseURL", getBaseURL));
+
+	context.subscriptions.push(commands.registerCommand("autokitteh.v2.setBaseURL", setBaseURL));
 
 	context.subscriptions.push(
-		commands.registerCommand("autokitteh.v2.setAKEndpoint", setAKEndpoint)
-	);
-
-	context.subscriptions.push(
-		commands.registerCommand("autokitteh.v2.openAK", async () => {
-			if (currentProjectView) {
-				commands.executeCommand("workbench.view.extension.<yourViewContainerNameHere");
-			}
+		commands.registerCommand("autokitteh.v2.walkthrough", () => {
+			commands.executeCommand(
+				`workbench.action.openWalkthrough`,
+				`${EXT_PUBLISHER}.vscode-v2#autokitteh.walkthrough`,
+				false
+			);
 		})
 	);
+
+	if (connection.isRunning) {
+		connection = await AppSync.pollData(connection, undefined);
+	}
 }

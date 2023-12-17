@@ -42,19 +42,19 @@
         ],
         "configuration": {
             "properties": {
-                "autokitteh.akEndpoint": {
+                "autokitteh.baseURL": {
                     "default": "http://localhost:9980",
                     "description": "Server URL",
                     "type": "string"
                 },
                 "autokitteh.serviceEnabled": {
                     "default": false,
-                    "description": "Connected to the server",
+                    "description": "Is connected to the server",
                     "type": "boolean"
                 },
                 "autokitteh.username": {
                     "default": "anonymous",
-                    "description": "Username",
+                    "description": "Username used for the connection",
                     "type": "string"
                 }
             },
@@ -80,6 +80,7 @@
                 }
             ]
         },
+        "publisher": "autokitteh",
         "views": {
             "autokittehSidebarTree": [
                 {
@@ -97,10 +98,18 @@
                 }
             ]
         },
+        "viewsWelcome": [
+            {
+                "contents": "No connection instance has been found.\n[Setup Configuration](command:autokitteh.v2.walkthrough)\nOr\n[Connect](command:autokitteh.v2.startPolling)",
+                "view": "autokittehSidebarTree",
+                "when": "!config.autokitteh.serviceEnabled"
+
+            }
+        ],
         "walkthroughs": [
             {
                 "description": "Let's start",
-                "id": "welcomeAutokitteh",
+                "id": "autokitteh.walkthrough",
                 "steps": [
                     {
                         "completionEvents": [
@@ -116,10 +125,10 @@
                     },
                     {
                         "completionEvents": [
-                            "onCommand:autokitteh.v2.setAKEndpoint"
+                            "onCommand:autokitteh.v2.setBaseURL"
                         ],
-                        "description": "Set the address of the server.\n[Insert server URL](command:autokitteh.v2.getAKEndpoint)",
-                        "id": "getAKEndpoint",
+                        "description": "Set the address of the server.\n[Insert server URL](command:autokitteh.v2.getBaseURL)",
+                        "id": "getBaseURL",
                         "media": {
                             "altText": "Empty image",
                             "image": "resources/walkthrough/empty.png"
@@ -137,18 +146,6 @@
                             "image": "resources/walkthrough/empty.png"
                         },
                         "title": "Now you can connect"
-                    },
-                    {
-                        "completionEvents": [
-                            "onCommand:autokitteh.v2.startPolling"
-                        ],
-                        "description": "[Open](command:autokitteh.v2.startPolling)",
-                        "id": "openAK",
-                        "media": {
-                            "altText": "Empty image",
-                            "image": "resources/walkthrough/empty.png"
-                        },
-                        "title": "Open Autokitteh extension"
                     }
                 ],
                 "title": "Welcome to Autokitteh"
