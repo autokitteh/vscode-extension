@@ -4,6 +4,13 @@ import { AppSync } from "@controllers/AppSync";
 import { LocalhostConnection } from "@type/connection";
 import { ProjectWebview } from "@views";
 import { applyManifest, buildOnRightClick, themeWatcher } from "@vscommands";
+import {
+	getAKEndpoint,
+	getUsername,
+	setUsername,
+	setAKEndpoint,
+	connectAK,
+} from "@vscommands/walkthrough";
 import { commands, ExtensionContext, workspace } from "vscode";
 
 export async function activate(context: ExtensionContext) {
@@ -31,11 +38,11 @@ export async function activate(context: ExtensionContext) {
 	);
 	context.subscriptions.push(openProjectCommand);
 
-	commands.registerCommand("autokittehSidebarTree.startPolling", async () => {
-		connection = await AppSync.pollData(connection, currentProjectView?.currentPanel); // Controller
+	commands.registerCommand("autokitteh.v2.startPolling", async () => {
+		connection = await AppSync.pollData(connection, currentProjectView?.currentPanel);
 	});
-	commands.registerCommand("autokittehSidebarTree.stopPolling", async () => {
-		AppSync.stopPolling(connection, currentProjectView.currentPanel);
+	commands.registerCommand("autokitteh.v2.stopPolling", async () => {
+		AppSync.stopPolling(connection, currentProjectView?.currentPanel);
 	});
 
 	context.subscriptions.push(
@@ -43,5 +50,25 @@ export async function activate(context: ExtensionContext) {
 	);
 	context.subscriptions.push(
 		commands.registerCommand("autokitteh.v2.buildFolder", buildOnRightClick)
+	);
+
+	context.subscriptions.push(commands.registerCommand("autokitteh.v2.getUsername", getUsername));
+
+	context.subscriptions.push(commands.registerCommand("autokitteh.v2.setUsername", setUsername));
+
+	context.subscriptions.push(
+		commands.registerCommand("autokitteh.v2.getAKEndpoint", getAKEndpoint)
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand("autokitteh.v2.setAKEndpoint", setAKEndpoint)
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand("autokitteh.v2.openAK", async () => {
+			if (currentProjectView) {
+				commands.executeCommand("workbench.view.extension.<yourViewContainerNameHere");
+			}
+		})
 	);
 }

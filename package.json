@@ -25,22 +25,37 @@
                 "title": "Build autokitteh"
             },
             {
-                "command": "autokittehSidebarTree.startPolling",
+                "command": "autokitteh.v2.startPolling",
                 "icon": "./resources/sidebar/top-panel-connect.svg",
                 "title": "Autokitteh: Connect to server"
             },
             {
-                "command": "autokittehSidebarTree.stopPolling",
+                "command": "autokitteh.v2.stopPolling",
                 "icon": "./resources/sidebar/top-panel-disconnect.svg",
                 "title": "Autokitteh: Disconnect from server"
+            },
+            {
+                "command": "autokitteh.v2.getUsername",
+                "shortTitle": "Let's get started",
+                "title": "Welcome to AutoKitteh"
             }
         ],
         "configuration": {
             "properties": {
+                "autokitteh.akEndpoint": {
+                    "default": "http://localhost:9980",
+                    "description": "Server URL",
+                    "type": "string"
+                },
                 "autokitteh.serviceEnabled": {
                     "default": false,
-                    "description": "enable autokitteh",
+                    "description": "Connected to the server",
                     "type": "boolean"
+                },
+                "autokitteh.username": {
+                    "default": "anonymous",
+                    "description": "Username",
+                    "type": "string"
                 }
             },
             "title": "autokitteh"
@@ -54,12 +69,12 @@
             ],
             "view/title": [
                 {
-                    "command": "autokittehSidebarTree.startPolling",
+                    "command": "autokitteh.v2.startPolling",
                     "group": "navigation",
                     "when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
                 },
                 {
-                    "command": "autokittehSidebarTree.stopPolling",
+                    "command": "autokitteh.v2.stopPolling",
                     "group": "navigation",
                     "when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled"
                 }
@@ -81,7 +96,64 @@
                     "title": "Autokitteh"
                 }
             ]
-        }
+        },
+        "walkthroughs": [
+            {
+                "description": "Let's start",
+                "id": "welcomeAutokitteh",
+                "steps": [
+                    {
+                        "completionEvents": [
+                            "onCommand:autokitteh.v2.setUsername"
+                        ],
+                        "description": "Set your username to connect the server.\n[Insert your username](command:autokitteh.v2.getUsername)",
+                        "id": "getUsername",
+                        "media": {
+                            "altText": "Empty image",
+                            "image": "resources/walkthrough/empty.png"
+                        },
+                        "title": "Set username"
+                    },
+                    {
+                        "completionEvents": [
+                            "onCommand:autokitteh.v2.setAKEndpoint"
+                        ],
+                        "description": "Set the address of the server.\n[Insert server URL](command:autokitteh.v2.getAKEndpoint)",
+                        "id": "getAKEndpoint",
+                        "media": {
+                            "altText": "Empty image",
+                            "image": "resources/walkthrough/empty.png"
+                        },
+                        "title": "Set server URL"
+                    },
+                    {
+                        "completionEvents": [
+                            "onCommand:autokitteh.v2.connectAK"
+                        ],
+                        "description": "[Connect](command:autokitteh.v2.startPolling)",
+                        "id": "connectAK",
+                        "media": {
+                            "altText": "Empty image",
+                            "image": "resources/walkthrough/empty.png"
+                        },
+                        "title": "Now you can connect"
+                    },
+                    {
+                        "completionEvents": [
+                            "onCommand:autokitteh.v2.startPolling"
+                        ],
+                        "description": "[Open](command:autokitteh.v2.startPolling)",
+                        "id": "openAK",
+                        "media": {
+                            "altText": "Empty image",
+                            "image": "resources/walkthrough/empty.png"
+                        },
+                        "title": "Open Autokitteh extension"
+                    }
+                ],
+                "title": "Welcome to Autokitteh"
+            }
+        ]
     },
     "dependencies": {
         "@connectrpc/connect": "^1.1.4",
