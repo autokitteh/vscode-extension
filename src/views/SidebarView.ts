@@ -24,7 +24,7 @@ export class TreeProvider implements TreeDataProvider<TreeItem> {
 
 	constructor(childrenStrArray: string[]) {
 		this.rootNode = new TreeItem(
-			this.i18n.t("t:projects.projects"),
+			this.i18n.t("projects.projects"),
 			TreeItemCollapsibleState.Expanded
 		);
 		this.childNodeMap = new Map();

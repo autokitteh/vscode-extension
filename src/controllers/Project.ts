@@ -23,17 +23,17 @@ export class Project {
 		const projects = await ProjectsService.listForUser(userId);
 
 		if (!myUser || !myUser.userId) {
-			MessageHandler.errorMessage(this.i18n.t("t:errors.userNotDefined"));
+			MessageHandler.errorMessage(this.i18n.t("errors.userNotDefined"));
 			return;
 		}
 
 		if (!projects.length) {
-			MessageHandler.errorMessage(this.i18n.t("t:errors.projectNotFound"));
+			MessageHandler.errorMessage(this.i18n.t("errors.projectNotFound"));
 			return;
 		}
 
 		if (!currentPanel) {
-			MessageHandler.errorMessage(this.i18n.t("t:errors.showProjectDetails"));
+			MessageHandler.errorMessage(this.i18n.t("errors.showProjectDetails"));
 			return;
 		}
 
@@ -42,7 +42,7 @@ export class Project {
 		);
 
 		if (!environments.length) {
-			MessageHandler.errorMessage(this.i18n.t("t:errors.environmentsNotDefinedForProject"));
+			MessageHandler.errorMessage(this.i18n.t("errors.environmentsNotDefinedForProject"));
 			return;
 		}
 

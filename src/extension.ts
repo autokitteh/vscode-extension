@@ -15,7 +15,9 @@ export async function activate(context: ExtensionContext) {
 	} as LocalhostConnection;
 
 	SharedContext.context = context;
-	SharedContext.i18n = initTranslate();
+	if (!SharedContext.i18n) {
+		SharedContext.i18n = initTranslate();
+	}
 
 	connection = await AppSync.stopPolling(connection);
 

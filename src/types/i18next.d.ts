@@ -2,9 +2,9 @@ import { english } from "@i18n/en";
 
 declare module "i18next" {
 	interface CustomTypeOptions {
-		defaultNS: "t";
+		defaultNS: "translation";
 		resources: {
-			t: typeof english;
+			translation: typeof english;
 		};
 	}
 }

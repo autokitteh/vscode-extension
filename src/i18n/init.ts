@@ -1,13 +1,9 @@
 import { english } from "@i18n/en";
 import * as i18n from "i18next";
 
-const englishTranslations = Object.keys(english).reduce((acc, key) => {
-	return Object.assign(acc, { ...english[key as keyof typeof english] });
-}, {});
-
 const englishResources = {
 	en: {
-		translation: englishTranslations,
+		translation: english,
 	},
 };
 
@@ -17,8 +13,8 @@ export const initTranslate = () => {
 		debug: true,
 		resources: englishResources,
 		fallbackLng: "en",
-		ns: ["t"],
-		defaultNS: "t",
+		ns: ["translation"],
+		defaultNS: "translation",
 	});
 	return i18n;
 };

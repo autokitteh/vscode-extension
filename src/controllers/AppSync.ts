@@ -28,7 +28,7 @@ export class AppSync {
 	): Promise<LocalhostConnection> => {
 		connection = await this.setConnetionSettings(connection, false);
 
-		const disconnectedTree = new TreeProvider([this.i18n.t("t:projects.clickHere")]);
+		const disconnectedTree = new TreeProvider([this.i18n.t("projects.clickHere")]);
 		Sidebar.refreshSidebarTree(disconnectedTree);
 
 		if (currentPanel) {
