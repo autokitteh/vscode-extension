@@ -38,28 +38,21 @@ export class ProjectWebview {
 	 *
 	 * @param extensionUri The URI of the directory containing the extension.
 	 */
-	public static render(extensionUri: Uri) {
+	public static render(webviewTitle: string, extensionUri: Uri) {
 		if (ProjectWebview.currentPanel) {
-			// Do nothing in case the webview is already open
-			return ProjectWebview;
-		} else {
-			const panel = window.createWebviewPanel(
-				"autokittehShowProject",
-				"Autokitteh Project",
-				ViewColumn.One,
-				{
-					enableScripts: true,
-					localResourceRoots: [
-						Uri.joinPath(extensionUri, "dist"),
-						Uri.joinPath(extensionUri, "webview-ui/build"),
-						Uri.joinPath(extensionUri, "webview-ui/node_modules/@vscode/codicons/dist"),
-					],
-				}
-			);
-
-			ProjectWebview.currentPanel = new ProjectWebview(panel, extensionUri);
-			return ProjectWebview;
+			ProjectWebview.currentPanel.dispose();
 		}
+		const panel = window.createWebviewPanel("autokittehShowProject", webviewTitle, ViewColumn.One, {
+			enableScripts: true,
+			localResourceRoots: [
+				Uri.joinPath(extensionUri, "dist"),
+				Uri.joinPath(extensionUri, "webview-ui/build"),
+				Uri.joinPath(extensionUri, "webview-ui/node_modules/@vscode/codicons/dist"),
+			],
+		});
+
+		ProjectWebview.currentPanel = new ProjectWebview(panel, extensionUri);
+		return ProjectWebview;
 	}
 
 	/**

@@ -43,7 +43,7 @@
         "configuration": {
             "properties": {
                 "autokitteh.baseURL": {
-                    "default": "http://localhost:9980",
+                    "default": "",
                     "description": "Server URL",
                     "type": "string"
                 },
