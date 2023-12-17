@@ -1,19 +1,16 @@
+import { translate } from "@i18n/translation";
 import {
 	EnvironmentsService,
 	DeploymentsService,
 	ProjectsService,
 	AuthorizationService,
 } from "@services";
-import { SharedContext } from "@services/context";
 import { MessageType } from "@type";
 import { getIds } from "@utilities/getIds";
 import { ProjectWebview } from "@views";
 import { MessageHandler } from "@views/utils/MessageHandler";
-import * as i18n from "i18next";
 
 export class Project {
-	static i18n: typeof i18n = SharedContext.i18n;
-
 	public static updateView = async (
 		userId: string,
 		currentPanel?: ProjectWebview | undefined,
@@ -23,17 +20,17 @@ export class Project {
 		const projects = await ProjectsService.listForUser(userId);
 
 		if (!myUser || !myUser.userId) {
-			MessageHandler.errorMessage(this.i18n.t("errors.userNotDefined"));
+			MessageHandler.errorMessage(translate().t("errors.userNotDefined"));
 			return;
 		}
 
 		if (!projects.length) {
-			MessageHandler.errorMessage(this.i18n.t("errors.projectNotFound"));
+			MessageHandler.errorMessage(translate().t("errors.projectNotFound"));
 			return;
 		}
 
 		if (!currentPanel) {
-			MessageHandler.errorMessage(this.i18n.t("errors.showProjectDetails"));
+			MessageHandler.errorMessage(translate().t("errors.showProjectDetails"));
 			return;
 		}
 
@@ -42,7 +39,7 @@ export class Project {
 		);
 
 		if (!environments.length) {
-			MessageHandler.errorMessage(this.i18n.t("errors.environmentsNotDefinedForProject"));
+			MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
 			return;
 		}
 

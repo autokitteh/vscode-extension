@@ -1,15 +1,12 @@
 import { Project } from "@controllers/Project";
 import { Sidebar } from "@controllers/Sidebar";
+import { translate } from "@i18n/translation";
 import { AuthorizationService } from "@services/auth";
-import { SharedContext } from "@services/context";
 import { IntervalTimer, LocalhostConnection } from "@type/connection";
 import { ProjectWebview, TreeProvider } from "@views";
-import * as i18n from "i18next";
 import { ConfigurationTarget, workspace } from "vscode";
 
 export class AppSync {
-	static i18n: typeof i18n = SharedContext.i18n;
-
 	static pollData = async (
 		connection: LocalhostConnection,
 		currentPanel?: ProjectWebview | undefined,
@@ -28,7 +25,7 @@ export class AppSync {
 	): Promise<LocalhostConnection> => {
 		connection = await this.setConnetionSettings(connection, false);
 
-		const disconnectedTree = new TreeProvider([this.i18n.t("projects.clickHere")]);
+		const disconnectedTree = new TreeProvider([translate().t("projects.clickHere")]);
 		Sidebar.refreshSidebarTree(disconnectedTree);
 
 		if (currentPanel) {

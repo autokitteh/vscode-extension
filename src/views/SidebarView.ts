@@ -1,6 +1,5 @@
 import { CONNECT_TO_AUTOKITTEH, OPEN_PROJECT_WEBVIEW } from "@constants";
-import { SharedContext } from "@services/context";
-import * as i18n from "i18next";
+import { translate } from "@i18n/translation";
 import {
 	EventEmitter,
 	TreeDataProvider,
@@ -11,8 +10,6 @@ import {
 } from "vscode";
 
 export class TreeProvider implements TreeDataProvider<TreeItem> {
-	private i18n: typeof i18n = SharedContext.i18n;
-
 	private _onDidChangeTreeData: EventEmitter<TreeItem | undefined | void> = new EventEmitter<
 		TreeItem | undefined | void
 	>();
@@ -24,7 +21,7 @@ export class TreeProvider implements TreeDataProvider<TreeItem> {
 
 	constructor(childrenStrArray: string[]) {
 		this.rootNode = new TreeItem(
-			this.i18n.t("projects.projects"),
+			translate().t("projects.projects"),
 			TreeItemCollapsibleState.Expanded
 		);
 		this.childNodeMap = new Map();
