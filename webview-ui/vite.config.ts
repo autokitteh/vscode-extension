@@ -8,6 +8,8 @@ export default defineConfig({
 		alias: {
 			// eslint-disable-next-line @typescript-eslint/naming-convention
 			"@type": path.resolve(__dirname, "../src/types"),
+			// eslint-disable-next-line @typescript-eslint/naming-convention
+			"@ak-proto-ts": path.resolve(__dirname, "../src/autokitteh/proto/gen/ts/autokitteh"),
 		},
 	},
 

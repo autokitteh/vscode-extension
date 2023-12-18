@@ -1,5 +1,5 @@
+import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import moment from "moment";
-import { Deployment } from "../../../src/autokitteh/proto/gen/ts/autokitteh/deployments/v1/deployment_pb";
 import {
 	AKTable,
 	AKTableEmptyMessage,
