@@ -102,12 +102,12 @@
             {
                 "contents": "No connection instance has been found.\n[Connect](command:autokitteh.v2.startPolling)",
                 "view": "autokittehSidebarTree",
-                "when": "!config.autokitteh.serviceEnabled"
+                "when": "config.autokitteh.username && config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
             },
             {
                 "contents": "No instance setup has been found.\n[Setup Configuration](command:autokitteh.v2.walkthrough)\n",
                 "view": "autokittehSidebarTree",
-                "when": "!config.autokitteh.username && !config.autokitteh.baseURL"
+                "when": "!config.autokitteh.username || !config.autokitteh.baseURL"
             }
         ],
         "walkthroughs": [
