@@ -94,6 +94,8 @@
     },
     "description": "AutoKitteh is an open-source automation framework designed to simplify the process of automating tasks across various environments and tools. Its primary focus is on providing a versatile and user-friendly platform for automating operations, particularly in DevOps and software development contexts.",
     "devDependencies": {
+        "@commitlint/cli": "^18.4.3",
+        "@commitlint/config-conventional": "^18.4.3",
         "@githubocto/tailwind-vscode": "^1.0.5",
         "@types/glob": "^7.1.3",
         "@types/js-yaml": "^4.0.9",
@@ -105,6 +107,7 @@
         "eslint": "^7.19.0",
         "eslint-plugin-import": "^2.29.0",
         "glob": "^7.1.6",
+        "husky": "^8.0.3",
         "prettier": "^2.2.1",
         "typescript": "^5.3.3",
         "vscode-test": "^1.5.0"
