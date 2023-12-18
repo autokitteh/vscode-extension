@@ -1,13 +1,6 @@
-import { CONNECT_TO_AUTOKITTEH, OPEN_PROJECT_WEBVIEW } from "@constants";
+import { vsCommands } from "@constants";
 import { translate } from "@i18n";
-import {
-	EventEmitter,
-	TreeDataProvider,
-	TreeItem,
-	Event,
-	TreeItemCollapsibleState,
-	workspace,
-} from "vscode";
+import { EventEmitter, TreeDataProvider, TreeItem, Event, TreeItemCollapsibleState } from "vscode";
 
 export class TreeProvider implements TreeDataProvider<TreeItem> {
 	private _onDidChangeTreeData: EventEmitter<TreeItem | undefined | void> = new EventEmitter<
@@ -31,11 +24,10 @@ export class TreeProvider implements TreeDataProvider<TreeItem> {
 	}
 
 	getTreeItem(element: TreeItem): TreeItem {
-		const isConnected = workspace.getConfiguration().get("autokitteh.serviceEnabled");
 		if (element !== this.rootNode) {
 			element.command = {
-				command: isConnected ? OPEN_PROJECT_WEBVIEW : CONNECT_TO_AUTOKITTEH,
-				title: "Open project",
+				command: vsCommands.openWebview,
+				title: translate().t("projects.openProject"),
 				arguments: [element.label],
 			};
 		}

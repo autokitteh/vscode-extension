@@ -1,4 +1,4 @@
-import { BASE_URL } from "@constants/api";
+import { BASE_URL } from "@constants";
 
 export const baseApi = BASE_URL;
 const urlPrefix = "autokitteh.";

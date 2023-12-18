@@ -1,7 +1,5 @@
 import { DEFAULT_SERVER_URL } from "@constants";
-import { AppSync } from "@controllers/AppSync";
 import { translate } from "@i18n";
-import { LocalhostConnection } from "@type/connection";
 import { TestURL } from "@utilities";
 import { window, commands, workspace } from "vscode";
 
@@ -12,7 +10,7 @@ export const getBaseURL = async () => {
 	if (!baseURL || baseURL.length === 0) {
 		baseURL = DEFAULT_SERVER_URL;
 	}
-	commands.executeCommand("autokitteh.v2.setBaseURL", baseURL);
+	commands.executeCommand("autokitteh.setBaseURL", baseURL);
 };
 
 export const setBaseURL = async (baseURL: string) => {
@@ -23,8 +21,4 @@ export const setBaseURL = async (baseURL: string) => {
 	} else {
 		window.showErrorMessage(translate().t("errors.badBaseURL"));
 	}
-};
-
-export const connectAK = async (connection: LocalhostConnection): Promise<LocalhostConnection> => {
-	return await AppSync.pollData(connection, undefined);
 };

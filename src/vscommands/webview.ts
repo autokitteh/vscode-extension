@@ -7,22 +7,18 @@ import { ExtensionContext } from "vscode";
 
 export const openWebview = async (
 	selectedProject: string,
-	currentProjectView: typeof ProjectWebview,
+	currentWebview: typeof ProjectWebview,
 	context: ExtensionContext,
 	connection: LocalhostConnection
 ): Promise<{ connection: LocalhostConnection; projectView: typeof ProjectWebview }> => {
-	currentProjectView = ProjectWebview.render(
+	currentWebview = ProjectWebview.render(
 		`${translate().t("general.companyName")}: ${selectedProject}`,
 		context.extensionUri
 	);
-	themeWatcher(currentProjectView);
+	themeWatcher(currentWebview);
 
 	return {
-		connection: await AppSync.pollData(
-			connection,
-			currentProjectView?.currentPanel,
-			selectedProject
-		),
-		projectView: currentProjectView,
+		connection: await AppSync.pollData(connection, currentWebview?.currentPanel, selectedProject),
+		projectView: currentWebview,
 	};
 };

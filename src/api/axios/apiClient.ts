@@ -22,6 +22,7 @@ export class ApiClient implements IApiClient {
 			baseURL: baseApi,
 			responseType: "json" as const,
 			headers: {
+				// eslint-disable-next-line @typescript-eslint/naming-convention
 				"Content-Type": "application/json",
 			},
 			timeout: 10 * 1000,

@@ -9,7 +9,7 @@ export const getUsername = async () => {
 	if (!username || username.length === 0) {
 		username = DEFAULT_USERNAME;
 	}
-	commands.executeCommand("autokitteh.v2.setUsername", username);
+	commands.executeCommand("autokitteh.setUsername", username);
 };
 
 export const setUsername = async (username: string) => {

@@ -1,16 +1,15 @@
 require("module-alias/register");
 
-import { EXT_PUBLISHER } from "@constants";
+import { vsCommands } from "@constants";
 import { AppSync } from "@controllers/AppSync";
 import { LocalhostConnection } from "@type/connection";
 import { ProjectWebview } from "@views";
-import { applyManifest, buildOnRightClick, openWebview, themeWatcher } from "@vscommands";
+import { applyManifest, buildOnRightClick, openWebview } from "@vscommands";
 import {
 	getBaseURL,
 	getUsername,
 	setUsername,
 	setBaseURL,
-	connectAK,
 	openWalkthrough,
 } from "@vscommands/walkthrough";
 import { commands, ExtensionContext, workspace } from "vscode";
@@ -21,43 +20,36 @@ export async function activate(context: ExtensionContext) {
 		timer: undefined,
 	} as LocalhostConnection;
 
-	let currentProjectView: typeof ProjectWebview;
+	let currentWebview: typeof ProjectWebview;
 
-	commands.registerCommand("autokitteh.v2.startPolling", async () => {
-		connection = await AppSync.pollData(connection, currentProjectView?.currentPanel);
+	commands.registerCommand(vsCommands.startPolling, async () => {
+		connection = await AppSync.pollData(connection, currentWebview?.currentPanel);
 	});
-	commands.registerCommand("autokitteh.v2.stopPolling", async () => {
-		AppSync.stopPolling(connection, currentProjectView?.currentPanel);
+	commands.registerCommand(vsCommands.stopPolling, async () => {
+		AppSync.stopPolling(connection, currentWebview?.currentPanel);
 	});
-
 	context.subscriptions.push(
-		commands.registerCommand("autokitteh.openWebview", async (selectedProject) => {
+		commands.registerCommand(vsCommands.openWebview, async (selectedProject) => {
 			const { connection: responseConnection, projectView } = await openWebview(
 				selectedProject,
-				currentProjectView,
+				currentWebview,
 				context,
 				connection
 			);
 			connection = responseConnection;
-			currentProjectView = projectView;
+			currentWebview = projectView;
 		})
 	);
-	context.subscriptions.push(
-		commands.registerCommand("autokitteh.v2.applyManifest", applyManifest)
-	);
-	context.subscriptions.push(
-		commands.registerCommand("autokitteh.v2.buildFolder", buildOnRightClick)
-	);
-	context.subscriptions.push(commands.registerCommand("autokitteh.v2.getUsername", getUsername));
-	context.subscriptions.push(commands.registerCommand("autokitteh.v2.setUsername", setUsername));
-	context.subscriptions.push(commands.registerCommand("autokitteh.v2.getBaseURL", getBaseURL));
-	context.subscriptions.push(commands.registerCommand("autokitteh.v2.setBaseURL", setBaseURL));
+	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
+	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));
+	context.subscriptions.push(commands.registerCommand(vsCommands.getUsername, getUsername));
+	context.subscriptions.push(commands.registerCommand(vsCommands.setUsername, setUsername));
+	context.subscriptions.push(commands.registerCommand(vsCommands.getBaseURL, getBaseURL));
+	context.subscriptions.push(commands.registerCommand(vsCommands.setBaseURL, setBaseURL));
 
-	context.subscriptions.push(
-		commands.registerCommand("autokitteh.v2.walkthrough", openWalkthrough)
-	);
+	context.subscriptions.push(commands.registerCommand(vsCommands.walkthrough, openWalkthrough));
 
 	if (connection.isRunning) {
-		commands.executeCommand("autokitteh.v2.startPolling");
+		commands.executeCommand(vsCommands.startPolling);
 	}
 }

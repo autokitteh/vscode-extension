@@ -3,11 +3,7 @@ export const TestURL = (url: string): string | undefined => {
 		const configURL = new URL(url);
 		const urlAddress = configURL.hostname;
 		const urlPort = configURL.port;
-		if (urlPort.length) {
-			return `http://${urlAddress}:${urlPort}`;
-		} else {
-			return undefined;
-		}
+		return urlPort.length && urlAddress.length ? `http://${urlAddress}:${urlPort}` : undefined;
 	} catch (er) {
 		return undefined;
 	}

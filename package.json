@@ -17,20 +17,20 @@
     "contributes": {
         "commands": [
             {
-                "command": "autokitteh.v2.applyManifest",
+                "command": "autokitteh.applyManifest",
                 "title": "Autokitteh V2: Apply Manifest"
             },
             {
-                "command": "autokitteh.v2.buildFolder",
+                "command": "autokitteh.buildFolder",
                 "title": "Build autokitteh"
             },
             {
-                "command": "autokitteh.v2.startPolling",
+                "command": "autokitteh.startPolling",
                 "icon": "./resources/sidebar/top-panel-connect.svg",
                 "title": "Autokitteh: Connect to server"
             },
             {
-                "command": "autokitteh.v2.stopPolling",
+                "command": "autokitteh.stopPolling",
                 "icon": "./resources/sidebar/top-panel-disconnect.svg",
                 "title": "Autokitteh: Disconnect from server"
             }
@@ -58,18 +58,18 @@
         "menus": {
             "explorer/context": [
                 {
-                    "command": "autokitteh.v2.buildFolder",
+                    "command": "autokitteh.buildFolder",
                     "when": "resourceLangId == yaml && resourceFilename =~ /autokitteh.yaml/"
                 }
             ],
             "view/title": [
                 {
-                    "command": "autokitteh.v2.startPolling",
+                    "command": "autokitteh.startPolling",
                     "group": "navigation",
                     "when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
                 },
                 {
-                    "command": "autokitteh.v2.stopPolling",
+                    "command": "autokitteh.stopPolling",
                     "group": "navigation",
                     "when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled"
                 }
@@ -95,12 +95,12 @@
         },
         "viewsWelcome": [
             {
-                "contents": "No connection instance has been found.\n[Connect](command:autokitteh.v2.startPolling)",
+                "contents": "No connection instance has been found.\n[Connect](command:autokitteh.startPolling)",
                 "view": "autokittehSidebarTree",
                 "when": "config.autokitteh.username && config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
             },
             {
-                "contents": "No instance setup has been found.\n[Setup Configuration](command:autokitteh.v2.walkthrough)\n",
+                "contents": "No instance setup has been found.\n[Setup Configuration](command:autokitteh.walkthrough)\n",
                 "view": "autokittehSidebarTree",
                 "when": "!config.autokitteh.username || !config.autokitteh.baseURL"
             }
@@ -112,9 +112,9 @@
                 "steps": [
                     {
                         "completionEvents": [
-                            "onCommand:autokitteh.v2.setUsername"
+                            "onCommand:autokitteh.setUsername"
                         ],
-                        "description": "Set your username to connect the server.\n[Insert your username](command:autokitteh.v2.getUsername)",
+                        "description": "Set your username to connect the server.\n[Set your username](command:autokitteh.getUsername)",
                         "id": "getUsername",
                         "media": {
                             "altText": "Empty image",
@@ -124,9 +124,9 @@
                     },
                     {
                         "completionEvents": [
-                            "onCommand:autokitteh.v2.setBaseURL"
+                            "onCommand:autokitteh.setBaseURL"
                         ],
-                        "description": "Set the address of the server.\n[Insert server URL](command:autokitteh.v2.getBaseURL)",
+                        "description": "Set the address of the server.\n[Insert server URL](command:autokitteh.getBaseURL)",
                         "id": "getBaseURL",
                         "media": {
                             "altText": "Empty image",
@@ -136,9 +136,9 @@
                     },
                     {
                         "completionEvents": [
-                            "onCommand:autokitteh.v2.connectAK"
+                            "onCommand:autokitteh.startPolling"
                         ],
-                        "description": "[Connect](command:autokitteh.v2.startPolling)",
+                        "description": "[Connect](command:autokitteh.startPolling)",
                         "id": "connectAK",
                         "media": {
                             "altText": "Empty image",
