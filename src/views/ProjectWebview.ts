@@ -1,6 +1,6 @@
 import { Message } from "@type/message";
 import { htmlView } from "@views/utils/htmlView";
-import { messageListener } from "@views/utils/messageListener";
+// import { messageListener } from "@views/utils/messageListener";
 import { Disposable, Uri, ViewColumn, Webview, WebviewPanel, window } from "vscode";
 
 /**
@@ -29,7 +29,7 @@ export class ProjectWebview {
 
 		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 		this._panel.webview.html = htmlView(this._panel.webview, extensionUri);
-		this._setWebviewMessageListener(this._panel.webview);
+		// this._setWebviewMessageListener(this._panel.webview);
 	}
 
 	/**
@@ -39,27 +39,34 @@ export class ProjectWebview {
 	 * @param extensionUri The URI of the directory containing the extension.
 	 */
 	public static render(extensionUri: Uri) {
-		if (ProjectWebview.currentPanel) {
-			// Do nothing in case the webview is already open
-			return ProjectWebview;
-		} else {
-			const panel = window.createWebviewPanel(
-				"autokittehShowProject",
-				"Autokitteh Project",
-				ViewColumn.One,
-				{
-					enableScripts: true,
-					localResourceRoots: [
-						Uri.joinPath(extensionUri, "dist"),
-						Uri.joinPath(extensionUri, "webview-ui/build"),
-						Uri.joinPath(extensionUri, "webview-ui/node_modules/@vscode/codicons/dist"),
-					],
-				}
-			);
+		const panel = window.createWebviewPanel(
+			"autokittehShowProject",
+			"Autokitteh Project",
+			ViewColumn.One,
+			{
+				enableScripts: true,
+				localResourceRoots: [
+					Uri.joinPath(extensionUri, "dist"),
+					Uri.joinPath(extensionUri, "webview-ui/build"),
+					Uri.joinPath(extensionUri, "webview-ui/node_modules/@vscode/codicons/dist"),
+				],
+			}
+		);
+		console.log("test");
 
-			ProjectWebview.currentPanel = new ProjectWebview(panel, extensionUri);
-			return ProjectWebview;
-		}
+		panel.webview.onDidReceiveMessage((message) => {
+			console.log(message);
+
+			switch (message.command) {
+				case "alert":
+					window.showErrorMessage(message.text);
+					return;
+			}
+		}, undefined);
+
+		ProjectWebview.currentPanel = new ProjectWebview(panel, extensionUri);
+
+		return ProjectWebview;
 	}
 
 	/**
@@ -83,8 +90,8 @@ export class ProjectWebview {
 	 * @param webview A reference to the extension webview
 	 * @param context A reference to the extension context
 	 */
-	private async _setWebviewMessageListener(webview: Webview) {
-		webview.onDidReceiveMessage(messageListener, undefined, this._disposables);
+	private _setWebviewMessageListener(webview: Webview) {
+		// webview.onDidReceiveMessage(messageListener, undefined, this._disposables);
 	}
 
 	public postMessageToWebview<T extends Message = Message>(message: T) {

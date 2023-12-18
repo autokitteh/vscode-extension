@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { AKButton } from "./components";
 import Deployments from "./sections/AKDeployments";
 import { vscodeWrapper } from "./utilities/vscode";
-import { Message, MessageType, Deployment } from "../../src/types";
+import { Deployment } from "../../src/autokitteh/proto/gen/ts/autokitteh/deployments/v1/deployment_pb";
+import { Message, MessageType } from "../../src/types";
 import AKLogoBlack from "../assets/images/ak-logo-black.svg?react";
 import AKLogoWhite from "../assets/images/ak-logo-white.svg?react";
 import "./App.css";
@@ -62,9 +63,7 @@ function App() {
 	 * Sends a message to the extension to validate the path.
 	 */
 	const validatePath = () => {
-		vscodeWrapper.postMessage({
-			command: "isReadyToBuild",
-		});
+		vscodeWrapper.postMessage({ message: "isReadyToBuild" });
 	};
 
 	/**
@@ -84,9 +83,18 @@ function App() {
 	 */
 	const openAddWebviewPane = () => {
 		vscodeWrapper.postMessage({
-			command: "openAddWebviewPane",
+			message: "openAddWebviewPane",
 		});
 	};
+
+	const buildProject = () => {
+		debugger;
+		vscodeWrapper.postMessage({
+			message: "buildProject",
+			payload: { projectName: projectName, projectId: "test" },
+		});
+	};
+	const deployProject = () => {};
 
 	return (
 		<main>
@@ -95,11 +103,11 @@ function App() {
 					<div className="flex items-center">
 						<Logo className="w-12 h-12" />
 						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">{projectName}</div>
-						<AKButton classes="mx-4">
+						<AKButton classes="mx-4" onClick={buildProject}>
 							<div className="codicon codicon-tools mr-2"></div>
 							Build
 						</AKButton>
-						<AKButton>
+						<AKButton onClick={deployProject}>
 							<div className="codicon codicon-play mr-2"></div>
 							Deploy
 						</AKButton>

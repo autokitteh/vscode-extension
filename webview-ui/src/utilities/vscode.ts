@@ -28,9 +28,9 @@ class VSCodeAPIWrapper {
 	 *
 	 * @param message Abitrary data (must be JSON serializable) to send to the extension context.
 	 */
-	public postMessage(message: unknown) {
+	public postMessage({ message, payload }: { message: string; payload?: object }) {
 		if (this.vsCodeApi) {
-			this.vsCodeApi.postMessage(message);
+			this.vsCodeApi.postMessage({ message: message, payload });
 		} else {
 			console.log(message);
 		}

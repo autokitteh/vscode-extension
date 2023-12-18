@@ -54,4 +54,11 @@ export class Project {
 			payload: selectedProject,
 		});
 	};
+
+	public static buildProject = async (
+		projectId: string,
+		currentPanel?: ProjectWebview | undefined
+	) => {
+		console.log(projectId);
+	};
 }

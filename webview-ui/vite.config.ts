@@ -6,6 +6,7 @@ import svgr from "vite-plugin-svgr";
 export default defineConfig({
 	resolve: {
 		alias: {
+			// eslint-disable-next-line @typescript-eslint/naming-convention
 			"@type": path.resolve(__dirname, "../src/types"),
 		},
 	},
