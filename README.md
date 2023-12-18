@@ -24,8 +24,8 @@ Commit message will be checked using [husky and commit lint](https://theodoruscl
  
 ### Format
  
-`<type>: <description>`
-Example: `feat: add projects build in the webview`
+`<type>(<ticket-number(optional)>): <description>`
+Example: `feat(UI-20): add projects build in the webview`
  
 ### 1. Type
  
