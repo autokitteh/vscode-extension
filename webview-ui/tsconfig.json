@@ -15,7 +15,11 @@
 		"isolatedModules": true,
 		"noEmit": true,
 		"jsx": "react-jsx",
-		"types": ["vite-plugin-svgr/client"]
+		"types": ["vite-plugin-svgr/client"],
+		"paths": {
+			"@ak-proto-ts/*": ["../src/autokitteh/proto/gen/ts/autokitteh/*"],
+			"@type/*": ["../src/types/*"]
+		}
 	},
 	"include": ["./src"]
 }
