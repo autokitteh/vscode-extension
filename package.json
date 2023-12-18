@@ -118,6 +118,7 @@
         "build:webview": "cd webview-ui && npm run build",
         "compile": "tsc -p ./",
         "install:all": "npm install && cd webview-ui && npm install",
+        "fetch-protos": "git submodule update --init",
         "lint": "eslint src --ext ts",
         "pretest": "npm run compile && npm run lint",
         "start:webview": "cd webview-ui && npm run start",

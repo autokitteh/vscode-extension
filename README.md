@@ -1,11 +1,12 @@
 ## Run The App
 
 ```bash
+
+# Fetch autokitteh protos submodule
+npm run fetch-rpotos
+
 # Install dependencies for both the extension and webview UI source code
 npm run install:all
-
-# Install `autokitteh` submodule
-git submodule update --init
 
 # Build webview UI source code
 npm run build:webview
