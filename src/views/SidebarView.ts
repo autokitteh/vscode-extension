@@ -1,5 +1,5 @@
 import { CONNECT_TO_AUTOKITTEH, OPEN_PROJECT_WEBVIEW } from "@constants";
-import { translate } from "@i18n/translation";
+import { translate } from "@i18n";
 import {
 	EventEmitter,
 	TreeDataProvider,

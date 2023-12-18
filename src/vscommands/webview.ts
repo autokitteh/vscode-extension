@@ -1,4 +1,5 @@
 import { AppSync } from "@controllers/AppSync";
+import { translate } from "@i18n";
 import { LocalhostConnection } from "@type/connection";
 import { ProjectWebview } from "@views";
 import { themeWatcher } from "@vscommands";
@@ -11,7 +12,7 @@ export const openWebview = async (
 	connection: LocalhostConnection
 ): Promise<{ connection: LocalhostConnection; projectView: typeof ProjectWebview }> => {
 	currentProjectView = ProjectWebview.render(
-		`Autokitteh: ${selectedProject}`,
+		`${translate().t("general.companyName")}: ${selectedProject}`,
 		context.extensionUri
 	);
 	themeWatcher(currentProjectView);

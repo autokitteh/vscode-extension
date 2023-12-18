@@ -1,4 +1,5 @@
 import { DEFAULT_USERNAME } from "@constants";
+import { translate } from "@i18n";
 import { window, commands, workspace } from "vscode";
 
 export const getUsername = async () => {
@@ -13,4 +14,5 @@ export const getUsername = async () => {
 
 export const setUsername = async (username: string) => {
 	workspace.getConfiguration().update("autokitteh.username", username);
+	window.showInformationMessage(translate().t("messages.usernameUpdated"));
 };

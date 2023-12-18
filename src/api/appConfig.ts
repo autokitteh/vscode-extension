@@ -1,6 +1,6 @@
-import { HOST_URL } from "@constants/api";
+import { BASE_URL } from "@constants/api";
 
-export const baseApi = HOST_URL;
+export const baseApi = BASE_URL;
 const urlPrefix = "autokitteh.";
 export const appConfig = {
 	accessToken: "<KEY>",

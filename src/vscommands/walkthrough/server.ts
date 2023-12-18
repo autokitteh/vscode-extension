@@ -1,6 +1,6 @@
 import { DEFAULT_SERVER_URL } from "@constants";
 import { AppSync } from "@controllers/AppSync";
-import { translate } from "@i18n/translation";
+import { translate } from "@i18n";
 import { LocalhostConnection } from "@type/connection";
 import { TestURL } from "@utilities";
 import { window, commands, workspace } from "vscode";
@@ -21,7 +21,7 @@ export const setBaseURL = async (baseURL: string) => {
 		workspace.getConfiguration().update("autokitteh.baseURL", hostBaseURL);
 		window.showInformationMessage(translate().t("messages.baseURLUpdated"));
 	} else {
-		window.showErrorMessage(translate().t("errors.badHostURL"));
+		window.showErrorMessage(translate().t("errors.badBaseURL"));
 	}
 };
 

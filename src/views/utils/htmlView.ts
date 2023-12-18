@@ -1,3 +1,4 @@
+import { translate } from "@i18n";
 import { getUri } from "@utilities";
 import { getNonce } from "@utilities";
 import { Uri, Webview } from "vscode";
@@ -34,7 +35,7 @@ export const htmlView = (webview: Webview, extensionUri: Uri) => {
 	  
       <link rel="stylesheet" type="text/css" href="${stylesUri}">
       <link rel="stylesheet" type="text/css" href="${codiconsUri}">
-      <title>Autokitteh</title>
+      <title>${translate().t("general.companyName")}</title>
     </head>
     <body>
       <div id="root"></div>

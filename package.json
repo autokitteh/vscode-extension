@@ -33,11 +33,6 @@
                 "command": "autokitteh.v2.stopPolling",
                 "icon": "./resources/sidebar/top-panel-disconnect.svg",
                 "title": "Autokitteh: Disconnect from server"
-            },
-            {
-                "command": "autokitteh.v2.getUsername",
-                "shortTitle": "Let's get started",
-                "title": "Welcome to AutoKitteh"
             }
         ],
         "configuration": {

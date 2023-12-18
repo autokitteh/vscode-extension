@@ -18,6 +18,7 @@
 			"@enums": ["enums/index"],
 			"@enums/*": ["enums/*"],
 			"@i18n/*": ["i18n/*"],
+			"@i18n": ["i18n/index"],
 			"@providers": ["providers/index"],
 			"@providers/*": ["providers/*"],
 			"@services": ["services/index"],

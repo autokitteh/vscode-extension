@@ -1,4 +1,4 @@
-import { translate } from "@i18n/translation";
+import { translate } from "@i18n";
 import {
 	EnvironmentsService,
 	DeploymentsService,
