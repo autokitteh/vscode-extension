@@ -9,7 +9,10 @@ export class ProjectsService {
 		return projectsResponse?.projects || [];
 	}
 
-	static async listForTree(userId: string): Promise<string[]> {
-		return (await this.listForUser(userId)).map((project) => project.name);
+	static async listForTree(userId: string): Promise<SidebarTreeItem[]> {
+		return (await this.listForUser(userId)).map((project) => ({
+			label: project.name,
+			key: project.projectId,
+		}));
 	}
 }

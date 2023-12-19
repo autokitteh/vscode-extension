@@ -3,15 +3,17 @@ import { AKButton } from "./components";
 import Deployments from "./sections/AKDeployments";
 import { vscodeWrapper } from "./utilities/vscode";
 import { Deployment } from "../../src/autokitteh/proto/gen/ts/autokitteh/deployments/v1/deployment_pb";
+import { Project } from "../../src/autokitteh/proto/gen/ts/autokitteh/projects/v1/project_pb";
+import { Theme } from "../../src/enums/index";
 import { Message, MessageType } from "../../src/types";
 import AKLogoBlack from "../assets/images/ak-logo-black.svg?react";
 import AKLogoWhite from "../assets/images/ak-logo-white.svg?react";
 import "./App.css";
 
 function App() {
-	const [messagesFromExtension, setMessagesFromExtension] = useState<string[]>([]);
+	const [messagesFromExtension, setMessagesFromExtension] = useState<any>([]);
 	const [deployments, setDeployments] = useState<Deployment[] | undefined>();
-	const [projectName, setProjectName] = useState<string | undefined>();
+	const [project, setProject] = useState<Project | undefined>();
 	const [directory, setDirectory] = useState<string>("");
 	const [themeVisualType, setThemeVisualType] = useState<number | undefined>();
 
@@ -25,16 +27,16 @@ function App() {
 
 			switch (event.data.type) {
 				case MessageType.common:
-					setDirectory(payload);
+					setDirectory(payload as string);
 					break;
 				case MessageType.theme:
-					setThemeVisualType(payload);
+					setThemeVisualType(payload as Theme);
 					break;
 				case MessageType.deployments:
-					setDeployments(payload);
+					setDeployments(payload as Deployment[]);
 					break;
-				case MessageType.projectName:
-					setProjectName(payload);
+				case MessageType.project:
+					setProject(payload as Project);
 					break;
 				default:
 			}
@@ -89,18 +91,26 @@ function App() {
 		});
 	};
 
+	const deployProject = () => {
+		vscodeWrapper.postMessage({
+			type: MessageType.deployProject,
+		} as Message);
+	};
+
 	return (
 		<main>
 			<div className="flex flex-col w-full">
 				<div className="flex mr-8">
 					<div className="flex items-center">
 						<Logo className="w-12 h-12" />
-						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">{projectName}</div>
+						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">
+							{project?.name || ""}
+						</div>
 						<AKButton classes="mx-4">
 							<div className="codicon codicon-tools mr-2"></div>
 							Build
 						</AKButton>
-						<AKButton>
+						<AKButton onClick={deployProject}>
 							<div className="codicon codicon-play mr-2"></div>
 							Deploy
 						</AKButton>

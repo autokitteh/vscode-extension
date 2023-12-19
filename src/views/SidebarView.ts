@@ -12,14 +12,19 @@ export class TreeProvider implements TreeDataProvider<TreeItem> {
 	private rootNode: TreeItem;
 	private childNodeMap: Map<TreeItem, TreeItem[]>;
 
-	constructor(childrenStrArray: string[]) {
+	constructor(children: any) {
 		this.rootNode = new TreeItem(
 			translate().t("projects.projects"),
 			TreeItemCollapsibleState.Expanded
 		);
 		this.childNodeMap = new Map();
 
-		const childItems = childrenStrArray.map((childStr) => new TreeItem(childStr));
+		const childItems = children.map((child: { label: string; key: string }) => {
+			const treeItem = new TreeItem(child.label);
+			treeItem.contextValue = child.key; // Set the key as contextValue
+			return treeItem;
+		});
+
 		this.childNodeMap.set(this.rootNode, childItems);
 	}
 
@@ -28,7 +33,7 @@ export class TreeProvider implements TreeDataProvider<TreeItem> {
 			element.command = {
 				command: vsCommands.openWebview,
 				title: translate().t("projects.openProject"),
-				arguments: [element.label],
+				arguments: [{ name: element.label, key: element.contextValue }],
 			};
 		}
 		return element;

@@ -2,9 +2,10 @@ require("module-alias/register");
 
 import { vsCommands } from "@constants";
 import { AppSync } from "@controllers/AppSync";
-import { LocalhostConnection } from "@type/connection";
-import { ProjectWebview } from "@views";
-import { applyManifest, buildOnRightClick, openWebview } from "@vscommands";
+import { ProjectController } from "@controllers/Project.controller";
+import { LocalhostConnection } from "@type";
+import { ProjectView } from "@views";
+import { applyManifest, buildOnRightClick } from "@vscommands";
 import {
 	getBaseURL,
 	getUsername,
@@ -20,24 +21,18 @@ export async function activate(context: ExtensionContext) {
 		timer: undefined,
 	} as LocalhostConnection;
 
-	let currentWebview: typeof ProjectWebview;
+	const projectView = new ProjectView(context);
+	let projectController = new ProjectController(projectView);
 
 	commands.registerCommand(vsCommands.startPolling, async () => {
-		connection = await AppSync.pollData(connection, currentWebview?.currentPanel);
+		connection = await AppSync.pollData(connection);
 	});
 	commands.registerCommand(vsCommands.stopPolling, async () => {
-		AppSync.stopPolling(connection, currentWebview?.currentPanel);
+		AppSync.stopPolling(connection);
 	});
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openWebview, async (selectedProject) => {
-			const { connection: responseConnection, projectView } = await openWebview(
-				selectedProject,
-				currentWebview,
-				context,
-				connection
-			);
-			connection = responseConnection;
-			currentWebview = projectView;
+			projectController.openProject(selectedProject);
 		})
 	);
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
