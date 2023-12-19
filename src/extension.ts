@@ -1,10 +1,10 @@
 require("module-alias/register");
 
 import { vsCommands } from "@constants";
-import { AppSync } from "@controllers/AppSync";
 import { ProjectController } from "@controllers/Project.controller";
-import { LocalhostConnection } from "@type";
-import { ProjectView } from "@views";
+import { SidebarController } from "@controllers/Sidebar.controller";
+import { TabsManagerController } from "@controllers/TabsManager.controller";
+import { ProjectView, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
 import {
 	getBaseURL,
@@ -14,25 +14,24 @@ import {
 	openWalkthrough,
 } from "@vscommands/walkthrough";
 import { commands, ExtensionContext, workspace } from "vscode";
+import * as vscode from "vscode";
 
 export async function activate(context: ExtensionContext) {
-	let connection = {
-		isRunning: workspace.getConfiguration().get("autokitteh.serviceEnabled") as boolean,
-		timer: undefined,
-	} as LocalhostConnection;
-
-	const projectView = new ProjectView(context);
-	let projectController = new ProjectController(projectView);
+	const sidebarView = new SidebarView();
+	const sidebarController = new SidebarController(sidebarView);
+	const tabsManager = new TabsManagerController();
 
 	commands.registerCommand(vsCommands.startPolling, async () => {
-		connection = await AppSync.pollData(connection);
+		sidebarController.connect();
 	});
 	commands.registerCommand(vsCommands.stopPolling, async () => {
-		AppSync.stopPolling(connection);
+		sidebarController.disconnect();
 	});
 	context.subscriptions.push(
-		commands.registerCommand(vsCommands.openWebview, async (selectedProject) => {
-			projectController.openProject(selectedProject);
+		commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {
+			const projectView = new ProjectView(context);
+			const projectController = new ProjectController(projectView);
+			tabsManager.openWebview(projectController, project);
 		})
 	);
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
@@ -41,10 +40,13 @@ export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(vsCommands.setUsername, setUsername));
 	context.subscriptions.push(commands.registerCommand(vsCommands.getBaseURL, getBaseURL));
 	context.subscriptions.push(commands.registerCommand(vsCommands.setBaseURL, setBaseURL));
-
 	context.subscriptions.push(commands.registerCommand(vsCommands.walkthrough, openWalkthrough));
 
-	if (connection.isRunning) {
-		commands.executeCommand(vsCommands.startPolling);
+	const isConnected = (await workspace
+		.getConfiguration()
+		.get("autokitteh.serviceEnabled")) as boolean;
+
+	if (isConnected) {
+		sidebarController.connect();
 	}
 }

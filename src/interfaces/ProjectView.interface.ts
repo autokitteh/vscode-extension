@@ -1,13 +1,13 @@
-type Callback = () => void;
-
-type ProjectDelegate = {
+interface IProjectViewDelegate {
 	onClose?: Callback;
 	build: Callback;
 	deploy: Callback;
-};
+}
 
 interface IProjectView {
 	show(): void;
+	reveal(): void;
 	update(data: any): void;
-	delegate?: ProjectDelegate;
+	dispose(): void;
+	delegate?: IProjectViewDelegate;
 }
