@@ -7,6 +7,7 @@ import { EnvironmentsService, DeploymentsService } from "@services";
 import { MessageType } from "@type";
 import { getIds } from "@utilities/getIds";
 import { MessageHandler } from "@views";
+import isEqual from "lodash/fp/isEqual";
 import { workspace } from "vscode";
 
 export class ProjectController {
@@ -64,8 +65,11 @@ export class ProjectController {
 
 	private startViewUpdateInterval() {
 		this.intervalTimerId = setInterval(async () => {
-			this.deployments = await this.getProjectDeployments();
-			this.refreshView();
+			const deploymentsResponse = await this.getProjectDeployments();
+			if (!isEqual(this.deployments, deploymentsResponse)) {
+				this.deployments = deploymentsResponse;
+				this.refreshView();
+			}
 		}, this.refreshRate);
 	}
 

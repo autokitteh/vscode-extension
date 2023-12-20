@@ -1,8 +1,8 @@
 import { User } from "@ak-proto-ts/users/v1/user_pb";
 import { DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL } from "@constants/extension-configuration";
 import { AuthorizationService, ProjectsService } from "@services";
-import { SidebarView } from "@views";
 import { ISidebarView } from "interfaces";
+import { isEqual } from "lodash/fp";
 import { ConfigurationTarget, window, workspace } from "vscode";
 
 export class SidebarController {
@@ -10,6 +10,7 @@ export class SidebarController {
 	private intervalTimerId?: NodeJS.Timeout;
 	private user?: User;
 	private refreshRate: number;
+	private projects?: SidebarTreeItem[];
 
 	constructor(private sidebarView: ISidebarView) {
 		this.view = sidebarView;
@@ -28,7 +29,11 @@ export class SidebarController {
 
 		this.intervalTimerId = setInterval(async () => {
 			if (this.user) {
-				this.view.refresh(await ProjectsService.listForTree(this.user.userId));
+				const projectsForUser = await ProjectsService.listForTree(this.user.userId);
+				if (!isEqual(projectsForUser, this.projects)) {
+					this.projects = projectsForUser;
+					this.view.refresh(projectsForUser);
+				}
 			}
 		}, this.refreshRate);
 	};

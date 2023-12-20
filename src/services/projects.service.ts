@@ -20,4 +20,9 @@ export class ProjectsService {
 		const response = await projectsClient.get({ projectId });
 		return response?.project || undefined;
 	}
+
+	static async list(userId: string): Promise<Project[]> {
+		const response = await projectsClient.listForOwner({ ownerId: userId });
+		return response.projects;
+	}
 }
