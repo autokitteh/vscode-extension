@@ -64,12 +64,12 @@
             ],
             "view/title": [
                 {
-                    "command": "autokitteh.startPolling",
+                    "command": "autokitteh.connect",
                     "group": "navigation",
                     "when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
                 },
                 {
-                    "command": "autokitteh.stopPolling",
+                    "command": "autokitteh.disconnect",
                     "group": "navigation",
                     "when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled"
                 }
@@ -112,7 +112,7 @@
                 "steps": [
                     {
                         "completionEvents": [
-                            "onCommand:autokitteh.setUsername"
+                            "autokitteh.usernameUpdated"
                         ],
                         "description": "Set your username to connect the server.\n[Set your username](command:autokitteh.getUsername)",
                         "id": "getUsername",
@@ -124,7 +124,7 @@
                     },
                     {
                         "completionEvents": [
-                            "onCommand:autokitteh.setBaseURL"
+                            "onCommand:autokitteh.baseURLUpdated"
                         ],
                         "description": "Set the address of the server.\n[Insert server URL](command:autokitteh.getBaseURL)",
                         "id": "getBaseURL",
