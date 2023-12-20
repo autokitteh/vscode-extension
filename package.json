@@ -95,7 +95,7 @@
         },
         "viewsWelcome": [
             {
-                "contents": "No connection instance has been found.\n[Connect](command:autokitteh.startPolling)",
+                "contents": "No connection instance has been found.\n[Connect](command:autokitteh.connect)",
                 "view": "autokittehSidebarTree",
                 "when": "config.autokitteh.username && config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
             },
@@ -112,10 +112,10 @@
                 "steps": [
                     {
                         "completionEvents": [
-                            "autokitteh.usernameUpdated"
+                            "onSettingChanged:autokitteh.baseURL"
                         ],
-                        "description": "Set your username to connect the server.\n[Set your username](command:autokitteh.getUsername)",
-                        "id": "getUsername",
+                        "description": "Set your username to connect the server.\n[Set your username](command:autokitteh.openUsernameInputDialog)",
+                        "id": "openUsernameInputDialog",
                         "media": {
                             "altText": "Empty image",
                             "image": "resources/walkthrough/empty.png"
@@ -124,10 +124,10 @@
                     },
                     {
                         "completionEvents": [
-                            "onCommand:autokitteh.baseURLUpdated"
+                            "onSettingChanged:autokitteh.baseURL"
                         ],
-                        "description": "Set the address of the server.\n[Insert server URL](command:autokitteh.getBaseURL)",
-                        "id": "getBaseURL",
+                        "description": "Set the address of the server.\n[Insert server URL](command:autokitteh.openBaseURLInputDialog)",
+                        "id": "openBaseURLInputDialog",
                         "media": {
                             "altText": "Empty image",
                             "image": "resources/walkthrough/empty.png"
@@ -136,9 +136,9 @@
                     },
                     {
                         "completionEvents": [
-                            "onCommand:autokitteh.startPolling"
+                            "onCommand:autokitteh.connect"
                         ],
-                        "description": "[Connect](command:autokitteh.startPolling)",
+                        "description": "[Connect](command:autokitteh.connect)",
                         "id": "connectAK",
                         "media": {
                             "altText": "Empty image",
