@@ -77,7 +77,6 @@ export class ProjectController {
 		this.disposeCB = disposeCB;
 		this.view.show(this.project.name);
 		this.startInterval();
-		// TODO: Implement theme watcher
 	}
 
 	startInterval() {

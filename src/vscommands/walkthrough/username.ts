@@ -18,6 +18,6 @@ export const openUsernameInputDialog = async () => {
 
 export const setUsername = async (username: string) => {
 	workspace.getConfiguration().update("autokitteh.username", username);
-	window.showInformationMessage(translate().t("messages.usernameUpdated"));
+	MessageHandler.infoMessage(translate().t("messages.usernameUpdated"));
 	commands.executeCommand(vsCommands.usernameUpdated);
 };
