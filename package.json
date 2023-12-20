@@ -25,12 +25,12 @@
                 "title": "Build autokitteh"
             },
             {
-                "command": "autokitteh.startPolling",
+                "command": "autokitteh.connect",
                 "icon": "./resources/sidebar/top-panel-connect.svg",
                 "title": "Autokitteh: Connect to server"
             },
             {
-                "command": "autokitteh.stopPolling",
+                "command": "autokitteh.disconnect",
                 "icon": "./resources/sidebar/top-panel-disconnect.svg",
                 "title": "Autokitteh: Disconnect from server"
             }

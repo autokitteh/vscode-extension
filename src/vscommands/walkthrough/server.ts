@@ -1,6 +1,7 @@
 import { DEFAULT_SERVER_URL, vsCommands } from "@constants";
 import { translate } from "@i18n";
-import { TestURL } from "@utilities";
+import { ValidateURL } from "@utilities";
+import { MessageHandler } from "@views";
 import { window, commands, workspace } from "vscode";
 
 export const openBaseURLInputDialog = async () => {
@@ -10,15 +11,17 @@ export const openBaseURLInputDialog = async () => {
 	if (!baseURL || baseURL.length === 0) {
 		baseURL = DEFAULT_SERVER_URL;
 	}
-	commands.executeCommand(vsCommands.setBaseURL, baseURL);
+
+	setBaseURL(baseURL);
 };
 
 export const setBaseURL = async (baseURL: string) => {
-	const hostBaseURL = TestURL(baseURL);
+	const hostBaseURL = ValidateURL(baseURL);
 	if (hostBaseURL) {
 		workspace.getConfiguration().update("autokitteh.baseURL", hostBaseURL);
-		window.showInformationMessage(translate().t("messages.baseURLUpdated"));
+		MessageHandler.infoMessage(translate().t("messages.baseURLUpdated"));
+		commands.executeCommand(vsCommands.baseURLUpdated);
 	} else {
-		window.showErrorMessage(translate().t("errors.badBaseURL"));
+		MessageHandler.errorMessage(translate().t("errors.badBaseURL"));
 	}
 };

@@ -5,9 +5,9 @@ export const vsCommands = {
 	applyManifest: "autokitteh.applyManifest",
 	buildFolder: "autokitteh.buildFolder",
 	openUsernameInputDialog: "autokitteh.openUsernameInputDialog",
-	setUsername: "autokitteh.setUsername",
+	usernameUpdated: "autokitteh.usernameUpdated",
 	openBaseURLInputDialog: "autokitteh.openBaseURLInputDialog",
-	setBaseURL: "autokitteh.setBaseURL",
 	walkthrough: "autokitteh.walkthrough",
 	openWalkthrough: "workbench.action.openWalkthrough",
+	baseURLUpdated: "baseURLUpdated",
 };

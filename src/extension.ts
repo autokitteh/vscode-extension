@@ -8,8 +8,6 @@ import { applyManifest, buildOnRightClick } from "@vscommands";
 import {
 	openBaseURLInputDialog,
 	openUsernameInputDialog,
-	setUsername,
-	setBaseURL,
 	openWalkthrough,
 } from "@vscommands/walkthrough";
 import { commands, ExtensionContext, workspace } from "vscode";
@@ -36,11 +34,11 @@ export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openUsernameInputDialog, openUsernameInputDialog)
 	);
-	context.subscriptions.push(commands.registerCommand(vsCommands.setUsername, setUsername));
+	context.subscriptions.push(commands.registerCommand(vsCommands.usernameUpdated, function () {}));
+	context.subscriptions.push(commands.registerCommand(vsCommands.baseURLUpdated, function () {}));
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openBaseURLInputDialog, openBaseURLInputDialog)
 	);
-	context.subscriptions.push(commands.registerCommand(vsCommands.setBaseURL, setBaseURL));
 	context.subscriptions.push(commands.registerCommand(vsCommands.walkthrough, openWalkthrough));
 
 	const isConnected = (await workspace
