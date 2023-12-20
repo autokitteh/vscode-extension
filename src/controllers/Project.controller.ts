@@ -105,7 +105,7 @@ export class ProjectController {
 		return await this.setIntervalForDataPush(this.project);
 	}
 
-	// TODO: Stop interval on unfocus
+	// TODO: Stop interval on unfocus & add to the interface
 	onFocus() {
 		this.startInterval();
 	}
