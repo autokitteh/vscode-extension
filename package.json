@@ -51,6 +51,16 @@
                     "default": "anonymous",
                     "description": "Username used for the connection",
                     "type": "string"
+                },
+                "autokitteh.sidebar.refresh.interval": {
+                    "default": 1000,
+                    "description": "Refresh interval in ms for the sidebar panel",
+                    "type": "number"
+                },
+                "autokitteh.project.refresh.interval": {
+                    "default": 1000,
+                    "description": "Refresh interval in ms for the projects webview panel",
+                    "type": "number"
                 }
             },
             "title": "autokitteh"

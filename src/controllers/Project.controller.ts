@@ -1,6 +1,6 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
-import { DEFAULT_INTERVAL_LENGTH } from "@constants";
+import { DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL } from "@constants";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import {
@@ -83,8 +83,8 @@ export class ProjectController {
 
 	private async setIntervalForDataPush(project: SidebarTreeItem) {
 		const INTERVAL_LENGTH =
-			((await workspace.getConfiguration().get("autokitteh.intervalLength")) as number) ||
-			DEFAULT_INTERVAL_LENGTH;
+			((await workspace.getConfiguration().get("autokitteh.project.refresh.interval")) as number) ||
+			DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL;
 
 		this.intervalTimerId = setInterval(async () => {
 			const deployments = await this.getProjectDeployments(project);

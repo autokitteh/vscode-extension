@@ -1,4 +1,4 @@
-import { DEFAULT_INTERVAL_LENGTH } from "@constants/extension-configuration";
+import { DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL } from "@constants/extension-configuration";
 import { AuthorizationService, ProjectsService } from "@services";
 import { SidebarView } from "@views";
 import { ISidebarView } from "interfaces";
@@ -19,8 +19,8 @@ export class SidebarController {
 			.update("autokitteh.serviceEnabled", true, ConfigurationTarget.Global);
 
 		const INTERVAL_LENGTH =
-			((await workspace.getConfiguration().get("autokitteh.intervalLength")) as number) ||
-			DEFAULT_INTERVAL_LENGTH;
+			((await workspace.getConfiguration().get("autokitteh.sidebar.refresh.interval")) as number) ||
+			DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL;
 
 		this.intervalTimerId = setInterval(async () => {
 			const myUser = await AuthorizationService.whoAmI();
