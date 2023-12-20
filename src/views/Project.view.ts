@@ -3,13 +3,17 @@ import { Message, MessageType } from "@type";
 import { getNonce } from "@utilities";
 import { getUri } from "@utilities/getUri";
 import * as vscode from "vscode";
-import { Uri } from "vscode";
+import { Uri, window } from "vscode";
 
 export class ProjectView implements IProjectView {
 	private panel?: vscode.WebviewPanel;
 	public delegate?: IProjectViewDelegate;
 
-	constructor(private context: vscode.ExtensionContext) {}
+	constructor(private context: vscode.ExtensionContext) {
+		window.onDidChangeWindowState((newState) => {
+			console.log("newState", newState);
+		});
+	}
 
 	public update(data: any): void {
 		if (this.panel && this.panel.webview) {
