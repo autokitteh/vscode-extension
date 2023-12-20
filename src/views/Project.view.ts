@@ -49,6 +49,18 @@ export class ProjectView implements IProjectView {
 		}
 	}
 
+	public onBlur() {
+		if (this.delegate?.onBlur) {
+			this.delegate.onBlur();
+		}
+	}
+
+	public onFocus() {
+		if (this.delegate?.onFocus) {
+			this.delegate.onFocus();
+		}
+	}
+
 	public dispose() {
 		if (this.panel) {
 			this.panel.dispose();
@@ -69,6 +81,14 @@ export class ProjectView implements IProjectView {
 				],
 			}
 		);
+
+		this.panel.onDidChangeViewState((newState) => {
+			if (newState.webviewPanel.visible) {
+				this.onFocus();
+			} else {
+				this.onBlur();
+			}
+		});
 
 		this.setupWebviewMessageListener();
 		this.onClose();

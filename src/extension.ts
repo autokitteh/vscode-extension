@@ -30,6 +30,7 @@ export async function activate(context: ExtensionContext) {
 			tabsManager.openWebview(project);
 		})
 	);
+
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
 	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));
 	context.subscriptions.push(commands.registerCommand(vsCommands.getUsername, getUsername));

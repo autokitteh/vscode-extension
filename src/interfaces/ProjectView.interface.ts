@@ -1,6 +1,7 @@
 interface IProjectViewDelegate {
 	onClose?: Callback;
-	onUnFocus?: Callback;
+	onBlur?: Callback;
+	onFocus?: Callback;
 	build: Callback;
 	deploy: Callback;
 }

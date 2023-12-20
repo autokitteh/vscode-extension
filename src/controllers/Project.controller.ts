@@ -17,7 +17,7 @@ export class ProjectController {
 	private view: IProjectView;
 	private intervalTimerId: NodeJS.Timeout | undefined;
 	private disposeCB?: ProjectCB;
-	private project: SidebarTreeItem;
+	public project: SidebarTreeItem;
 
 	constructor(private projectView: IProjectView, project: SidebarTreeItem) {
 		this.view = projectView;
@@ -105,8 +105,11 @@ export class ProjectController {
 		return await this.setIntervalForDataPush(this.project);
 	}
 
-	// TODO: Stop interval on unfocus & add to the interface
-	onFocus() {
+	public onBlur() {
+		this.stopInterval();
+	}
+
+	public onFocus() {
 		this.startInterval();
 	}
 
