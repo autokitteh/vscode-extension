@@ -9,11 +9,7 @@ export class ProjectView implements IProjectView {
 	private panel?: vscode.WebviewPanel;
 	public delegate?: IProjectViewDelegate;
 
-	constructor(private context: vscode.ExtensionContext) {
-		window.onDidChangeWindowState((newState) => {
-			console.log("newState", newState);
-		});
-	}
+	constructor(private context: vscode.ExtensionContext) {}
 
 	public update(data: any): void {
 		if (this.panel && this.panel.webview) {

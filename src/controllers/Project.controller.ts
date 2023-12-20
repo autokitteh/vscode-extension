@@ -17,11 +17,11 @@ export class ProjectController {
 	private view: IProjectView;
 	private intervalTimerId: NodeJS.Timeout | undefined;
 	private disposeCB?: ProjectCB;
-	private projectId: string;
+	private project: SidebarTreeItem;
 
-	constructor(private projectView: IProjectView, projectId: string) {
+	constructor(private projectView: IProjectView, project: SidebarTreeItem) {
 		this.view = projectView;
-		this.projectId = projectId;
+		this.project = project;
 		this.view.delegate = this;
 	}
 
@@ -66,13 +66,7 @@ export class ProjectController {
 		return [];
 	}
 
-	private loadDataToWebview({
-		deployments,
-		project,
-	}: {
-		deployments: Deployment[] | undefined;
-		project: SidebarTreeItem;
-	}) {
+	private loadDataToWebview({ deployments }: { deployments: Deployment[] | undefined }) {
 		this.view.update({
 			type: MessageType.deployments,
 			payload: deployments,
@@ -80,8 +74,8 @@ export class ProjectController {
 		this.view.update({
 			type: MessageType.project,
 			payload: {
-				name: project.label,
-				projectId: project.key,
+				name: this.project.label,
+				projectId: this.project.key,
 			},
 		});
 	}
@@ -93,25 +87,28 @@ export class ProjectController {
 
 		this.intervalTimerId = setInterval(async () => {
 			const deployments = await this.getProjectDeployments(project);
-			this.loadDataToWebview({ deployments, project });
+			this.loadDataToWebview({ deployments });
 		}, INTERVAL_LENGTH);
 	}
 
-	public async openProject(project: SidebarTreeItem, disposeCB: ProjectCB) {
+	public async openProject(disposeCB: ProjectCB) {
 		this.disposeCB = disposeCB;
 
-		this.view.show(project.label);
-		const deployments = await this.getProjectDeployments(project);
-		this.loadDataToWebview({ deployments, project });
-		this.startInterval(project);
+		this.view.show(this.project.label);
+		const deployments = await this.getProjectDeployments(this.project);
+		this.loadDataToWebview({ deployments });
+		this.startInterval();
 		// TODO: Implement theme watcher
 	}
 
-	async startInterval(project: SidebarTreeItem) {
-		return await this.setIntervalForDataPush(project);
+	async startInterval() {
+		return await this.setIntervalForDataPush(this.project);
 	}
 
-	// TODO: Start and stop interval on focus and unfocus
+	// TODO: Stop interval on unfocus
+	onFocus() {
+		this.startInterval();
+	}
 
 	stopInterval() {
 		if (this.intervalTimerId) {
@@ -124,7 +121,7 @@ export class ProjectController {
 			clearInterval(this.intervalTimerId);
 		}
 		if (this.disposeCB) {
-			this.disposeCB(this.projectId);
+			this.disposeCB(this.project.key);
 		}
 	}
 

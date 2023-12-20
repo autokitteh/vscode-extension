@@ -14,10 +14,11 @@ export class TabsManagerController {
 	public async openWebview(project: SidebarTreeItem) {
 		if (this.openWebviews[project.key]) {
 			this.openWebviews[project.key].reveal();
+			this.openWebviews[project.key].onFocus();
 		} else {
 			const newProjectView = new ProjectView(this.context);
-			const newProjectController = new ProjectController(newProjectView, project.key);
-			newProjectController.openProject(project, this.disposeWebview);
+			const newProjectController = new ProjectController(newProjectView, project);
+			newProjectController.openProject(this.disposeWebview);
 			this.openWebviews[project.key] = newProjectController;
 		}
 	}
