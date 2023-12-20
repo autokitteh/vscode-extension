@@ -1,6 +1,6 @@
 import { appConfig } from "@api";
 import { IApiClient } from "@api/axios";
-import { ApplyResponse } from "@type/entities/manifest";
+import { ApplyResponse } from "@type/entities/manifest.type";
 import * as yaml from "js-yaml";
 
 export class ManifestService {

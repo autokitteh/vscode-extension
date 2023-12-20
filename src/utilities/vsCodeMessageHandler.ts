@@ -1,5 +1,6 @@
 import { window } from "vscode";
 
+// TODO: apply on all app messages
 export class MessageHandler {
 	static infoMessage(messageText: string): void {
 		window.showInformationMessage(messageText);

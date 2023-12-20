@@ -1,6 +1,6 @@
 import { User } from "@ak-proto-ts/users/v1/user_pb";
 import { authClient } from "@api/grpc/clients";
-import { UsersService } from "@services/users";
+import { UsersService } from "@services/users.service";
 
 const DEBUG_USER_NAME = "george";
 
