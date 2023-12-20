@@ -51,7 +51,7 @@ export class ProjectView implements IProjectView {
 
 	public dispose() {
 		if (this.panel) {
-			this.panel?.dispose();
+			this.panel.dispose();
 		}
 	}
 
