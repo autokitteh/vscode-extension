@@ -15,4 +15,9 @@ export class ProjectsService {
 			key: project.projectId,
 		}));
 	}
+
+	static async get(projectId: string): Promise<Project | undefined> {
+		const response = await projectsClient.get({ projectId });
+		return response?.project || undefined;
+	}
 }

@@ -20,4 +20,11 @@ export class EnvironmentsService {
 				.map((response) => get(response, "value.envs", []))
 		);
 	}
+	static async getByProject(projectId: string): Promise<Env[]> {
+		const environments = await await environmentsClient.list({
+			parentId: projectId,
+		});
+
+		return environments.envs;
+	}
 }

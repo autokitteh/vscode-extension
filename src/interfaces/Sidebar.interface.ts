@@ -7,7 +7,7 @@ export interface ISidebarViewDelegate {
 }
 
 export interface ISidebarView extends TreeDataProvider<TreeItem> {
-	refresh(): void;
+	refresh(children: SidebarTreeItem[]): void;
 	load(children: SidebarTreeItem[]): void;
 	delegate?: ISidebarViewDelegate;
 }

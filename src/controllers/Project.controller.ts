@@ -3,12 +3,7 @@ import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL } from "@constants";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
-import {
-	EnvironmentsService,
-	DeploymentsService,
-	ProjectsService,
-	AuthorizationService,
-} from "@services";
+import { EnvironmentsService, DeploymentsService } from "@services";
 import { MessageType } from "@type";
 import { getIds } from "@utilities/getIds";
 import { MessageHandler } from "@views";
@@ -16,42 +11,28 @@ import { workspace } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
-	private intervalTimerId: NodeJS.Timeout | undefined;
+	private intervalTimerId?: NodeJS.Timer;
 	private disposeCB?: ProjectCB;
-	public project: SidebarTreeItem;
+	public project: Project;
+	private deployments?: Deployment[];
+	private refreshRate: number;
 
-	constructor(private projectView: IProjectView, project: SidebarTreeItem) {
+	constructor(private projectView: IProjectView, project: Project) {
 		this.view = projectView;
 		this.project = project;
 		this.view.delegate = this;
-	}
-
-	update(data: any): void {
-		this.view.update(data);
+		this.refreshRate =
+			(workspace.getConfiguration().get("autokitteh.project.refresh.interval") as number) ||
+			DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL;
 	}
 
 	reveal(): void {
 		this.view.reveal();
 	}
 
-	private async getProjectDeployments(project: SidebarTreeItem): Promise<Deployment[] | undefined> {
-		const myUser = await AuthorizationService.whoAmI();
-		if (project) {
-			if (!myUser || !myUser.userId) {
-				MessageHandler.errorMessage(translate().t("errors.userNotDefined"));
-				return;
-			}
-
-			const projects = await ProjectsService.listForUser(myUser.userId);
-
-			if (!projects.length) {
-				MessageHandler.errorMessage(translate().t("errors.projectNotFound"));
-				return;
-			}
-
-			const environments = await EnvironmentsService.listForProjects(
-				getIds(projects, "projectId" as keyof Project)
-			);
+	private async getProjectDeployments(): Promise<Deployment[] | undefined> {
+		if (this.project.projectId) {
+			const environments = await EnvironmentsService.getByProject(this.project.projectId);
 
 			if (!environments.length) {
 				MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
@@ -67,43 +48,36 @@ export class ProjectController {
 		return [];
 	}
 
-	private loadDataToWebview({ deployments }: { deployments: Deployment[] | undefined }) {
+	private refreshView() {
 		this.view.update({
 			type: MessageType.deployments,
-			payload: deployments,
+			payload: this.deployments,
 		});
 		this.view.update({
 			type: MessageType.project,
 			payload: {
-				name: this.project.label,
-				projectId: this.project.key,
+				name: this.project.name,
+				projectId: this.project.projectId,
 			},
 		});
 	}
 
-	private async setIntervalForDataPush(project: SidebarTreeItem) {
-		const INTERVAL_LENGTH =
-			((await workspace.getConfiguration().get("autokitteh.project.refresh.interval")) as number) ||
-			DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL;
-
+	private startViewUpdateInterval() {
 		this.intervalTimerId = setInterval(async () => {
-			const deployments = await this.getProjectDeployments(project);
-			this.loadDataToWebview({ deployments });
-		}, INTERVAL_LENGTH);
+			this.deployments = await this.getProjectDeployments();
+			this.refreshView();
+		}, this.refreshRate);
 	}
 
 	public async openProject(disposeCB: ProjectCB) {
 		this.disposeCB = disposeCB;
-
-		this.view.show(this.project.label);
-		const deployments = await this.getProjectDeployments(this.project);
-		this.loadDataToWebview({ deployments });
+		this.view.show(this.project.name);
 		this.startInterval();
 		// TODO: Implement theme watcher
 	}
 
-	async startInterval() {
-		return await this.setIntervalForDataPush(this.project);
+	startInterval() {
+		return this.startViewUpdateInterval();
 	}
 
 	public onBlur() {
@@ -117,6 +91,7 @@ export class ProjectController {
 	stopInterval() {
 		if (this.intervalTimerId) {
 			clearInterval(this.intervalTimerId);
+			this.intervalTimerId = undefined;
 		}
 	}
 
@@ -125,7 +100,7 @@ export class ProjectController {
 			clearInterval(this.intervalTimerId);
 		}
 		if (this.disposeCB) {
-			this.disposeCB(this.project.key);
+			this.disposeCB(this.project.projectId);
 		}
 	}
 

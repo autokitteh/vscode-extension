@@ -1,3 +1,4 @@
+import { User } from "@ak-proto-ts/users/v1/user_pb";
 import { DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL } from "@constants/extension-configuration";
 import { AuthorizationService, ProjectsService } from "@services";
 import { SidebarView } from "@views";
@@ -6,11 +7,16 @@ import { ConfigurationTarget, window, workspace } from "vscode";
 
 export class SidebarController {
 	private view: ISidebarView;
-	private intervalTimerId: NodeJS.Timeout | undefined;
+	private intervalTimerId?: NodeJS.Timeout;
+	private user?: User;
+	private refreshRate: number;
 
 	constructor(private sidebarView: ISidebarView) {
 		this.view = sidebarView;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
+		this.refreshRate =
+			(workspace.getConfiguration().get("autokitteh.sidebar.refresh.interval") as number) ||
+			DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL;
 	}
 
 	public connect = async () => {
@@ -18,19 +24,13 @@ export class SidebarController {
 			.getConfiguration()
 			.update("autokitteh.serviceEnabled", true, ConfigurationTarget.Global);
 
-		const INTERVAL_LENGTH =
-			((await workspace.getConfiguration().get("autokitteh.sidebar.refresh.interval")) as number) ||
-			DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL;
+		this.user = await AuthorizationService.whoAmI();
 
 		this.intervalTimerId = setInterval(async () => {
-			const myUser = await AuthorizationService.whoAmI();
-			if (myUser && myUser.userId) {
-				this.view = new SidebarView();
-
-				this.view.load(await ProjectsService.listForTree(myUser.userId));
-				window.registerTreeDataProvider("autokittehSidebarTree", this.view);
+			if (this.user) {
+				this.view.refresh(await ProjectsService.listForTree(this.user.userId));
 			}
-		}, INTERVAL_LENGTH);
+		}, this.refreshRate);
 	};
 
 	public disconnect = async () => {
@@ -42,7 +42,6 @@ export class SidebarController {
 			clearInterval(this.intervalTimerId);
 		}
 
-		this.view = new SidebarView();
-		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
+		this.view.refresh([]);
 	};
 }

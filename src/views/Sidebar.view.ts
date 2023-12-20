@@ -15,6 +15,10 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 	constructor() {}
 
 	load(children: SidebarTreeItem[]) {
+		if (!children.length) {
+			this.rootNode = undefined;
+			return;
+		}
 		this.rootNode = new TreeItem(
 			translate().t("projects.projects"),
 			TreeItemCollapsibleState.Expanded
@@ -53,7 +57,8 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 		}
 	}
 
-	refresh() {
+	refresh(children: SidebarTreeItem[]) {
+		this.load(children);
 		this._onDidChangeTreeData.fire();
 	}
 }

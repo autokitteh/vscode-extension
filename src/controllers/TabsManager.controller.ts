@@ -1,4 +1,5 @@
 import { ProjectController } from "@controllers";
+import { ProjectsService } from "@services";
 import { ProjectView } from "@views";
 import { ExtensionContext } from "vscode";
 
@@ -16,9 +17,12 @@ export class TabsManagerController {
 			this.openWebviews[project.key].reveal();
 		} else {
 			const newProjectView = new ProjectView(this.context);
-			const newProjectController = new ProjectController(newProjectView, project);
-			newProjectController.openProject(this.disposeWebview);
-			this.openWebviews[project.key] = newProjectController;
+			const projectObj = await ProjectsService.get(project.key);
+			if (projectObj) {
+				const newProjectController = new ProjectController(newProjectView, projectObj);
+				newProjectController.openProject(this.disposeWebview);
+				this.openWebviews[project.key] = newProjectController;
+			}
 		}
 	}
 
