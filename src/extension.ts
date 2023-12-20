@@ -13,7 +13,6 @@ import {
 	openWalkthrough,
 } from "@vscommands/walkthrough";
 import { commands, ExtensionContext, workspace } from "vscode";
-import * as vscode from "vscode";
 
 export async function activate(context: ExtensionContext) {
 	const sidebarView = new SidebarView();
