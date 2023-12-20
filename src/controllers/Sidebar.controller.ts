@@ -20,7 +20,7 @@ export class SidebarController {
 	}
 
 	public connect = async () => {
-		await workspace
+		workspace
 			.getConfiguration()
 			.update("autokitteh.serviceEnabled", true, ConfigurationTarget.Global);
 
@@ -34,7 +34,7 @@ export class SidebarController {
 	};
 
 	public disconnect = async () => {
-		await workspace
+		workspace
 			.getConfiguration()
 			.update("autokitteh.serviceEnabled", false, ConfigurationTarget.Global);
 
