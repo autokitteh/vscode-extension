@@ -1,4 +1,4 @@
-import { DEFAULT_USERNAME } from "@constants";
+import { DEFAULT_USERNAME, vsCommands } from "@constants";
 import { translate } from "@i18n";
 import { window, commands, workspace } from "vscode";
 
@@ -9,7 +9,7 @@ export const openUsernameInputDialog = async () => {
 	if (!username || username.length === 0) {
 		username = DEFAULT_USERNAME;
 	}
-	commands.executeCommand("autokitteh.setUsername", username);
+	commands.executeCommand(vsCommands.setUsername, username);
 };
 
 export const setUsername = async (username: string) => {

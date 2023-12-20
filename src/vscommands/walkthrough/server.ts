@@ -1,4 +1,4 @@
-import { DEFAULT_SERVER_URL } from "@constants";
+import { DEFAULT_SERVER_URL, vsCommands } from "@constants";
 import { translate } from "@i18n";
 import { TestURL } from "@utilities";
 import { window, commands, workspace } from "vscode";
@@ -10,7 +10,7 @@ export const openBaseURLInputDialog = async () => {
 	if (!baseURL || baseURL.length === 0) {
 		baseURL = DEFAULT_SERVER_URL;
 	}
-	commands.executeCommand("autokitteh.setBaseURL", baseURL);
+	commands.executeCommand(vsCommands.setBaseURL, baseURL);
 };
 
 export const setBaseURL = async (baseURL: string) => {

@@ -1,9 +1,9 @@
-import { EXT_PUBLISHER } from "@constants";
+import { EXT_PUBLISHER, vsCommands } from "@constants";
 import { commands } from "vscode";
 
 export const openWalkthrough = () => {
 	commands.executeCommand(
-		`workbench.action.openWalkthrough`,
+		vsCommands.openWalkthrough,
 		`${EXT_PUBLISHER}.vscode-v2#autokitteh.walkthrough`,
 		false
 	);

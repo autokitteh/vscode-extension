@@ -9,4 +9,5 @@ export const vsCommands = {
 	openBaseURLInputDialog: "autokitteh.openBaseURLInputDialog",
 	setBaseURL: "autokitteh.setBaseURL",
 	walkthrough: "autokitteh.walkthrough",
+	openWalkthrough: "workbench.action.openWalkthrough",
 };
