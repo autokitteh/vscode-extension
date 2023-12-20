@@ -1,10 +1,9 @@
 require("module-alias/register");
 
 import { vsCommands } from "@constants";
-import { ProjectController } from "@controllers/Project.controller";
 import { SidebarController } from "@controllers/Sidebar.controller";
 import { TabsManagerController } from "@controllers/TabsManager.controller";
-import { ProjectView, SidebarView } from "@views";
+import { SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
 import {
 	getBaseURL,
