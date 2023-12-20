@@ -3,6 +3,7 @@ import * as path from "path";
 import { get } from "lodash";
 import * as vscode from "vscode";
 
+// TODO: delete after we'll take the logic into the relevant controller
 export const messageListener = async (message: any) => {
 	const editorLangId = vscode.window.activeTextEditor?.document.languageId;
 	const command = message.command;

@@ -19,7 +19,7 @@ import * as vscode from "vscode";
 export async function activate(context: ExtensionContext) {
 	const sidebarView = new SidebarView();
 	const sidebarController = new SidebarController(sidebarView);
-	const tabsManager = new TabsManagerController();
+	const tabsManager = new TabsManagerController(context);
 
 	commands.registerCommand(vsCommands.startPolling, async () => {
 		sidebarController.connect();
@@ -29,9 +29,7 @@ export async function activate(context: ExtensionContext) {
 	});
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {
-			const projectView = new ProjectView(context);
-			const projectController = new ProjectController(projectView);
-			tabsManager.openWebview(projectController, project);
+			tabsManager.openWebview(project);
 		})
 	);
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));

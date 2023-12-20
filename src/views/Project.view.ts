@@ -55,10 +55,10 @@ export class ProjectView implements IProjectView {
 		}
 	}
 
-	public show() {
+	public show(projectName: string) {
 		this.panel = vscode.window.createWebviewPanel(
-			"textInput",
-			"Text Input",
+			"project",
+			`${translate().t("general.companyName")}: ${projectName}`,
 			vscode.ViewColumn.One,
 			{
 				enableScripts: true,
