@@ -76,7 +76,7 @@ function App() {
 	 * @returns {JSX.Element} The logo component.
 	 */
 	const Logo = ({ className }: { className: string }) =>
-		themeVisualType === 2 ? (
+		themeVisualType === 2 || themeVisualType === 3 ? (
 			<AKLogoWhite className={className} fill="white" />
 		) : (
 			<AKLogoBlack className={className} />

@@ -1,3 +1,4 @@
+import { Theme } from "@enums";
 import { translate } from "@i18n/translation";
 import { IProjectView, IProjectViewDelegate } from "@interfaces";
 import { Message, MessageType } from "@type";
@@ -95,6 +96,28 @@ export class ProjectView implements IProjectView {
 		this.onClose();
 
 		this.panel.webview.html = this.getWebviewContent();
+
+		const themeKind = window.activeColorTheme.kind as number as Theme;
+		this.changeTheme(themeKind);
+		this.addThemeListener();
+	}
+
+	private changeTheme(themeKind: Theme) {
+		if (this.panel) {
+			this.panel.webview.postMessage({
+				type: MessageType.theme,
+				payload: themeKind,
+			});
+		}
+	}
+
+	private addThemeListener() {
+		return window.onDidChangeActiveColorTheme((editor) => {
+			if (editor) {
+				const themeKind = (editor.kind || window.activeColorTheme.kind) as number as Theme;
+				this.changeTheme(themeKind);
+			}
+		});
 	}
 
 	private getWebviewContent(): string {
