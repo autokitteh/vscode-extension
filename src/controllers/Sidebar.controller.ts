@@ -2,7 +2,7 @@ import { User } from "@ak-proto-ts/users/v1/user_pb";
 import { DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL } from "@constants/extension-configuration";
 import { AuthorizationService, ProjectsService } from "@services";
 import { ISidebarView } from "interfaces";
-import { isEqual } from "lodash/fp";
+import isEqual from "lodash/isEqual";
 import { ConfigurationTarget, window, workspace } from "vscode";
 
 export class SidebarController {

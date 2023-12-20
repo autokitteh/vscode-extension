@@ -7,7 +7,7 @@ import { EnvironmentsService, DeploymentsService } from "@services";
 import { MessageType } from "@type";
 import { getIds } from "@utilities/getIds";
 import { MessageHandler } from "@views";
-import isEqual from "lodash/fp/isEqual";
+import isEqual from "lodash/isEqual";
 import { workspace } from "vscode";
 
 export class ProjectController {
