@@ -3,7 +3,7 @@ import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL } from "@constants";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
-import { EnvironmentsService, DeploymentsService } from "@services";
+import { EnvironmentsService, DeploymentsService, ProjectsService } from "@services";
 import { MessageType } from "@type";
 import { getIds } from "@utilities/getIds";
 import { MessageHandler } from "@views";
@@ -14,13 +14,14 @@ export class ProjectController {
 	private view: IProjectView;
 	private intervalTimerId?: NodeJS.Timer;
 	private disposeCB?: ProjectCB;
-	public project: Project;
+	public projectId: string;
+	public project?: Project;
 	private deployments?: Deployment[];
 	private refreshRate: number;
 
-	constructor(private projectView: IProjectView, project: Project) {
+	constructor(private projectView: IProjectView, projectId: string) {
 		this.view = projectView;
-		this.project = project;
+		this.projectId = projectId;
 		this.view.delegate = this;
 		this.refreshRate =
 			(workspace.getConfiguration().get("autokitteh.project.refresh.interval") as number) ||
@@ -32,7 +33,7 @@ export class ProjectController {
 	}
 
 	private async getProjectDeployments(): Promise<Deployment[] | undefined> {
-		if (this.project.projectId) {
+		if (this.project) {
 			const environments = await EnvironmentsService.getByProject(this.project.projectId);
 
 			if (!environments.length) {
@@ -54,13 +55,14 @@ export class ProjectController {
 			type: MessageType.deployments,
 			payload: this.deployments,
 		});
-		this.view.update({
-			type: MessageType.project,
-			payload: {
-				name: this.project.name,
-				projectId: this.project.projectId,
-			},
-		});
+		if (this.project) {
+			this.view.update({
+				type: MessageType.project,
+				payload: {
+					name: this.project.name,
+				},
+			});
+		}
 	}
 
 	private startViewUpdateInterval() {
@@ -73,10 +75,17 @@ export class ProjectController {
 		}, this.refreshRate);
 	}
 
+	private async loadProject() {
+		this.project = await ProjectsService.get(this.projectId);
+	}
+
 	public async openProject(disposeCB: ProjectCB) {
 		this.disposeCB = disposeCB;
-		this.view.show(this.project.name);
-		this.startInterval();
+		await this.loadProject();
+		if (this.project) {
+			this.view.show(this.project.name);
+			this.startInterval();
+		}
 	}
 
 	startInterval() {
@@ -103,7 +112,7 @@ export class ProjectController {
 			clearInterval(this.intervalTimerId);
 		}
 		if (this.disposeCB) {
-			this.disposeCB(this.project.projectId);
+			this.disposeCB(this.projectId);
 		}
 	}
 
