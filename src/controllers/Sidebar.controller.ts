@@ -1,7 +1,7 @@
 import { DEFAULT_INTERVAL_LENGTH } from "@constants/extension-configuration";
 import { AuthorizationService, ProjectsService } from "@services";
 import { SidebarView } from "@views";
-import { ISidebarView } from "interfaces/Sidebar.interface";
+import { ISidebarView } from "interfaces";
 import { ConfigurationTarget, window, workspace } from "vscode";
 
 export class SidebarController {

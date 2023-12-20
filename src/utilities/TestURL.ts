@@ -1,3 +1,4 @@
+// TODO: Don't manipulate URL, only validate
 export const TestURL = (url: string): string | undefined => {
 	try {
 		const configURL = new URL(url);

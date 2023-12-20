@@ -1,4 +1,5 @@
 import { translate } from "@i18n/translation";
+import { IProjectView, IProjectViewDelegate } from "@interfaces";
 import { Message, MessageType } from "@type";
 import { getNonce } from "@utilities";
 import { getUri } from "@utilities/getUri";

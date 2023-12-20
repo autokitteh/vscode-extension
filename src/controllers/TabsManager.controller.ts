@@ -1,4 +1,4 @@
-import { ProjectController } from "@controllers/Project.controller";
+import { ProjectController } from "@controllers";
 import { ProjectView } from "@views";
 import { ExtensionContext } from "vscode";
 

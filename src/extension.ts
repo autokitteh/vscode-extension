@@ -1,13 +1,13 @@
 require("module-alias/register");
 
 import { vsCommands } from "@constants";
-import { SidebarController } from "@controllers/Sidebar.controller";
-import { TabsManagerController } from "@controllers/TabsManager.controller";
+import { SidebarController } from "@controllers";
+import { TabsManagerController } from "@controllers";
 import { SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
 import {
-	getBaseURL,
-	getUsername,
+	openBaseURLInputDialog,
+	openUsernameInputDialog,
 	setUsername,
 	setBaseURL,
 	openWalkthrough,
@@ -19,10 +19,10 @@ export async function activate(context: ExtensionContext) {
 	const sidebarController = new SidebarController(sidebarView);
 	const tabsManager = new TabsManagerController(context);
 
-	commands.registerCommand(vsCommands.startPolling, async () => {
+	commands.registerCommand(vsCommands.connect, async () => {
 		sidebarController.connect();
 	});
-	commands.registerCommand(vsCommands.stopPolling, async () => {
+	commands.registerCommand(vsCommands.disconnect, async () => {
 		sidebarController.disconnect();
 	});
 	context.subscriptions.push(
@@ -33,9 +33,13 @@ export async function activate(context: ExtensionContext) {
 
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
 	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));
-	context.subscriptions.push(commands.registerCommand(vsCommands.getUsername, getUsername));
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.openUsernameInputDialog, openUsernameInputDialog)
+	);
 	context.subscriptions.push(commands.registerCommand(vsCommands.setUsername, setUsername));
-	context.subscriptions.push(commands.registerCommand(vsCommands.getBaseURL, getBaseURL));
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.openBaseURLInputDialog, openBaseURLInputDialog)
+	);
 	context.subscriptions.push(commands.registerCommand(vsCommands.setBaseURL, setBaseURL));
 	context.subscriptions.push(commands.registerCommand(vsCommands.walkthrough, openWalkthrough));
 

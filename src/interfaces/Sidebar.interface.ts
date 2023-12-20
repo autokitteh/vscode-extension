@@ -1,6 +1,6 @@
 import { TreeDataProvider, TreeItem } from "vscode";
 
-interface ISidebarViewDelegate {
+export interface ISidebarViewDelegate {
 	onClose?: Callback;
 	build: Callback;
 	deploy: Callback;

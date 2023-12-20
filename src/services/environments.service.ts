@@ -1,6 +1,6 @@
 import { Env } from "@ak-proto-ts/envs/v1/env_pb";
 import { environmentsClient } from "@api/grpc/clients";
-import { flattenArray } from "@utilities/flattenArray";
+import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
 export class EnvironmentsService {

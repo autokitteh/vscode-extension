@@ -1,4 +1,4 @@
-interface IProjectViewDelegate {
+export interface IProjectViewDelegate {
 	onClose?: Callback;
 	onBlur?: Callback;
 	onFocus?: Callback;
@@ -6,7 +6,7 @@ interface IProjectViewDelegate {
 	deploy: Callback;
 }
 
-interface IProjectView {
+export interface IProjectView {
 	show(projectName: string): void;
 	reveal(): void;
 	update(data: any): void;

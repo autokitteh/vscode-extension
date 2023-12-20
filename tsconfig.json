@@ -19,6 +19,8 @@
 			"@enums/*": ["enums/*"],
 			"@i18n/*": ["i18n/*"],
 			"@i18n": ["i18n/index"],
+			"@interfaces": ["interfaces/index"],
+			"@interfaces/*": ["interfaces/*"],
 			"@providers": ["providers/index"],
 			"@providers/*": ["providers/*"],
 			"@services": ["services/index"],

@@ -1,12 +1,12 @@
 export const vsCommands = {
 	openWebview: "autokitteh.openWebview",
-	startPolling: "autokitteh.startPolling",
-	stopPolling: "autokitteh.stopPolling",
+	connect: "autokitteh.connect",
+	disconnect: "autokitteh.disconnect",
 	applyManifest: "autokitteh.applyManifest",
 	buildFolder: "autokitteh.buildFolder",
-	getUsername: "autokitteh.getUsername",
+	openUsernameInputDialog: "autokitteh.openUsernameInputDialog",
 	setUsername: "autokitteh.setUsername",
-	getBaseURL: "autokitteh.getBaseURL",
+	openBaseURLInputDialog: "autokitteh.openBaseURLInputDialog",
 	setBaseURL: "autokitteh.setBaseURL",
 	walkthrough: "autokitteh.walkthrough",
 };

@@ -1,7 +1,8 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
-import { DEFAULT_INTERVAL_LENGTH } from "@constants/extension-configuration";
-import { translate } from "@i18n/index";
+import { DEFAULT_INTERVAL_LENGTH } from "@constants";
+import { translate } from "@i18n";
+import { IProjectView } from "@interfaces";
 import {
 	EnvironmentsService,
 	DeploymentsService,

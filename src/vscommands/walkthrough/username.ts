@@ -2,7 +2,7 @@ import { DEFAULT_USERNAME } from "@constants";
 import { translate } from "@i18n";
 import { window, commands, workspace } from "vscode";
 
-export const getUsername = async () => {
+export const openUsernameInputDialog = async () => {
 	let username = await window.showInputBox({
 		placeHolder: "Type your username (leave empty for the default: 'anonymous')",
 	});

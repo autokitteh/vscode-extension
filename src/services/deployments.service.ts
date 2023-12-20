@@ -1,6 +1,6 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { deploymentsClient } from "@api/grpc/clients";
-import { flattenArray } from "@utilities/flattenArray";
+import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
 export class DeploymentsService {

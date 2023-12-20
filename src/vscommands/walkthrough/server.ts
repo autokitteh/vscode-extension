@@ -3,7 +3,7 @@ import { translate } from "@i18n";
 import { TestURL } from "@utilities";
 import { window, commands, workspace } from "vscode";
 
-export const getBaseURL = async () => {
+export const openBaseURLInputDialog = async () => {
 	let baseURL = await window.showInputBox({
 		placeHolder: "Type the server URL (leave empty for the default: 'http://localhost:9980')",
 	});
