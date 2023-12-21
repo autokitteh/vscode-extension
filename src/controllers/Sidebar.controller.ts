@@ -40,8 +40,13 @@ export class SidebarController {
 						this.projects = projectsForUser;
 						this.view.refresh(projectsForUser);
 					}
+				} else {
+					await this.disconnect();
+					MessageHandler.errorMessage(translate().t("errors.noHostConnection"));
 				}
 			}, this.refreshRate);
+		} else {
+			MessageHandler.errorMessage(translate().t("errors.noUserFound"));
 		}
 	};
 
