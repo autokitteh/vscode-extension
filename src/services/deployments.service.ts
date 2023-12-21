@@ -26,4 +26,21 @@ export class DeploymentsService {
 		}
 		return [];
 	}
+	static async create(deployment: { envId: string; buildId: string }): Promise<string | undefined> {
+		try {
+			const createResponse = await deploymentsClient.create({ deployment });
+
+			return createResponse.deploymentId;
+		} catch (error) {
+			handlegRPCErrors(error);
+		}
+		return undefined;
+	}
+	static async activate(deploymentId: string): Promise<void> {
+		try {
+			await deploymentsClient.activate({ deploymentId });
+		} catch (error) {
+			handlegRPCErrors(error);
+		}
+	}
 }

@@ -14,7 +14,7 @@ function App() {
 	const [directory, setDirectory] = useState<string>("");
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 
-	const delegate = {
+	const messageHandlers = {
 		setDeployments,
 		setProject,
 		setDirectory,
@@ -22,7 +22,7 @@ function App() {
 	};
 
 	const handleMessagesFromExtension = useCallback(
-		(event: MessageEvent<Message>) => HandleIncomingMessages(event, delegate),
+		(event: MessageEvent<Message>) => HandleIncomingMessages(event, messageHandlers),
 		[]
 	);
 

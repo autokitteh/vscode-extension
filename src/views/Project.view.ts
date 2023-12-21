@@ -80,6 +80,11 @@ export class ProjectView implements IProjectView {
 
 		this.panel.webview.html = this.getWebviewContent();
 
+		this.panel.webview.postMessage?.({
+			type: MessageType.project,
+			payload: projectName,
+		});
+
 		const themeKind = window.activeColorTheme.kind as number as Theme;
 		this.changeTheme(themeKind);
 		this.addThemeListener();

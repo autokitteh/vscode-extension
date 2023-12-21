@@ -6,22 +6,22 @@ import { Message, MessageType } from "@parent-type/index";
 
 export const HandleIncomingMessages = (
 	event: MessageEvent<Message>,
-	delegate: IIncomingMessagesHandler
+	handlers: IIncomingMessagesHandler
 ) => {
 	const { payload } = event.data as Message;
 
 	switch (event.data.type) {
 		case MessageType.common:
-			delegate.setDirectory(payload as string);
+			handlers.setDirectory(payload as string);
 			break;
 		case MessageType.theme:
-			delegate.setThemeVisualType(payload as Theme);
+			handlers.setThemeVisualType(payload as Theme);
 			break;
 		case MessageType.deployments:
-			delegate.setDeployments(payload as Deployment[]);
+			handlers.setDeployments(payload as Deployment[]);
 			break;
 		case MessageType.project:
-			delegate.setProject(payload as Project);
+			handlers.setProject(payload as Project);
 			break;
 		default:
 	}

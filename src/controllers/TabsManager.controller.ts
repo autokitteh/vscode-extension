@@ -12,14 +12,15 @@ export class TabsManagerController {
 	}
 
 	public async openWebview(project: SidebarTreeItem) {
-		if (this.openWebviews[project.key]) {
-			this.openWebviews[project.key].reveal();
-		} else {
+		if (!this.openWebviews[project.key]) {
 			const newView = new ProjectView(this.context);
 			const newController = new ProjectController(newView, project.key);
 			newController.openProject(this.disposeWebview);
 			this.openWebviews[project.key] = newController;
+			return;
 		}
+
+		this.openWebviews[project.key].reveal();
 	}
 
 	private disposeWebview(projectId: string) {

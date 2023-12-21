@@ -1,6 +1,9 @@
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { projectsClient } from "@api/grpc/clients";
 import { handlegRPCErrors } from "@api/grpc/grpc.errorHandler";
+import { translate } from "@i18n";
+import { DeploymentsService } from "@services";
+import { MessageHandler } from "@views";
 
 export class ProjectsService {
 	static async listForUser(userId: string): Promise<Project[]> {
@@ -45,5 +48,30 @@ export class ProjectsService {
 			handlegRPCErrors(error);
 		}
 		return [];
+	}
+
+	static async build(projectId: string): Promise<string | undefined> {
+		try {
+			const response = await projectsClient.build({ projectId });
+			const { buildId, error } = response;
+			if (error) {
+				MessageHandler.errorMessage(error.message);
+			}
+			MessageHandler.infoMessage(translate().t("projects.projectBuildSucceed"));
+			return buildId;
+		} catch (error) {
+			handlegRPCErrors(error);
+		}
+	}
+
+	static async deploy(
+		deployment: { envId: string; buildId: string },
+		projectId: string
+	): Promise<void> {
+		const buildId = await this.build(projectId);
+		const deploymentId = await DeploymentsService.create(deployment);
+		if (buildId && deploymentId) {
+			DeploymentsService.activate(deploymentId);
+		}
 	}
 }

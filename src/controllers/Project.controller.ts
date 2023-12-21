@@ -23,15 +23,9 @@ export class ProjectController {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
-		this.refreshRate = workspace
+		this.refreshRate = workspace //consider pass from outside in order to test easier
 			.getConfiguration()
 			.get("autokitteh.project.refresh.interval", DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL);
-		this.init().catch((error) => console.error(error));
-	}
-
-	async init() {
-		await this.loadProject();
-		this.startInterval();
 	}
 
 	reveal(): void {
@@ -39,22 +33,13 @@ export class ProjectController {
 	}
 
 	async getProjectDeployments(): Promise<Deployment[]> {
-		if (!this.project) {
+		const environments = await EnvironmentsService.getByProject(this.projectId);
+		if (!environments.length) {
+			MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
 			return [];
 		}
 
-		try {
-			const environments = await EnvironmentsService.getByProject(this.project.projectId);
-			if (!environments.length) {
-				MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
-				return [];
-			}
-
-			return (await DeploymentsService.listForEnvironments(getIds(environments, "envId"))) || [];
-		} catch (error) {
-			console.error(error);
-			return [];
-		}
+		return await DeploymentsService.listForEnvironments(getIds(environments, "envId"));
 	}
 
 	async refreshView() {
@@ -62,9 +47,6 @@ export class ProjectController {
 		if (!isEqual(this.deployments, deployments)) {
 			this.deployments = deployments;
 			this.view.update({ type: MessageType.deployments, payload: deployments });
-			if (this.project) {
-				this.view.update({ type: MessageType.project, payload: { name: this.project.name } });
-			}
 		}
 	}
 
@@ -81,16 +63,9 @@ export class ProjectController {
 		}
 	}
 
-	async loadProject() {
-		try {
-			this.project = await ProjectsService.get(this.projectId);
-		} catch (error) {
-			console.error(error);
-		}
-	}
-
 	public async openProject(disposeCB: ProjectCB) {
-		await this.loadProject();
+		this.disposeCB = disposeCB;
+		this.project = await ProjectsService.get(this.projectId);
 		if (this.project) {
 			this.view.show(this.project.name);
 			this.startInterval();
@@ -110,8 +85,8 @@ export class ProjectController {
 		this.disposeCB?.(this.projectId);
 	}
 
-	build() {
-		console.log(this.project);
+	async build() {
+		const buildId = await ProjectsService.build(this.projectId);
 	}
 
 	deploy() {}

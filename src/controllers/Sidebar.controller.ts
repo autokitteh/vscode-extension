@@ -20,11 +20,6 @@ export class SidebarController {
 		this.refreshRate = workspace
 			.getConfiguration()
 			.get("autokitteh.sidebar.refresh.interval", DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL);
-		this.init().catch((error) => console.error("Failed to initialize:", error));
-	}
-
-	private async init() {
-		await this.connect();
 	}
 
 	public connect = async () => {
@@ -63,7 +58,6 @@ export class SidebarController {
 				this.view.refresh(projectsForUser);
 			}
 		} catch (error: unknown) {
-			await this.disconnect();
 			if (error instanceof Error) {
 				MessageHandler.errorMessage(error.message);
 			}
