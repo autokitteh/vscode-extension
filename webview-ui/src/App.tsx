@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AKLogoBlack from "@assets/images/ak-logo-black.svg?react";
 import AKLogoWhite from "@assets/images/ak-logo-white.svg?react";
 import { AKButton } from "@components";
@@ -8,8 +8,7 @@ import { Project } from "@parent-ak-proto-ts/projects/v1/project_pb";
 import { Theme } from "@parent-enums/index";
 import { Message, MessageType } from "@parent-type/index";
 import { AKDeployments } from "@sections";
-import { vscodeWrapper } from "@utilities";
-import { HandleIncomingMessages } from "@utilities";
+import { HandleIncomingMessages, vscodeWrapper } from "@utilities";
 import "./App.css";
 
 function App() {
@@ -29,23 +28,25 @@ function App() {
 	 * Handles incoming messages from the extension.
 	 * @param {MessageEvent<Message>} event - The message event.
 	 */
-	const handleMessagesFromExtension = (event: MessageEvent<Message>) => {
-		HandleIncomingMessages(event, delegate);
-	};
+	const handleMessagesFromExtension = useCallback(
+		(event: MessageEvent<Message>) => HandleIncomingMessages(event, delegate),
+		[messagesFromExtension]
+	);
 
 	useEffect(() => {
 		/**
 		 * Adds an event listener for incoming messages from the extension.
 		 * @param {MessageEvent<Message>} event - The message event.
 		 */
-		const eventListener = (event: MessageEvent<Message>): void =>
+		window.addEventListener("message", (event: MessageEvent<Message>) => {
 			handleMessagesFromExtension(event);
+		});
 
 		return () => {
 			/**
 			 * Removes the event listener for incoming messages from the extension.
 			 */
-			window.removeEventListener("message", eventListener);
+			window.removeEventListener("message", handleMessagesFromExtension);
 		};
 	}, [handleMessagesFromExtension]);
 
