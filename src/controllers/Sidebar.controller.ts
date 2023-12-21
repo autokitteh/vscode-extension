@@ -1,7 +1,9 @@
 import { User } from "@ak-proto-ts/users/v1/user_pb";
+import { BASE_URL } from "@constants";
 import { DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL } from "@constants/extension-configuration";
 import { translate } from "@i18n";
 import { AuthorizationService, ProjectsService } from "@services";
+import { ValidateURL } from "@utilities";
 import { MessageHandler } from "@views";
 import { ISidebarView } from "interfaces";
 import isEqual from "lodash/isEqual";
@@ -23,19 +25,39 @@ export class SidebarController {
 	}
 
 	public connect = async () => {
+		if (!ValidateURL(BASE_URL)) {
+			MessageHandler.errorMessage(translate().t("errors.badHostURL"));
+			return;
+		}
+
+		this.user = await AuthorizationService.whoAmI();
+		if (!this.user) {
+			MessageHandler.errorMessage(translate().t("errors.noUserFound"));
+			return;
+		}
+		this.updateServiceEnabled(true);
 		try {
-			this.user = await AuthorizationService.whoAmI();
-			if (!this.user) {
-				throw new Error(translate().t("errors.noUserFound"));
+			const projects = await this.fetchProjects(this.user);
+			if (!projects.length) {
+				MessageHandler.errorMessage(translate().t("errors.noProjectsFound"));
+				return;
 			}
 
-			this.updateServiceEnabled(true);
 			this.startInterval();
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				MessageHandler.errorMessage(error.message);
+			} else {
+				console.error(error);
 			}
 		}
+	};
+
+	private fetchProjects = async (user: User): Promise<SidebarTreeItem[]> => {
+		return (await ProjectsService.list(user.userId)).map((project) => ({
+			label: project.name,
+			key: project.projectId,
+		}));
 	};
 
 	private startInterval() {
@@ -45,17 +67,13 @@ export class SidebarController {
 	private async refreshProjects() {
 		try {
 			if (!this.user) {
-				throw new Error(translate().t("errors.noHostConnection"));
+				MessageHandler.errorMessage(translate().t("errors.noUserFound"));
+				return;
 			}
-
-			const projectsForUser = await ProjectsService.listForTree(this.user.userId);
-			if (!projectsForUser.length) {
-				throw new Error(translate().t("errors.noProjectsFound"));
-			}
-
-			if (!isEqual(projectsForUser, this.projects)) {
-				this.projects = projectsForUser;
-				this.view.refresh(projectsForUser);
+			const projects = await this.fetchProjects(this.user);
+			if (!isEqual(projects, this.projects)) {
+				this.projects = projects;
+				this.view.refresh(this.projects);
 			}
 		} catch (error: unknown) {
 			if (error instanceof Error) {
@@ -67,6 +85,7 @@ export class SidebarController {
 	public disconnect = async () => {
 		this.updateServiceEnabled(false);
 		this.stopInterval();
+		this.projects = [];
 		this.view.refresh([]);
 	};
 

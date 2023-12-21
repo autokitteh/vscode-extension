@@ -76,7 +76,6 @@ export class ProjectView implements IProjectView {
 		});
 
 		this.setupWebviewMessageListener();
-		this.onClose();
 
 		this.panel.webview.html = this.getWebviewContent();
 

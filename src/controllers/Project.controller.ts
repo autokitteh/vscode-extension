@@ -86,7 +86,8 @@ export class ProjectController {
 	}
 
 	async build() {
-		const buildId = await ProjectsService.build(this.projectId);
+		await ProjectsService.build(this.projectId);
+		MessageHandler.infoMessage(translate().t("projects.projectBuildSucceed"));
 	}
 
 	deploy() {}

@@ -6,30 +6,6 @@ import { DeploymentsService } from "@services";
 import { MessageHandler } from "@views";
 
 export class ProjectsService {
-	static async listForUser(userId: string): Promise<Project[]> {
-		try {
-			const projectsResponse = await projectsClient.listForOwner({
-				ownerId: userId,
-			});
-			return projectsResponse.projects;
-		} catch (error) {
-			handlegRPCErrors(error);
-		}
-		return [];
-	}
-
-	static async listForTree(userId: string): Promise<SidebarTreeItem[]> {
-		try {
-			return (await this.listForUser(userId)).map((project) => ({
-				label: project.name,
-				key: project.projectId,
-			}));
-		} catch (error) {
-			handlegRPCErrors(error);
-		}
-		return [];
-	}
-
 	static async get(projectId: string): Promise<Project | undefined> {
 		try {
 			const response = await projectsClient.get({ projectId });
@@ -53,15 +29,12 @@ export class ProjectsService {
 	static async build(projectId: string): Promise<string | undefined> {
 		try {
 			const response = await projectsClient.build({ projectId });
-			const { buildId, error } = response;
-			if (error) {
-				MessageHandler.errorMessage(error.message);
-			}
-			MessageHandler.infoMessage(translate().t("projects.projectBuildSucceed"));
+			const { buildId } = response;
 			return buildId;
 		} catch (error) {
 			handlegRPCErrors(error);
 		}
+		return;
 	}
 
 	static async deploy(
