@@ -6,7 +6,7 @@ import { window, commands, workspace } from "vscode";
 
 export const openBaseURLInputDialog = async () => {
 	let baseURL = await window.showInputBox({
-		placeHolder: "Type the server URL (leave empty for the default: 'http://localhost:9980')",
+		placeHolder: translate().t("walkthrough.setHostInputDialog"),
 	});
 	if (!baseURL || baseURL.length === 0) {
 		baseURL = DEFAULT_SERVER_URL;

@@ -5,13 +5,13 @@ import { window, commands, workspace } from "vscode";
 
 export const openUsernameInputDialog = async () => {
 	let username = await window.showInputBox({
-		placeHolder: "Type your username (leave empty for the default: 'anonymous')",
+		placeHolder: translate().t("walkthrough.setUsernameInputDialog"),
 	});
 	if (!username) {
 		username = DEFAULT_USERNAME;
 	}
 	if (username && username.length < 3) {
-		MessageHandler.errorMessage("Username should contain more than 3 characters");
+		MessageHandler.errorMessage(translate().t("walkthrough.minimalUsernameLength"));
 	}
 	await setUsername(username);
 };
