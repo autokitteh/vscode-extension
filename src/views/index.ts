@@ -1,3 +1,3 @@
-export { ProjectWebview } from "@views/ProjectWebview";
-export { TreeProvider } from "@views/SidebarView";
-export { MessageHandler } from "@views/utils/MessageHandler";
+export { SidebarView } from "@views/Sidebar.view";
+export { MessageHandler } from "@utilities/vsCodeMessageHandler";
+export { ProjectView } from "@views/Project.view";

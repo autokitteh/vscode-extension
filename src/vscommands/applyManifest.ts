@@ -1,4 +1,5 @@
 import { manifestClient } from "@api/grpc/clients";
+import { MessageHandler } from "@views";
 import { window } from "vscode";
 
 export const applyManifest = async () => {
@@ -26,7 +27,7 @@ export const applyManifest = async () => {
 		);
 		(resp.operations || []).forEach((o: any) => output.appendLine(`operation: ${o.description}`));
 
-		window.showInformationMessage("Manifest applied");
+		MessageHandler.infoMessage("Manifest applied");
 	}
 
 	output.show();

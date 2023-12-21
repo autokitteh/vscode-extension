@@ -17,30 +17,50 @@
     "contributes": {
         "commands": [
             {
-                "command": "autokitteh.v2.applyManifest",
+                "command": "autokitteh.applyManifest",
                 "title": "Autokitteh V2: Apply Manifest"
             },
             {
-                "command": "autokitteh.v2.buildFolder",
+                "command": "autokitteh.buildFolder",
                 "title": "Build autokitteh"
             },
             {
-                "command": "autokittehSidebarTree.startPolling",
+                "command": "autokitteh.connect",
                 "icon": "./resources/sidebar/top-panel-connect.svg",
                 "title": "Autokitteh: Connect to server"
             },
             {
-                "command": "autokittehSidebarTree.stopPolling",
+                "command": "autokitteh.disconnect",
                 "icon": "./resources/sidebar/top-panel-disconnect.svg",
                 "title": "Autokitteh: Disconnect from server"
             }
         ],
         "configuration": {
             "properties": {
+                "autokitteh.baseURL": {
+                    "default": "",
+                    "description": "Server URL",
+                    "type": "string"
+                },
                 "autokitteh.serviceEnabled": {
                     "default": false,
-                    "description": "enable autokitteh",
+                    "description": "Is connected to the server",
                     "type": "boolean"
+                },
+                "autokitteh.username": {
+                    "default": "anonymous",
+                    "description": "Username used for the connection",
+                    "type": "string"
+                },
+                "autokitteh.sidebar.refresh.interval": {
+                    "default": 1000,
+                    "description": "Refresh interval in ms for the sidebar panel",
+                    "type": "number"
+                },
+                "autokitteh.project.refresh.interval": {
+                    "default": 1000,
+                    "description": "Refresh interval in ms for the projects webview panel",
+                    "type": "number"
                 }
             },
             "title": "autokitteh"
@@ -48,23 +68,24 @@
         "menus": {
             "explorer/context": [
                 {
-                    "command": "autokitteh.v2.buildFolder",
+                    "command": "autokitteh.buildFolder",
                     "when": "resourceLangId == yaml && resourceFilename =~ /autokitteh.yaml/"
                 }
             ],
             "view/title": [
                 {
-                    "command": "autokittehSidebarTree.startPolling",
+                    "command": "autokitteh.connect",
                     "group": "navigation",
                     "when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
                 },
                 {
-                    "command": "autokittehSidebarTree.stopPolling",
+                    "command": "autokitteh.disconnect",
                     "group": "navigation",
                     "when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled"
                 }
             ]
         },
+        "publisher": "autokitteh",
         "views": {
             "autokittehSidebarTree": [
                 {
@@ -81,7 +102,64 @@
                     "title": "Autokitteh"
                 }
             ]
-        }
+        },
+        "viewsWelcome": [
+            {
+                "contents": "No connection instance has been found.\n[Connect](command:autokitteh.connect)",
+                "view": "autokittehSidebarTree",
+                "when": "config.autokitteh.username && config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
+            },
+            {
+                "contents": "No instance setup has been found.\n[Setup Configuration](command:autokitteh.walkthrough)\n",
+                "view": "autokittehSidebarTree",
+                "when": "!config.autokitteh.username || !config.autokitteh.baseURL"
+            }
+        ],
+        "walkthroughs": [
+            {
+                "description": "Let's start",
+                "id": "autokitteh.walkthrough",
+                "steps": [
+                    {
+                        "completionEvents": [
+                            "onSettingChanged:autokitteh.baseURL"
+                        ],
+                        "description": "Set your username to connect the server.\n[Set your username](command:autokitteh.openUsernameInputDialog)",
+                        "id": "openUsernameInputDialog",
+                        "media": {
+                            "altText": "Empty image",
+                            "image": "resources/walkthrough/empty.png"
+                        },
+                        "title": "Set username"
+                    },
+                    {
+                        "completionEvents": [
+                            "onSettingChanged:autokitteh.baseURL"
+                        ],
+                        "description": "Set the address of the server.\n[Insert server URL](command:autokitteh.openBaseURLInputDialog)",
+                        "id": "openBaseURLInputDialog",
+                        "media": {
+                            "altText": "Empty image",
+                            "image": "resources/walkthrough/empty.png"
+                        },
+                        "title": "Set server URL"
+                    },
+                    {
+                        "completionEvents": [
+                            "onCommand:autokitteh.connect"
+                        ],
+                        "description": "[Connect](command:autokitteh.connect)",
+                        "id": "connectAK",
+                        "media": {
+                            "altText": "Empty image",
+                            "image": "resources/walkthrough/empty.png"
+                        },
+                        "title": "Now you can connect"
+                    }
+                ],
+                "title": "Welcome to Autokitteh"
+            }
+        ]
     },
     "dependencies": {
         "@connectrpc/connect": "^1.1.4",

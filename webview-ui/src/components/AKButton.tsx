@@ -4,8 +4,13 @@ import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 interface AKButtonProps {
 	children: ReactNode;
 	classes?: string;
+	onClick?: () => void;
 }
 
-export const AKButton = ({ children, classes }: AKButtonProps) => {
-	return <VSCodeButton className={classes}>{children}</VSCodeButton>;
+export const AKButton = ({ children, classes, onClick }: AKButtonProps) => {
+	return (
+		<VSCodeButton className={classes} onClick={onClick}>
+			{children}
+		</VSCodeButton>
+	);
 };

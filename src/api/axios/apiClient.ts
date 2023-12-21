@@ -1,18 +1,8 @@
 import { baseApi } from "@api";
 import { handleErrorResponse } from "@api/axios";
+import { IApiClient } from "@interfaces";
 import { RequestConfig } from "@type";
 import Axios, { AxiosError, AxiosInstance } from "axios";
-
-export interface IApiClient {
-	post<TRequest, TResponse>(
-		path: string,
-		object: TRequest,
-		config?: RequestConfig
-	): Promise<TResponse>;
-	patch<TRequest, TResponse>(path: string, object: TRequest): Promise<TResponse>;
-	put<TRequest, TResponse>(path: string, object: TRequest): Promise<TResponse>;
-	get<TResponse>(path: string): Promise<TResponse>;
-}
 
 export class ApiClient implements IApiClient {
 	private client: AxiosInstance;
@@ -22,6 +12,7 @@ export class ApiClient implements IApiClient {
 			baseURL: baseApi,
 			responseType: "json" as const,
 			headers: {
+				// eslint-disable-next-line @typescript-eslint/naming-convention
 				"Content-Type": "application/json",
 			},
 			timeout: 10 * 1000,

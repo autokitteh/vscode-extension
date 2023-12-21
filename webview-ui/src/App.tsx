@@ -1,91 +1,40 @@
 import { useCallback, useEffect, useState } from "react";
-import { AKButton } from "./components";
-import Deployments from "./sections/AKDeployments";
-import { vscodeWrapper } from "./utilities/vscode";
-import { Message, MessageType, Deployment } from "../../src/types";
-import AKLogoBlack from "../assets/images/ak-logo-black.svg?react";
-import AKLogoWhite from "../assets/images/ak-logo-white.svg?react";
+import { AKButton, AKLogo } from "@components";
+import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
+import { Project } from "@parent-ak-proto-ts/projects/v1/project_pb";
+import { Theme } from "@parent-enums/index";
+import { Message, MessageType } from "@parent-type/index";
+import { AKDeployments } from "@sections";
+import { HandleIncomingMessages, vscodeWrapper } from "@utilities";
 import "./App.css";
 
 function App() {
-	const [messagesFromExtension, setMessagesFromExtension] = useState<string[]>([]);
 	const [deployments, setDeployments] = useState<Deployment[] | undefined>();
-	const [projectName, setProjectName] = useState<string | undefined>();
+	const [project, setProject] = useState<Project | undefined>();
 	const [directory, setDirectory] = useState<string>("");
-	const [themeVisualType, setThemeVisualType] = useState<number | undefined>();
+	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 
-	/**
-	 * Handles incoming messages from the extension.
-	 * @param {MessageEvent<Message>} event - The message event.
-	 */
+	const messageHandlers = {
+		setDeployments,
+		setProject,
+		setDirectory,
+		setThemeVisualType,
+	};
+
 	const handleMessagesFromExtension = useCallback(
-		(event: MessageEvent<Message>) => {
-			const { payload } = event.data as Message;
-
-			switch (event.data.type) {
-				case MessageType.common:
-					setDirectory(payload);
-					break;
-				case MessageType.theme:
-					setThemeVisualType(payload);
-					break;
-				case MessageType.deployments:
-					setDeployments(payload);
-					break;
-				case MessageType.projectName:
-					setProjectName(payload);
-					break;
-				default:
-			}
-		},
-		[messagesFromExtension]
+		(event: MessageEvent<Message>) => HandleIncomingMessages(event, messageHandlers),
+		[]
 	);
 
 	useEffect(() => {
-		/**
-		 * Adds an event listener for incoming messages from the extension.
-		 * @param {MessageEvent<Message>} event - The message event.
-		 */
-		window.addEventListener("message", (event: MessageEvent<Message>) => {
-			handleMessagesFromExtension(event);
-		});
-
+		window.addEventListener("message", handleMessagesFromExtension);
 		return () => {
-			/**
-			 * Removes the event listener for incoming messages from the extension.
-			 */
 			window.removeEventListener("message", handleMessagesFromExtension);
 		};
 	}, [handleMessagesFromExtension]);
 
-	/**
-	 * Sends a message to the extension to validate the path.
-	 */
-	const validatePath = () => {
-		vscodeWrapper.postMessage({
-			command: "isReadyToBuild",
-		});
-	};
-
-	/**
-	 * Renders the appropriate logo based on the theme visual type.
-	 * @param {string} className - The class name for the logo component.
-	 * @returns {JSX.Element} The logo component.
-	 */
-	const Logo = ({ className }: { className: string }) =>
-		themeVisualType === 2 ? (
-			<AKLogoWhite className={className} fill="white" />
-		) : (
-			<AKLogoBlack className={className} />
-		);
-
-	/**
-	 * Opens the add webview pane in the extension.
-	 */
-	const openAddWebviewPane = () => {
-		vscodeWrapper.postMessage({
-			command: "openAddWebviewPane",
-		});
+	const sendMessage = (type: MessageType) => {
+		vscodeWrapper.postMessage({ type } as Message);
 	};
 
 	return (
@@ -93,19 +42,21 @@ function App() {
 			<div className="flex flex-col w-full">
 				<div className="flex mr-8">
 					<div className="flex items-center">
-						<Logo className="w-12 h-12" />
-						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">{projectName}</div>
-						<AKButton classes="mx-4">
+						<AKLogo className="w-12 h-12" themeVisualType={themeVisualType} />
+						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">
+							{project?.name || ""}
+						</div>
+						<AKButton classes="mx-4" onClick={() => sendMessage(MessageType.buildProject)}>
 							<div className="codicon codicon-tools mr-2"></div>
 							Build
 						</AKButton>
-						<AKButton>
+						<AKButton onClick={() => sendMessage(MessageType.deployProject)}>
 							<div className="codicon codicon-play mr-2"></div>
 							Deploy
 						</AKButton>
 					</div>
 				</div>
-				<Deployments deployments={deployments} />
+				<AKDeployments deployments={deployments} />
 			</div>
 		</main>
 	);

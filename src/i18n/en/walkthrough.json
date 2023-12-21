@@ -1,0 +1,5 @@
+{
+    "setUsernameInputDialog":"Type your username (leave empty for the default: 'anonymous')",
+    "minimalUsernameLength":"Username should contain more than 3 characters",
+    "setHostInputDialog": "Type the server URL (leave empty for the default: 'http://localhost:9980')"
+}

@@ -1,47 +1,51 @@
 require("module-alias/register");
 
-import { AppSync } from "@controllers/AppSync";
-import { LocalhostConnection } from "@type/connection";
-import { ProjectWebview } from "@views";
-import { applyManifest, buildOnRightClick, themeWatcher } from "@vscommands";
+import { vsCommands } from "@constants";
+import { SidebarController } from "@controllers";
+import { TabsManagerController } from "@controllers";
+import { SidebarView } from "@views";
+import { applyManifest, buildOnRightClick } from "@vscommands";
+import {
+	openBaseURLInputDialog,
+	openUsernameInputDialog,
+	openWalkthrough,
+} from "@vscommands/walkthrough";
 import { commands, ExtensionContext, workspace } from "vscode";
 
 export async function activate(context: ExtensionContext) {
-	let connection = {
-		isRunning: workspace.getConfiguration().get("autokitteh.serviceEnabled") as boolean,
-		timer: undefined,
-	} as LocalhostConnection;
+	const sidebarView = new SidebarView();
+	const sidebarController = new SidebarController(sidebarView);
+	const tabsManager = new TabsManagerController(context);
 
-	connection = await AppSync.stopPolling(connection);
-
-	let currentProjectView: typeof ProjectWebview;
-
-	const openProjectCommand = commands.registerCommand(
-		"autokitteh.openWebview",
-		async (selectedProject) => {
-			currentProjectView = ProjectWebview.render(context.extensionUri);
-			themeWatcher(currentProjectView);
-
-			connection = await AppSync.pollData(
-				connection,
-				currentProjectView?.currentPanel,
-				selectedProject
-			);
-		}
-	);
-	context.subscriptions.push(openProjectCommand);
-
-	commands.registerCommand("autokittehSidebarTree.startPolling", async () => {
-		connection = await AppSync.pollData(connection, currentProjectView?.currentPanel); // Controller
+	commands.registerCommand(vsCommands.connect, async () => {
+		sidebarController.connect();
 	});
-	commands.registerCommand("autokittehSidebarTree.stopPolling", async () => {
-		AppSync.stopPolling(connection, currentProjectView.currentPanel);
+	commands.registerCommand(vsCommands.disconnect, async () => {
+		sidebarController.disconnect();
 	});
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {
+			tabsManager.openWebview(project);
+		})
+	);
 
+	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
+	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));
 	context.subscriptions.push(
-		commands.registerCommand("autokitteh.v2.applyManifest", applyManifest)
+		commands.registerCommand(vsCommands.openUsernameInputDialog, openUsernameInputDialog)
 	);
+	context.subscriptions.push(commands.registerCommand(vsCommands.usernameUpdated, function () {}));
+	context.subscriptions.push(commands.registerCommand(vsCommands.baseURLUpdated, function () {}));
 	context.subscriptions.push(
-		commands.registerCommand("autokitteh.v2.buildFolder", buildOnRightClick)
+		commands.registerCommand(vsCommands.openBaseURLInputDialog, openBaseURLInputDialog)
 	);
+	context.subscriptions.push(commands.registerCommand(vsCommands.walkthrough, openWalkthrough));
+
+	const isConnected = (await workspace
+		.getConfiguration()
+		.get("autokitteh.serviceEnabled")) as boolean;
+
+	if (isConnected) {
+		sidebarController.connect();
+	}
 }

@@ -4,5 +4,6 @@
 		"source.fixAll.eslint": "explicit"
 	},
 	"editor.formatOnSave": true,
-	"typescript.preferences.importModuleSpecifier": "non-relative"
+	"typescript.preferences.importModuleSpecifier": "non-relative",
+	"git.enableCommitSigning": true
 }

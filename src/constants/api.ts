@@ -1,9 +1,7 @@
+import { ValidateURL } from "@utilities";
 import { workspace } from "vscode";
 
-const HOST_ADDRESS =
-	workspace.getConfiguration().get("autokitteh.host.address") || "http://localhost";
-const HOST_PORT = workspace.getConfiguration().get("autokitteh.host.url") || "9980";
+const baseURLFromVSCode = workspace.getConfiguration().get("autokitteh.baseURL") as string;
+const BASE_URL = ValidateURL(baseURLFromVSCode) ? baseURLFromVSCode : "";
 
-export const HOST_URL = `${HOST_ADDRESS}:${HOST_PORT}`;
-
-export const URL_PREFIX = "autokitteh.";
+export { BASE_URL };

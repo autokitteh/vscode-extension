@@ -1,5 +1,3 @@
-import moment from "moment";
-import { Deployment } from "../../../src/types";
 import {
 	AKTable,
 	AKTableEmptyMessage,
@@ -7,9 +5,11 @@ import {
 	AKTableHeader,
 	AKTableRow,
 	AKTableHeaderCell,
-} from "../components/AKTable";
+} from "@components/AKTable";
+import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
+import moment from "moment";
 
-export const Deployments = ({ deployments }: { deployments: Deployment[] | undefined }) => {
+export const AKDeployments = ({ deployments }: { deployments: Deployment[] | undefined }) => {
 	return (
 		<div>
 			<AKTable classes="mt-4">
@@ -23,7 +23,9 @@ export const Deployments = ({ deployments }: { deployments: Deployment[] | undef
 				{deployments &&
 					deployments.map((deployment) => (
 						<AKTableRow key={deployment.deploymentId}>
-							<AKTableCell>{moment(deployment.createdAt).fromNow()}</AKTableCell>
+							<AKTableCell>
+								{moment(deployment.createdAt as unknown as string).fromNow()}
+							</AKTableCell>
 							<AKTableCell>{deployment.state}</AKTableCell>
 							<AKTableCell>0</AKTableCell>
 							<AKTableCell>{deployment.buildId}</AKTableCell>
@@ -39,4 +41,4 @@ export const Deployments = ({ deployments }: { deployments: Deployment[] | undef
 	);
 };
 
-export default Deployments;
+export default AKDeployments;

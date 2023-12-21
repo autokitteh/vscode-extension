@@ -1,1 +1,1 @@
-export { Theme } from "@enums/theme";
+export { Theme } from "@enums/theme.enum";
