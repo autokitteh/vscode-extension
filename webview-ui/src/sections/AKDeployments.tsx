@@ -1,5 +1,3 @@
-import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
-import moment from "moment";
 import {
 	AKTable,
 	AKTableEmptyMessage,
@@ -7,9 +5,11 @@ import {
 	AKTableHeader,
 	AKTableRow,
 	AKTableHeaderCell,
-} from "../components/AKTable";
+} from "@components/AKTable";
+import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
+import moment from "moment";
 
-export const Deployments = ({ deployments }: { deployments: Deployment[] | undefined }) => {
+export const AKDeployments = ({ deployments }: { deployments: Deployment[] | undefined }) => {
 	return (
 		<div>
 			<AKTable classes="mt-4">
@@ -41,4 +41,4 @@ export const Deployments = ({ deployments }: { deployments: Deployment[] | undef
 	);
 };
 
-export default Deployments;
+export default AKDeployments;

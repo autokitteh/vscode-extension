@@ -7,9 +7,14 @@ import svgr from "vite-plugin-svgr";
 export default defineConfig({
 	resolve: {
 		alias: {
-			"@type": path.resolve(__dirname, "../src/types"),
-			"@enums": path.resolve(__dirname, "../src/enums"),
-			"@ak-proto-ts": path.resolve(__dirname, "../src/autokitteh/proto/gen/ts/autokitteh"),
+			"@parent-type": path.resolve(__dirname, "../src/types"),
+			"@parent-enums": path.resolve(__dirname, "../src/enums"),
+			"@assets": path.resolve(__dirname, "./assets"),
+			"@components": path.resolve(__dirname, "./components"),
+			"@utilities": path.resolve(__dirname, "./components"),
+			"@sections": path.resolve(__dirname, "./components"),
+			"@interfaces": path.resolve(__dirname, "./components"),
+			"@parent-ak-proto-ts": path.resolve(__dirname, "../src/autokitteh/proto/gen/ts/autokitteh"),
 		},
 	},
 

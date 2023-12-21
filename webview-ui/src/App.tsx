@@ -1,15 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
-import { AKButton } from "./components";
-import { IIncomingMessagesHandler } from "./interfaces/incomingMessagesHandler.interface";
-import Deployments from "./sections/AKDeployments";
-import { HandleIncomingMessages } from "./utilities/incomingMessagesHandler";
-import { vscodeWrapper } from "./utilities/vscode";
-import { Deployment } from "../../src/autokitteh/proto/gen/ts/autokitteh/deployments/v1/deployment_pb";
-import { Project } from "../../src/autokitteh/proto/gen/ts/autokitteh/projects/v1/project_pb";
-import { Theme } from "../../src/enums/index";
-import { Message, MessageType } from "../../src/types";
-import AKLogoBlack from "../assets/images/ak-logo-black.svg?react";
-import AKLogoWhite from "../assets/images/ak-logo-white.svg?react";
+import { useEffect, useState } from "react";
+import AKLogoBlack from "@assets/images/ak-logo-black.svg?react";
+import AKLogoWhite from "@assets/images/ak-logo-white.svg?react";
+import { AKButton } from "@components";
+import { IIncomingMessagesHandler } from "@interfaces";
+import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
+import { Project } from "@parent-ak-proto-ts/projects/v1/project_pb";
+import { Theme } from "@parent-enums/index";
+import { Message, MessageType } from "@parent-type/index";
+import { AKDeployments } from "@sections";
+import { vscodeWrapper } from "@utilities";
+import { HandleIncomingMessages } from "@utilities";
 import "./App.css";
 
 function App() {
@@ -92,7 +92,7 @@ function App() {
 						</AKButton>
 					</div>
 				</div>
-				<Deployments deployments={deployments} />
+				<AKDeployments deployments={deployments} />
 			</div>
 		</main>
 	);
