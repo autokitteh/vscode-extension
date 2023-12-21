@@ -21,21 +21,23 @@ export class SidebarController {
 	}
 
 	public connect = async () => {
-		workspace
-			.getConfiguration()
-			.update("autokitteh.serviceEnabled", true, ConfigurationTarget.Global);
-
 		this.user = await AuthorizationService.whoAmI();
 
-		this.intervalTimerId = setInterval(async () => {
-			if (this.user) {
-				const projectsForUser = await ProjectsService.listForTree(this.user.userId);
-				if (!isEqual(projectsForUser, this.projects)) {
-					this.projects = projectsForUser;
-					this.view.refresh(projectsForUser);
+		if (this.user) {
+			workspace
+				.getConfiguration()
+				.update("autokitteh.serviceEnabled", true, ConfigurationTarget.Global);
+
+			this.intervalTimerId = setInterval(async () => {
+				if (this.user) {
+					const projectsForUser = await ProjectsService.listForTree(this.user.userId);
+					if (!isEqual(projectsForUser, this.projects)) {
+						this.projects = projectsForUser;
+						this.view.refresh(projectsForUser);
+					}
 				}
-			}
-		}, this.refreshRate);
+			}, this.refreshRate);
+		}
 	};
 
 	public disconnect = async () => {
