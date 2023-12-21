@@ -6,6 +6,8 @@ import { getNonce } from "@utilities";
 import { getUri } from "@utilities/getUri";
 import * as vscode from "vscode";
 import { Uri, window } from "vscode";
+import * as TSConfig from "../../tsconfig.json";
+const appDistFolderName = TSConfig.compilerOptions.outDir;
 
 export class ProjectView implements IProjectView {
 	private panel?: vscode.WebviewPanel;
@@ -60,7 +62,7 @@ export class ProjectView implements IProjectView {
 			{
 				enableScripts: true,
 				localResourceRoots: [
-					Uri.joinPath(this.context.extensionUri, "dist"),
+					Uri.joinPath(this.context.extensionUri, appDistFolderName),
 					Uri.joinPath(this.context.extensionUri, "webview-ui/build"),
 					Uri.joinPath(this.context.extensionUri, "webview-ui/node_modules/@vscode/codicons/dist"),
 				],
