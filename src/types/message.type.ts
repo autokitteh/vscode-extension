@@ -7,6 +7,7 @@ export enum MessageType {
 	project = "PROJECT",
 	theme = "THEME",
 	deployProject = "DEPLOY_PROJECT",
+	buildProject = "BUILD_PROJECT",
 }
 
 export type Message = {

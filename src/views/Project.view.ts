@@ -14,59 +14,42 @@ export class ProjectView implements IProjectView {
 	constructor(private context: vscode.ExtensionContext) {}
 
 	public update(data: any): void {
-		if (this.panel && this.panel.webview) {
-			this.panel.webview.postMessage(data);
-		}
+		this.panel?.webview.postMessage(data);
 	}
 	public reveal(): void {
-		if (this.panel) {
-			this.panel.reveal();
-		}
+		this.panel?.reveal();
 	}
 
 	public setupWebviewMessageListener() {
-		if (this.panel) {
-			this.panel.webview.onDidReceiveMessage(
-				(message: Message) => {
-					switch (message.type) {
-						case MessageType.deployProject:
-							console.log("deploy");
-							// TODO: Relevant function in the controller, under the delegate
-							break;
-					}
-				},
-				undefined,
-				this.context.subscriptions
-			);
-		}
+		this.panel?.webview.onDidReceiveMessage(
+			(message: Message) => {
+				switch (message.type) {
+					case MessageType.buildProject:
+						this.delegate?.build?.();
+						break;
+				}
+			},
+			undefined,
+			this.context.subscriptions
+		);
 	}
 
 	public onClose() {
-		if (this.panel) {
-			this.panel.onDidDispose(() => {
-				if (this.delegate?.onClose) {
-					this.delegate.onClose();
-				}
-			});
-		}
+		this.panel?.onDidDispose(() => {
+			this.delegate?.onClose?.();
+		});
 	}
 
 	public onBlur() {
-		if (this.delegate?.onBlur) {
-			this.delegate.onBlur();
-		}
+		this.delegate?.onBlur?.();
 	}
 
 	public onFocus() {
-		if (this.delegate?.onFocus) {
-			this.delegate.onFocus();
-		}
+		this.delegate?.onFocus?.();
 	}
 
 	public dispose() {
-		if (this.panel) {
-			this.panel.dispose();
-		}
+		this.delegate?.onFocus?.();
 	}
 
 	public show(projectName: string) {
@@ -103,12 +86,10 @@ export class ProjectView implements IProjectView {
 	}
 
 	private changeTheme(themeKind: Theme) {
-		if (this.panel) {
-			this.panel.webview.postMessage({
-				type: MessageType.theme,
-				payload: themeKind,
-			});
-		}
+		this.panel?.webview.postMessage?.({
+			type: MessageType.theme,
+			payload: themeKind,
+		});
 	}
 
 	private addThemeListener() {

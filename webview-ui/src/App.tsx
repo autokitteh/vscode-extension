@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { AKButton } from "./components";
+import { IIncomingMessagesHandler } from "./interfaces/incomingMessagesHandler.interface";
 import Deployments from "./sections/AKDeployments";
+import { HandleIncomingMessages } from "./utilities/incomingMessagesHandler";
 import { vscodeWrapper } from "./utilities/vscode";
 import { Deployment } from "../../src/autokitteh/proto/gen/ts/autokitteh/deployments/v1/deployment_pb";
 import { Project } from "../../src/autokitteh/proto/gen/ts/autokitteh/projects/v1/project_pb";
@@ -15,60 +17,37 @@ function App() {
 	const [deployments, setDeployments] = useState<Deployment[] | undefined>();
 	const [project, setProject] = useState<Project | undefined>();
 	const [directory, setDirectory] = useState<string>("");
-	const [themeVisualType, setThemeVisualType] = useState<number | undefined>();
+	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
+	const delegate: IIncomingMessagesHandler = {
+		setDeployments,
+		setProject,
+		setDirectory,
+		setThemeVisualType,
+	};
 
 	/**
 	 * Handles incoming messages from the extension.
 	 * @param {MessageEvent<Message>} event - The message event.
 	 */
-	const handleMessagesFromExtension = useCallback(
-		(event: MessageEvent<Message>) => {
-			const { payload } = event.data as Message;
-
-			switch (event.data.type) {
-				case MessageType.common:
-					setDirectory(payload as string);
-					break;
-				case MessageType.theme:
-					setThemeVisualType(payload as Theme);
-					break;
-				case MessageType.deployments:
-					setDeployments(payload as Deployment[]);
-					break;
-				case MessageType.project:
-					setProject(payload as Project);
-					break;
-				default:
-			}
-		},
-		[messagesFromExtension]
-	);
+	const handleMessagesFromExtension = (event: MessageEvent<Message>) => {
+		HandleIncomingMessages(event, delegate);
+	};
 
 	useEffect(() => {
 		/**
 		 * Adds an event listener for incoming messages from the extension.
 		 * @param {MessageEvent<Message>} event - The message event.
 		 */
-		window.addEventListener("message", (event: MessageEvent<Message>) => {
+		const eventListener = (event: MessageEvent<Message>): void =>
 			handleMessagesFromExtension(event);
-		});
 
 		return () => {
 			/**
 			 * Removes the event listener for incoming messages from the extension.
 			 */
-			window.removeEventListener("message", handleMessagesFromExtension);
+			window.removeEventListener("message", eventListener);
 		};
 	}, [handleMessagesFromExtension]);
-
-	/**
-	 * Sends a message to the extension to validate the path.
-	 */
-	const validatePath = () => {
-		vscodeWrapper.postMessage({
-			command: "isReadyToBuild",
-		});
-	};
 
 	/**
 	 * Renders the appropriate logo based on the theme visual type.
@@ -82,18 +61,15 @@ function App() {
 			<AKLogoBlack className={className} />
 		);
 
-	/**
-	 * Opens the add webview pane in the extension.
-	 */
-	const openAddWebviewPane = () => {
-		vscodeWrapper.postMessage({
-			command: "openAddWebviewPane",
-		});
-	};
-
 	const deployProject = () => {
 		vscodeWrapper.postMessage({
 			type: MessageType.deployProject,
+		} as Message);
+	};
+
+	const buildProject = () => {
+		vscodeWrapper.postMessage({
+			type: MessageType.buildProject,
 		} as Message);
 	};
 
@@ -106,7 +82,7 @@ function App() {
 						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">
 							{project?.name || ""}
 						</div>
-						<AKButton classes="mx-4">
+						<AKButton classes="mx-4" onClick={buildProject}>
 							<div className="codicon codicon-tools mr-2"></div>
 							Build
 						</AKButton>

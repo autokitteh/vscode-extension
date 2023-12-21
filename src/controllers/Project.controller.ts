@@ -111,12 +111,12 @@ export class ProjectController {
 		if (this.intervalTimerId) {
 			clearInterval(this.intervalTimerId);
 		}
-		if (this.disposeCB) {
-			this.disposeCB(this.projectId);
-		}
+		this.disposeCB?.(this.projectId);
 	}
 
-	build() {}
+	build() {
+		console.log(this.project);
+	}
 
 	deploy() {
 		if (this.intervalTimerId) {
