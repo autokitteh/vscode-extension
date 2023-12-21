@@ -1,6 +1,8 @@
 import { User } from "@ak-proto-ts/users/v1/user_pb";
 import { DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL } from "@constants/extension-configuration";
+import { translate } from "@i18n";
 import { AuthorizationService, ProjectsService } from "@services";
+import { MessageHandler } from "@views";
 import { ISidebarView } from "interfaces";
 import isEqual from "lodash/isEqual";
 import { ConfigurationTarget, window, workspace } from "vscode";
@@ -31,6 +33,9 @@ export class SidebarController {
 			this.intervalTimerId = setInterval(async () => {
 				if (this.user) {
 					const projectsForUser = await ProjectsService.listForTree(this.user.userId);
+					if (!projectsForUser.length) {
+						MessageHandler.errorMessage(translate().t("errors.noProjectsFound"));
+					}
 					if (!isEqual(projectsForUser, this.projects)) {
 						this.projects = projectsForUser;
 						this.view.refresh(projectsForUser);

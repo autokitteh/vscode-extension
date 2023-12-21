@@ -3,5 +3,6 @@
     "projectNotFound": "Not found projects",
     "showProjectDetails": "Click on a project to show its details",
     "environmentsNotDefinedForProject": "Environments not defined for this project",
-    "badBaseURL": "It seems that the host address in the configuration is wrong.\nRe-enter the host again or Go to Settings->Autokitteh and set the BaseURL in the following format: http://URL:PORT"
+    "badBaseURL": "It seems that the host address in the configuration is wrong.\nRe-enter the host again or Go to Settings->Autokitteh and set the BaseURL in the following format: http://URL:PORT",
+    "noProjectsFound": "No errors found, please check host configuration and manifest existance"
 }
