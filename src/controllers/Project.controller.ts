@@ -19,85 +19,59 @@ export class ProjectController {
 	private deployments?: Deployment[];
 	private refreshRate: number;
 
-	constructor(private projectView: IProjectView, projectId: string) {
+	constructor(projectView: IProjectView, projectId: string) {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
-		this.refreshRate =
-			(workspace.getConfiguration().get("autokitteh.project.refresh.interval") as number) ||
-			DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL;
+		this.refreshRate = workspace
+			.getConfiguration()
+			.get("autokitteh.project.refresh.interval", DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL);
+		this.init().catch((error) => console.error(error));
+	}
+
+	async init() {
+		await this.loadProject();
+		this.startInterval();
 	}
 
 	reveal(): void {
 		this.view.reveal();
 	}
 
-	private async getProjectDeployments(): Promise<Deployment[] | undefined> {
-		if (this.project) {
-			const environments = await EnvironmentsService.getByProject(this.project.projectId);
+	async getProjectDeployments(): Promise<Deployment[]> {
+		if (!this.project) {
+			return [];
+		}
 
+		try {
+			const environments = await EnvironmentsService.getByProject(this.project.projectId);
 			if (!environments.length) {
 				MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
-				return;
+				return [];
 			}
 
-			const deployments: Deployment[] = await DeploymentsService.listForEnvironments(
-				getIds(environments, "envId")
-			);
-
-			return deployments || [];
-		}
-		return [];
-	}
-
-	private refreshView() {
-		this.view.update({
-			type: MessageType.deployments,
-			payload: this.deployments,
-		});
-		if (this.project) {
-			this.view.update({
-				type: MessageType.project,
-				payload: {
-					name: this.project.name,
-				},
-			});
+			return (await DeploymentsService.listForEnvironments(getIds(environments, "envId"))) || [];
+		} catch (error) {
+			console.error(error);
+			return [];
 		}
 	}
 
-	private startViewUpdateInterval() {
-		this.intervalTimerId = setInterval(async () => {
-			const deploymentsResponse = await this.getProjectDeployments();
-			if (!isEqual(this.deployments, deploymentsResponse)) {
-				this.deployments = deploymentsResponse;
-				this.refreshView();
+	async refreshView() {
+		const deployments = await this.getProjectDeployments();
+		if (!isEqual(this.deployments, deployments)) {
+			this.deployments = deployments;
+			this.view.update({ type: MessageType.deployments, payload: deployments });
+			if (this.project) {
+				this.view.update({ type: MessageType.project, payload: { name: this.project.name } });
 			}
-		}, this.refreshRate);
-	}
-
-	private async loadProject() {
-		this.project = await ProjectsService.get(this.projectId);
-	}
-
-	public async openProject(disposeCB: ProjectCB) {
-		this.disposeCB = disposeCB;
-		await this.loadProject();
-		if (this.project) {
-			this.view.show(this.project.name);
-			this.startInterval();
 		}
 	}
 
 	startInterval() {
-		return this.startViewUpdateInterval();
-	}
-
-	public onBlur() {
-		this.stopInterval();
-	}
-
-	public onFocus() {
-		this.startInterval();
+		if (!this.intervalTimerId) {
+			this.intervalTimerId = setInterval(() => this.refreshView(), this.refreshRate);
+		}
 	}
 
 	stopInterval() {
@@ -107,10 +81,32 @@ export class ProjectController {
 		}
 	}
 
-	onClose() {
-		if (this.intervalTimerId) {
-			clearInterval(this.intervalTimerId);
+	async loadProject() {
+		try {
+			this.project = await ProjectsService.get(this.projectId);
+		} catch (error) {
+			console.error(error);
 		}
+	}
+
+	public async openProject(disposeCB: ProjectCB) {
+		await this.loadProject();
+		if (this.project) {
+			this.view.show(this.project.name);
+			this.startInterval();
+		}
+	}
+
+	onBlur() {
+		this.stopInterval();
+	}
+
+	onFocus() {
+		this.startInterval();
+	}
+
+	onClose() {
+		this.stopInterval();
 		this.disposeCB?.(this.projectId);
 	}
 
@@ -118,9 +114,5 @@ export class ProjectController {
 		console.log(this.project);
 	}
 
-	deploy() {
-		if (this.intervalTimerId) {
-			clearInterval(this.intervalTimerId);
-		}
-	}
+	deploy() {}
 }
