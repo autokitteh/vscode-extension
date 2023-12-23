@@ -1,6 +1,5 @@
 import { IIncomingMessagesHandler } from "@interfaces";
 import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
-import { Project } from "@parent-ak-proto-ts/projects/v1/project_pb";
 import { Theme } from "@parent-enums/index";
 import { Message, MessageType } from "@parent-type/index";
 
@@ -8,7 +7,6 @@ export const HandleIncomingMessages = (
 	event: MessageEvent<Message>,
 	handlers: IIncomingMessagesHandler
 ) => {
-	debugger;
 	const { payload } = event.data as Message;
 
 	switch (event.data.type) {

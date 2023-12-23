@@ -1,3 +1,4 @@
+import { log } from "console";
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL } from "@constants";
@@ -86,9 +87,16 @@ export class ProjectController {
 	}
 
 	async build() {
-		await ProjectsService.build(this.projectId);
-		MessageHandler.infoMessage(translate().t("projects.projectBuildSucceed"));
+		const buildId = await ProjectsService.build(this.projectId);
+		if (buildId) {
+			MessageHandler.infoMessage(translate().t("projects.projectBuildSucceed"));
+		}
 	}
 
-	deploy() {}
+	async deploy() {
+		const deploymentId = await ProjectsService.deploy(this.projectId);
+		if (deploymentId) {
+			MessageHandler.infoMessage(translate().t("projects.projectDeploySucceed"));
+		}
+	}
 }
