@@ -1,4 +1,4 @@
-import { manifestClient } from "@api/grpc/clients.api";
+import { manifestClient } from "@api/grpc/clients.grpc.api";
 import { MessageHandler } from "@views";
 import { window } from "vscode";
 
