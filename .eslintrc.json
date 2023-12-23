@@ -93,5 +93,6 @@
 				"case": "camelCase"
 			}
 		]
-	}
+	},
+	"extends": ["prettier"]
 }

@@ -3,11 +3,13 @@
 /.pnp
 .pnp.js
 
-/webview-ui/node_modules
-/webview-ui/build
-/src/autokitteh
+webview-ui/build*
+webview-ui/index.html
+src/autokitteh*
 
 package-lock.json
+
+.gitignore
 
 # testing
 /coverage
