@@ -5,7 +5,7 @@ import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { EnvironmentsService, DeploymentsService, ProjectsService } from "@services";
 import { MessageType } from "@type";
-import { getIds } from "@utilities/getIds";
+import { getIds } from "@utilities/getIds.util";
 import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
 import { workspace } from "vscode";

@@ -4,8 +4,8 @@ import { EnvsService } from "@ak-proto-ts/envs/v1/svc_connect";
 import { ProjectsService } from "@ak-proto-ts/projects/v1/svc_connect";
 import { UsersService } from "@ak-proto-ts/users/v1/svc_connect";
 import { ApiClient } from "@api";
-import { grpcTransport } from "@api/grpc/transport";
-import { ManifestService } from "@api/manifest";
+import { grpcTransport } from "@api/grpc/transport.api";
+import { ManifestService } from "@api/manifest.api";
 import { createPromiseClient } from "@connectrpc/connect";
 
 export const projectsClient = createPromiseClient(ProjectsService, grpcTransport);
