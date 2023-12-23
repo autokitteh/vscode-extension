@@ -11,18 +11,16 @@
 
 ## What type of PR is this? (check all applicable)
 
-- [ ] 🔄 Refactor 
+- [ ] 🔄 Refactor
 - [ ] 💡 Feature (non-breaking change which adds functionality)
 - [ ] 🐞 Bug Fix (non-breaking change which fixes an issue)
 - [ ] 🔨 Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] 🏎 Optimization 
-- [ ] 📄 Documentation Update 
+- [ ] 🏎 Optimization
+- [ ] 📄 Documentation Update
 
 ## Description
 
-
 ## Linear Ticket
-
 
 ## Checklist:
 

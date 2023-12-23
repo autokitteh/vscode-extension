@@ -4,57 +4,36 @@
 		"ecmaVersion": 6,
 		"sourceType": "module"
 	},
-	"plugins": [
-		"@typescript-eslint",
-		"import",
-		"unicorn"
-	],
+	"plugins": ["@typescript-eslint", "import", "unicorn"],
 	"root": true,
 	"rules": {
 		"@typescript-eslint/naming-convention": [
 			"error",
 			{
-				"format": [
-					"camelCase",
-					"PascalCase"
-				],
+				"format": ["camelCase", "PascalCase"],
 				"selector": "default"
 			},
 			{
-				"format": [
-					"camelCase",
-					"PascalCase",
-					"UPPER_CASE"
-				],
+				"format": ["camelCase", "PascalCase", "UPPER_CASE"],
 				"leadingUnderscore": "allow",
 				"selector": "variable"
 			},
 			{
-				"format": [
-					"PascalCase"
-				],
+				"format": ["PascalCase"],
 				"leadingUnderscore": "allow",
 				"selector": "typeLike"
 			},
 			{
-				"format": [
-					"camelCase"
-				],
+				"format": ["camelCase"],
 				"leadingUnderscore": "allow",
 				"selector": "classProperty"
 			},
 			{
-				"format": [
-					"camelCase",
-					"UPPER_CASE"
-				],
+				"format": ["camelCase", "UPPER_CASE"],
 				"selector": "enumMember"
 			},
 			{
-				"format": [
-					"camelCase",
-					"PascalCase"
-				],
+				"format": ["camelCase", "PascalCase"],
 				"leadingUnderscore": "allow",
 				"selector": "classMethod"
 			}
@@ -76,15 +55,7 @@
 					"caseInsensitive": true,
 					"order": "asc"
 				},
-				"groups": [
-					"external",
-					"builtin",
-					"parent",
-					[
-						"sibling",
-						"index"
-					]
-				],
+				"groups": ["external", "builtin", "parent", ["sibling", "index"]],
 				"newlines-between": "never",
 				"pathGroups": [
 					{
@@ -103,9 +74,7 @@
 						"position": "after"
 					}
 				],
-				"pathGroupsExcludedImportTypes": [
-					"builtin"
-				]
+				"pathGroupsExcludedImportTypes": ["builtin"]
 			}
 		],
 		"max-len": [
@@ -124,5 +93,6 @@
 				"case": "camelCase"
 			}
 		]
-	}
+	},
+	"extends": ["prettier"]
 }

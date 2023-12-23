@@ -1,7 +1,6 @@
 {
-    "clickHere": "Click here to connect",
-    "projects": "Projects",
-    "openProject": "Open project",
-    "projectBuildSucceed": "Project build succeed"
-
+	"clickHere": "Click here to connect",
+	"projects": "Projects",
+	"openProject": "Open project",
+	"projectBuildSucceed": "Project build succeed"
 }

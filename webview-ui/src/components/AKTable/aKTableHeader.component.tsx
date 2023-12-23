@@ -5,9 +5,5 @@ interface AKTableHeaderProps {
 }
 
 export const AKTableHeader = ({ children }: AKTableHeaderProps) => {
-	return (
-		<tr className="bg-vscode-editorGroup-dropBackground font-bold">
-			{children}
-		</tr>
-	);
+	return <tr className="bg-vscode-editorGroup-dropBackground font-bold">{children}</tr>;
 };

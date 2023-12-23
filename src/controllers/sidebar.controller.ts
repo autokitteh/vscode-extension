@@ -1,13 +1,12 @@
 import { User } from "@ak-proto-ts/users/v1/user_pb";
-import { BASE_URL } from "@constants";
-import { DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL } from "@constants/extensionConfiguration.constans";
+import { BASE_URL, vsCommands, DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL } from "@constants";
 import { translate } from "@i18n";
 import { AuthorizationService, ProjectsService } from "@services";
 import { ValidateURL } from "@utilities";
 import { MessageHandler } from "@views";
 import { ISidebarView } from "interfaces";
 import isEqual from "lodash/isEqual";
-import { ConfigurationTarget, window, workspace } from "vscode";
+import { ConfigurationTarget, commands, window, workspace } from "vscode";
 
 export class SidebarController {
 	private view: ISidebarView;
@@ -27,6 +26,7 @@ export class SidebarController {
 	public connect = async () => {
 		if (!ValidateURL(BASE_URL)) {
 			MessageHandler.errorMessage(translate().t("errors.badHostURL"));
+			commands.executeCommand(vsCommands.disconnect);
 			return;
 		}
 
