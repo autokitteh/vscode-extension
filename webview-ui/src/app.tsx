@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
+import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import { AKButton, AKLogo } from "@components";
 import { Theme } from "@enums/index";
 import { translate } from "@i18n/index";
+import { IIncomingMessagesHandler } from "@interfaces/incomingMessagesHandler.interface";
 import { AKDeployments } from "@sections";
 import { Message, MessageType } from "@type/index";
 import { HandleIncomingMessages, vscodeWrapper } from "@utilities";
@@ -10,15 +12,15 @@ import "./App.css";
 
 function App() {
 	const [deployments, setDeployments] = useState<Deployment[] | undefined>();
+	const [sessions, setSessions] = useState<Session[] | undefined>();
 	const [projectName, setProjectName] = useState<string | undefined>();
-	const [directory, setDirectory] = useState<string>("");
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 
-	const messageHandlers = {
+	const messageHandlers: IIncomingMessagesHandler = {
 		setDeployments,
 		setProjectName,
-		setDirectory,
 		setThemeVisualType,
+		setSessions,
 	};
 
 	const handleMessagesFromExtension = useCallback(

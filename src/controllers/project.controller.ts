@@ -1,10 +1,16 @@
 import { log } from "console";
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
+import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import { DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL } from "@constants";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
-import { EnvironmentsService, DeploymentsService, ProjectsService } from "@services";
+import {
+	EnvironmentsService,
+	DeploymentsService,
+	ProjectsService,
+	SessionsService,
+} from "@services";
 import { MessageType } from "@type";
 import { getIds } from "@utilities/getIds.utils";
 import { MessageHandler } from "@views";
@@ -18,6 +24,7 @@ export class ProjectController {
 	public projectId: string;
 	public project?: Project;
 	private deployments?: Deployment[];
+	private sessions?: Session[];
 	private refreshRate: number;
 
 	constructor(projectView: IProjectView, projectId: string) {
@@ -40,7 +47,11 @@ export class ProjectController {
 			return [];
 		}
 
-		return await DeploymentsService.listForEnvironments(getIds(environments, "envId"));
+		return await DeploymentsService.listByEnvironmentIds(getIds(environments, "envId"));
+	}
+
+	async getProjectSessions(): Promise<Session[]> {
+		return await SessionsService.listByProject(this.projectId);
 	}
 
 	async refreshView() {
@@ -48,6 +59,11 @@ export class ProjectController {
 		if (!isEqual(this.deployments, deployments)) {
 			this.deployments = deployments;
 			this.view.update({ type: MessageType.deployments, payload: deployments });
+		}
+		const sessions = await this.getProjectSessions();
+		if (!isEqual(this.sessions, sessions)) {
+			this.sessions = sessions;
+			this.view.update({ type: MessageType.sessions, payload: sessions });
 		}
 	}
 
