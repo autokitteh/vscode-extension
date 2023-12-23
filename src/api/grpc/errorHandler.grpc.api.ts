@@ -2,7 +2,7 @@ import { ConnectError } from "@connectrpc/connect";
 import { vsCommands } from "@constants";
 import { gRPCErrors } from "@constants/api.constants";
 import { MessageHandler } from "@views";
-import {commands} from "vscode";
+import { commands } from "vscode";
 
 export const handlegRPCErrors = async (error: unknown) => {
 	if (error instanceof ConnectError) {

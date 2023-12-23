@@ -1,211 +1,211 @@
 {
-    "_moduleAliases": {
-        "@ak-proto-ts": "dist/src/autokitteh/proto/gen/ts/autokitteh",
-        "@api": "dist/src/api",
-        "@connection": "dist/src/connection.js",
-        "@constants": "dist/src/constants",
-        "@controllers": "dist/src/controllers",
-        "@enums": "dist/src/enums",
-        "@i18n": "dist/src/i18n",
-        "@providers": "dist/src/providers",
-        "@services": "dist/src/services",
-        "@type": "dist/src/types",
-        "@utilities": "dist/src/utilities",
-        "@views": "dist/src/views",
-        "@vscommands": "dist/src/vscommands"
-    },
-    "contributes": {
-        "commands": [
-            {
-                "command": "autokitteh.applyManifest",
-                "title": "Autokitteh V2: Apply Manifest"
-            },
-            {
-                "command": "autokitteh.buildFolder",
-                "title": "Build autokitteh"
-            },
-            {
-                "command": "autokitteh.connect",
-                "icon": "./resources/sidebar/top-panel-connect.svg",
-                "title": "Autokitteh: Connect to server"
-            },
-            {
-                "command": "autokitteh.disconnect",
-                "icon": "./resources/sidebar/top-panel-disconnect.svg",
-                "title": "Autokitteh: Disconnect from server"
-            }
-        ],
-        "configuration": {
-            "properties": {
-                "autokitteh.baseURL": {
-                    "default": "",
-                    "description": "Server URL",
-                    "type": "string"
-                },
-                "autokitteh.serviceEnabled": {
-                    "default": false,
-                    "description": "Is connected to the server",
-                    "type": "boolean"
-                },
-                "autokitteh.username": {
-                    "default": "anonymous",
-                    "description": "Username used for the connection",
-                    "type": "string"
-                },
-                "autokitteh.sidebar.refresh.interval": {
-                    "default": 1000,
-                    "description": "Refresh interval in ms for the sidebar panel",
-                    "type": "number"
-                },
-                "autokitteh.project.refresh.interval": {
-                    "default": 1000,
-                    "description": "Refresh interval in ms for the projects webview panel",
-                    "type": "number"
-                }
-            },
-            "title": "autokitteh"
-        },
-        "menus": {
-            "explorer/context": [
-                {
-                    "command": "autokitteh.buildFolder",
-                    "when": "resourceLangId == yaml && resourceFilename =~ /autokitteh.yaml/"
-                }
-            ],
-            "view/title": [
-                {
-                    "command": "autokitteh.connect",
-                    "group": "navigation",
-                    "when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
-                },
-                {
-                    "command": "autokitteh.disconnect",
-                    "group": "navigation",
-                    "when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled"
-                }
-            ]
-        },
-        "publisher": "autokitteh",
-        "views": {
-            "autokittehSidebarTree": [
-                {
-                    "id": "autokittehSidebarTree",
-                    "name": "AK Server"
-                }
-            ]
-        },
-        "viewsContainers": {
-            "activitybar": [
-                {
-                    "icon": "./resources/sidebar/ak-sidebar-icon.svg",
-                    "id": "autokittehSidebarTree",
-                    "title": "Autokitteh"
-                }
-            ]
-        },
-        "viewsWelcome": [
-            {
-                "contents": "No connection instance has been found.\n[Connect](command:autokitteh.connect)",
-                "view": "autokittehSidebarTree",
-                "when": "config.autokitteh.username && config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
-            },
-            {
-                "contents": "No instance setup has been found.\n[Setup Configuration](command:autokitteh.walkthrough)\n",
-                "view": "autokittehSidebarTree",
-                "when": "!config.autokitteh.username || !config.autokitteh.baseURL"
-            }
-        ],
-        "walkthroughs": [
-            {
-                "description": "Let's start",
-                "id": "autokitteh.walkthrough",
-                "steps": [
-                    {
-                        "completionEvents": [
-                            "onSettingChanged:autokitteh.baseURL"
-                        ],
-                        "description": "Set your username to connect the server.\n[Set your username](command:autokitteh.openUsernameInputDialog)",
-                        "id": "openUsernameInputDialog",
-                        "media": {
-                            "altText": "Empty image",
-                            "image": "resources/walkthrough/empty.png"
-                        },
-                        "title": "Set username"
-                    },
-                    {
-                        "completionEvents": [
-                            "onSettingChanged:autokitteh.baseURL"
-                        ],
-                        "description": "Set the address of the server.\n[Insert server URL](command:autokitteh.openBaseURLInputDialog)",
-                        "id": "openBaseURLInputDialog",
-                        "media": {
-                            "altText": "Empty image",
-                            "image": "resources/walkthrough/empty.png"
-                        },
-                        "title": "Set server URL"
-                    },
-                    {
-                        "completionEvents": [
-                            "onCommand:autokitteh.connect"
-                        ],
-                        "description": "[Connect](command:autokitteh.connect)",
-                        "id": "connectAK",
-                        "media": {
-                            "altText": "Empty image",
-                            "image": "resources/walkthrough/empty.png"
-                        },
-                        "title": "Now you can connect"
-                    }
-                ],
-                "title": "Welcome to Autokitteh"
-            }
-        ]
-    },
-    "dependencies": {
-        "@connectrpc/connect": "^1.1.4",
-        "@connectrpc/connect-node": "^1.1.4",
-        "axios": "^1.6.2",
-        "i18next": "^23.7.11",
-        "js-yaml": "^4.1.0",
-        "lodash": "^4.17.21",
-        "module-alias": "^2.2.3"
-    },
-    "description": "AutoKitteh is an open-source automation framework designed to simplify the process of automating tasks across various environments and tools. Its primary focus is on providing a versatile and user-friendly platform for automating operations, particularly in DevOps and software development contexts.",
-    "devDependencies": {
-        "@commitlint/cli": "^18.4.3",
-        "@commitlint/config-conventional": "^18.4.3",
-        "@githubocto/tailwind-vscode": "^1.0.5",
-        "@types/glob": "^7.1.3",
-        "@types/js-yaml": "^4.0.9",
-        "@types/lodash": "^4.14.202",
-        "@types/node": "^12.11.7",
-        "@types/vscode": "^1.46.0",
-        "@typescript-eslint/eslint-plugin": "^6.14.0",
-        "@typescript-eslint/parser": "^6.14.0",
-        "eslint": "^8.56.0",
-        "eslint-plugin-import": "^2.29.0",
-        "eslint-plugin-unicorn": "^50.0.1",
-        "glob": "^7.1.6",
-        "husky": "^8.0.3",
-        "prettier": "^2.2.1",
-        "typescript": "^5.3.3",
-        "vscode-test": "^1.5.0"
-    },
-    "engines": {
-        "vscode": "^1.75.0"
-    },
-    "main": "./dist/src/extension.js",
-    "name": "vscode-v2",
-    "scripts": {
-        "build:webview": "cd webview-ui && npm run build",
-        "compile": "tsc -p ./",
-        "install:all": "npm install && cd webview-ui && npm install",
-        "fetch-protos": "git submodule update --init",
-        "lint": "eslint src --ext ts",
-        "pretest": "npm run compile && npm run lint",
-        "start:webview": "cd webview-ui && npm run start",
-        "vscode:prepublish": "npm run compile",
-        "watch": "tsc -watch -p ./"
-    },
-    "version": "0.0.1"
+	"_moduleAliases": {
+		"@ak-proto-ts": "dist/src/autokitteh/proto/gen/ts/autokitteh",
+		"@api": "dist/src/api",
+		"@connection": "dist/src/connection.js",
+		"@constants": "dist/src/constants",
+		"@controllers": "dist/src/controllers",
+		"@enums": "dist/src/enums",
+		"@i18n": "dist/src/i18n",
+		"@providers": "dist/src/providers",
+		"@services": "dist/src/services",
+		"@type": "dist/src/types",
+		"@utilities": "dist/src/utilities",
+		"@views": "dist/src/views",
+		"@vscommands": "dist/src/vscommands"
+	},
+	"contributes": {
+		"commands": [
+			{
+				"command": "autokitteh.applyManifest",
+				"title": "Autokitteh V2: Apply Manifest"
+			},
+			{
+				"command": "autokitteh.buildFolder",
+				"title": "Build autokitteh"
+			},
+			{
+				"command": "autokitteh.connect",
+				"icon": "./resources/sidebar/top-panel-connect.svg",
+				"title": "Autokitteh: Connect to server"
+			},
+			{
+				"command": "autokitteh.disconnect",
+				"icon": "./resources/sidebar/top-panel-disconnect.svg",
+				"title": "Autokitteh: Disconnect from server"
+			}
+		],
+		"configuration": {
+			"properties": {
+				"autokitteh.baseURL": {
+					"default": "",
+					"description": "Server URL",
+					"type": "string"
+				},
+				"autokitteh.serviceEnabled": {
+					"default": false,
+					"description": "Is connected to the server",
+					"type": "boolean"
+				},
+				"autokitteh.username": {
+					"default": "anonymous",
+					"description": "Username used for the connection",
+					"type": "string"
+				},
+				"autokitteh.sidebar.refresh.interval": {
+					"default": 1000,
+					"description": "Refresh interval in ms for the sidebar panel",
+					"type": "number"
+				},
+				"autokitteh.project.refresh.interval": {
+					"default": 1000,
+					"description": "Refresh interval in ms for the projects webview panel",
+					"type": "number"
+				}
+			},
+			"title": "autokitteh"
+		},
+		"menus": {
+			"explorer/context": [
+				{
+					"command": "autokitteh.buildFolder",
+					"when": "resourceLangId == yaml && resourceFilename =~ /autokitteh.yaml/"
+				}
+			],
+			"view/title": [
+				{
+					"command": "autokitteh.connect",
+					"group": "navigation",
+					"when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
+				},
+				{
+					"command": "autokitteh.disconnect",
+					"group": "navigation",
+					"when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled"
+				}
+			]
+		},
+		"publisher": "autokitteh",
+		"views": {
+			"autokittehSidebarTree": [
+				{
+					"id": "autokittehSidebarTree",
+					"name": "AK Server"
+				}
+			]
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"icon": "./resources/sidebar/ak-sidebar-icon.svg",
+					"id": "autokittehSidebarTree",
+					"title": "Autokitteh"
+				}
+			]
+		},
+		"viewsWelcome": [
+			{
+				"contents": "No connection instance has been found.\n[Connect](command:autokitteh.connect)",
+				"view": "autokittehSidebarTree",
+				"when": "config.autokitteh.username && config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
+			},
+			{
+				"contents": "No instance setup has been found.\n[Setup Configuration](command:autokitteh.walkthrough)\n",
+				"view": "autokittehSidebarTree",
+				"when": "!config.autokitteh.username || !config.autokitteh.baseURL"
+			}
+		],
+		"walkthroughs": [
+			{
+				"description": "Let's start",
+				"id": "autokitteh.walkthrough",
+				"steps": [
+					{
+						"completionEvents": [
+							"onSettingChanged:autokitteh.baseURL"
+						],
+						"description": "Set your username to connect the server.\n[Set your username](command:autokitteh.openUsernameInputDialog)",
+						"id": "openUsernameInputDialog",
+						"media": {
+							"altText": "Empty image",
+							"image": "resources/walkthrough/empty.png"
+						},
+						"title": "Set username"
+					},
+					{
+						"completionEvents": [
+							"onSettingChanged:autokitteh.baseURL"
+						],
+						"description": "Set the address of the server.\n[Insert server URL](command:autokitteh.openBaseURLInputDialog)",
+						"id": "openBaseURLInputDialog",
+						"media": {
+							"altText": "Empty image",
+							"image": "resources/walkthrough/empty.png"
+						},
+						"title": "Set server URL"
+					},
+					{
+						"completionEvents": [
+							"onCommand:autokitteh.connect"
+						],
+						"description": "[Connect](command:autokitteh.connect)",
+						"id": "connectAK",
+						"media": {
+							"altText": "Empty image",
+							"image": "resources/walkthrough/empty.png"
+						},
+						"title": "Now you can connect"
+					}
+				],
+				"title": "Welcome to Autokitteh"
+			}
+		]
+	},
+	"dependencies": {
+		"@connectrpc/connect": "^1.1.4",
+		"@connectrpc/connect-node": "^1.1.4",
+		"axios": "^1.6.2",
+		"i18next": "^23.7.11",
+		"js-yaml": "^4.1.0",
+		"lodash": "^4.17.21",
+		"module-alias": "^2.2.3"
+	},
+	"description": "AutoKitteh is an open-source automation framework designed to simplify the process of automating tasks across various environments and tools. Its primary focus is on providing a versatile and user-friendly platform for automating operations, particularly in DevOps and software development contexts.",
+	"devDependencies": {
+		"@commitlint/cli": "^18.4.3",
+		"@commitlint/config-conventional": "^18.4.3",
+		"@githubocto/tailwind-vscode": "^1.0.5",
+		"@types/glob": "^7.1.3",
+		"@types/js-yaml": "^4.0.9",
+		"@types/lodash": "^4.14.202",
+		"@types/node": "^12.11.7",
+		"@types/vscode": "^1.46.0",
+		"@typescript-eslint/eslint-plugin": "^6.14.0",
+		"@typescript-eslint/parser": "^6.14.0",
+		"eslint": "^8.56.0",
+		"eslint-plugin-import": "^2.29.0",
+		"eslint-plugin-unicorn": "^50.0.1",
+		"glob": "^7.1.6",
+		"husky": "^8.0.3",
+		"prettier": "^2.2.1",
+		"typescript": "^5.3.3",
+		"vscode-test": "^1.5.0"
+	},
+	"engines": {
+		"vscode": "^1.75.0"
+	},
+	"main": "./dist/src/extension.js",
+	"name": "vscode-v2",
+	"scripts": {
+		"build:webview": "cd webview-ui && npm run build",
+		"compile": "tsc -p ./",
+		"install:all": "npm install && cd webview-ui && npm install",
+		"fetch-protos": "git submodule update --init",
+		"lint": "eslint src --ext ts",
+		"pretest": "npm run compile && npm run lint",
+		"start:webview": "cd webview-ui && npm run start",
+		"vscode:prepublish": "npm run compile",
+		"watch": "tsc -watch -p ./"
+	},
+	"version": "0.0.1"
 }

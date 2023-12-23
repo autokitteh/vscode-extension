@@ -3,6 +3,10 @@
 /.pnp
 .pnp.js
 
+/webview-ui/node_modules
+/webview-ui/build
+/src/autokitteh
+
 # testing
 /coverage
 

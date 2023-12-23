@@ -5,9 +5,5 @@ interface AKTableHeaderCellProps {
 }
 
 export const AKTableHeaderCell = ({ children }: AKTableHeaderCellProps) => {
-	return (
-		<th>
-			{children}
-		</th>
-	);
+	return <th>{children}</th>;
 };
