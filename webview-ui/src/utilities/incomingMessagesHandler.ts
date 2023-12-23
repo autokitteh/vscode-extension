@@ -11,16 +11,16 @@ export const HandleIncomingMessages = (
 
 	switch (event.data.type) {
 		case MessageType.common:
-			handlers.setDirectory(payload as string);
+			handlers.setDirectory(payload);
 			break;
 		case MessageType.theme:
-			handlers.setThemeVisualType(payload as Theme);
+			handlers.setThemeVisualType(payload);
 			break;
 		case MessageType.deployments:
-			handlers.setDeployments(payload as Deployment[]);
+			handlers.setDeployments(payload);
 			break;
 		case MessageType.project:
-			handlers.setProjectName(payload as string);
+			handlers.setProjectName(payload);
 			break;
 		default:
 	}
