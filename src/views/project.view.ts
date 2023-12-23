@@ -72,6 +72,8 @@ export class ProjectView implements IProjectView {
 			}
 		);
 
+		this.onClose();
+
 		this.panel.onDidChangeViewState((newState) => {
 			if (newState.webviewPanel.visible) {
 				this.onFocus();

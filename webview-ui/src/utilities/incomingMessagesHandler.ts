@@ -1,5 +1,7 @@
+import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
+import { Theme } from "@enums/index";
 import { IIncomingMessagesHandler } from "@interfaces";
-import { Message, MessageType } from "@parent-type/index";
+import { Message, MessageType } from "@type/index";
 
 export const HandleIncomingMessages = (
 	event: MessageEvent<Message>,
@@ -9,16 +11,16 @@ export const HandleIncomingMessages = (
 
 	switch (event.data.type) {
 		case MessageType.common:
-			handlers.setDirectory(payload);
+			handlers.setDirectory(payload as string);
 			break;
 		case MessageType.theme:
-			handlers.setThemeVisualType(payload);
+			handlers.setThemeVisualType(payload as Theme);
 			break;
 		case MessageType.deployments:
-			handlers.setDeployments(payload);
+			handlers.setDeployments(payload as Deployment[]);
 			break;
 		case MessageType.project:
-			handlers.setProjectName(payload);
+			handlers.setProjectName(payload as string);
 			break;
 		default:
 	}

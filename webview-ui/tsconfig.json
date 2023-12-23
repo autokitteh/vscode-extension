@@ -17,8 +17,9 @@
 		"noEmit": true,
 		"jsx": "react-jsx",
 		"paths": {
-			"@parent-ak-proto-ts/*": ["../src/autokitteh/proto/gen/ts/autokitteh/*"],
-			"@parent-type/*": ["../src/types/*"],
+			"@ak-proto-ts/*": ["../src/autokitteh/proto/gen/ts/autokitteh/*"],
+			"@type/*": ["../src/types/*"],
+			"@i18n/*": ["../src/i18n/*"],
 			"@assets/*": ["assets/*"],
 			"@components/*": ["src/components/*"],
 			"@components": ["src/components/index"],
@@ -28,7 +29,7 @@
 			"@sections": ["src/sections/index"],
 			"@interfaces/*": ["src/interfaces/*"],
 			"@interfaces": ["src/interfaces/index"],
-			"@parent-enums/*": ["../src/enums/*"]
+			"@enums/*": ["../src/enums/*"]
 		}
 	},
 	"include": ["./src"]

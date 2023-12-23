@@ -1,5 +1,5 @@
-import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
-import { Theme } from "@parent-enums/index";
+import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
+import { Theme } from "@enums/index";
 
 export interface IIncomingMessagesHandler {
 	setDeployments(deployments: Deployment[] | undefined): void;

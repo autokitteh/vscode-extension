@@ -1,3 +1,4 @@
+import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import {
 	AKTable,
 	AKTableEmptyMessage,
@@ -5,8 +6,8 @@ import {
 	AKTableHeader,
 	AKTableRow,
 	AKTableHeaderCell,
-} from "@components/aKTable";
-import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
+} from "@components/AKTable";
+import { translate } from "@i18n/index";
 import moment from "moment";
 
 export const AKDeployments = ({ deployments }: { deployments: Deployment[] | undefined }) => {
@@ -14,11 +15,11 @@ export const AKDeployments = ({ deployments }: { deployments: Deployment[] | und
 		<div>
 			<AKTable classes="mt-4">
 				<AKTableHeader>
-					<AKTableHeaderCell>Deploy Time</AKTableHeaderCell>
-					<AKTableHeaderCell>Status</AKTableHeaderCell>
-					<AKTableHeaderCell>Sessions</AKTableHeaderCell>
-					<AKTableHeaderCell>Build-ID (Optional)</AKTableHeaderCell>
-					<AKTableHeaderCell>Actions</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactAppDeployments.time")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactAppDeployments.status")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactAppDeployments.sessions")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactAppDeployments.buildId")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactAppDeployments.actions")}</AKTableHeaderCell>
 				</AKTableHeader>
 				{deployments &&
 					deployments.map((deployment) => (

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
+import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { AKButton, AKLogo } from "@components";
-import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
-import { Theme } from "@parent-enums/index";
-import { Message, MessageType } from "@parent-type/index";
+import { Theme } from "@enums/index";
+import { translate } from "@i18n/index";
 import { AKDeployments } from "@sections";
+import { Message, MessageType } from "@type/index";
 import { HandleIncomingMessages, vscodeWrapper } from "@utilities";
 import "./App.css";
 
@@ -43,15 +44,15 @@ function App() {
 					<div className="flex items-center">
 						<AKLogo className="w-12 h-12" themeVisualType={themeVisualType} />
 						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">
-							{projectName || ""}
+							{projectName || translate().t("reactAppErrors.projects.noTitle")}
 						</div>
 						<AKButton classes="mx-4" onClick={() => sendMessage(MessageType.buildProject)}>
 							<div className="codicon codicon-tools mr-2"></div>
-							Test
+							{translate().t("reactAppGeneral.test")}
 						</AKButton>
 						<AKButton onClick={() => sendMessage(MessageType.deployProject)}>
 							<div className="codicon codicon-play mr-2"></div>
-							Run
+							{translate().t("reactAppGeneral.run")}
 						</AKButton>
 					</div>
 				</div>

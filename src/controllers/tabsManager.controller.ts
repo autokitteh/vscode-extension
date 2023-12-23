@@ -9,6 +9,7 @@ export class TabsManagerController {
 	constructor(context: ExtensionContext) {
 		this.openWebviews = {};
 		this.context = context;
+		this.disposeWebview = this.disposeWebview.bind(this);
 	}
 
 	public async openWebview(project: SidebarTreeItem) {
