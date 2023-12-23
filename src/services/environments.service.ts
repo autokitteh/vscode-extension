@@ -1,6 +1,6 @@
 import { Env } from "@ak-proto-ts/envs/v1/env_pb";
-import { environmentsClient } from "@api/grpc/clients";
-import { handlegRPCErrors } from "@api/grpc/grpc.errorHandler";
+import { environmentsClient } from "@api/grpc/clients.api";
+import { handlegRPCErrors } from "@api/grpc/grpc.errorHandler.api";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
