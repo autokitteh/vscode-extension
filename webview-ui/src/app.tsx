@@ -47,11 +47,11 @@ function App() {
 						</div>
 						<AKButton classes="mx-4" onClick={() => sendMessage(MessageType.buildProject)}>
 							<div className="codicon codicon-tools mr-2"></div>
-							Build
+							Test
 						</AKButton>
 						<AKButton onClick={() => sendMessage(MessageType.deployProject)}>
 							<div className="codicon codicon-play mr-2"></div>
-							Deploy
+							Run
 						</AKButton>
 					</div>
 				</div>

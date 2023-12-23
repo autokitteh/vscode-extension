@@ -55,4 +55,13 @@ export class ProjectsService {
 		}
 		return;
 	}
+
+	static async run(projectId: string): Promise<string | undefined> {
+		const deploymentId = await this.deploy(projectId);
+		if (deploymentId) {
+			await DeploymentsService.activate(deploymentId);
+			return deploymentId;
+		}
+		return;
+	}
 }
