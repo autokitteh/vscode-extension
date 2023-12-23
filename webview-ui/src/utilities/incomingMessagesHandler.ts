@@ -1,6 +1,4 @@
 import { IIncomingMessagesHandler } from "@interfaces";
-import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
-import { Theme } from "@parent-enums/index";
 import { Message, MessageType } from "@parent-type/index";
 
 export const HandleIncomingMessages = (
