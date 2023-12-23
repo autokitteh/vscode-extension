@@ -194,7 +194,7 @@
     "engines": {
         "vscode": "^1.75.0"
     },
-    "main": "./dist/src/extension.js",
+    "main": "./dist/extension.js",
     "name": "vscode-v2",
     "scripts": {
         "build:webview": "cd webview-ui && npm run build",
