@@ -4,6 +4,6 @@ export {
 	EXT_PUBLISHER,
 	DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL,
 	DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL,
-} from "@constants/extensionConfiguration.constans";
+} from "@constants/extensionConfiguration.constants";
 export { BASE_URL } from "@constants/api.constants";
-export { vsCommands } from "@constants/vsCommands.constans";
+export { vsCommands } from "@constants/vsCommands.constants";
