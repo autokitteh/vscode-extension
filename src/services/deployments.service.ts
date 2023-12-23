@@ -1,6 +1,6 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
-import { deploymentsClient } from "@api/grpc/clients";
-import { handlegRPCErrors } from "@api/grpc/grpc.errorHandler";
+import { deploymentsClient } from "@api/grpc/clients.grpc.api";
+import { handlegRPCErrors } from "@api/grpc/errorHandler.grpc.api";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
 

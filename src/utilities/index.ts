@@ -1,5 +1,5 @@
-export { getNonce } from "@utilities/getNonce";
-export { getTheme } from "@utilities/getTheme";
-export { getUri } from "@utilities/getUri";
-export { flattenArray } from "@utilities/flattenArray";
-export { ValidateURL } from "@utilities/ValidateURL";
+export { getNonce } from "@utilities/getNonce.utils";
+export { getTheme } from "@utilities/getTheme.utils";
+export { getUri } from "@utilities/getUri.utils";
+export { flattenArray } from "@utilities/flattenArray.utils";
+export { ValidateURL } from "@utilities/ValidateURL.utils";

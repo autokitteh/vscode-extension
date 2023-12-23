@@ -1,3 +1,3 @@
-export { SidebarView } from "@views/Sidebar.view";
-export { MessageHandler } from "@utilities/vsCodeMessageHandler";
-export { ProjectView } from "@views/Project.view";
+export { SidebarView } from "@views/sidebar.view";
+export { MessageHandler } from "@utilities/vsCodeMessageHandler.utils";
+export { ProjectView } from "@views/project.view";
