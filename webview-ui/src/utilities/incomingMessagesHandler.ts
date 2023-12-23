@@ -8,6 +8,7 @@ export const HandleIncomingMessages = (
 	event: MessageEvent<Message>,
 	handlers: IIncomingMessagesHandler
 ) => {
+	debugger;
 	const { payload } = event.data as Message;
 
 	switch (event.data.type) {
@@ -21,7 +22,7 @@ export const HandleIncomingMessages = (
 			handlers.setDeployments(payload as Deployment[]);
 			break;
 		case MessageType.project:
-			handlers.setProject(payload as Project);
+			handlers.setProjectName(payload as string);
 			break;
 		default:
 	}

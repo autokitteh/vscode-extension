@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { AKButton, AKLogo } from "@components";
 import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
-import { Project } from "@parent-ak-proto-ts/projects/v1/project_pb";
 import { Theme } from "@parent-enums/index";
 import { Message, MessageType } from "@parent-type/index";
 import { AKDeployments } from "@sections";
@@ -10,13 +9,13 @@ import "./App.css";
 
 function App() {
 	const [deployments, setDeployments] = useState<Deployment[] | undefined>();
-	const [project, setProject] = useState<Project | undefined>();
+	const [projectName, setProjectName] = useState<string | undefined>();
 	const [directory, setDirectory] = useState<string>("");
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 
 	const messageHandlers = {
 		setDeployments,
-		setProject,
+		setProjectName,
 		setDirectory,
 		setThemeVisualType,
 	};
@@ -44,7 +43,7 @@ function App() {
 					<div className="flex items-center">
 						<AKLogo className="w-12 h-12" themeVisualType={themeVisualType} />
 						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">
-							{project?.name || ""}
+							{projectName || ""}
 						</div>
 						<AKButton classes="mx-4" onClick={() => sendMessage(MessageType.buildProject)}>
 							<div className="codicon codicon-tools mr-2"></div>
