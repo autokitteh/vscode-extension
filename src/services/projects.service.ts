@@ -1,6 +1,6 @@
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
-import { projectsClient } from "@api/grpc/clients.api";
-import { handlegRPCErrors } from "@api/grpc/grpc.errorHandler.api";
+import { projectsClient } from "@api/grpc/clients";
+import { handlegRPCErrors } from "@api/grpc/grpc.errorHandler";
 import { translate } from "@i18n";
 import { DeploymentsService } from "@services";
 import { MessageHandler } from "@views";

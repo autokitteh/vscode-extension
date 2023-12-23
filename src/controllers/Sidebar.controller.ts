@@ -1,6 +1,6 @@
 import { User } from "@ak-proto-ts/users/v1/user_pb";
 import { BASE_URL } from "@constants";
-import { DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL } from "@constants/extensionConfiguration.const";
+import { DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL } from "@constants/extension-configuration";
 import { translate } from "@i18n";
 import { AuthorizationService, ProjectsService } from "@services";
 import { ValidateURL } from "@utilities";

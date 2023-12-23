@@ -1,9 +1,9 @@
 import { Theme } from "@enums";
-import { translate } from "@i18n/translation.i18n";
+import { translate } from "@i18n/translation";
 import { IProjectView, IProjectViewDelegate } from "@interfaces";
 import { Message, MessageType } from "@type";
 import { getNonce } from "@utilities";
-import { getUri } from "@utilities/getUri.util";
+import { getUri } from "@utilities/getUri";
 import * as vscode from "vscode";
 import { Uri, window } from "vscode";
 import * as TSConfig from "../../tsconfig.json";

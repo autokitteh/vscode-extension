@@ -1,6 +1,6 @@
 import { User } from "@ak-proto-ts/users/v1/user_pb";
-import { authClient } from "@api/grpc/clients.api";
-import { handlegRPCErrors } from "@api/grpc/grpc.errorHandler.api";
+import { authClient } from "@api/grpc/clients";
+import { handlegRPCErrors } from "@api/grpc/grpc.errorHandler";
 
 export class AuthorizationService {
 	static async whoAmI(): Promise<User | undefined> {
