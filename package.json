@@ -1,18 +1,18 @@
 {
     "_moduleAliases": {
-        "@ak-proto-ts": "dist/autokitteh/proto/gen/ts/autokitteh",
-        "@api": "dist/api",
-        "@connection": "dist/connection.js",
-        "@constants": "dist/constants",
-        "@controllers": "dist/controllers",
-        "@enums": "dist/enums",
-        "@i18n": "dist/i18n",
-        "@providers": "dist/providers",
-        "@services": "dist/services",
-        "@type": "dist/types",
-        "@utilities": "dist/utilities",
-        "@views": "dist/views",
-        "@vscommands": "dist/vscommands"
+        "@ak-proto-ts": "dist/src/autokitteh/proto/gen/ts/autokitteh",
+        "@api": "dist/src/api",
+        "@connection": "dist/src/connection.js",
+        "@constants": "dist/src/constants",
+        "@controllers": "dist/src/controllers",
+        "@enums": "dist/src/enums",
+        "@i18n": "dist/src/i18n",
+        "@providers": "dist/src/providers",
+        "@services": "dist/src/services",
+        "@type": "dist/src/types",
+        "@utilities": "dist/src/utilities",
+        "@views": "dist/src/views",
+        "@vscommands": "dist/src/vscommands"
     },
     "contributes": {
         "commands": [
@@ -194,7 +194,7 @@
     "engines": {
         "vscode": "^1.75.0"
     },
-    "main": "./dist/extension.js",
+    "main": "./dist/src/extension.js",
     "name": "vscode-v2",
     "scripts": {
         "build:webview": "cd webview-ui && npm run build",
