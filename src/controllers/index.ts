@@ -1,3 +1,3 @@
-export { ProjectController } from "@controllers/Project.controller1";
-export { SidebarController } from "@controllers/Sidebar.controller1";
-export { TabsManagerController } from "@controllers/TabsManager.controller1";
+export { ProjectController } from "@controllers/project.controller";
+export { SidebarController } from "@controllers/sidebar.controller";
+export { TabsManagerController } from "@controllers/tabsManager.controller";
