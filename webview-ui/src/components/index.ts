@@ -1,2 +1,2 @@
-export { AKButton } from "@components/aKButton.component";
-export { AKLogo } from "@components/aKLogo.component";
+export { AKButton } from "@components/AKButton";
+export { AKLogo } from "@components/AKLogo";

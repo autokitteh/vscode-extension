@@ -1,1 +1,1 @@
-export { AKDeployments } from "@sections/aKDeployments.section";
+export { AKDeployments } from "@sections/AKDeployments";

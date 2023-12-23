@@ -5,7 +5,7 @@ import {
 	AKTableHeader,
 	AKTableRow,
 	AKTableHeaderCell,
-} from "@components/aKTable";
+} from "@components/AKTable";
 import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
 import moment from "moment";
 

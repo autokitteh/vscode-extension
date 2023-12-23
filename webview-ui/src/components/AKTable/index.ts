@@ -1,6 +1,6 @@
-export { AKTable } from "./aKTable.component";
-export { AKTableCell } from "./aKTableCell.component";
-export { AKTableHeader } from "./aKTableHeader.component";
-export { AKTableRow } from "./aKTableRow.component";
-export { AKTableHeaderCell } from "./aKTableHeaderCell.component";
-export { AKTableEmptyMessage } from "./aKTableEmptyMessage.component";
+export { AKTable } from "./AKTable";
+export { AKTableCell } from "./AKTableCell";
+export { AKTableHeader } from "./AKTableHeader";
+export { AKTableRow } from "./AKTableRow";
+export { AKTableHeaderCell } from "./AKTableHeaderCell";
+export { AKTableEmptyMessage } from "./AKTableEmptyMessage";
