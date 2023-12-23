@@ -1,6 +1,6 @@
 import { ConnectError } from "@connectrpc/connect";
 import { vsCommands } from "@constants";
-import { gRPCErrors } from "@constants/api.const";
+import { gRPCErrors } from "@constants/api.constants";
 import { MessageHandler } from "@views";
 import {commands} from "vscode";
 
