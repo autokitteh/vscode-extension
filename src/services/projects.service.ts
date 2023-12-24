@@ -41,7 +41,7 @@ export class ProjectsService {
 	static async deploy(projectId: string): Promise<string | undefined> {
 		const buildId = await this.build(projectId);
 		if (buildId) {
-			const environments = await EnvironmentsService.getByProject(projectId);
+			const environments = await EnvironmentsService.getByProjectId(projectId);
 			const environment = environments.find(
 				(environment) => environment.name === DEFAULT_ENVIRONMENT
 			);

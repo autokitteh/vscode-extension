@@ -17,7 +17,7 @@ export class SessionsService {
 
 	static async listByProjectId(projectId: string): Promise<Session[]> {
 		try {
-			const projectEnvironments = await EnvironmentsService.getByProject(projectId);
+			const projectEnvironments = await EnvironmentsService.getByProjectId(projectId);
 
 			const sessionsPromises = projectEnvironments.map(async (environment) => {
 				const sessions = await this.listByEnvironmentId(environment.envId);
