@@ -1,7 +1,7 @@
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { projectsClient } from "@api/grpc/clients.grpc.api";
 import { handlegRPCErrors } from "@api/grpc/errorHandler.grpc.api";
-import { DEFAULT_PROJECT_ENVIRONMENT } from "@constants/extensionConfiguration.constants";
+import { DEFAULT_ENVIRONMENT } from "@constants/extensionConfiguration.constants";
 import { DeploymentsService, EnvironmentsService } from "@services";
 
 export class ProjectsService {
@@ -41,7 +41,7 @@ export class ProjectsService {
 		if (buildId) {
 			const environments = await EnvironmentsService.getByProject(projectId);
 			const environment = environments.find(
-				(environment) => environment.name === DEFAULT_PROJECT_ENVIRONMENT
+				(environment) => environment.name === DEFAULT_ENVIRONMENT
 			);
 
 			if (environment) {
