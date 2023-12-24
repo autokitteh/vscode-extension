@@ -11,16 +11,16 @@ export const HandleIncomingMessages = (
 	const { payload } = event.data as Message;
 
 	switch (event.data.type) {
-		case MessageType.theme:
+		case MessageType.setTheme:
 			handlers.setThemeVisualType(payload as Theme);
 			break;
-		case MessageType.deployments:
+		case MessageType.setDeployments:
 			handlers.setDeployments(payload as Deployment[]);
 			break;
-		case MessageType.projectName:
+		case MessageType.setProjectName:
 			handlers.setProjectName(payload as string);
 			break;
-		case MessageType.sessions:
+		case MessageType.setSessions:
 			handlers.setSessions(payload as Session[]);
 		default:
 	}

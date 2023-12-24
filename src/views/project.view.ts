@@ -83,7 +83,7 @@ export class ProjectView implements IProjectView {
 		this.panel.webview.html = this.getWebviewContent();
 
 		this.panel.webview.postMessage?.({
-			type: MessageType.projectName,
+			type: MessageType.setProjectName,
 			payload: projectName,
 		});
 
@@ -94,7 +94,7 @@ export class ProjectView implements IProjectView {
 
 	private changeTheme(themeKind: Theme) {
 		this.panel?.webview.postMessage?.({
-			type: MessageType.theme,
+			type: MessageType.setTheme,
 			payload: themeKind,
 		});
 	}

@@ -3,13 +3,12 @@ import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 
 export enum MessageType {
-	common = "COMMON",
-	deployments = "DEPLOYMENTS",
-	projectName = "PROJECT_NAME",
-	theme = "THEME",
+	setDeployments = "SET_DEPLOYMENTS",
+	setProjectName = "SET_PROJECT_NAME",
+	setTheme = "SET_THEME",
 	deployProject = "DEPLOY_PROJECT",
 	buildProject = "BUILD_PROJECT",
-	sessions = "SESSIONS",
+	setSessions = "SET_SESSIONS",
 }
 
 export type Message = {
