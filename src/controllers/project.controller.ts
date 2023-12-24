@@ -1,9 +1,15 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
+import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import { DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL } from "@constants";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
-import { EnvironmentsService, DeploymentsService, ProjectsService } from "@services";
+import {
+	EnvironmentsService,
+	DeploymentsService,
+	ProjectsService,
+	SessionsService,
+} from "@services";
 import { MessageType } from "@type";
 import { getIds } from "@utilities/getIds.utils";
 import { MessageHandler } from "@views";
@@ -17,15 +23,14 @@ export class ProjectController {
 	public projectId: string;
 	public project?: Project;
 	private deployments?: Deployment[];
+	private sessions?: Session[];
 	private refreshRate: number;
 
-	constructor(projectView: IProjectView, projectId: string) {
+	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
-		this.refreshRate = workspace //consider pass from outside in order to test easier
-			.getConfiguration()
-			.get("autokitteh.project.refresh.interval", DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL);
+		this.refreshRate = refreshRate;
 	}
 
 	reveal(): void {
@@ -33,20 +38,25 @@ export class ProjectController {
 	}
 
 	async getProjectDeployments(): Promise<Deployment[]> {
-		const environments = await EnvironmentsService.getByProject(this.projectId);
+		const environments = await EnvironmentsService.listByProjectId(this.projectId);
 		if (!environments.length) {
 			MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
 			return [];
 		}
 
-		return await DeploymentsService.listForEnvironments(getIds(environments, "envId"));
+		return await DeploymentsService.listByEnvironmentIds(getIds(environments, "envId"));
 	}
 
 	async refreshView() {
 		const deployments = await this.getProjectDeployments();
 		if (!isEqual(this.deployments, deployments)) {
 			this.deployments = deployments;
-			this.view.update({ type: MessageType.deployments, payload: deployments });
+			this.view.update({ type: MessageType.setDeployments, payload: deployments });
+		}
+		const sessions = await SessionsService.listByProjectId(this.projectId);
+		if (!isEqual(this.sessions, sessions)) {
+			this.sessions = sessions;
+			this.view.update({ type: MessageType.setSessions, payload: sessions });
 		}
 	}
 
@@ -86,9 +96,16 @@ export class ProjectController {
 	}
 
 	async build() {
-		await ProjectsService.build(this.projectId);
-		MessageHandler.infoMessage(translate().t("projects.projectBuildSucceed"));
+		const buildId = await ProjectsService.build(this.projectId);
+		if (buildId) {
+			MessageHandler.infoMessage(translate().t("projects.projectBuildSucceed"));
+		}
 	}
 
-	deploy() {}
+	async run() {
+		const deploymentId = await ProjectsService.run(this.projectId);
+		if (deploymentId) {
+			MessageHandler.infoMessage(translate().t("projects.projectDeploySucceed"));
+		}
+	}
 }

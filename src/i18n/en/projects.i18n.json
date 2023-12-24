@@ -2,5 +2,6 @@
 	"clickHere": "Click here to connect",
 	"projects": "Projects",
 	"openProject": "Open project",
-	"projectBuildSucceed": "Project build succeed"
+	"projectBuildSucceed": "Project build succeed",
+	"projectDeploySucceed": "Project deploy succeed"
 }

@@ -1,10 +1,10 @@
-import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
-import { Project } from "@parent-ak-proto-ts/projects/v1/project_pb";
-import { Theme } from "@parent-enums/index";
+import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
+import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
+import { Theme } from "@enums/index";
 
 export interface IIncomingMessagesHandler {
 	setDeployments(deployments: Deployment[] | undefined): void;
 	setThemeVisualType(themeKind: Theme | undefined): void;
-	setProject(project: Project | undefined): void;
-	setDirectory(directoryPath: string): void;
+	setProjectName(projectName: string | undefined): void;
+	setSessions(sessions: Session[] | undefined): void;
 }

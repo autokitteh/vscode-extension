@@ -1,5 +1,6 @@
 require("module-alias/register");
 
+import { sidebarControllerRefreshRate } from "@api/appConfig.api";
 import { vsCommands } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
@@ -14,7 +15,8 @@ import { commands, ExtensionContext, workspace } from "vscode";
 
 export async function activate(context: ExtensionContext) {
 	const sidebarView = new SidebarView();
-	const sidebarController = new SidebarController(sidebarView);
+
+	const sidebarController = new SidebarController(sidebarView, sidebarControllerRefreshRate);
 	const tabsManager = new TabsManagerController(context);
 
 	commands.registerCommand(vsCommands.connect, async () => {

@@ -1,24 +1,26 @@
 import { useCallback, useEffect, useState } from "react";
+import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
+import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import { AKButton, AKLogo } from "@components";
-import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
-import { Project } from "@parent-ak-proto-ts/projects/v1/project_pb";
-import { Theme } from "@parent-enums/index";
-import { Message, MessageType } from "@parent-type/index";
-import { AKDeployments } from "@sections";
+import { Theme } from "@enums/index";
+import { translate } from "@i18n/index";
+import { IIncomingMessagesHandler } from "@interfaces/incomingMessagesHandler.interface";
+import { AKDeployments, AKSessions } from "@sections";
+import { Message, MessageType } from "@type/index";
 import { HandleIncomingMessages, vscodeWrapper } from "@utilities";
 import "./App.css";
 
 function App() {
 	const [deployments, setDeployments] = useState<Deployment[] | undefined>();
-	const [project, setProject] = useState<Project | undefined>();
-	const [directory, setDirectory] = useState<string>("");
+	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
+	const [sessions, setSessions] = useState<Session[] | undefined>();
 
-	const messageHandlers = {
+	const messageHandlers: IIncomingMessagesHandler = {
 		setDeployments,
-		setProject,
-		setDirectory,
+		setProjectName,
 		setThemeVisualType,
+		setSessions,
 	};
 
 	const handleMessagesFromExtension = useCallback(
@@ -44,19 +46,20 @@ function App() {
 					<div className="flex items-center">
 						<AKLogo className="w-12 h-12" themeVisualType={themeVisualType} />
 						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">
-							{project?.name || ""}
+							{projectName || translate().t("reactApp.projects.noTitle")}
 						</div>
 						<AKButton classes="mx-4" onClick={() => sendMessage(MessageType.buildProject)}>
 							<div className="codicon codicon-tools mr-2"></div>
-							Build
+							{translate().t("reactApp.general.build")}
 						</AKButton>
-						<AKButton onClick={() => sendMessage(MessageType.deployProject)}>
+						<AKButton onClick={() => sendMessage(MessageType.runProject)}>
 							<div className="codicon codicon-play mr-2"></div>
-							Deploy
+							{translate().t("reactApp.general.run")}
 						</AKButton>
 					</div>
 				</div>
 				<AKDeployments deployments={deployments} />
+				<AKSessions sessions={sessions} />
 			</div>
 		</main>
 	);

@@ -29,17 +29,14 @@ export class ProjectView implements IProjectView {
 					case MessageType.buildProject:
 						this.delegate?.build?.();
 						break;
+					case MessageType.runProject:
+						this.delegate?.run?.();
+						break;
 				}
 			},
 			undefined,
 			this.context.subscriptions
 		);
-	}
-
-	public onClose() {
-		this.panel?.onDidDispose(() => {
-			this.delegate?.onClose?.();
-		});
 	}
 
 	public onBlur() {
@@ -77,12 +74,15 @@ export class ProjectView implements IProjectView {
 			}
 		});
 
+		this.panel.onDidDispose(() => {
+			this.delegate?.onClose?.();
+		});
 		this.setupWebviewMessageListener();
 
 		this.panel.webview.html = this.getWebviewContent();
 
 		this.panel.webview.postMessage?.({
-			type: MessageType.project,
+			type: MessageType.setProjectName,
 			payload: projectName,
 		});
 
@@ -93,7 +93,7 @@ export class ProjectView implements IProjectView {
 
 	private changeTheme(themeKind: Theme) {
 		this.panel?.webview.postMessage?.({
-			type: MessageType.theme,
+			type: MessageType.setTheme,
 			payload: themeKind,
 		});
 	}

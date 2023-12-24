@@ -18,6 +18,7 @@ export const translate = () => {
 			fallbackLng: "en",
 			ns: ["translation"],
 			defaultNS: "translation",
+			keySeparator: ".",
 		});
 		return i18n;
 	}

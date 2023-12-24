@@ -1,8 +1,8 @@
+import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
+import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
+import { Theme } from "@enums/index";
 import { IIncomingMessagesHandler } from "@interfaces";
-import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
-import { Project } from "@parent-ak-proto-ts/projects/v1/project_pb";
-import { Theme } from "@parent-enums/index";
-import { Message, MessageType } from "@parent-type/index";
+import { Message, MessageType } from "@type/index";
 
 export const HandleIncomingMessages = (
 	event: MessageEvent<Message>,
@@ -11,18 +11,17 @@ export const HandleIncomingMessages = (
 	const { payload } = event.data as Message;
 
 	switch (event.data.type) {
-		case MessageType.common:
-			handlers.setDirectory(payload as string);
-			break;
-		case MessageType.theme:
+		case MessageType.setTheme:
 			handlers.setThemeVisualType(payload as Theme);
 			break;
-		case MessageType.deployments:
+		case MessageType.setDeployments:
 			handlers.setDeployments(payload as Deployment[]);
 			break;
-		case MessageType.project:
-			handlers.setProject(payload as Project);
+		case MessageType.setProjectName:
+			handlers.setProjectName(payload as string);
 			break;
+		case MessageType.setSessions:
+			handlers.setSessions(payload as Session[]);
 		default:
 	}
 };

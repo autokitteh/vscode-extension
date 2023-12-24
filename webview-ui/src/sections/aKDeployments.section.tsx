@@ -1,3 +1,5 @@
+import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
+import { AKDeploymentState } from "@components";
 import {
 	AKTable,
 	AKTableEmptyMessage,
@@ -5,8 +7,8 @@ import {
 	AKTableHeader,
 	AKTableRow,
 	AKTableHeaderCell,
-} from "@components/aKTable";
-import { Deployment } from "@parent-ak-proto-ts/deployments/v1/deployment_pb";
+} from "@components/AKTable";
+import { translate } from "@i18n/index";
 import moment from "moment";
 
 export const AKDeployments = ({ deployments }: { deployments: Deployment[] | undefined }) => {
@@ -14,11 +16,11 @@ export const AKDeployments = ({ deployments }: { deployments: Deployment[] | und
 		<div>
 			<AKTable classes="mt-4">
 				<AKTableHeader>
-					<AKTableHeaderCell>Deploy Time</AKTableHeaderCell>
-					<AKTableHeaderCell>Status</AKTableHeaderCell>
-					<AKTableHeaderCell>Sessions</AKTableHeaderCell>
-					<AKTableHeaderCell>Build-ID (Optional)</AKTableHeaderCell>
-					<AKTableHeaderCell>Actions</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.deployments.time")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.deployments.status")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.deployments.sessions")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.deployments.buildId")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.deployments.actions")}</AKTableHeaderCell>
 				</AKTableHeader>
 				{deployments &&
 					deployments.map((deployment) => (
@@ -26,10 +28,17 @@ export const AKDeployments = ({ deployments }: { deployments: Deployment[] | und
 							<AKTableCell>
 								{moment(deployment.createdAt as unknown as string).fromNow()}
 							</AKTableCell>
-							<AKTableCell>{deployment.state}</AKTableCell>
+							<AKTableCell>
+								<div className="flex justify-center">
+									<AKDeploymentState deploymentState={deployment.state.toString()} />
+								</div>
+							</AKTableCell>
 							<AKTableCell>0</AKTableCell>
 							<AKTableCell>{deployment.buildId}</AKTableCell>
-							<AKTableCell>TODO</AKTableCell>
+							<AKTableCell>
+								<div className="codicon codicon-debug-rerun"></div>
+								<div className="codicon codicon-close"></div>
+							</AKTableCell>
 						</AKTableRow>
 					))}
 			</AKTable>
