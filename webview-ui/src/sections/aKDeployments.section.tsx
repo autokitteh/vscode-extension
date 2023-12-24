@@ -31,7 +31,7 @@ export const AKDeployments = ({ deployments }: { deployments: Deployment[] | und
 							<AKTableCell>0</AKTableCell>
 							<AKTableCell>{deployment.buildId}</AKTableCell>
 							<AKTableCell>
-								<div className="codicon codicon-stop"></div>
+								<div className="codicon codicon-debug-rerun"></div>
 								<div className="codicon codicon-close"></div>
 							</AKTableCell>
 						</AKTableRow>
