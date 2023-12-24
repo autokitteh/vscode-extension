@@ -5,7 +5,7 @@ import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
 export class DeploymentsService {
-	static async listForEnvironments(environmentsIds: string[]): Promise<Deployment[]> {
+	static async listByEnvironmentIds(environmentsIds: string[]): Promise<Deployment[]> {
 		try {
 			const deploymentsPromises = environmentsIds.map(
 				async (envId) =>

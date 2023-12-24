@@ -1,0 +1,7 @@
+{
+	"time": "Deployment Time",
+	"status": "Status",
+	"sessions": "Sessions",
+	"buildId": "Build-ID (Optional)",
+	"actions": "Actions"
+}

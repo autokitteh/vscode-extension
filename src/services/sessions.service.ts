@@ -1,0 +1,39 @@
+import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
+import { sessionsClient } from "@api/grpc/clients.grpc.api";
+import { handlegRPCErrors } from "@api/grpc/errorHandler.grpc.api";
+import { EnvironmentsService } from "@services/environments.service";
+import { flattenArray } from "@utilities";
+import { get } from "lodash";
+
+export class SessionsService {
+	static async listByEnvironment(environmentId: string): Promise<Session[]> {
+		try {
+			return (await sessionsClient.list({ envId: environmentId })).sessions;
+		} catch (error) {
+			handlegRPCErrors(error);
+		}
+		return [];
+	}
+
+	static async listByProject(projectId: string): Promise<Session[]> {
+		try {
+			const projectEnvironments = await EnvironmentsService.getByProject(projectId);
+
+			const sessionsPromises = projectEnvironments.map(async (environment) => {
+				const sessions = await this.listByEnvironment(environment.envId);
+				return sessions;
+			});
+
+			const sessionsResponses = await Promise.allSettled(sessionsPromises);
+
+			return flattenArray<Session>(
+				sessionsResponses
+					.filter((response) => response.status === "fulfilled")
+					.map((response) => get(response, "value.sessions", []))
+			);
+		} catch (error) {
+			handlegRPCErrors(error);
+		}
+		return [];
+	}
+}

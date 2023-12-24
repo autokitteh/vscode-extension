@@ -76,13 +76,14 @@ export class ProjectView implements IProjectView {
 				this.onBlur();
 			}
 		});
+		this.onClose();
 
 		this.setupWebviewMessageListener();
 
 		this.panel.webview.html = this.getWebviewContent();
 
 		this.panel.webview.postMessage?.({
-			type: MessageType.project,
+			type: MessageType.projectName,
 			payload: projectName,
 		});
 

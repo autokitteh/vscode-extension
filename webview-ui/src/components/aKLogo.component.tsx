@@ -1,11 +1,11 @@
 import React, { ReactNode } from "react";
 import AKLogoBlack from "@assets/images/ak-logo-black.svg?react";
 import AKLogoWhite from "@assets/images/ak-logo-white.svg?react";
-import { Theme } from "@parent-enums/index";
+import { Theme } from "@enums/index";
 
 type LogoProperties = {
 	className: string;
-	themeVisualType: Theme;
+	themeVisualType: Theme | undefined;
 };
 
 export const AKLogo = ({ className, themeVisualType }: LogoProperties): ReactNode =>
