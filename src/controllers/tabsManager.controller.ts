@@ -1,7 +1,8 @@
 import { DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL } from "@constants";
 import { ProjectController } from "@controllers";
+import { projectControllerRefreshRate } from "@utilities/getControllersRefreshRate.utils";
 import { ProjectView } from "@views";
-import { ExtensionContext, workspace } from "vscode";
+import { ExtensionContext } from "vscode";
 
 export class TabsManagerController {
 	openWebviews: { [key: string]: any };
@@ -16,9 +17,6 @@ export class TabsManagerController {
 	public async openWebview(project: SidebarTreeItem) {
 		if (!this.openWebviews[project.key]) {
 			const newView = new ProjectView(this.context);
-			const projectControllerRefreshRate =
-				Number(workspace.getConfiguration().get("autokitteh.project.refresh.interval")) ||
-				DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL;
 
 			const newController = new ProjectController(
 				newView,
