@@ -14,7 +14,11 @@ import { commands, ExtensionContext, workspace } from "vscode";
 
 export async function activate(context: ExtensionContext) {
 	const sidebarView = new SidebarView();
-	const sidebarController = new SidebarController(sidebarView);
+	const sidebarControllerRefreshRate = workspace
+		.getConfiguration()
+		.get("autokitteh.project.refresh.interval") as number;
+
+	const sidebarController = new SidebarController(sidebarView, sidebarControllerRefreshRate);
 	const tabsManager = new TabsManagerController(context);
 
 	commands.registerCommand(vsCommands.connect, async () => {

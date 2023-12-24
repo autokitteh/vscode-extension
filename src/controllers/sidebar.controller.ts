@@ -1,5 +1,5 @@
 import { User } from "@ak-proto-ts/users/v1/user_pb";
-import { BASE_URL, vsCommands, DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL } from "@constants";
+import { BASE_URL, vsCommands } from "@constants";
 import { translate } from "@i18n";
 import { AuthorizationService, ProjectsService } from "@services";
 import { ValidateURL } from "@utilities";
@@ -15,12 +15,10 @@ export class SidebarController {
 	private refreshRate: number;
 	private projects?: SidebarTreeItem[];
 
-	constructor(sidebarView: ISidebarView) {
+	constructor(sidebarView: ISidebarView, refreshRate: number) {
 		this.view = sidebarView;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
-		this.refreshRate = workspace
-			.getConfiguration()
-			.get("autokitteh.sidebar.refresh.interval", DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL);
+		this.refreshRate = refreshRate;
 	}
 
 	public connect = async () => {

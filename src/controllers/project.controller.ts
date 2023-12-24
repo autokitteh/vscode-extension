@@ -26,13 +26,11 @@ export class ProjectController {
 	private sessions?: Session[];
 	private refreshRate: number;
 
-	constructor(projectView: IProjectView, projectId: string) {
+	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
-		this.refreshRate = workspace //consider pass from outside in order to test easier
-			.getConfiguration()
-			.get("autokitteh.project.refresh.interval", DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL);
+		this.refreshRate = refreshRate;
 	}
 
 	reveal(): void {
