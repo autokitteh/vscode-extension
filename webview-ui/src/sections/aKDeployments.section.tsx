@@ -1,4 +1,5 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
+import { AKDeploymentState } from "@components";
 import {
 	AKTable,
 	AKTableEmptyMessage,
@@ -27,7 +28,11 @@ export const AKDeployments = ({ deployments }: { deployments: Deployment[] | und
 							<AKTableCell>
 								{moment(deployment.createdAt as unknown as string).fromNow()}
 							</AKTableCell>
-							<AKTableCell>{deployment.state}</AKTableCell>
+							<AKTableCell>
+								<div className="flex justify-center">
+									<AKDeploymentState deploymentState={deployment.state.toString()} />
+								</div>
+							</AKTableCell>
 							<AKTableCell>0</AKTableCell>
 							<AKTableCell>{deployment.buildId}</AKTableCell>
 							<AKTableCell>
