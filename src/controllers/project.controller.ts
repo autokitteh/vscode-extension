@@ -23,14 +23,13 @@ export class ProjectController {
 	public projectId: string;
 	public project?: Project;
 	private deployments?: Deployment[];
-	private refreshRate: number;
 	private sessions?: Session[];
+	private refreshRate: number;
 
 	constructor(projectView: IProjectView, projectId: string) {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
-
 		this.refreshRate = workspace //consider pass from outside in order to test easier
 			.getConfiguration()
 			.get("autokitteh.project.refresh.interval", DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL);
@@ -99,9 +98,16 @@ export class ProjectController {
 	}
 
 	async build() {
-		await ProjectsService.build(this.projectId);
-		MessageHandler.infoMessage(translate().t("projects.projectBuildSucceed"));
+		const buildId = await ProjectsService.build(this.projectId);
+		if (buildId) {
+			MessageHandler.infoMessage(translate().t("projects.projectBuildSucceed"));
+		}
 	}
 
-	deploy() {}
+	async deploy() {
+		const deploymentId = await ProjectsService.run(this.projectId);
+		if (deploymentId) {
+			MessageHandler.infoMessage(translate().t("projects.projectDeploySucceed"));
+		}
+	}
 }

@@ -1,9 +1,8 @@
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { projectsClient } from "@api/grpc/clients.grpc.api";
 import { handlegRPCErrors } from "@api/grpc/errorHandler.grpc.api";
-import { translate } from "@i18n";
-import { DeploymentsService } from "@services";
-import { MessageHandler } from "@views";
+import { DEFAULT_PROJECT_ENVIRONMENT } from "@constants/extensionConfiguration.constants";
+import { DeploymentsService, EnvironmentsService } from "@services";
 
 export class ProjectsService {
 	static async get(projectId: string): Promise<Project | undefined> {
@@ -37,14 +36,32 @@ export class ProjectsService {
 		return;
 	}
 
-	static async deploy(
-		deployment: { envId: string; buildId: string },
-		projectId: string
-	): Promise<void> {
+	static async deploy(projectId: string): Promise<string | undefined> {
 		const buildId = await this.build(projectId);
-		const deploymentId = await DeploymentsService.create(deployment);
-		if (buildId && deploymentId) {
-			DeploymentsService.activate(deploymentId);
+		if (buildId) {
+			const environments = await EnvironmentsService.getByProject(projectId);
+			const environment = environments.find(
+				(environment) => environment.name === DEFAULT_PROJECT_ENVIRONMENT
+			);
+
+			if (environment) {
+				const deploymentId = await DeploymentsService.create({
+					buildId,
+					envId: environment.envId,
+				});
+
+				return deploymentId;
+			}
 		}
+		return;
+	}
+
+	static async run(projectId: string): Promise<string | undefined> {
+		const deploymentId = await this.deploy(projectId);
+		if (deploymentId) {
+			await DeploymentsService.activate(deploymentId);
+			return deploymentId;
+		}
+		return;
 	}
 }
