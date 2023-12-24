@@ -5,7 +5,7 @@ import { AKButton, AKLogo } from "@components";
 import { Theme } from "@enums/index";
 import { translate } from "@i18n/index";
 import { IIncomingMessagesHandler } from "@interfaces/incomingMessagesHandler.interface";
-import { AKDeployments } from "@sections";
+import { AKDeployments, AKSessions } from "@sections";
 import { Message, MessageType } from "@type/index";
 import { HandleIncomingMessages, vscodeWrapper } from "@utilities";
 import "./App.css";
@@ -54,11 +54,12 @@ function App() {
 						</AKButton>
 						<AKButton onClick={() => sendMessage(MessageType.runProject)}>
 							<div className="codicon codicon-play mr-2"></div>
-							{translate().t("reactAppGeneral.run")}
+							{translate().t("reactApp.general.run")}
 						</AKButton>
 					</div>
 				</div>
 				<AKDeployments deployments={deployments} />
+				<AKSessions sessions={sessions} />
 			</div>
 		</main>
 	);

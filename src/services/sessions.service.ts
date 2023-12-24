@@ -29,7 +29,7 @@ export class SessionsService {
 			return flattenArray<Session>(
 				sessionsResponses
 					.filter((response) => response.status === "fulfilled")
-					.map((response) => get(response, "value.sessions", []))
+					.map((response) => get(response, "value", []))
 			);
 		} catch (error) {
 			handlegRPCErrors(error);
