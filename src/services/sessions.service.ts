@@ -6,7 +6,7 @@ import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
 export class SessionsService {
-	static async listByEnvironment(environmentId: string): Promise<Session[]> {
+	static async listByEnvironmentId(environmentId: string): Promise<Session[]> {
 		try {
 			return (await sessionsClient.list({ envId: environmentId })).sessions;
 		} catch (error) {
@@ -15,12 +15,12 @@ export class SessionsService {
 		return [];
 	}
 
-	static async listByProject(projectId: string): Promise<Session[]> {
+	static async listByProjectId(projectId: string): Promise<Session[]> {
 		try {
 			const projectEnvironments = await EnvironmentsService.getByProject(projectId);
 
 			const sessionsPromises = projectEnvironments.map(async (environment) => {
-				const sessions = await this.listByEnvironment(environment.envId);
+				const sessions = await this.listByEnvironmentId(environment.envId);
 				return sessions;
 			});
 

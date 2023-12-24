@@ -54,7 +54,7 @@ function App() {
 						</AKButton>
 						<AKButton onClick={() => sendMessage(MessageType.deployProject)}>
 							<div className="codicon codicon-play mr-2"></div>
-							{translate().t("reactAppGeneral.run")}{" "}
+							{translate().t("reactAppGeneral.run")}
 						</AKButton>
 					</div>
 				</div>

@@ -51,7 +51,7 @@ export class ProjectController {
 	}
 
 	async getProjectSessions(): Promise<Session[]> {
-		return await SessionsService.listByProject(this.projectId);
+		return await SessionsService.listByProjectId(this.projectId);
 	}
 
 	async refreshView() {
