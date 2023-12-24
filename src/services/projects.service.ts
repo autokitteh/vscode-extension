@@ -1,8 +1,9 @@
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { projectsClient } from "@api/grpc/clients.grpc.api";
 import { handlegRPCErrors } from "@api/grpc/errorHandler.grpc.api";
+import { DEFAULT_ENVIRONMENT } from "@constants/extensionConfiguration.constants";
 import { translate } from "@i18n";
-import { DeploymentsService } from "@services";
+import { DeploymentsService, EnvironmentsService } from "@services";
 import { MessageHandler } from "@views";
 
 export class ProjectsService {
@@ -37,14 +38,38 @@ export class ProjectsService {
 		return;
 	}
 
-	static async deploy(
-		deployment: { envId: string; buildId: string },
-		projectId: string
-	): Promise<void> {
+	static async deploy(projectId: string): Promise<string | undefined> {
 		const buildId = await this.build(projectId);
-		const deploymentId = await DeploymentsService.create(deployment);
-		if (buildId && deploymentId) {
-			DeploymentsService.activate(deploymentId);
+		if (buildId) {
+			const environments = await EnvironmentsService.listByProjectId(projectId);
+			const environment = environments.find(
+				(environment) => environment.name === DEFAULT_ENVIRONMENT
+			);
+
+			if (environment) {
+				const deploymentId = await DeploymentsService.create({
+					buildId,
+					envId: environment.envId,
+				});
+
+				return deploymentId;
+			} else {
+				MessageHandler.errorMessage(translate().t("errors.defaultEnvironmentNotFound"));
+			}
 		}
+		return;
+	}
+
+	static async run(projectId: string): Promise<string | undefined> {
+		const deploymentId = await this.deploy(projectId);
+		if (deploymentId) {
+			try {
+				await DeploymentsService.activate(deploymentId);
+			} catch (error) {
+				handlegRPCErrors(error);
+			}
+			return deploymentId;
+		}
+		return;
 	}
 }

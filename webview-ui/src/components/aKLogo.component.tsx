@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
-import AKLogoBlack from "@assets/images/ak-logo-black.svg?react";
-import AKLogoWhite from "@assets/images/ak-logo-white.svg?react";
+import AKLogoBlack from "@assets/images/logo/ak-logo-black.svg?react";
+import AKLogoWhite from "@assets/images/logo/ak-logo-white.svg?react";
 import { Theme } from "@enums/index";
 
 type LogoProperties = {

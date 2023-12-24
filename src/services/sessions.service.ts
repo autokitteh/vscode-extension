@@ -17,7 +17,7 @@ export class SessionsService {
 
 	static async listByProjectId(projectId: string): Promise<Session[]> {
 		try {
-			const projectEnvironments = await EnvironmentsService.getByProject(projectId);
+			const projectEnvironments = await EnvironmentsService.listByProjectId(projectId);
 
 			const sessionsPromises = projectEnvironments.map(async (environment) => {
 				const sessions = await this.listByEnvironmentId(environment.envId);
@@ -29,7 +29,7 @@ export class SessionsService {
 			return flattenArray<Session>(
 				sessionsResponses
 					.filter((response) => response.status === "fulfilled")
-					.map((response) => get(response, "value.sessions", []))
+					.map((response) => get(response, "value", []))
 			);
 		} catch (error) {
 			handlegRPCErrors(error);

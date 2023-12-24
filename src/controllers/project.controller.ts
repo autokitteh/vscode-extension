@@ -23,17 +23,14 @@ export class ProjectController {
 	public projectId: string;
 	public project?: Project;
 	private deployments?: Deployment[];
-	private refreshRate: number;
 	private sessions?: Session[];
+	private refreshRate: number;
 
-	constructor(projectView: IProjectView, projectId: string) {
+	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
-
-		this.refreshRate = workspace //consider pass from outside in order to test easier
-			.getConfiguration()
-			.get("autokitteh.project.refresh.interval", DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL);
+		this.refreshRate = refreshRate;
 	}
 
 	reveal(): void {
@@ -41,7 +38,7 @@ export class ProjectController {
 	}
 
 	async getProjectDeployments(): Promise<Deployment[]> {
-		const environments = await EnvironmentsService.getByProject(this.projectId);
+		const environments = await EnvironmentsService.listByProjectId(this.projectId);
 		if (!environments.length) {
 			MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
 			return [];
@@ -99,9 +96,16 @@ export class ProjectController {
 	}
 
 	async build() {
-		await ProjectsService.build(this.projectId);
-		MessageHandler.infoMessage(translate().t("projects.projectBuildSucceed"));
+		const buildId = await ProjectsService.build(this.projectId);
+		if (buildId) {
+			MessageHandler.infoMessage(translate().t("projects.projectBuildSucceed"));
+		}
 	}
 
-	deploy() {}
+	async run() {
+		const deploymentId = await ProjectsService.run(this.projectId);
+		if (deploymentId) {
+			MessageHandler.infoMessage(translate().t("projects.projectDeploySucceed"));
+		}
+	}
 }

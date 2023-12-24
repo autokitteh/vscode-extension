@@ -15,13 +15,15 @@ export const AKSessions = ({ sessions }: { sessions: Session[] | undefined }) =>
 		<div>
 			<AKTable classes="mt-4">
 				<AKTableHeader>
-					<AKTableHeaderCell>{translate().t("reactAppSessions.time")}</AKTableHeaderCell>
-					<AKTableHeaderCell>{translate().t("reactAppSessions.actions")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.sessions.time")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.sessions.sessionId")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.sessions.actions")}</AKTableHeaderCell>
 				</AKTableHeader>
 				{sessions &&
 					sessions.map((session) => (
 						<AKTableRow key={session.sessionId}>
 							<AKTableCell>{moment(session.createdAt as unknown as string).fromNow()}</AKTableCell>
+							<AKTableCell>{session.sessionId}</AKTableCell>
 							<AKTableCell>
 								<div className="codicon codicon-stop"></div>
 								<div className="codicon codicon-close"></div>

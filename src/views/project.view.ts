@@ -29,17 +29,14 @@ export class ProjectView implements IProjectView {
 					case MessageType.buildProject:
 						this.delegate?.build?.();
 						break;
+					case MessageType.runProject:
+						this.delegate?.run?.();
+						break;
 				}
 			},
 			undefined,
 			this.context.subscriptions
 		);
-	}
-
-	public onClose() {
-		this.panel?.onDidDispose(() => {
-			this.delegate?.onClose?.();
-		});
 	}
 
 	public onBlur() {
@@ -76,8 +73,10 @@ export class ProjectView implements IProjectView {
 				this.onBlur();
 			}
 		});
-		this.onClose();
 
+		this.panel.onDidDispose(() => {
+			this.delegate?.onClose?.();
+		});
 		this.setupWebviewMessageListener();
 
 		this.panel.webview.html = this.getWebviewContent();

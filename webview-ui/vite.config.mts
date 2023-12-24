@@ -11,6 +11,7 @@ export default defineConfig({
 			"@enums": path.resolve(__dirname, "../src/enums"),
 			"@assets": path.resolve(__dirname, "./assets"),
 			"@components": path.resolve(__dirname, "./src/components"),
+			"@constants": path.resolve(__dirname, "./src/constants"),
 			"@utilities": path.resolve(__dirname, "./src/utilities"),
 			"@sections": path.resolve(__dirname, "./src/sections"),
 			"@interfaces": path.resolve(__dirname, "./src/interfaces"),
