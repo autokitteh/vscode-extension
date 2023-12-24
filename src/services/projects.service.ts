@@ -2,7 +2,9 @@ import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { projectsClient } from "@api/grpc/clients.grpc.api";
 import { handlegRPCErrors } from "@api/grpc/errorHandler.grpc.api";
 import { DEFAULT_ENVIRONMENT } from "@constants/extensionConfiguration.constants";
+import { translate } from "@i18n";
 import { DeploymentsService, EnvironmentsService } from "@services";
+import { MessageHandler } from "@views";
 
 export class ProjectsService {
 	static async get(projectId: string): Promise<Project | undefined> {
@@ -51,6 +53,8 @@ export class ProjectsService {
 				});
 
 				return deploymentId;
+			} else {
+				MessageHandler.errorMessage(translate().t("errors.defaultEnvironmentNotFound"));
 			}
 		}
 		return;
