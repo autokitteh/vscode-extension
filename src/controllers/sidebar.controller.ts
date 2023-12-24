@@ -28,15 +28,16 @@ export class SidebarController {
 			return;
 		}
 
-		this.user = await AuthorizationService.whoAmI();
-		if (!this.user) {
+		const { data: user } = await AuthorizationService.whoAmI();
+		if (!user) {
 			MessageHandler.errorMessage(translate().t("errors.noUserFound"));
 			return;
 		}
+		this.user = user;
 		this.updateServiceEnabled(true);
 		try {
-			const projects = await this.fetchProjects(this.user);
-			if (!projects.length) {
+			const projects = await this.fetchProjects(this.user.userId);
+			if (!projects) {
 				MessageHandler.errorMessage(translate().t("errors.noProjectsFound"));
 				return;
 			}
@@ -51,8 +52,12 @@ export class SidebarController {
 		}
 	};
 
-	private fetchProjects = async (user: User): Promise<SidebarTreeItem[]> => {
-		return (await ProjectsService.list(user.userId)).map((project) => ({
+	private fetchProjects = async (userId: string): Promise<SidebarTreeItem[] | undefined> => {
+		const { data: projects } = await ProjectsService.list(userId);
+		if (!projects) {
+			return undefined;
+		}
+		return projects.map((project) => ({
 			label: project.name,
 			key: project.projectId,
 		}));
@@ -68,8 +73,8 @@ export class SidebarController {
 				MessageHandler.errorMessage(translate().t("errors.noUserFound"));
 				return;
 			}
-			const projects = await this.fetchProjects(this.user);
-			if (!isEqual(projects, this.projects)) {
+			const projects = await this.fetchProjects(this.user.userId);
+			if (!isEqual(projects, this.projects) && projects) {
 				this.projects = projects;
 				this.view.refresh(this.projects);
 			}

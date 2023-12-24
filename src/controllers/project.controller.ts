@@ -37,14 +37,17 @@ export class ProjectController {
 		this.view.reveal();
 	}
 
-	async getProjectDeployments(): Promise<Deployment[]> {
-		const environments = await EnvironmentsService.listByProjectId(this.projectId);
-		if (!environments.length) {
+	async getProjectDeployments(): Promise<Deployment[] | undefined> {
+		const { data: environments } = await EnvironmentsService.listByProjectId(this.projectId);
+		if (!environments) {
 			MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
 			return [];
 		}
 
-		return await DeploymentsService.listByEnvironmentIds(getIds(environments, "envId"));
+		const { data: projectDeployments } = await DeploymentsService.listByEnvironmentIds(
+			getIds(environments, "envId")
+		);
+		return projectDeployments;
 	}
 
 	async refreshView() {
@@ -53,7 +56,7 @@ export class ProjectController {
 			this.deployments = deployments;
 			this.view.update({ type: MessageType.setDeployments, payload: deployments });
 		}
-		const sessions = await SessionsService.listByProjectId(this.projectId);
+		const { data: sessions } = await SessionsService.listByProjectId(this.projectId);
 		if (!isEqual(this.sessions, sessions)) {
 			this.sessions = sessions;
 			this.view.update({ type: MessageType.setSessions, payload: sessions });
@@ -75,8 +78,9 @@ export class ProjectController {
 
 	public async openProject(disposeCB: ProjectCB) {
 		this.disposeCB = disposeCB;
-		this.project = await ProjectsService.get(this.projectId);
-		if (this.project) {
+		const { data: project } = await ProjectsService.get(this.projectId);
+		if (project) {
+			this.project = project;
 			this.view.show(this.project.name);
 			this.startInterval();
 		}

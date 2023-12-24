@@ -8,5 +8,8 @@
 	"noProjectsFound": "No projects found, please check host configuration and manifest existance",
 	"noUserFound": "No user found, please check host configuration and manifest existance",
 	"noHostConnection": "No connection found, diconnecting. Please check host configuration and manifest existance",
-	"defaultEnvironmentNotFound": "Default environment not found"
+	"defaultEnvironmentNotFound": "Default environment not found",
+	"buildFailed": "Build failed",
+	"deploymentFailed": "Deployment failed",
+	"projectEnvironmentsNotFound": "Project environments not found"
 }

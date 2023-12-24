@@ -1,75 +1,73 @@
+import { ActivateResponse } from "@ak-proto-ts/deployments/v1/svc_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { projectsClient } from "@api/grpc/clients.grpc.api";
-import { handlegRPCErrors } from "@api/grpc/errorHandler.grpc.api";
 import { DEFAULT_ENVIRONMENT } from "@constants/extensionConfiguration.constants";
 import { translate } from "@i18n";
 import { DeploymentsService, EnvironmentsService } from "@services";
-import { MessageHandler } from "@views";
+import { ServiceResponse } from "@type/services.types";
 
 export class ProjectsService {
-	static async get(projectId: string): Promise<Project | undefined> {
+	static async get(projectId: string): ServiceResponse<Project> {
 		try {
-			const response = await projectsClient.get({ projectId });
-			return response?.project || undefined;
+			const project = (await projectsClient.get({ projectId })).project;
+			return { data: project, error: undefined };
 		} catch (error) {
-			handlegRPCErrors(error);
+			return { data: undefined, error };
 		}
-		return undefined;
 	}
 
-	static async list(userId: string): Promise<Project[]> {
+	static async list(userId: string): ServiceResponse<Project[]> {
 		try {
-			const response = await projectsClient.listForOwner({ ownerId: userId });
-			return response.projects;
+			const projects = (await projectsClient.listForOwner({ ownerId: userId })).projects;
+			return { data: projects, error: undefined };
 		} catch (error) {
-			handlegRPCErrors(error);
+			return { data: undefined, error };
 		}
-		return [];
 	}
 
-	static async build(projectId: string): Promise<string | undefined> {
+	static async build(projectId: string): ServiceResponse<string> {
 		try {
 			const response = await projectsClient.build({ projectId });
 			const { buildId } = response;
-			return buildId;
+			return { data: buildId, error: undefined };
 		} catch (error) {
-			handlegRPCErrors(error);
+			return { data: undefined, error };
 		}
-		return;
 	}
 
-	static async deploy(projectId: string): Promise<string | undefined> {
-		const buildId = await this.build(projectId);
+	static async deploy(projectId: string): ServiceResponse<string> {
+		const { data: buildId } = await this.build(projectId);
 		if (buildId) {
-			const environments = await EnvironmentsService.listByProjectId(projectId);
-			const environment = environments.find(
+			const { data: environments } = await EnvironmentsService.listByProjectId(projectId);
+			const environment = environments?.find(
 				(environment) => environment.name === DEFAULT_ENVIRONMENT
 			);
 
 			if (environment) {
-				const deploymentId = await DeploymentsService.create({
+				const { data: deploymentId } = await DeploymentsService.create({
 					buildId,
 					envId: environment.envId,
 				});
 
-				return deploymentId;
+				return { data: deploymentId, error: undefined };
 			} else {
-				MessageHandler.errorMessage(translate().t("errors.defaultEnvironmentNotFound"));
+				return { data: undefined, error: translate().t("errors.defaultEnvironmentNotFound") };
 			}
 		}
-		return;
+		return { data: undefined, error: translate().t("errors.buildFailed") };
 	}
 
-	static async run(projectId: string): Promise<string | undefined> {
-		const deploymentId = await this.deploy(projectId);
+	static async run(projectId: string): ServiceResponse<ActivateResponse> {
+		const { data: deploymentId } = await this.deploy(projectId);
 		if (deploymentId) {
 			try {
-				await DeploymentsService.activate(deploymentId);
+				const { data: activateResponse } = await DeploymentsService.activate(deploymentId);
+				return { data: activateResponse, error: undefined };
 			} catch (error) {
-				handlegRPCErrors(error);
+				return { data: undefined, error: error };
 			}
-			return deploymentId;
+		} else {
+			return { data: undefined, error: new Error(translate().t("errors.deploymentFailed")) };
 		}
-		return;
 	}
 }
