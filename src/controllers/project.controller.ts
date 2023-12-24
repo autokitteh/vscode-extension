@@ -50,20 +50,16 @@ export class ProjectController {
 		return await DeploymentsService.listByEnvironmentIds(getIds(environments, "envId"));
 	}
 
-	async getProjectSessions(): Promise<Session[]> {
-		return await SessionsService.listByProjectId(this.projectId);
-	}
-
 	async refreshView() {
 		const deployments = await this.getProjectDeployments();
 		if (!isEqual(this.deployments, deployments)) {
 			this.deployments = deployments;
-			this.view.update({ type: MessageType.deployments, payload: deployments });
+			this.view.update({ type: MessageType.setDeployments, payload: deployments });
 		}
-		const sessions = await this.getProjectSessions();
+		const sessions = await SessionsService.listByProjectId(this.projectId);
 		if (!isEqual(this.sessions, sessions)) {
 			this.sessions = sessions;
-			this.view.update({ type: MessageType.sessions, payload: sessions });
+			this.view.update({ type: MessageType.setSessions, payload: sessions });
 		}
 	}
 
