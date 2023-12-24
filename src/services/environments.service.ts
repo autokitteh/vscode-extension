@@ -5,7 +5,7 @@ import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
 export class EnvironmentsService {
-	static async listByProjectId(projectsIds: string[]): Promise<Env[]> {
+	static async listByProjectIds(projectsIds: string[]): Promise<Env[]> {
 		try {
 			const environmentsPromises = projectsIds.map(async (projectId) => {
 				const environments = await environmentsClient.list({
@@ -26,7 +26,7 @@ export class EnvironmentsService {
 		}
 		return [];
 	}
-	static async getByProjectId(projectId: string): Promise<Env[]> {
+	static async listByProjectId(projectId: string): Promise<Env[]> {
 		try {
 			return (
 				await environmentsClient.list({
