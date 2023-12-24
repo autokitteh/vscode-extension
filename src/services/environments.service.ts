@@ -1,11 +1,12 @@
 import { Env } from "@ak-proto-ts/envs/v1/env_pb";
 import { environmentsClient } from "@api/grpc/clients.grpc.api";
 import { handlegRPCErrors } from "@api/grpc/errorHandler.grpc.api";
+import { ServiceResponse } from "@type/services.types";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
 export class EnvironmentsService {
-	static async listForProjects(projectsIds: string[]): Promise<Env[]> {
+	static async listForProjects(projectsIds: string[]): ServiceResponse {
 		try {
 			const environmentsPromises = projectsIds.map(async (projectId) => {
 				const environments = await environmentsClient.list({
@@ -15,27 +16,29 @@ export class EnvironmentsService {
 			});
 
 			const environmentsResponses = await Promise.allSettled(environmentsPromises);
-
-			return flattenArray<Env>(
+			const environmentsSettled = flattenArray<Env>(
 				environmentsResponses
 					.filter((response) => response.status === "fulfilled")
 					.map((response) => get(response, "value.envs", []))
 			);
+
+			// TODO: handle unsetteled responses
+
+			return { data: environmentsSettled, error: undefined };
 		} catch (error) {
-			handlegRPCErrors(error);
+			return { data: undefined, error };
 		}
-		return [];
 	}
-	static async getByProject(projectId: string): Promise<Env[]> {
+	static async getByProject(projectId: string): ServiceResponse {
 		try {
-			return (
+			const environments = (
 				await environmentsClient.list({
 					parentId: projectId,
 				})
 			).envs;
+			return { data: environments, error: undefined };
 		} catch (error) {
-			handlegRPCErrors(error);
+			return { data: undefined, error };
 		}
-		return [];
 	}
 }

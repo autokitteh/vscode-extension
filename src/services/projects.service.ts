@@ -1,50 +1,66 @@
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { projectsClient } from "@api/grpc/clients.grpc.api";
 import { handlegRPCErrors } from "@api/grpc/errorHandler.grpc.api";
-import { translate } from "@i18n";
 import { DeploymentsService } from "@services";
-import { MessageHandler } from "@views";
+import { ServiceResponse } from "@type/services.types";
 
 export class ProjectsService {
-	static async get(projectId: string): Promise<Project | undefined> {
+	static async get(projectId: string): ServiceResponse {
 		try {
-			const response = await projectsClient.get({ projectId });
-			return response?.project || undefined;
+			const project = (await projectsClient.get({ projectId })).project;
+			return { data: project, error: undefined };
 		} catch (error) {
-			handlegRPCErrors(error);
+			return { data: undefined, error };
 		}
-		return undefined;
 	}
 
-	static async list(userId: string): Promise<Project[]> {
+	static async list(userId: string): ServiceResponse {
 		try {
-			const response = await projectsClient.listForOwner({ ownerId: userId });
-			return response.projects;
+			const projects = (await projectsClient.listForOwner({ ownerId: userId })).projects;
+			return { data: projects, error: undefined };
 		} catch (error) {
-			handlegRPCErrors(error);
+			return { data: undefined, error };
 		}
-		return [];
 	}
 
-	static async build(projectId: string): Promise<string | undefined> {
+	static async build(projectId: string): ServiceResponse {
 		try {
 			const response = await projectsClient.build({ projectId });
 			const { buildId } = response;
-			return buildId;
+			return { data: buildId, error: undefined };
 		} catch (error) {
-			handlegRPCErrors(error);
+			return { data: undefined, error };
 		}
-		return;
 	}
 
 	static async deploy(
 		deployment: { envId: string; buildId: string },
 		projectId: string
-	): Promise<void> {
-		const buildId = await this.build(projectId);
-		const deploymentId = await DeploymentsService.create(deployment);
-		if (buildId && deploymentId) {
-			DeploymentsService.activate(deploymentId);
+	): ServiceResponse {
+		let buildRequestError;
+		if (!deployment.buildId) {
+			const { data: buildId, error: buildError } = await this.build(projectId);
+			buildRequestError = buildError;
+		}
+		const { data: deploymentId, error: deployError } = await DeploymentsService.create(deployment);
+
+		const combinedErrors: {
+			buildRequestError?: object;
+			deployRequestError?: object;
+		} = {};
+
+		if (buildRequestError) {
+			combinedErrors.buildRequestError = buildRequestError;
+		}
+
+		if (deployError) {
+			combinedErrors.deployRequestError = deployError;
+		}
+
+		if (Object.keys(combinedErrors).length > 0) {
+			return { data: undefined, error: combinedErrors };
+		} else {
+			return await DeploymentsService.activate(deploymentId as string);
 		}
 	}
 }
