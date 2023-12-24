@@ -15,11 +15,11 @@ export const AKDeployments = ({ deployments }: { deployments: Deployment[] | und
 		<div>
 			<AKTable classes="mt-4">
 				<AKTableHeader>
-					<AKTableHeaderCell>{translate().t("reactAppDeployments.time")}</AKTableHeaderCell>
-					<AKTableHeaderCell>{translate().t("reactAppDeployments.status")}</AKTableHeaderCell>
-					<AKTableHeaderCell>{translate().t("reactAppDeployments.sessions")}</AKTableHeaderCell>
-					<AKTableHeaderCell>{translate().t("reactAppDeployments.buildId")}</AKTableHeaderCell>
-					<AKTableHeaderCell>{translate().t("reactAppDeployments.actions")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.deployments.time")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.deployments.status")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.deployments.sessions")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.deployments.buildId")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.deployments.actions")}</AKTableHeaderCell>
 				</AKTableHeader>
 				{deployments &&
 					deployments.map((deployment) => (

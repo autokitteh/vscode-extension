@@ -15,8 +15,8 @@ export const AKSessions = ({ sessions }: { sessions: Session[] | undefined }) =>
 		<div>
 			<AKTable classes="mt-4">
 				<AKTableHeader>
-					<AKTableHeaderCell>{translate().t("reactAppSessions.time")}</AKTableHeaderCell>
-					<AKTableHeaderCell>{translate().t("reactAppSessions.actions")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.sessions.time")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.sessions.actions")}</AKTableHeaderCell>
 				</AKTableHeader>
 				{sessions &&
 					sessions.map((session) => (

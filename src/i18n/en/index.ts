@@ -13,7 +13,9 @@ export const english = {
 	messages,
 	general,
 	walkthrough,
-	reactAppGeneral,
-	reactAppErrors,
-	reactAppDeployments,
+	reactApp: {
+		general: { ...reactAppGeneral },
+		errors: { ...reactAppErrors },
+		deployments: { ...reactAppDeployments },
+	},
 };

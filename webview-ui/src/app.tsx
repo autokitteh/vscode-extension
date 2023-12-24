@@ -46,11 +46,11 @@ function App() {
 					<div className="flex items-center">
 						<AKLogo className="w-12 h-12" themeVisualType={themeVisualType} />
 						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">
-							{projectName || translate().t("reactAppErrors.projects.noTitle")}
+							{projectName || translate().t("reactApp.projects.noTitle")}
 						</div>
 						<AKButton classes="mx-4" onClick={() => sendMessage(MessageType.buildProject)}>
 							<div className="codicon codicon-tools mr-2"></div>
-							{translate().t("reactAppGeneral.test")}
+							{translate().t("reactApp.general.build")}
 						</AKButton>
 						<AKButton onClick={() => sendMessage(MessageType.deployProject)}>
 							<div className="codicon codicon-play mr-2"></div>
