@@ -1,6 +1,5 @@
-import { DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL } from "@constants";
+import { projectControllerRefreshRate } from "@api/appConfig.api";
 import { ProjectController } from "@controllers";
-import { projectControllerRefreshRate } from "@utilities/getControllersRefreshRate.utils";
 import { ProjectView } from "@views";
 import { ExtensionContext } from "vscode";
 
@@ -11,7 +10,6 @@ export class TabsManagerController {
 	constructor(context: ExtensionContext) {
 		this.openWebviews = {};
 		this.context = context;
-		this.disposeWebview = this.disposeWebview.bind(this);
 	}
 
 	public async openWebview(project: SidebarTreeItem) {
@@ -23,7 +21,7 @@ export class TabsManagerController {
 				project.key,
 				projectControllerRefreshRate
 			);
-			newController.openProject(this.disposeWebview);
+			newController.openProject(() => this.disposeWebview(project.key));
 			this.openWebviews[project.key] = newController;
 			return;
 		}
@@ -31,7 +29,7 @@ export class TabsManagerController {
 		this.openWebviews[project.key].reveal();
 	}
 
-	private disposeWebview(projectId: string) {
-		delete this.openWebviews[projectId];
+	private disposeWebview(controllerId: string) {
+		delete this.openWebviews[controllerId];
 	}
 }

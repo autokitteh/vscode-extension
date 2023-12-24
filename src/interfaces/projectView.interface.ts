@@ -3,7 +3,7 @@ export interface IProjectViewDelegate {
 	onBlur?: Callback;
 	onFocus?: Callback;
 	build: Callback;
-	deploy: Callback;
+	run: Callback;
 }
 
 export interface IProjectView {

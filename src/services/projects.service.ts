@@ -59,7 +59,11 @@ export class ProjectsService {
 	static async run(projectId: string): Promise<string | undefined> {
 		const deploymentId = await this.deploy(projectId);
 		if (deploymentId) {
-			await DeploymentsService.activate(deploymentId);
+			try {
+				await DeploymentsService.activate(deploymentId);
+			} catch (error) {
+				handlegRPCErrors(error);
+			}
 			return deploymentId;
 		}
 		return;

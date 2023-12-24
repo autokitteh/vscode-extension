@@ -1,9 +1,9 @@
 require("module-alias/register");
 
+import { sidebarControllerRefreshRate } from "@api/appConfig.api";
 import { vsCommands } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
-import { sidebarControllerRefreshRate } from "@utilities/getControllersRefreshRate.utils";
 import { SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
 import {

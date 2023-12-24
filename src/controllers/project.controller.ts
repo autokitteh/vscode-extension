@@ -102,7 +102,7 @@ export class ProjectController {
 		}
 	}
 
-	async deploy() {
+	async run() {
 		const deploymentId = await ProjectsService.run(this.projectId);
 		if (deploymentId) {
 			MessageHandler.infoMessage(translate().t("projects.projectDeploySucceed"));
