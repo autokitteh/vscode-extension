@@ -76,12 +76,12 @@ export class SidebarController {
 		}
 	}
 
-	public resetSidebar = async () => {
+	public resetSidebar = () => {
 		this.projects = [];
 		this.view.refresh([]);
 	};
 
-	public disconnect = async () => {
+	public disconnect = () => {
 		this.stopInterval();
 		this.resetSidebar();
 	};

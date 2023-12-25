@@ -26,7 +26,7 @@ export async function activate(context: ExtensionContext) {
 	});
 	commands.registerCommand(vsCommands.disconnect, async () => {
 		sidebarController.disconnect();
-		await ConnectionHandler.updateConnectionStatus(false);
+		await ConnectionHandler.disconnect();
 	});
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {

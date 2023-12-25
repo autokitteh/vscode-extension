@@ -1,7 +1,6 @@
-import { ConnectError } from "@connectrpc/connect";
 import { vsCommands } from "@constants";
-import { gRPCErrors } from "@constants/api.constants";
 import { ConnectionHandler } from "@controllers/utilities/connectionHandler";
+import { errorHelper } from "@controllers/utilities/errorHelper";
 import { translate } from "@i18n";
 import { ServiceResponse } from "@type/services.types";
 import { commands } from "vscode";
@@ -33,23 +32,7 @@ export class RequestHandler {
 
 			return data as T;
 		} else {
-			if (error instanceof ConnectError && error.code === gRPCErrors.serverNotRespond) {
-				commands.executeCommand(
-					vsCommands.showErrorMessage,
-					translate().t("errors.serverNotRespond")
-				);
-				ConnectionHandler.reconnect();
-			} else {
-				const errorMessage = messages?.onFailureMessage
-					? messages.onFailureMessage
-					: typeof error === "string"
-						? error
-						: error instanceof Error
-							? error?.message
-							: translate().t("errors.unexpectedError");
-
-				commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
-			}
+			errorHelper(error);
 		}
 		return;
 	}

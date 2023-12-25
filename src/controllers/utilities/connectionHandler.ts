@@ -1,6 +1,6 @@
 import { ConnectError } from "@connectrpc/connect";
 import { BASE_URL, vsCommands } from "@constants";
-import { gRPCErrors } from "@constants/api.constants";
+import { errorHelper } from "@controllers/utilities/errorHelper";
 import { translate } from "@i18n";
 import { AuthorizationService } from "@services";
 import { ValidateURL } from "@utilities";
@@ -25,30 +25,21 @@ export class ConnectionHandler {
 			return;
 		}
 
-		try {
-			const { error } = await AuthorizationService.whoAmI();
-			if (error) {
-				throw new Error((error as ConnectError).message);
-			}
-			ConnectionHandler.updateConnectionStatus(true);
-			ConnectionHandler.isConnected = true;
-			ConnectionHandler.startConnectionCheckInterval();
-		} catch (error: unknown) {
-			if (error instanceof ConnectError) {
-				if (error.code === gRPCErrors.serverNotRespond) {
-					commands.executeCommand(
-						vsCommands.showErrorMessage,
-						translate().t("errors.serverNotRespond")
-					);
-					commands.executeCommand(vsCommands.disconnect);
-				}
-			} else if (error instanceof Error) {
-				commands.executeCommand(vsCommands.showErrorMessage, error.message);
-			} else if (typeof error === "string") {
-				commands.executeCommand(vsCommands.showErrorMessage, error);
-			}
+		const { error } = await AuthorizationService.whoAmI();
+		if (error) {
+			errorHelper(error);
 			ConnectionHandler.isConnected = false;
+			ConnectionHandler.updateConnectionStatus(false);
+		} else {
+			ConnectionHandler.isConnected = true;
+			ConnectionHandler.updateConnectionStatus(true);
+			ConnectionHandler.startConnectionCheckInterval();
 		}
+	};
+
+	static disconnect = async (): Promise<void> => {
+		await ConnectionHandler.updateConnectionStatus(false);
+		ConnectionHandler.stopConnectionCheckInterval();
 	};
 
 	static async updateConnectionStatus(isEnabled: boolean) {
