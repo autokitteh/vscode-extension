@@ -25,17 +25,14 @@ export class ResponseHandler {
 		} catch (error) {
 			await ConnectionHandler.updateConnectionStatus(false);
 
-			ResponseHandler.displayErrorMessage(
+			const errorMessage =
 				error instanceof Error
-					? error
+					? error.message
 					: onFailureMessage
-						? new Error(onFailureMessage)
-						: new Error(error as string)
-			);
-		}
-	}
+						? onFailureMessage
+						: (error as string);
 
-	static displayErrorMessage(error: Error) {
-		MessageHandler.errorMessage(error.message);
+			MessageHandler.errorMessage(errorMessage);
+		}
 	}
 }
