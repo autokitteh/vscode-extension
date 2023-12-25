@@ -46,7 +46,9 @@ export async function activate(context: ExtensionContext) {
 	);
 	context.subscriptions.push(commands.registerCommand(vsCommands.walkthrough, openWalkthrough));
 
-	const isConnected = workspace.getConfiguration().get("autokitteh.serviceEnabled") as boolean;
+	const isConnected = (await workspace
+		.getConfiguration()
+		.get("autokitteh.serviceEnabled")) as boolean;
 
 	if (isConnected) {
 		commands.executeCommand(vsCommands.connect);
