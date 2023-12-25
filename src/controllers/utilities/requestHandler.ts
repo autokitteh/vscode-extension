@@ -39,13 +39,17 @@ export class RequestHandler {
 					translate().t("errors.serverNotRespond")
 				);
 				ConnectionHandler.reconnect();
+			} else {
+				const errorMessage = messages?.onFailureMessage
+					? messages.onFailureMessage
+					: typeof error === "string"
+						? error
+						: error instanceof Error
+							? error?.message
+							: translate().t("errors.unexpectedError");
+
+				commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
 			}
-
-			const errorMessage = messages?.onFailureMessage
-				? messages.onFailureMessage
-				: error || translate().t("errors.unexpectedError");
-
-			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
 		}
 		return;
 	}
