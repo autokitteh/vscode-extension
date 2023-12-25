@@ -110,12 +110,14 @@ export class ProjectController {
 	async build() {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(this.projectId), {
 			onSuccessMessage: translate().t("projects.projectBuildSucceed"),
+			onFailureMessage: translate().t("projects.projectBuildFailed"),
 		});
 	}
 
 	async run() {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.run(this.projectId), {
 			onSuccessMessage: translate().t("projects.projectDeploySucceed"),
+			onFailureMessage: translate().t("projects.projectDeployFailed"),
 		});
 	}
 }
