@@ -50,7 +50,7 @@ export class ConnectionHandler {
 	static async getConnectionStatus() {
 		try {
 			const { error } = await AuthorizationService.whoAmI();
-			return !!!error;
+			return !error;
 		} catch (error: unknown) {
 			return false;
 		}
