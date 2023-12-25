@@ -12,7 +12,6 @@ export class ConnectionHandler {
 	static reconnectInterval = 5000;
 	static maxReconnectAttempts = 10;
 	static reconnectAttempts = 0;
-
 	static connect = async (): Promise<boolean> => {
 		if (!ValidateURL(BASE_URL)) {
 			MessageHandler.errorMessage(translate().t("errors.badHostURL"));
@@ -21,8 +20,11 @@ export class ConnectionHandler {
 		}
 
 		try {
-			await AuthorizationService.whoAmI();
-			await ConnectionHandler.updateConnectionStatus(true);
+			const { error } = await AuthorizationService.whoAmI();
+			if (error) {
+				throw new Error((error as ConnectError).message);
+			}
+			ConnectionHandler.updateConnectionStatus(true);
 			return true;
 		} catch (error: unknown) {
 			if (error instanceof ConnectError) {
@@ -46,13 +48,11 @@ export class ConnectionHandler {
 	}
 
 	static async getConnectionStatus() {
-		return (await workspace.getConfiguration().get("autokitteh.serviceEnabled")) as boolean;
-	}
-	static disconnect() {
-		commands.executeCommand(vsCommands.disconnect);
-		if (ConnectionHandler.intervalId !== null) {
-			clearInterval(ConnectionHandler.intervalId);
-			ConnectionHandler.intervalId = null;
+		try {
+			const { error } = await AuthorizationService.whoAmI();
+			return !!!error;
+		} catch (error: unknown) {
+			return false;
 		}
 	}
 
@@ -65,7 +65,7 @@ export class ConnectionHandler {
 						clearInterval(ConnectionHandler.intervalId as NodeJS.Timeout);
 						ConnectionHandler.intervalId = null;
 						ConnectionHandler.reconnectAttempts = 0;
-						await ConnectionHandler.updateConnectionStatus(true);
+						commands.executeCommand(vsCommands.connect);
 					} else {
 						MessageHandler.errorMessage(translate().t("errors.serverNotRespond"));
 

@@ -37,14 +37,15 @@ export class SidebarController {
 		if (!this.user) {
 			return;
 		}
+
+		this.noProjectMessageDisplayed = false;
+
 		this.startInterval();
 	};
 
 	private fetchProjects = async (userId: string): Promise<SidebarTreeItem[] | undefined> => {
 		const projects = await ResponseHandler.handleServiceResponse(ProjectsService.list(userId));
-		if (!projects) {
-			return;
-		} else {
+		if (projects) {
 			return projects.map((project) => ({
 				label: project.name,
 				key: project.projectId,
@@ -64,8 +65,10 @@ export class SidebarController {
 			}
 			const projects = await this.fetchProjects(this.user.userId);
 			if (!projects || (!projects.length && !this.noProjectMessageDisplayed)) {
+				if (!this.noProjectMessageDisplayed) {
+					MessageHandler.errorMessage(translate().t("errors.noProjectsFound"));
+				}
 				this.noProjectMessageDisplayed = true;
-				MessageHandler.errorMessage(translate().t("errors.noProjectsFound"));
 			}
 			if (!isEqual(projects, this.projects) && projects) {
 				this.projects = projects;

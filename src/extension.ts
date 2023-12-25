@@ -21,7 +21,11 @@ export async function activate(context: ExtensionContext) {
 	const tabsManager = new TabsManagerController(context);
 
 	commands.registerCommand(vsCommands.connect, async () => {
-		await ConnectionHandler.connect();
+		const mainConnection = await ConnectionHandler.connect();
+		if (!mainConnection) {
+			commands.executeCommand(vsCommands.disconnect);
+			return;
+		}
 		sidebarController.connect();
 	});
 	commands.registerCommand(vsCommands.disconnect, async () => {
