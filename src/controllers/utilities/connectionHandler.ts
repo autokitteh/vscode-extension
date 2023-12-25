@@ -4,19 +4,25 @@ import { gRPCErrors } from "@constants/api.constants";
 import { translate } from "@i18n";
 import { AuthorizationService } from "@services";
 import { ValidateURL } from "@utilities";
-import { MessageHandler } from "@views";
 import { ConfigurationTarget, commands, workspace } from "vscode";
 
 export class ConnectionHandler {
-	static intervalId: NodeJS.Timeout | null = null;
+	static reconnectIntervalId: NodeJS.Timeout | null = null;
 	static reconnectInterval = 5000;
 	static maxReconnectAttempts = 10;
 	static reconnectAttempts = 0;
-	static connect = async (): Promise<boolean> => {
+	static connectionCheckIntervalId: NodeJS.Timeout | null = null;
+	static connectionCheckInterval = 5000;
+
+	static isConnected = false;
+
+	static connect = async (): Promise<void> => {
 		if (!ValidateURL(BASE_URL)) {
-			MessageHandler.errorMessage(translate().t("errors.badHostURL"));
+			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.badHostURL"));
 			commands.executeCommand(vsCommands.disconnect);
-			return false;
+			ConnectionHandler.isConnected = false;
+			await ConnectionHandler.updateConnectionStatus(false);
+			return;
 		}
 
 		try {
@@ -25,19 +31,23 @@ export class ConnectionHandler {
 				throw new Error((error as ConnectError).message);
 			}
 			ConnectionHandler.updateConnectionStatus(true);
-			return true;
+			ConnectionHandler.isConnected = true;
+			ConnectionHandler.startConnectionCheckInterval();
 		} catch (error: unknown) {
 			if (error instanceof ConnectError) {
-				MessageHandler.errorMessage(translate().t("errors.serverNotRespond"));
 				if (error.code === gRPCErrors.serverNotRespond) {
+					commands.executeCommand(
+						vsCommands.showErrorMessage,
+						translate().t("errors.serverNotRespond")
+					);
 					commands.executeCommand(vsCommands.disconnect);
 				}
 			} else if (error instanceof Error) {
-				MessageHandler.errorMessage(error.message);
-			} else {
-				MessageHandler.errorMessage(error as string);
+				commands.executeCommand(vsCommands.showErrorMessage, error.message);
+			} else if (typeof error === "string") {
+				commands.executeCommand(vsCommands.showErrorMessage, error);
 			}
-			return false;
+			ConnectionHandler.isConnected = false;
 		}
 	};
 
@@ -56,25 +66,45 @@ export class ConnectionHandler {
 		}
 	}
 
+	static startConnectionCheckInterval() {
+		if (ConnectionHandler.connectionCheckIntervalId === null) {
+			ConnectionHandler.connectionCheckIntervalId = setInterval(async () => {
+				const currentStatus = await ConnectionHandler.getConnectionStatus();
+				ConnectionHandler.isConnected = currentStatus;
+			}, ConnectionHandler.connectionCheckInterval);
+		}
+	}
+
+	static stopConnectionCheckInterval() {
+		if (ConnectionHandler.connectionCheckIntervalId !== null) {
+			clearInterval(ConnectionHandler.connectionCheckIntervalId);
+			ConnectionHandler.connectionCheckIntervalId = null;
+		}
+	}
+
 	static reconnect() {
-		if (ConnectionHandler.intervalId === null) {
-			ConnectionHandler.intervalId = setInterval(async () => {
+		if (ConnectionHandler.reconnectIntervalId === null) {
+			ConnectionHandler.reconnectIntervalId = setInterval(async () => {
 				if (ConnectionHandler.reconnectAttempts < ConnectionHandler.maxReconnectAttempts) {
 					const isConnected = await ConnectionHandler.getConnectionStatus();
 					if (isConnected) {
-						clearInterval(ConnectionHandler.intervalId as NodeJS.Timeout);
-						ConnectionHandler.intervalId = null;
+						clearInterval(ConnectionHandler.reconnectIntervalId as NodeJS.Timeout);
+						ConnectionHandler.reconnectIntervalId = null;
 						ConnectionHandler.reconnectAttempts = 0;
 						commands.executeCommand(vsCommands.connect);
+						ConnectionHandler.isConnected = true;
+						await ConnectionHandler.updateConnectionStatus(true);
 					} else {
-						MessageHandler.errorMessage(translate().t("errors.serverNotRespond"));
-
+						commands.executeCommand(
+							vsCommands.showErrorMessage,
+							translate().t("errors.serverNotRespond")
+						);
 						ConnectionHandler.reconnectAttempts++;
 					}
 				} else {
 					await ConnectionHandler.updateConnectionStatus(false);
-					clearInterval(ConnectionHandler.intervalId as NodeJS.Timeout);
-					ConnectionHandler.intervalId = null;
+					clearInterval(ConnectionHandler.reconnectIntervalId as NodeJS.Timeout);
+					ConnectionHandler.reconnectIntervalId = null;
 				}
 			}, ConnectionHandler.reconnectInterval);
 		}

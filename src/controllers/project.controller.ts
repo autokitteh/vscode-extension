@@ -1,8 +1,7 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
-import { DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL } from "@constants";
-import { ResponseHandler } from "@controllers/utilities/responseHandler";
+import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import {
@@ -13,9 +12,7 @@ import {
 } from "@services";
 import { MessageType } from "@type";
 import { getIds } from "@utilities/getIds.utils";
-import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
-import { workspace } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
@@ -39,19 +36,17 @@ export class ProjectController {
 	}
 
 	async getProjectDeployments(): Promise<Deployment[] | undefined> {
-		const environments = await ResponseHandler.handleServiceResponse(
-			EnvironmentsService.listByProjectId(this.projectId),
-			undefined,
-			translate().t("errors.environmentsNotDefinedForProject")
+		const environments = await RequestHandler.handleServiceResponse(
+			() => EnvironmentsService.listByProjectId(this.projectId),
+			{ onFailureMessage: translate().t("errors.environmentsNotDefinedForProject") }
 		);
 		if (!environments) {
 			return;
 		}
 		const environmentIds = getIds(environments, "envId");
-		const projectDeployments = await ResponseHandler.handleServiceResponse(
-			DeploymentsService.listByEnvironmentIds(environmentIds),
-			undefined,
-			translate().t("errors.environmentsNotDefinedForProject")
+		const projectDeployments = await RequestHandler.handleServiceResponse(
+			() => DeploymentsService.listByEnvironmentIds(environmentIds),
+			{ onFailureMessage: translate().t("errors.deploymentsNotDefinedForProject") }
 		);
 		return projectDeployments;
 	}
@@ -62,10 +57,8 @@ export class ProjectController {
 			this.deployments = deployments;
 			this.view.update({ type: MessageType.setDeployments, payload: deployments });
 		}
-		const sessions = await ResponseHandler.handleServiceResponse(
-			SessionsService.listByProjectId(this.projectId),
-			undefined,
-			translate().t("errors.unexpectedError")
+		const sessions = await RequestHandler.handleServiceResponse(() =>
+			SessionsService.listByProjectId(this.projectId)
 		);
 		if (!isEqual(this.sessions, sessions)) {
 			this.sessions = sessions;
@@ -88,10 +81,11 @@ export class ProjectController {
 
 	public async openProject(disposeCB: ProjectCB) {
 		this.disposeCB = disposeCB;
-		const project = await ResponseHandler.handleServiceResponse(
-			ProjectsService.get(this.projectId),
-			undefined,
-			translate().t("errors.unexpectedError")
+		const project = await RequestHandler.handleServiceResponse(
+			() => ProjectsService.get(this.projectId),
+			{
+				onFailureMessage: translate().t("errors.projectNotFound"),
+			}
 		);
 		if (project) {
 			this.project = project;
@@ -114,18 +108,14 @@ export class ProjectController {
 	}
 
 	async build() {
-		await ResponseHandler.handleServiceResponse(
-			ProjectsService.build(this.projectId),
-			translate().t("projects.projectBuildSucceed"),
-			translate().t("errors.unexpectedError")
-		);
+		await RequestHandler.handleServiceResponse(() => ProjectsService.build(this.projectId), {
+			onSuccessMessage: translate().t("projects.projectBuildSucceed"),
+		});
 	}
 
 	async run() {
-		await ResponseHandler.handleServiceResponse(
-			ProjectsService.run(this.projectId),
-			translate().t("projects.projectDeploySucceed"),
-			translate().t("errors.unexpectedError")
-		);
+		await RequestHandler.handleServiceResponse(() => ProjectsService.run(this.projectId), {
+			onSuccessMessage: translate().t("projects.projectDeploySucceed"),
+		});
 	}
 }

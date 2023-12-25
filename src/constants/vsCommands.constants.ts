@@ -10,4 +10,6 @@ export const vsCommands = {
 	walkthrough: "autokitteh.walkthrough",
 	openWalkthrough: "workbench.action.openWalkthrough",
 	baseURLUpdated: "autokitteh.baseURLUpdated",
+	showErrorMessage: "autokitteh.showErrorMessage",
+	showInfoMessage: "autokitteh.showInfoMessage",
 };

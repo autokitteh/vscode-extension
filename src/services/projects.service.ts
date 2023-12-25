@@ -7,7 +7,7 @@ import { DeploymentsService, EnvironmentsService } from "@services";
 import { ServiceResponse } from "@type/services.types";
 
 export class ProjectsService {
-	static async get(projectId: string): ServiceResponse<Project> {
+	static async get(projectId: string): Promise<ServiceResponse<Project>> {
 		try {
 			const project = (await projectsClient.get({ projectId })).project;
 			return { data: project, error: undefined };
@@ -16,7 +16,7 @@ export class ProjectsService {
 		}
 	}
 
-	static async list(userId: string): ServiceResponse<Project[]> {
+	static async list(userId: string): Promise<ServiceResponse<Project[]>> {
 		try {
 			const projects = (await projectsClient.listForOwner({ ownerId: userId })).projects;
 			return { data: projects, error: undefined };
@@ -25,7 +25,7 @@ export class ProjectsService {
 		}
 	}
 
-	static async build(projectId: string): ServiceResponse<string> {
+	static async build(projectId: string): Promise<ServiceResponse<string>> {
 		try {
 			const response = await projectsClient.build({ projectId });
 			const { buildId } = response;
@@ -35,7 +35,7 @@ export class ProjectsService {
 		}
 	}
 
-	static async deploy(projectId: string): ServiceResponse<string> {
+	static async deploy(projectId: string): Promise<ServiceResponse<string>> {
 		const { data: buildId } = await this.build(projectId);
 		if (buildId) {
 			const { data: environments } = await EnvironmentsService.listByProjectId(projectId);
@@ -57,7 +57,7 @@ export class ProjectsService {
 		return { data: undefined, error: translate().t("errors.buildFailed") };
 	}
 
-	static async run(projectId: string): ServiceResponse<ActivateResponse> {
+	static async run(projectId: string): Promise<ServiceResponse<ActivateResponse>> {
 		const { data: deploymentId } = await this.deploy(projectId);
 		if (deploymentId) {
 			try {

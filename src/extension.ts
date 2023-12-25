@@ -5,7 +5,7 @@ import { vsCommands } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { ConnectionHandler } from "@controllers/utilities/connectionHandler";
-import { SidebarView } from "@views";
+import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
 import {
 	openBaseURLInputDialog,
@@ -21,11 +21,7 @@ export async function activate(context: ExtensionContext) {
 	const tabsManager = new TabsManagerController(context);
 
 	commands.registerCommand(vsCommands.connect, async () => {
-		const mainConnection = await ConnectionHandler.connect();
-		if (!mainConnection) {
-			commands.executeCommand(vsCommands.disconnect);
-			return;
-		}
+		await ConnectionHandler.connect();
 		sidebarController.connect();
 	});
 	commands.registerCommand(vsCommands.disconnect, async () => {
@@ -44,7 +40,12 @@ export async function activate(context: ExtensionContext) {
 		commands.registerCommand(vsCommands.openUsernameInputDialog, openUsernameInputDialog)
 	);
 	context.subscriptions.push(commands.registerCommand(vsCommands.usernameUpdated, function () {}));
-	context.subscriptions.push(commands.registerCommand(vsCommands.baseURLUpdated, function () {}));
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.showInfoMessage, MessageHandler.infoMessage)
+	);
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.showErrorMessage, MessageHandler.errorMessage)
+	);
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openBaseURLInputDialog, openBaseURLInputDialog)
 	);

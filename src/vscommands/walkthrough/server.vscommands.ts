@@ -19,9 +19,12 @@ export const setBaseURL = async (baseURL: string) => {
 	const hostBaseURL = ValidateURL(baseURL);
 	if (hostBaseURL) {
 		workspace.getConfiguration().update("autokitteh.baseURL", hostBaseURL);
-		MessageHandler.infoMessage(translate().t("messages.baseURLUpdated"));
+		commands.executeCommand(vsCommands.showInfoMessage, translate().t("messages.baseURLUpdated"));
 		commands.executeCommand(vsCommands.baseURLUpdated);
 	} else {
-		MessageHandler.errorMessage(translate().t("errors.walkthrough.badBaseURL"));
+		commands.executeCommand(
+			vsCommands.showErrorMessage,
+			translate().t("errors.walkthrough.badBaseURL")
+		);
 	}
 };

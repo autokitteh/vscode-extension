@@ -3,7 +3,7 @@ import { environmentsClient } from "@api/grpc/clients.grpc.api";
 import { ServiceResponse } from "@type/services.types";
 
 export class EnvironmentsService {
-	static async listByProjectId(projectId: string): ServiceResponse<Env[]> {
+	static async listByProjectId(projectId: string): Promise<ServiceResponse<Env[]>> {
 		try {
 			const environments = (
 				await environmentsClient.list({

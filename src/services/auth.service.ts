@@ -3,7 +3,7 @@ import { authClient } from "@api/grpc/clients.grpc.api";
 import { ServiceResponse } from "@type/services.types";
 
 export class AuthorizationService {
-	static async whoAmI(): ServiceResponse<User> {
+	static async whoAmI(): Promise<ServiceResponse<User>> {
 		try {
 			const user = (await authClient.whoAmI({})).user;
 			return { data: user, error: undefined };

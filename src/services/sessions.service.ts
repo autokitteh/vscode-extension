@@ -7,7 +7,7 @@ import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
 export class SessionsService {
-	static async listByEnvironmentId(environmentId: string): ServiceResponse<Session[]> {
+	static async listByEnvironmentId(environmentId: string): Promise<ServiceResponse<Session[]>> {
 		try {
 			const sessions = (await sessionsClient.list({ envId: environmentId })).sessions;
 			return { data: sessions, error: undefined };
@@ -16,7 +16,7 @@ export class SessionsService {
 		}
 	}
 
-	static async listByProjectId(projectId: string): ServiceResponse<Session[]> {
+	static async listByProjectId(projectId: string): Promise<ServiceResponse<Session[]>> {
 		try {
 			const { data: projectEnvironments } = await EnvironmentsService.listByProjectId(projectId);
 
