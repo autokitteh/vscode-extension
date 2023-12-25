@@ -18,15 +18,17 @@ export class DeploymentsService {
 			const deploymentsResponses = await Promise.allSettled(deploymentsPromises);
 			const deploymentsSettled = flattenArray<Deployment>(
 				deploymentsResponses
-					.filter((response) => response.status === "fulfilled")
-					.map((response) => get(response, "value.deployments", []))
+					.filter((response): response is PromiseRejectedResult => response.status === "rejected")
+					.map((response) => response.reason?.deployments || [])
 			);
 
-			// TODO: handle unsetteled responses
+			const unsettledResponses = deploymentsResponses
+				.filter((response): response is PromiseRejectedResult => response.status === "rejected")
+				.map((response) => response.reason);
 
 			return {
 				data: deploymentsSettled,
-				error: undefined,
+				error: unsettledResponses.length > 0 ? unsettledResponses : undefined,
 			};
 		} catch (error) {
 			return { data: undefined, error };
