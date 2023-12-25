@@ -1,7 +1,6 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
-import { DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL } from "@constants";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import {
@@ -39,7 +38,7 @@ export class ProjectController {
 
 	async getProjectDeployments(): Promise<Deployment[]> {
 		const environments = await EnvironmentsService.listByProjectId(this.projectId);
-		if (!environments.length) {
+		if (!environments) {
 			MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
 			return [];
 		}

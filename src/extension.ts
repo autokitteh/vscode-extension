@@ -4,6 +4,7 @@ import { sidebarControllerRefreshRate } from "@api/appConfig.api";
 import { vsCommands } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
+import { ConnectionHandler } from "@controllers/utilities/connectionHandler";
 import { SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
 import {
@@ -20,10 +21,16 @@ export async function activate(context: ExtensionContext) {
 	const tabsManager = new TabsManagerController(context);
 
 	commands.registerCommand(vsCommands.connect, async () => {
-		sidebarController.connect();
+		const mainConnection = await ConnectionHandler.connect();
+		if (!mainConnection) {
+			ConnectionHandler.reconnect();
+		} else {
+			sidebarController.connect();
+		}
 	});
 	commands.registerCommand(vsCommands.disconnect, async () => {
 		sidebarController.disconnect();
+		await ConnectionHandler.updateConnectionStatus(false);
 	});
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {
@@ -48,6 +55,6 @@ export async function activate(context: ExtensionContext) {
 		.get("autokitteh.serviceEnabled")) as boolean;
 
 	if (isConnected) {
-		sidebarController.connect();
+		commands.executeCommand(vsCommands.connect);
 	}
 }

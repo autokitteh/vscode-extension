@@ -1,8 +1,7 @@
 import { User } from "@ak-proto-ts/users/v1/user_pb";
-import { BASE_URL, vsCommands } from "@constants";
+import { ConnectionHandler } from "@controllers/utilities/connectionHandler";
 import { translate } from "@i18n";
 import { AuthorizationService, ProjectsService } from "@services";
-import { ValidateURL } from "@utilities";
 import { MessageHandler } from "@views";
 import { ISidebarView } from "interfaces";
 import isEqual from "lodash/isEqual";
@@ -14,6 +13,7 @@ export class SidebarController {
 	private user?: User;
 	private refreshRate: number;
 	private projects?: SidebarTreeItem[];
+	private noProjectMessageDisplayed = false;
 
 	constructor(sidebarView: ISidebarView, refreshRate: number) {
 		this.view = sidebarView;
@@ -22,23 +22,17 @@ export class SidebarController {
 	}
 
 	public connect = async () => {
-		if (!ValidateURL(BASE_URL)) {
-			MessageHandler.errorMessage(translate().t("errors.badHostURL"));
-			commands.executeCommand(vsCommands.disconnect);
-			return;
-		}
-
 		this.user = await AuthorizationService.whoAmI();
 		if (!this.user) {
-			MessageHandler.errorMessage(translate().t("errors.noUserFound"));
 			return;
 		}
+		this.noProjectMessageDisplayed = false;
+
 		this.updateServiceEnabled(true);
 		try {
 			const projects = await this.fetchProjects(this.user);
 			if (!projects.length) {
 				MessageHandler.errorMessage(translate().t("errors.noProjectsFound"));
-				return;
 			}
 
 			this.startInterval();
@@ -69,7 +63,19 @@ export class SidebarController {
 				return;
 			}
 			const projects = await this.fetchProjects(this.user);
-			if (!isEqual(projects, this.projects)) {
+			const isConnected = await ConnectionHandler.getConnectionStatus();
+			if (!projects.length && !isConnected) {
+				ConnectionHandler.reconnect();
+				return;
+			}
+
+			if (!projects && !this.noProjectMessageDisplayed) {
+				if (!this.noProjectMessageDisplayed) {
+					MessageHandler.errorMessage(translate().t("errors.noProjectsFound"));
+				}
+				this.noProjectMessageDisplayed = true;
+			}
+			if (projects && !isEqual(projects, this.projects)) {
 				this.projects = projects;
 				this.view.refresh(this.projects);
 			}
