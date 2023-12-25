@@ -10,7 +10,8 @@ export class ResponseHandler {
 		onSuccessMessage?: string,
 		onFailureMessage?: string
 	) {
-		if (!(await ConnectionHandler.getConnectionStatus())) {
+		const isConnected = await ConnectionHandler.getConnectionStatus();
+		if (!isConnected) {
 			await ConnectionHandler.updateConnectionStatus(false);
 			ConnectionHandler.reconnect();
 			return;
