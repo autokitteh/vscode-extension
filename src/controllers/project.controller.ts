@@ -12,6 +12,7 @@ import {
 } from "@services";
 import { MessageType } from "@type";
 import { getIds } from "@utilities/getIds.utils";
+import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
 
 export class ProjectController {
@@ -38,15 +39,16 @@ export class ProjectController {
 	async getProjectDeployments(): Promise<Deployment[] | undefined> {
 		const environments = await RequestHandler.handleServiceResponse(
 			() => EnvironmentsService.listByProjectId(this.projectId),
-			{ onFailureMessage: translate().t("errors.environmentsNotDefinedForProject") }
+			{ onFailTranslationKey: "errors.environmentsNotDefinedForProject" }
 		);
-		if (!environments) {
+		if (!environments || environments.length === 0) {
+			MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
 			return;
 		}
 		const environmentIds = getIds(environments, "envId");
 		const projectDeployments = await RequestHandler.handleServiceResponse(
 			() => DeploymentsService.listByEnvironmentIds(environmentIds),
-			{ onFailureMessage: translate().t("errors.deploymentsNotDefinedForProject") }
+			{ onFailTranslationKey: "errors.deploymentsNotDefinedForProject" }
 		);
 		return projectDeployments;
 	}
@@ -84,7 +86,7 @@ export class ProjectController {
 		const project = await RequestHandler.handleServiceResponse(
 			() => ProjectsService.get(this.projectId),
 			{
-				onFailureMessage: translate().t("errors.projectNotFound"),
+				onFailTranslationKey: "errors.projectNotFound",
 			}
 		);
 		if (project) {
@@ -109,15 +111,15 @@ export class ProjectController {
 
 	async build() {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(this.projectId), {
-			onSuccessMessage: translate().t("projects.projectBuildSucceed"),
-			onFailureMessage: translate().t("projects.projectBuildFailed"),
+			onSuccessTranslationKey: "projects.projectBuildSucceed",
+			onFailTranslationKey: "projects.projectBuildFailed",
 		});
 	}
 
 	async run() {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.run(this.projectId), {
-			onSuccessMessage: translate().t("projects.projectDeploySucceed"),
-			onFailureMessage: translate().t("projects.projectDeployFailed"),
+			onSuccessTranslationKey: "projects.projectDeploySucceed",
+			onFailTranslationKey: "projects.projectDeployFailed",
 		});
 	}
 }

@@ -1,23 +1,21 @@
 import { ConnectError } from "@connectrpc/connect";
 import { vsCommands } from "@constants";
-import { gRPCErrors } from "@constants/api.constants";
-import { ConnectionHandler } from "@controllers/utilities/connectionHandler";
 import { translate } from "@i18n/translation.i18n";
 import { commands } from "vscode";
 
-export const errorHelper = (error: unknown, errorMessage?: string) => {
-	if (error instanceof ConnectError && error.code === gRPCErrors.serverNotRespond) {
-		commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.serverNotRespond"));
-		ConnectionHandler.reconnect();
-	} else {
-		const errorMessageToDisplay = errorMessage
-			? errorMessage
-			: typeof error === "string"
-				? error
-				: error instanceof Error
-					? error.message
-					: translate().t("errors.unexpectedError");
-
-		commands.executeCommand(vsCommands.showErrorMessage, errorMessageToDisplay);
+export const errorHelper = (error: unknown, onFailureMessage?: string) => {
+	let errorMessage = translate().t(["errors.unexpectedError"]);
+	if (onFailureMessage) {
+		errorMessage = translate().t(onFailureMessage);
+		if (error instanceof ConnectError) {
+			const { code, message } = error;
+			errorMessage = `${errorMessage}. [${code}]: ${message}`;
+		} else if (error instanceof Error) {
+			const { message } = error;
+			errorMessage = `${errorMessage}. ${message}`;
+		} else if (typeof error === "string") {
+			errorMessage = `${errorMessage}. ${error}`;
+		}
 	}
+	commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
 };

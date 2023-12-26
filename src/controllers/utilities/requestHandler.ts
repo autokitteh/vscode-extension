@@ -2,6 +2,7 @@ import { vsCommands } from "@constants";
 import { ConnectionHandler } from "@controllers/utilities/connectionHandler";
 import { errorHelper } from "@controllers/utilities/errorHelper";
 import { translate } from "@i18n";
+import { TranslationKeys } from "@type/i18next";
 import { ServiceResponse } from "@type/services.types";
 import { commands } from "vscode";
 
@@ -9,8 +10,8 @@ export class RequestHandler {
 	static async handleServiceResponse<T>(
 		requestPromise: () => Promise<ServiceResponse<T>>,
 		messages?: {
-			onSuccessMessage?: string;
-			onFailureMessage?: string;
+			onSuccessTranslationKey?: TranslationKeys;
+			onFailTranslationKey?: TranslationKeys;
 		}
 	): Promise<T | undefined> {
 		if (!ConnectionHandler.isConnected) {
@@ -19,21 +20,19 @@ export class RequestHandler {
 		const { error, data } = await requestPromise();
 
 		if (!error) {
-			if (messages?.onSuccessMessage) {
-				commands.executeCommand(vsCommands.showInfoMessage, messages.onSuccessMessage);
+			if (messages?.onSuccessTranslationKey) {
+				commands.executeCommand(
+					vsCommands.showInfoMessage,
+					translate().t(messages.onSuccessTranslationKey)
+				);
 			}
 			return data as T;
 		} else if (error && data) {
-			const errorMessage = messages?.onFailureMessage
-				? messages.onFailureMessage
-				: translate().t("errors.unexpectedError");
-
-			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
-
+			errorHelper(error, messages?.onFailTranslationKey);
 			return data as T;
-		} else {
-			errorHelper(error);
 		}
+		errorHelper(error, messages?.onFailTranslationKey);
+
 		return;
 	}
 }

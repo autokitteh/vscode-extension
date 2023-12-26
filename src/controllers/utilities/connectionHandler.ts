@@ -19,7 +19,6 @@ export class ConnectionHandler {
 	static connect = async (): Promise<void> => {
 		if (!ValidateURL(BASE_URL)) {
 			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.badHostURL"));
-			commands.executeCommand(vsCommands.disconnect);
 			ConnectionHandler.isConnected = false;
 			await ConnectionHandler.updateConnectionStatus(false);
 			return;
