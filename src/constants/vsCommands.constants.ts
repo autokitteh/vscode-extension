@@ -7,7 +7,7 @@ export const vsCommands = {
 	openUsernameInputDialog: "autokitteh.openUsernameInputDialog",
 	usernameUpdated: "autokitteh.usernameUpdated",
 	openBaseURLInputDialog: "autokitteh.openBaseURLInputDialog",
-	walkthrough: "autokitteh.walkthrough",
+	openConfigSetupWalkthrough: "autokitteh.openConfigSetupWalkthrough",
 	openWalkthrough: "workbench.action.openWalkthrough",
 	baseURLUpdated: "autokitteh.baseURLUpdated",
 	showErrorMessage: "autokitteh.showErrorMessage",

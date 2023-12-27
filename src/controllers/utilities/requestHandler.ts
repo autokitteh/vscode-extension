@@ -18,7 +18,7 @@ export class RequestHandler {
 			return;
 		}
 		const { error, data } = await requestPromise();
-
+		errorHelper("error");
 		if (!error) {
 			if (messages?.onSuccessTranslationKey) {
 				commands.executeCommand(
@@ -27,7 +27,8 @@ export class RequestHandler {
 				);
 			}
 			return data as T;
-		} else if (error && data) {
+		}
+		if (error && data) {
 			errorHelper(error, messages?.onFailTranslationKey);
 			return data as T;
 		}

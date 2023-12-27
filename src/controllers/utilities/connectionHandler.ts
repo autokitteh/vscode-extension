@@ -8,11 +8,13 @@ import { ConfigurationTarget, commands, workspace } from "vscode";
 
 export class ConnectionHandler {
 	static reconnectIntervalId: NodeJS.Timeout | null = null;
-	static reconnectInterval = 5000;
-	static maxReconnectAttempts = 10;
+	static reconnectInterval = Number(
+		workspace.getConfiguration().get("autokitteh.connectionTest.refresh.interval")
+	);
+	static maxReconnectAttempts = Number(
+		workspace.getConfiguration().get("autokitteh.connectionTest.maxReconnectAttempts")
+	);
 	static reconnectAttempts = 0;
-	static connectionCheckIntervalId: NodeJS.Timeout | null = null;
-	static connectionCheckInterval = 5000;
 
 	static isConnected = false;
 
@@ -29,16 +31,17 @@ export class ConnectionHandler {
 			errorHelper(error);
 			ConnectionHandler.isConnected = false;
 			ConnectionHandler.updateConnectionStatus(false);
-		} else {
-			ConnectionHandler.isConnected = true;
-			ConnectionHandler.updateConnectionStatus(true);
-			ConnectionHandler.startConnectionCheckInterval();
+			return;
 		}
+
+		ConnectionHandler.isConnected = true;
+		ConnectionHandler.updateConnectionStatus(true);
+		ConnectionHandler.testConnection();
 	};
 
 	static disconnect = async (): Promise<void> => {
 		await ConnectionHandler.updateConnectionStatus(false);
-		ConnectionHandler.stopConnectionCheckInterval();
+		ConnectionHandler.stopTestConnection();
 	};
 
 	static async updateConnectionStatus(isEnabled: boolean) {
@@ -56,31 +59,13 @@ export class ConnectionHandler {
 		}
 	}
 
-	static startConnectionCheckInterval() {
-		if (ConnectionHandler.connectionCheckIntervalId === null) {
-			ConnectionHandler.connectionCheckIntervalId = setInterval(async () => {
-				const currentStatus = await ConnectionHandler.getConnectionStatus();
-				ConnectionHandler.isConnected = currentStatus;
-			}, ConnectionHandler.connectionCheckInterval);
-		}
-	}
-
-	static stopConnectionCheckInterval() {
-		if (ConnectionHandler.connectionCheckIntervalId !== null) {
-			clearInterval(ConnectionHandler.connectionCheckIntervalId);
-			ConnectionHandler.connectionCheckIntervalId = null;
-		}
-	}
-
-	static reconnect() {
+	static testConnection() {
 		if (ConnectionHandler.reconnectIntervalId === null) {
 			ConnectionHandler.reconnectIntervalId = setInterval(async () => {
 				if (ConnectionHandler.reconnectAttempts < ConnectionHandler.maxReconnectAttempts) {
 					const isConnected = await ConnectionHandler.getConnectionStatus();
 					if (isConnected) {
-						clearInterval(ConnectionHandler.reconnectIntervalId as NodeJS.Timeout);
-						ConnectionHandler.reconnectIntervalId = null;
-						ConnectionHandler.reconnectAttempts = 0;
+						this.stopTestConnection();
 						commands.executeCommand(vsCommands.connect);
 						ConnectionHandler.isConnected = true;
 						await ConnectionHandler.updateConnectionStatus(true);
@@ -92,11 +77,16 @@ export class ConnectionHandler {
 						ConnectionHandler.reconnectAttempts++;
 					}
 				} else {
-					await ConnectionHandler.updateConnectionStatus(false);
-					clearInterval(ConnectionHandler.reconnectIntervalId as NodeJS.Timeout);
-					ConnectionHandler.reconnectIntervalId = null;
+					this.stopTestConnection();
 				}
 			}, ConnectionHandler.reconnectInterval);
 		}
+	}
+
+	static async stopTestConnection() {
+		await ConnectionHandler.updateConnectionStatus(false);
+		clearInterval(ConnectionHandler.reconnectIntervalId as NodeJS.Timeout);
+		ConnectionHandler.reconnectIntervalId = null;
+		ConnectionHandler.reconnectAttempts = 0;
 	}
 }

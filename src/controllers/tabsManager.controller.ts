@@ -1,7 +1,6 @@
-import { projectControllerRefreshRate } from "@api/appConfig.api";
 import { ProjectController } from "@controllers";
 import { ProjectView } from "@views";
-import { ExtensionContext } from "vscode";
+import { ExtensionContext, workspace } from "vscode";
 
 export class TabsManagerController {
 	openWebviews: { [key: string]: any };
@@ -19,7 +18,7 @@ export class TabsManagerController {
 			const newController = new ProjectController(
 				newView,
 				project.key,
-				projectControllerRefreshRate
+				Number(workspace.getConfiguration().get("autokitteh.project.refresh.interval"))
 			);
 			newController.openProject(() => this.disposeWebview(project.key));
 			this.openWebviews[project.key] = newController;
