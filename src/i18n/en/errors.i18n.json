@@ -1,5 +1,5 @@
 {
-	"unexpectedError": "We're sorry, but an unexpected error has occurred and the application is currently unavailable. Please try again later. If the issue persists, contact support for assistance.",
+	"unexpectedError": "We're sorry, but an unexpected error has occurred and the application is currently unavailable. Please try again later.",
 	"projectNotFound": "Couldn't fetch the project details",
 	"showProjectDetails": "Click on a project to show its details",
 	"environmentsNotDefinedForProject": "Environments not defined for this project",
