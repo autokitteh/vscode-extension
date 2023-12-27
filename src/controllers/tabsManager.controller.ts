@@ -1,7 +1,7 @@
 import { projectControllerRefreshRate } from "@constants/api.constants";
 import { ProjectController } from "@controllers";
 import { ProjectView } from "@views";
-import { ExtensionContext, workspace } from "vscode";
+import { ExtensionContext } from "vscode";
 
 export class TabsManagerController {
 	openWebviews: { [key: string]: any };

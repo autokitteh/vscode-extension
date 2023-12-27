@@ -19,5 +19,5 @@ export const sidebarControllerRefreshRate =
 
 export const projectControllerRefreshRate =
 	Number(workspace.getConfiguration().get("autokitteh.project.refresh.interval")) >= 0
-		? Number(workspace.getConfiguration().get("autokitteh.project.refresh.interval")) >= 0
+		? Number(workspace.getConfiguration().get("autokitteh.project.refresh.interval"))
 		: DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL;
