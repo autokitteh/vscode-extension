@@ -29,7 +29,7 @@ export class SidebarController {
 		}
 
 		this.user = await RequestHandler.handleServiceResponse(() => AuthorizationService.whoAmI(), {
-			onFailTranslationKey: "errors.noUserFound",
+			onFailureMessage: translate().t("errors.noUserFound"),
 		});
 		if (!this.user) {
 			return;

@@ -39,7 +39,7 @@ export class ProjectController {
 	async getProjectDeployments(): Promise<Deployment[] | undefined> {
 		const environments = await RequestHandler.handleServiceResponse(
 			() => EnvironmentsService.listByProjectId(this.projectId),
-			{ onFailTranslationKey: "errors.environmentsNotDefinedForProject" }
+			{ onFailureMessage: translate().t("errors.environmentsNotDefinedForProject") }
 		);
 		if (!environments || environments.length === 0) {
 			MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
@@ -48,7 +48,7 @@ export class ProjectController {
 		const environmentIds = getIds(environments, "envId");
 		const projectDeployments = await RequestHandler.handleServiceResponse(
 			() => DeploymentsService.listByEnvironmentIds(environmentIds),
-			{ onFailTranslationKey: "errors.deploymentsNotDefinedForProject" }
+			{ onFailureMessage: translate().t("errors.deploymentsNotDefinedForProject") }
 		);
 		return projectDeployments;
 	}
@@ -86,7 +86,7 @@ export class ProjectController {
 		const project = await RequestHandler.handleServiceResponse(
 			() => ProjectsService.get(this.projectId),
 			{
-				onFailTranslationKey: "errors.projectNotFound",
+				onFailureMessage: translate().t("errors.projectNotFound"),
 			}
 		);
 		if (project) {
@@ -111,15 +111,15 @@ export class ProjectController {
 
 	async build() {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(this.projectId), {
-			onSuccessTranslationKey: "projects.projectBuildSucceed",
-			onFailTranslationKey: "projects.projectBuildFailed",
+			onSuccessMessage: translate().t("projects.projectBuildSucceed"),
+			onFailureMessage: translate().t("projects.projectBuildFailed"),
 		});
 	}
 
 	async run() {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.run(this.projectId), {
-			onSuccessTranslationKey: "projects.projectDeploySucceed",
-			onFailTranslationKey: "projects.projectDeployFailed",
+			onSuccessMessage: translate().t("projects.projectDeploySucceed"),
+			onFailureMessage: translate().t("projects.projectDeployFailed"),
 		});
 	}
 }
