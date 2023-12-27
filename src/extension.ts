@@ -1,6 +1,7 @@
 require("module-alias/register");
 
 import { vsCommands } from "@constants";
+import { sidebarControllerRefreshRate } from "@constants/api.constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { ConnectionHandler } from "@controllers/utilities/connectionHandler";
@@ -16,10 +17,7 @@ import { commands, ExtensionContext, workspace } from "vscode";
 export async function activate(context: ExtensionContext) {
 	const sidebarView = new SidebarView();
 
-	const sidebarController = new SidebarController(
-		sidebarView,
-		Number(workspace.getConfiguration().get("autokitteh.sidebar.refresh.interval"))
-	);
+	const sidebarController = new SidebarController(sidebarView, sidebarControllerRefreshRate);
 	const tabsManager = new TabsManagerController(context);
 
 	commands.registerCommand(vsCommands.connect, async () => {
