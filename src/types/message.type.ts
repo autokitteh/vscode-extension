@@ -9,6 +9,7 @@ export enum MessageType {
 	runProject = "RUN_PROJECT",
 	buildProject = "BUILD_PROJECT",
 	setSessions = "SET_SESSIONS",
+	copyDeploymentId = "COPY_DEPLOYMENT_ID",
 }
 
 export type Message = {

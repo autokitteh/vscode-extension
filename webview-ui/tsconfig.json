@@ -27,6 +27,7 @@
 			"@components/*": ["src/components/*"],
 			"@components": ["src/components/index"],
 			"@utilities": ["src/utilities/index"],
+			"@utilities/*": ["src/utilities/*"],
 			"@sections/*": ["src/sections/*"],
 			"@sections": ["src/sections/index"],
 			"@interfaces/*": ["src/interfaces/*"],

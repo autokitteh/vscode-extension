@@ -33,7 +33,7 @@ export const AKSessions = ({ sessions }: { sessions: Session[] | undefined }) =>
 			</AKTable>
 			{!sessions && <AKTableEmptyMessage>Loading...</AKTableEmptyMessage>}
 			{sessions && sessions.length === 0 && (
-				<AKTableEmptyMessage>No sessions found</AKTableEmptyMessage>
+				<AKTableEmptyMessage>Select project to display it sessions</AKTableEmptyMessage>
 			)}
 		</div>
 	);

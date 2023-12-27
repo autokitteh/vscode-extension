@@ -32,6 +32,10 @@ export class ProjectView implements IProjectView {
 					case MessageType.runProject:
 						this.delegate?.run?.();
 						break;
+					case MessageType.copyDeploymentId:
+						vscode.env.clipboard.writeText(message.payload as string);
+						vscode.window.showInformationMessage("Build ID copied to clipboard");
+						break;
 				}
 			},
 			undefined,
