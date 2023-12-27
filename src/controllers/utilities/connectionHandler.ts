@@ -68,13 +68,13 @@ export class ConnectionHandler {
 						ConnectionHandler.isConnected = true;
 						await ConnectionHandler.updateConnectionStatus(true);
 						ConnectionHandler.reconnectAttempts = 0;
-					} else {
-						ConnectionHandler.isConnected = false;
-						ConnectionHandler.reconnectAttempts++;
+						return;
 					}
-				} else {
-					this.stopTestConnection();
+					ConnectionHandler.isConnected = false;
+					ConnectionHandler.reconnectAttempts++;
+					return;
 				}
+				this.stopTestConnection();
 			}, ConnectionHandler.reconnectInterval);
 		}
 	}
