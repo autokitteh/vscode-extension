@@ -1,8 +1,8 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
-import { Theme } from "@enums/index";
+import { Theme, MessageType } from "@enums/index";
 import { IIncomingMessagesHandler } from "@interfaces";
-import { Message, MessageType } from "@type/index";
+import { Message } from "@type/index";
 
 export const HandleIncomingMessages = (
 	event: MessageEvent<Message>,

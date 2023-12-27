@@ -1,20 +1,18 @@
-import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
-import { DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL } from "@constants";
+import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
+import { Deployment } from "@models";
 import {
 	EnvironmentsService,
 	DeploymentsService,
 	ProjectsService,
 	SessionsService,
 } from "@services";
-import { MessageType } from "@type";
 import { getIds } from "@utilities/getIds.utils";
 import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
-import { workspace } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;

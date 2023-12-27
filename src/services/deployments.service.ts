@@ -1,8 +1,8 @@
-import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { deploymentsClient } from "@api/grpc/clients.grpc.api";
 import { handlegRPCErrors } from "@api/grpc/errorHandler.grpc.api";
-import { flattenArray } from "@utilities";
-import { get } from "lodash";
+import { Deployment } from "@models";
+import { chain } from "lodash";
+import get from "lodash/get";
 
 export class DeploymentsService {
 	static async listByEnvironmentIds(environmentsIds: string[]): Promise<Deployment[]> {
@@ -16,11 +16,13 @@ export class DeploymentsService {
 
 			const deploymentsResponses = await Promise.allSettled(deploymentsPromises);
 
-			return flattenArray<Deployment>(
-				deploymentsResponses
-					.filter((response) => response.status === "fulfilled")
-					.map((response) => get(response, "value.deployments", []))
-			);
+			const deployments = chain(deploymentsResponses)
+				.filter((response) => response.status === "fulfilled")
+				.flatMap((response) => get(response, "value.deployments", []))
+				.map((deployment) => new Deployment(deployment))
+				.value();
+
+			return deployments;
 		} catch (error) {
 			handlegRPCErrors(error);
 		}

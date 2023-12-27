@@ -2,11 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import { AKButton, AKLogo } from "@components";
-import { Theme } from "@enums/index";
+import { Theme, MessageType } from "@enums";
 import { translate } from "@i18n/index";
 import { IIncomingMessagesHandler } from "@interfaces/incomingMessagesHandler.interface";
 import { AKDeployments, AKSessions } from "@sections";
-import { Message, MessageType } from "@type/index";
+import { Message } from "@type/index";
 import { HandleIncomingMessages, vscodeWrapper } from "@utilities";
 import "./App.css";
 

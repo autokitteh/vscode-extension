@@ -14,14 +14,21 @@ export class SessionsService {
 		}
 		return [];
 	}
+	static async listByDeploymentId(deploymentId: string): Promise<Session[]> {
+		try {
+			return (await sessionsClient.list({ deploymentId })).sessions;
+		} catch (error) {
+			handlegRPCErrors(error);
+		}
+		return [];
+	}
 
 	static async listByProjectId(projectId: string): Promise<Session[]> {
 		try {
 			const projectEnvironments = await EnvironmentsService.listByProjectId(projectId);
 
 			const sessionsPromises = projectEnvironments.map(async (environment) => {
-				const sessions = await this.listByEnvironmentId(environment.envId);
-				return sessions;
+				return await this.listByEnvironmentId(environment.envId);
 			});
 
 			const sessionsResponses = await Promise.allSettled(sessionsPromises);

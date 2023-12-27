@@ -11,6 +11,7 @@
 		"@services": "dist/src/services",
 		"@type": "dist/src/types",
 		"@utilities": "dist/src/utilities",
+		"@models": "dist/src/models",
 		"@views": "dist/src/views",
 		"@vscommands": "dist/src/vscommands"
 	},
