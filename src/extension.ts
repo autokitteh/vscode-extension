@@ -26,6 +26,9 @@ export async function activate(context: ExtensionContext) {
 		await ConnectionHandler.connect();
 		sidebarController.connect();
 	});
+	commands.registerCommand(vsCommands.testConnection, async () => {
+		await ConnectionHandler.testConnection();
+	});
 	commands.registerCommand(vsCommands.disconnect, async () => {
 		await ConnectionHandler.disconnect();
 		sidebarController.disconnect();
@@ -60,6 +63,6 @@ export async function activate(context: ExtensionContext) {
 		.get("autokitteh.serviceEnabled")) as boolean;
 
 	if (isConnected) {
-		commands.executeCommand(vsCommands.connect);
+		commands.executeCommand(vsCommands.testConnection);
 	}
 }

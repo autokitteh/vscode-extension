@@ -65,21 +65,16 @@ export class ConnectionHandler {
 				if (ConnectionHandler.reconnectAttempts < ConnectionHandler.maxReconnectAttempts) {
 					const isConnected = await ConnectionHandler.getConnectionStatus();
 					if (isConnected) {
-						this.stopTestConnection();
-						commands.executeCommand(vsCommands.connect);
 						ConnectionHandler.isConnected = true;
 						await ConnectionHandler.updateConnectionStatus(true);
 					} else {
 						if (ConnectionHandler.reconnectAttempts === 0) {
 							commands.executeCommand(
-								vsCommands.showInfoMessage,
+								vsCommands.showErrorMessage,
 								translate().t("errors.serverNotRespond")
 							);
 						}
-						commands.executeCommand(
-							vsCommands.showErrorMessage,
-							translate().t("errors.serverNotRespond")
-						);
+						ConnectionHandler.isConnected = false;
 						ConnectionHandler.reconnectAttempts++;
 					}
 				} else {

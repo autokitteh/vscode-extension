@@ -1,6 +1,7 @@
 export const vsCommands = {
 	openWebview: "autokitteh.openWebview",
 	connect: "autokitteh.connect",
+	testConnection: "autokitteh.testConnection",
 	disconnect: "autokitteh.disconnect",
 	applyManifest: "autokitteh.applyManifest",
 	buildFolder: "autokitteh.buildFolder",

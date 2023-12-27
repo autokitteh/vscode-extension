@@ -34,9 +34,6 @@ export class SidebarController {
 		if (!this.user) {
 			return;
 		}
-
-		this.noProjectMessageDisplayed = false;
-
 		this.startInterval();
 	};
 
@@ -66,13 +63,17 @@ export class SidebarController {
 		}
 		const projects = await this.fetchProjects(this.user.userId);
 		if (projects) {
+			if (!projects.length && !this.noProjectMessageDisplayed && ConnectionHandler.isConnected) {
+				commands.executeCommand(
+					vsCommands.showErrorMessage,
+					translate().t("errors.noProjectsFound")
+				);
+				this.noProjectMessageDisplayed = true;
+			}
 			if (!isEqual(projects, this.projects)) {
 				this.projects = projects;
 				this.view.refresh(this.projects);
 			}
-		} else if (!this.noProjectMessageDisplayed) {
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.noProjectsFound"));
-			this.noProjectMessageDisplayed = true;
 		}
 	}
 
