@@ -63,7 +63,7 @@ export class SidebarController {
 		}
 		const projects = await this.fetchProjects(this.user.userId);
 		if (projects) {
-			if (!projects.length && !this.noProjectMessageDisplayed && ConnectionHandler.isConnected) {
+			if (!projects.length && !this.noProjectMessageDisplayed && !ConnectionHandler.isConnected) {
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
 					translate().t("errors.noProjectsFound")

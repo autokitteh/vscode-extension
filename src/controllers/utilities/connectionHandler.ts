@@ -67,13 +67,8 @@ export class ConnectionHandler {
 					if (isConnected) {
 						ConnectionHandler.isConnected = true;
 						await ConnectionHandler.updateConnectionStatus(true);
+						ConnectionHandler.reconnectAttempts = 0;
 					} else {
-						if (ConnectionHandler.reconnectAttempts === 0) {
-							commands.executeCommand(
-								vsCommands.showErrorMessage,
-								translate().t("errors.serverNotRespond")
-							);
-						}
 						ConnectionHandler.isConnected = false;
 						ConnectionHandler.reconnectAttempts++;
 					}
