@@ -7,7 +7,7 @@ import { ValidateURL } from "@utilities";
 import { ConfigurationTarget, commands, workspace } from "vscode";
 
 export class ConnectionHandler {
-	static reconnectIntervalId: NodeJS.Timeout | null = null;
+	static connectTestIntervalId: NodeJS.Timeout | null = null;
 	static isConnected = false;
 	static startTime: number | null = null;
 	static intervalDuration = connectionHandlerInterval;
@@ -55,7 +55,7 @@ export class ConnectionHandler {
 
 	static testConnection() {
 		ConnectionHandler.startTime = Date.now();
-		ConnectionHandler.reconnectIntervalId = setInterval(
+		ConnectionHandler.connectTestIntervalId = setInterval(
 			ConnectionHandler.performConnectionTest,
 			ConnectionHandler.intervalDuration
 		);
@@ -70,31 +70,30 @@ export class ConnectionHandler {
 			if (ConnectionHandler.intervalDuration !== connectionHandlerInterval) {
 				ConnectionHandler.changeInterval(connectionHandlerInterval);
 			}
-			return;
-		}
+		} else {
+			ConnectionHandler.isConnected = false;
+			await ConnectionHandler.updateConnectionStatus(false);
 
-		ConnectionHandler.isConnected = false;
-		await ConnectionHandler.updateConnectionStatus(false);
+			const currentTime = Date.now();
+			const elapsedTime = (currentTime - (ConnectionHandler.startTime || currentTime)) / 1000; // in seconds
 
-		const currentTime = Date.now();
-		const elapsedTime = (currentTime - (ConnectionHandler.startTime || currentTime)) / 1000; // in seconds
+			if (elapsedTime >= 3600) {
+				// Stop the connection test after one hour if not connected
+				ConnectionHandler.stopTestConnection();
+				return;
+			}
 
-		if (elapsedTime >= 3600) {
-			// Stop the connection test after one hour
-			ConnectionHandler.stopTestConnection();
-			return;
-		}
-
-		if (elapsedTime >= 60 && ConnectionHandler.intervalDuration === connectionHandlerInterval) {
-			// Change interval after the first minute
-			ConnectionHandler.changeInterval(connectionHandlerSlowInterval);
+			if (elapsedTime >= 60 && ConnectionHandler.intervalDuration === connectionHandlerInterval) {
+				// Change interval after the first minute
+				ConnectionHandler.changeInterval(connectionHandlerSlowInterval);
+			}
 		}
 	}
 
 	static changeInterval(newInterval: number) {
-		clearInterval(ConnectionHandler.reconnectIntervalId as NodeJS.Timeout);
+		clearInterval(ConnectionHandler.connectTestIntervalId as NodeJS.Timeout);
 		ConnectionHandler.intervalDuration = newInterval;
-		ConnectionHandler.reconnectIntervalId = setInterval(
+		ConnectionHandler.connectTestIntervalId = setInterval(
 			ConnectionHandler.performConnectionTest,
 			newInterval
 		);
@@ -102,7 +101,7 @@ export class ConnectionHandler {
 
 	static async stopTestConnection() {
 		await ConnectionHandler.updateConnectionStatus(false);
-		clearInterval(ConnectionHandler.reconnectIntervalId as NodeJS.Timeout);
-		ConnectionHandler.reconnectIntervalId = null;
+		clearInterval(ConnectionHandler.connectTestIntervalId as NodeJS.Timeout);
+		ConnectionHandler.connectTestIntervalId = null;
 	}
 }
