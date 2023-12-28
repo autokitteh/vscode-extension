@@ -1,7 +1,8 @@
-import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { translate } from "@i18n";
+import { convertSessionProtoToModel } from "@models/session.model";
 import { EnvironmentsService } from "@services/environments.service";
+import { Session } from "@type/models";
 import { ServiceResponse } from "@type/services.types";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
@@ -9,7 +10,9 @@ import { get } from "lodash";
 export class SessionsService {
 	static async listByEnvironmentId(environmentId: string): Promise<ServiceResponse<Session[]>> {
 		try {
-			const sessions = (await sessionsClient.list({ envId: environmentId })).sessions;
+			const sessions = (await sessionsClient.list({ envId: environmentId })).sessions.map(
+				(session) => convertSessionProtoToModel(session)
+			);
 			return { data: sessions, error: undefined };
 		} catch (error) {
 			return { data: undefined, error };
@@ -31,7 +34,11 @@ export class SessionsService {
 				const sessions = flattenArray<Session>(
 					sessionsResponses
 						.filter((response) => response.status === "fulfilled")
-						.map((response) => get(response, "value.sessions", []))
+						.map((response) =>
+							get(response, "value.sessions", []).map((session) =>
+								convertSessionProtoToModel(session)
+							)
+						)
 				);
 
 				return { data: sessions, error: undefined };

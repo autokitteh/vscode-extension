@@ -1,4 +1,3 @@
-import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import {
 	AKTable,
 	AKTableEmptyMessage,
@@ -8,6 +7,7 @@ import {
 	AKTableHeaderCell,
 } from "@components/AKTable";
 import { translate } from "@i18n/index";
+import { Session } from "@type/models/index";
 import moment from "moment";
 
 export const AKSessions = ({ sessions }: { sessions: Session[] | undefined }) => {
