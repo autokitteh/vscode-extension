@@ -1,9 +1,10 @@
 import { ActivateResponse } from "@ak-proto-ts/deployments/v1/svc_pb";
-import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { projectsClient } from "@api/grpc/clients.grpc.api";
 import { DEFAULT_ENVIRONMENT } from "@constants/extensionConfiguration.constants";
 import { translate } from "@i18n";
+import { convertProjectProtoToModel } from "@models/project.model";
 import { DeploymentsService, EnvironmentsService } from "@services";
+import { Project } from "@type/models";
 import { ServiceResponse } from "@type/services.types";
 
 export class ProjectsService {
@@ -18,7 +19,9 @@ export class ProjectsService {
 
 	static async list(userId: string): Promise<ServiceResponse<Project[]>> {
 		try {
-			const projects = (await projectsClient.listForOwner({ ownerId: userId })).projects;
+			const projects = (await projectsClient.listForOwner({ ownerId: userId })).projects.map(
+				(project) => convertProjectProtoToModel(project)
+			);
 			return { data: projects, error: undefined };
 		} catch (error) {
 			return { data: undefined, error };

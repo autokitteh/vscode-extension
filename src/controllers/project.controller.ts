@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
+=======
+import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
+>>>>>>> 81cf76a (feat: use new project model instead of proto)
 import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType } from "@enums";
@@ -10,7 +14,12 @@ import {
 	ProjectsService,
 	SessionsService,
 } from "@services";
+<<<<<<< HEAD
 import { Deployment } from "@type/models";
+=======
+import { MessageType } from "@type";
+import { Project } from "@type/models";
+>>>>>>> 81cf76a (feat: use new project model instead of proto)
 import { getIds } from "@utilities/getIds.utils";
 import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
