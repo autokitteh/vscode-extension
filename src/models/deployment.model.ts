@@ -1,19 +1,10 @@
 import { Deployment as ProtoDeployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
-import { SessionsService } from "@services";
-import pick from "lodash/pick";
+import { Session as ProtoSession } from "@ak-proto-ts/sessions/v1/session_pb";
+import { Session } from "@models/session.model";
+import { pick } from "@utilities/pick";
 
-export class Deployment {
-	sessionsCount: number;
-	envId: string;
-
-	constructor(deployment: ProtoDeployment) {
-		Object.assign(this, pick(deployment, ["deploymentId", "buildId", "createdAt", "state"]));
-		this.sessionsCount = 0;
-		this.envId = "";
-		this.fetchSessions();
-	}
-
-	private async fetchSessions() {
-		this.sessionsCount = (await SessionsService.listByEnvironmentId(this.envId)).length;
-	}
-}
+export const Deployment = (protoDeployment: ProtoDeployment, sessions: ProtoSession[]) => {
+	const deployment = pick(protoDeployment, ["deploymentId", "envId", "buildId", "createdAt"]);
+	const deploymentSessions = sessions.map((session) => Session(session));
+	return { ...deployment, sessions: deploymentSessions, sessionsCount: deploymentSessions.length };
+};

@@ -1,6 +1,6 @@
+import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { deploymentsClient } from "@api/grpc/clients.grpc.api";
 import { handlegRPCErrors } from "@api/grpc/errorHandler.grpc.api";
-import { Deployment } from "@models";
 import { chain } from "lodash";
 import get from "lodash/get";
 
@@ -19,7 +19,6 @@ export class DeploymentsService {
 			const deployments = chain(deploymentsResponses)
 				.filter((response) => response.status === "fulfilled")
 				.flatMap((response) => get(response, "value.deployments", []))
-				.map((deployment) => new Deployment(deployment))
 				.value();
 
 			return deployments;

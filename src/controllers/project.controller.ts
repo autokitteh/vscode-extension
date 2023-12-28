@@ -1,9 +1,9 @@
+import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
-import { Deployment } from "@models";
 import {
 	EnvironmentsService,
 	DeploymentsService,
@@ -52,10 +52,12 @@ export class ProjectController {
 			this.view.update({ type: MessageType.setDeployments, payload: deployments });
 		}
 		const sessions = await SessionsService.listByProjectId(this.projectId);
-		if (!isEqual(this.sessions, sessions)) {
-			this.sessions = sessions;
-			this.view.update({ type: MessageType.setSessions, payload: sessions });
-		}
+		console.log(sessions);
+
+		// if (!isEqual(this.sessions, sessions)) {
+		// 	this.sessions = sessions;
+		// 	this.view.update({ type: MessageType.setSessions, payload: sessions });
+		// }
 	}
 
 	startInterval() {
