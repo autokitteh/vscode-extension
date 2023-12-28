@@ -7,6 +7,7 @@
 		"@controllers": "dist/src/controllers",
 		"@enums": "dist/src/enums",
 		"@i18n": "dist/src/i18n",
+		"@models": "dist/src/models",
 		"@providers": "dist/src/providers",
 		"@services": "dist/src/services",
 		"@type": "dist/src/types",
