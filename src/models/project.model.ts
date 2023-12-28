@@ -7,7 +7,7 @@ import { Project } from "@type/models/project.type";
  * @param {ProtoProject} protoProject - The ProtoProject object to convert.
  * @returns {Project} The converted TypeScript Project object.
  */
-export const convertProjectProtoToTS = (protoProject: ProtoProject): Project => {
+export const convertProjectProtoToModel = (protoProject: ProtoProject): Project => {
 	return {
 		name: protoProject.name,
 		projectId: protoProject.projectId,

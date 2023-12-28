@@ -7,7 +7,7 @@ import { convertTimestampToDate } from "@utilities";
  * @param protoSession The ProtoSession object to convert.
  * @returns The SessionType object.
  */
-export function convertSessionProtoToTS(protoSession: ProtoSession): Session {
+export function convertSessionProtoToModel(protoSession: ProtoSession): Session {
 	return {
 		sessionId: protoSession.sessionId,
 		deploymentId: protoSession.deploymentId,

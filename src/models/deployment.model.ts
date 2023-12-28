@@ -8,7 +8,7 @@ import { convertTimestampToDate } from "@utilities";
  * @param {ProtoDeployment} protoDeployment - The ProtoDeployment object to convert.
  * @returns {Deployment} The converted TypeScript Deployment object.
  */
-export const convertDeploymentProtoToTS = (protoDeployment: ProtoDeployment): Deployment => {
+export const convertDeploymentProtoToModel = (protoDeployment: ProtoDeployment): Deployment => {
 	return {
 		deploymentId: protoDeployment.deploymentId,
 		envId: protoDeployment.envId,
