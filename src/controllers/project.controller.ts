@@ -1,6 +1,5 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
-import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
@@ -11,6 +10,7 @@ import {
 	SessionsService,
 } from "@services";
 import { MessageType } from "@type";
+import { Session } from "@type/models";
 import { getIds } from "@utilities/getIds.utils";
 import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
