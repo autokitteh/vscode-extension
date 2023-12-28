@@ -1,1 +1,1 @@
-export { Deployment } from "@models/deployment.model";
+export { convertDeploymentProtoToTS as Deployment } from "@models/deployment.model";

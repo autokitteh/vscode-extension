@@ -1,7 +1,4 @@
-import { DeploymentType } from "@type/models/deployment.type";
-
-export type ProjectType = {
+export type Project = {
 	projectId: string;
-	projectName: string;
-	deployments: DeploymentType[];
+	name: string;
 };

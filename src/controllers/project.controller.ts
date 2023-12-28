@@ -1,12 +1,10 @@
-import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentsService, ProjectsService, SessionsService } from "@services";
-import { DeploymentType } from "@type/models/deployment.type";
-import { SessionType } from "@type/models/session.type";
-import { getIds } from "@utilities/getIds.utils";
+import { Deployment } from "@type/models/deployment.type";
+import { Session } from "@type/models/session.type";
 import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
 
@@ -14,10 +12,10 @@ export class ProjectController {
 	private view: IProjectView;
 	private intervalTimerId?: NodeJS.Timer;
 	private disposeCB?: ProjectCB;
-	public projectId: string;
-	public project?: Project;
-	private deployments?: Deployment[];
-	private sessions?: SessionType[];
+	private projectId: string;
+	private project?: Project;
+	private deployments: Deployment[] = [];
+	private sessions?: Session[];
 	private refreshRate: number;
 	private buildIds: string[] = [];
 
@@ -32,30 +30,23 @@ export class ProjectController {
 		this.view.reveal();
 	}
 
-	async getProjectDeployments(): Promise<DeploymentType[]> {
+	async getProjectDeployments(): Promise<Deployment[]> {
 		const deployments = await DeploymentsService.listByBuildIds(this.buildIds);
 
 		return deployments;
 	}
 
-	async refreshView() {
+	async refreshDeploymentsView() {
 		const deployments = await this.getProjectDeployments();
 		if (!isEqual(this.deployments, deployments)) {
-			// this.deployments = deployments;
-			// this.view.update({ type: MessageType.setDeployments, payload: deployments });
+			this.deployments = deployments;
+			this.view.update({ type: MessageType.setDeployments, payload: deployments });
 		}
-		// const sessions = await SessionsService.listByDeploymentId(this.deployments![0].deploymentId);
-		// console.log(sessions);
-
-		// if (!isEqual(this.sessions, sessions)) {
-		// 	this.sessions = sessions;
-		// 	this.view.update({ type: MessageType.setSessions, payload: sessions });
-		// }
 	}
 
 	startInterval() {
 		if (!this.intervalTimerId) {
-			this.intervalTimerId = setInterval(() => this.refreshView(), this.refreshRate);
+			this.intervalTimerId = setInterval(() => this.refreshDeploymentsView(), this.refreshRate);
 		}
 	}
 

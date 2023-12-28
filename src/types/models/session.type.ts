@@ -1,5 +1,5 @@
-export type SessionType = {
+export type Session = {
 	sessionId: string;
 	deploymentId: string;
-	createdAt: Date;
+	createdAt?: Date;
 };
