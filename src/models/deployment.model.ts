@@ -1,10 +1,22 @@
 import { Deployment as ProtoDeployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
-import { Session as ProtoSession } from "@ak-proto-ts/sessions/v1/session_pb";
-import { Session } from "@models/session.model";
-import { pick } from "@utilities/pick";
+import { DeploymentType } from "@type/models/deployment.type";
+import { convertTimestampToDate } from "@utilities/convertTimestampToDate";
+import assign from "lodash/assign";
+import pick from "lodash/pick";
 
-export const Deployment = (protoDeployment: ProtoDeployment, sessions: ProtoSession[]) => {
-	const deployment = pick(protoDeployment, ["deploymentId", "envId", "buildId", "createdAt"]);
-	const deploymentSessions = sessions.map((session) => Session(session));
-	return { ...deployment, sessions: deploymentSessions, sessionsCount: deploymentSessions.length };
+export const Deployment = (protoDeployment: ProtoDeployment): DeploymentType => {
+	const deployment = pick(protoDeployment, [
+		"deploymentId",
+		"envId",
+		"buildId",
+		"createdAt",
+		"state",
+	]);
+	const modifiedDeployment = assign(deployment, {
+		createdAt: protoDeployment.createdAt
+			? convertTimestampToDate(protoDeployment.createdAt)
+			: undefined,
+	});
+
+	return { ...modifiedDeployment, sessionsCount: 0, sessions: [] };
 };

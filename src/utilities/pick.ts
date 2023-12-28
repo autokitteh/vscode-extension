@@ -1,7 +1,4 @@
-export const pick = <T extends object, K extends keyof T>(
-	obj: T,
-	keys: K[]
-): { [P in K]: T[P] } => {
+export const pick = <T extends object, K extends keyof T>(obj: T, keys: K[]): object => {
 	const pickedObj: { [P in K]?: T[P] } = {};
 
 	keys.forEach((key) => {

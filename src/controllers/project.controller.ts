@@ -1,15 +1,11 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
-import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
-import {
-	EnvironmentsService,
-	DeploymentsService,
-	ProjectsService,
-	SessionsService,
-} from "@services";
+import { DeploymentsService, ProjectsService, SessionsService } from "@services";
+import { DeploymentType } from "@type/models/deployment.type";
+import { SessionType } from "@type/models/session.type";
 import { getIds } from "@utilities/getIds.utils";
 import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
@@ -21,8 +17,9 @@ export class ProjectController {
 	public projectId: string;
 	public project?: Project;
 	private deployments?: Deployment[];
-	private sessions?: Session[];
+	private sessions?: SessionType[];
 	private refreshRate: number;
+	private buildIds: string[] = [];
 
 	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
 		this.view = projectView;
@@ -35,24 +32,20 @@ export class ProjectController {
 		this.view.reveal();
 	}
 
-	async getProjectDeployments(): Promise<Deployment[]> {
-		const environments = await EnvironmentsService.listByProjectId(this.projectId);
-		if (!environments.length) {
-			MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
-			return [];
-		}
+	async getProjectDeployments(): Promise<DeploymentType[]> {
+		const deployments = await DeploymentsService.listByBuildIds(this.buildIds);
 
-		return await DeploymentsService.listByEnvironmentIds(getIds(environments, "envId"));
+		return deployments;
 	}
 
 	async refreshView() {
 		const deployments = await this.getProjectDeployments();
 		if (!isEqual(this.deployments, deployments)) {
-			this.deployments = deployments;
-			this.view.update({ type: MessageType.setDeployments, payload: deployments });
+			// this.deployments = deployments;
+			// this.view.update({ type: MessageType.setDeployments, payload: deployments });
 		}
-		const sessions = await SessionsService.listByProjectId(this.projectId);
-		console.log(sessions);
+		// const sessions = await SessionsService.listByDeploymentId(this.deployments![0].deploymentId);
+		// console.log(sessions);
 
 		// if (!isEqual(this.sessions, sessions)) {
 		// 	this.sessions = sessions;
@@ -103,9 +96,10 @@ export class ProjectController {
 	}
 
 	async run() {
-		const deploymentId = await ProjectsService.run(this.projectId);
-		if (deploymentId) {
+		const projectRunParams = await ProjectsService.run(this.projectId);
+		if (projectRunParams?.deploymentId && projectRunParams?.buildId) {
 			MessageHandler.infoMessage(translate().t("projects.projectDeploySucceed"));
+			this.buildIds.push(projectRunParams.buildId);
 		}
 	}
 }

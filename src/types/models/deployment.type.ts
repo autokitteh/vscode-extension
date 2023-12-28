@@ -1,9 +1,12 @@
+import { SessionType } from "@type/models/session.type";
+
 export type DeploymentType = {
 	deploymentId: string;
 	buildId: string;
-	createdAt?: any;
+	createdAt?: Date;
 	sessionsCount: number;
 	state: number;
+	sessions: SessionType[];
 };
 
 /**

@@ -38,7 +38,9 @@ export class ProjectsService {
 		return;
 	}
 
-	static async deploy(projectId: string): Promise<string | undefined> {
+	static async deploy(
+		projectId: string
+	): Promise<{ buildId: string; deploymentId: string | undefined } | undefined> {
 		const buildId = await this.build(projectId);
 		if (buildId) {
 			const environments = await EnvironmentsService.listByProjectId(projectId);
@@ -52,7 +54,7 @@ export class ProjectsService {
 					envId: environment.envId,
 				});
 
-				return deploymentId;
+				return { buildId, deploymentId };
 			} else {
 				MessageHandler.errorMessage(translate().t("errors.defaultEnvironmentNotFound"));
 			}
@@ -60,15 +62,18 @@ export class ProjectsService {
 		return;
 	}
 
-	static async run(projectId: string): Promise<string | undefined> {
-		const deploymentId = await this.deploy(projectId);
-		if (deploymentId) {
+	static async run(
+		projectId: string
+	): Promise<{ buildId: string; deploymentId: string | undefined } | undefined> {
+		const projectDeployment = await this.deploy(projectId);
+		if (projectDeployment?.deploymentId && projectDeployment?.buildId) {
+			const { buildId, deploymentId } = projectDeployment;
 			try {
 				await DeploymentsService.activate(deploymentId);
 			} catch (error) {
 				handlegRPCErrors(error);
 			}
-			return deploymentId;
+			return { buildId, deploymentId };
 		}
 		return;
 	}
