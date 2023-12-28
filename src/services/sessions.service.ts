@@ -1,39 +1,51 @@
 import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
-import { handlegRPCErrors } from "@api/grpc/errorHandler.grpc.api";
+import { translate } from "@i18n";
 import { EnvironmentsService } from "@services/environments.service";
+import { ServiceResponse } from "@type/services.types";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
 export class SessionsService {
-	static async listByEnvironmentId(environmentId: string): Promise<Session[]> {
+	static async listByEnvironmentId(environmentId: string): Promise<ServiceResponse<Session[]>> {
 		try {
-			return (await sessionsClient.list({ envId: environmentId })).sessions;
+			const sessions = (await sessionsClient.list({ envId: environmentId })).sessions;
+			return { data: sessions, error: undefined };
 		} catch (error) {
-			handlegRPCErrors(error);
+			return { data: undefined, error };
 		}
-		return [];
 	}
 
-	static async listByProjectId(projectId: string): Promise<Session[]> {
+	static async listByProjectId(projectId: string): Promise<ServiceResponse<Session[]>> {
 		try {
-			const projectEnvironments = await EnvironmentsService.listByProjectId(projectId);
+			const { data: projectEnvironments } = await EnvironmentsService.listByProjectId(projectId);
 
-			const sessionsPromises = projectEnvironments.map(async (environment) => {
-				const sessions = await this.listByEnvironmentId(environment.envId);
-				return sessions;
-			});
+			if (projectEnvironments) {
+				const sessionsPromises = projectEnvironments.map(async (environment) => {
+					const sessions = await this.listByEnvironmentId(environment.envId);
+					return sessions;
+				});
 
-			const sessionsResponses = await Promise.allSettled(sessionsPromises);
+				const sessionsResponses = await Promise.allSettled(sessionsPromises);
 
-			return flattenArray<Session>(
-				sessionsResponses
-					.filter((response) => response.status === "fulfilled")
-					.map((response) => get(response, "value", []))
-			);
+				const sessions = flattenArray<Session>(
+					sessionsResponses
+						.filter((response) => response.status === "fulfilled")
+						.map((response) => get(response, "value.sessions", []))
+				);
+
+				return { data: sessions, error: undefined };
+			} else {
+				return {
+					data: undefined,
+					error: new Error(translate().t("errors.projectEnvironmentsNotFound")),
+				};
+			}
 		} catch (error) {
-			handlegRPCErrors(error);
+			return {
+				data: undefined,
+				error,
+			};
 		}
-		return [];
 	}
 }

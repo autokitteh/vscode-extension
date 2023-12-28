@@ -1,12 +1,12 @@
 import { manifestClient } from "@api/grpc/clients.grpc.api";
-import { MessageHandler } from "@views";
-import { window } from "vscode";
+import { vsCommands } from "@constants";
+import { commands, window } from "vscode";
 
 export const applyManifest = async () => {
 	let output = window.createOutputChannel("autokitteh");
 
 	if (!window.activeTextEditor) {
-		return; // no editor
+		return;
 	}
 
 	let { document } = window.activeTextEditor;
@@ -27,7 +27,7 @@ export const applyManifest = async () => {
 		);
 		(resp.operations || []).forEach((o: any) => output.appendLine(`operation: ${o.description}`));
 
-		MessageHandler.infoMessage("Manifest applied");
+		commands.executeCommand(vsCommands.showInfoMessage, "Manifest applied");
 	}
 
 	output.show();

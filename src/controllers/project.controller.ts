@@ -1,7 +1,7 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { Project } from "@ak-proto-ts/projects/v1/project_pb";
 import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
-import { DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL } from "@constants";
+import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import {
@@ -14,7 +14,6 @@ import { MessageType } from "@type";
 import { getIds } from "@utilities/getIds.utils";
 import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
-import { workspace } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
@@ -37,14 +36,21 @@ export class ProjectController {
 		this.view.reveal();
 	}
 
-	async getProjectDeployments(): Promise<Deployment[]> {
-		const environments = await EnvironmentsService.listByProjectId(this.projectId);
-		if (!environments.length) {
+	async getProjectDeployments(): Promise<Deployment[] | undefined> {
+		const environments = await RequestHandler.handleServiceResponse(
+			() => EnvironmentsService.listByProjectId(this.projectId),
+			{ onFailureMessage: translate().t("errors.environmentsNotDefinedForProject") }
+		);
+		if (!environments || environments.length === 0) {
 			MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
-			return [];
+			return;
 		}
-
-		return await DeploymentsService.listByEnvironmentIds(getIds(environments, "envId"));
+		const environmentIds = getIds(environments, "envId");
+		const projectDeployments = await RequestHandler.handleServiceResponse(
+			() => DeploymentsService.listByEnvironmentIds(environmentIds),
+			{ onFailureMessage: translate().t("errors.deploymentsNotDefinedForProject") }
+		);
+		return projectDeployments;
 	}
 
 	async refreshView() {
@@ -53,7 +59,9 @@ export class ProjectController {
 			this.deployments = deployments;
 			this.view.update({ type: MessageType.setDeployments, payload: deployments });
 		}
-		const sessions = await SessionsService.listByProjectId(this.projectId);
+		const sessions = await RequestHandler.handleServiceResponse(() =>
+			SessionsService.listByProjectId(this.projectId)
+		);
 		if (!isEqual(this.sessions, sessions)) {
 			this.sessions = sessions;
 			this.view.update({ type: MessageType.setSessions, payload: sessions });
@@ -75,8 +83,14 @@ export class ProjectController {
 
 	public async openProject(disposeCB: ProjectCB) {
 		this.disposeCB = disposeCB;
-		this.project = await ProjectsService.get(this.projectId);
-		if (this.project) {
+		const project = await RequestHandler.handleServiceResponse(
+			() => ProjectsService.get(this.projectId),
+			{
+				onFailureMessage: translate().t("errors.projectNotFound"),
+			}
+		);
+		if (project) {
+			this.project = project;
 			this.view.show(this.project.name);
 			this.startInterval();
 		}
@@ -96,16 +110,16 @@ export class ProjectController {
 	}
 
 	async build() {
-		const buildId = await ProjectsService.build(this.projectId);
-		if (buildId) {
-			MessageHandler.infoMessage(translate().t("projects.projectBuildSucceed"));
-		}
+		await RequestHandler.handleServiceResponse(() => ProjectsService.build(this.projectId), {
+			onSuccessMessage: translate().t("projects.projectBuildSucceed"),
+			onFailureMessage: translate().t("projects.projectBuildFailed"),
+		});
 	}
 
 	async run() {
-		const deploymentId = await ProjectsService.run(this.projectId);
-		if (deploymentId) {
-			MessageHandler.infoMessage(translate().t("projects.projectDeploySucceed"));
-		}
+		await RequestHandler.handleServiceResponse(() => ProjectsService.run(this.projectId), {
+			onSuccessMessage: translate().t("projects.projectDeploySucceed"),
+			onFailureMessage: translate().t("projects.projectDeployFailed"),
+		});
 	}
 }

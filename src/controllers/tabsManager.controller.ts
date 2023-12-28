@@ -1,4 +1,4 @@
-import { projectControllerRefreshRate } from "@api/appConfig.api";
+import { projectControllerRefreshRate } from "@constants/api.constants";
 import { ProjectController } from "@controllers";
 import { ProjectView } from "@views";
 import { ExtensionContext } from "vscode";

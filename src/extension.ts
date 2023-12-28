@@ -1,10 +1,11 @@
 require("module-alias/register");
 
-import { sidebarControllerRefreshRate } from "@api/appConfig.api";
 import { vsCommands } from "@constants";
+import { sidebarControllerRefreshRate } from "@constants/api.constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
-import { SidebarView } from "@views";
+import { ConnectionHandler } from "@controllers/utilities/connectionHandler";
+import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
 import {
 	openBaseURLInputDialog,
@@ -20,9 +21,14 @@ export async function activate(context: ExtensionContext) {
 	const tabsManager = new TabsManagerController(context);
 
 	commands.registerCommand(vsCommands.connect, async () => {
+		await ConnectionHandler.connect();
 		sidebarController.connect();
 	});
+	commands.registerCommand(vsCommands.testConnection, async () => {
+		await ConnectionHandler.testConnection();
+	});
 	commands.registerCommand(vsCommands.disconnect, async () => {
+		await ConnectionHandler.disconnect();
 		sidebarController.disconnect();
 	});
 	context.subscriptions.push(
@@ -37,17 +43,24 @@ export async function activate(context: ExtensionContext) {
 		commands.registerCommand(vsCommands.openUsernameInputDialog, openUsernameInputDialog)
 	);
 	context.subscriptions.push(commands.registerCommand(vsCommands.usernameUpdated, function () {}));
-	context.subscriptions.push(commands.registerCommand(vsCommands.baseURLUpdated, function () {}));
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.showInfoMessage, MessageHandler.infoMessage)
+	);
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.showErrorMessage, MessageHandler.errorMessage)
+	);
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openBaseURLInputDialog, openBaseURLInputDialog)
 	);
-	context.subscriptions.push(commands.registerCommand(vsCommands.walkthrough, openWalkthrough));
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.openConfigSetupWalkthrough, openWalkthrough)
+	);
 
 	const isConnected = (await workspace
 		.getConfiguration()
 		.get("autokitteh.serviceEnabled")) as boolean;
 
 	if (isConnected) {
-		sidebarController.connect();
+		commands.executeCommand(vsCommands.testConnection);
 	}
 }

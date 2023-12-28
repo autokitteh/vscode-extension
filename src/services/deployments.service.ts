@@ -1,11 +1,14 @@
 import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
+import { ActivateResponse, ListResponse } from "@ak-proto-ts/deployments/v1/svc_pb";
 import { deploymentsClient } from "@api/grpc/clients.grpc.api";
-import { handlegRPCErrors } from "@api/grpc/errorHandler.grpc.api";
+import { ServiceResponse } from "@type/services.types";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
 export class DeploymentsService {
-	static async listByEnvironmentIds(environmentsIds: string[]): Promise<Deployment[]> {
+	static async listByEnvironmentIds(
+		environmentsIds: string[]
+	): Promise<ServiceResponse<Deployment[]>> {
 		try {
 			const deploymentsPromises = environmentsIds.map(
 				async (envId) =>
@@ -15,32 +18,44 @@ export class DeploymentsService {
 			);
 
 			const deploymentsResponses = await Promise.allSettled(deploymentsPromises);
-
-			return flattenArray<Deployment>(
+			const deploymentsSettled = flattenArray<Deployment>(
 				deploymentsResponses
-					.filter((response) => response.status === "fulfilled")
+					.filter(
+						(response): response is PromiseFulfilledResult<ListResponse> =>
+							response.status === "fulfilled"
+					)
 					.map((response) => get(response, "value.deployments", []))
 			);
+
+			const unsettledResponses = deploymentsResponses
+				.filter((response): response is PromiseRejectedResult => response.status === "rejected")
+				.map((response) => response.reason);
+
+			return {
+				data: deploymentsSettled,
+				error: unsettledResponses.length > 0 ? unsettledResponses : undefined,
+			};
 		} catch (error) {
-			handlegRPCErrors(error);
+			return { data: undefined, error };
 		}
-		return [];
 	}
-	static async create(deployment: { envId: string; buildId: string }): Promise<string | undefined> {
+	static async create(deployment: {
+		envId: string;
+		buildId: string;
+	}): Promise<ServiceResponse<string>> {
 		try {
 			const createResponse = await deploymentsClient.create({ deployment });
 
-			return createResponse.deploymentId;
+			return { data: createResponse.deploymentId, error: undefined };
 		} catch (error) {
-			handlegRPCErrors(error);
+			return { data: undefined, error };
 		}
-		return undefined;
 	}
-	static async activate(deploymentId: string): Promise<void> {
+	static async activate(deploymentId: string): Promise<ServiceResponse<ActivateResponse>> {
 		try {
-			await deploymentsClient.activate({ deploymentId });
+			return { data: await deploymentsClient.activate({ deploymentId }), error: undefined };
 		} catch (error) {
-			handlegRPCErrors(error);
+			return { data: undefined, error };
 		}
 	}
 }

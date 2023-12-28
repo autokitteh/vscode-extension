@@ -1,12 +1,12 @@
 import { User } from "@ak-proto-ts/users/v1/user_pb";
-import { BASE_URL, vsCommands } from "@constants";
+import { vsCommands } from "@constants";
+import { ConnectionHandler } from "@controllers/utilities/connectionHandler";
+import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { translate } from "@i18n";
 import { AuthorizationService, ProjectsService } from "@services";
-import { ValidateURL } from "@utilities";
-import { MessageHandler } from "@views";
 import { ISidebarView } from "interfaces";
 import isEqual from "lodash/isEqual";
-import { ConfigurationTarget, commands, window, workspace } from "vscode";
+import { commands, window } from "vscode";
 
 export class SidebarController {
 	private view: ISidebarView;
@@ -14,6 +14,8 @@ export class SidebarController {
 	private user?: User;
 	private refreshRate: number;
 	private projects?: SidebarTreeItem[];
+	private noProjectMessageDisplayed = false;
+	private noUserMessageDisplayed = false;
 
 	constructor(sidebarView: ISidebarView, refreshRate: number) {
 		this.view = sidebarView;
@@ -22,76 +24,68 @@ export class SidebarController {
 	}
 
 	public connect = async () => {
-		if (!ValidateURL(BASE_URL)) {
-			MessageHandler.errorMessage(translate().t("errors.badHostURL"));
-			commands.executeCommand(vsCommands.disconnect);
+		if (!ConnectionHandler.isConnected) {
 			return;
 		}
 
-		this.user = await AuthorizationService.whoAmI();
+		this.user = await RequestHandler.handleServiceResponse(() => AuthorizationService.whoAmI(), {
+			onFailureMessage: translate().t("errors.noUserFound"),
+		});
 		if (!this.user) {
-			MessageHandler.errorMessage(translate().t("errors.noUserFound"));
 			return;
 		}
-		this.updateServiceEnabled(true);
-		try {
-			const projects = await this.fetchProjects(this.user);
-			if (!projects.length) {
-				MessageHandler.errorMessage(translate().t("errors.noProjectsFound"));
-				return;
-			}
-
-			this.startInterval();
-		} catch (error: unknown) {
-			if (error instanceof Error) {
-				MessageHandler.errorMessage(error.message);
-			} else {
-				console.error(error);
-			}
-		}
+		this.startInterval();
 	};
 
-	private fetchProjects = async (user: User): Promise<SidebarTreeItem[]> => {
-		return (await ProjectsService.list(user.userId)).map((project) => ({
-			label: project.name,
-			key: project.projectId,
-		}));
+	private fetchProjects = async (userId: string): Promise<SidebarTreeItem[] | undefined> => {
+		const projects = await RequestHandler.handleServiceResponse(() => ProjectsService.list(userId));
+		if (projects) {
+			return projects.map((project) => ({
+				label: project.name,
+				key: project.projectId,
+			}));
+		}
 	};
 
 	private startInterval() {
+		this.noProjectMessageDisplayed = false;
+		this.noUserMessageDisplayed = false;
 		this.intervalTimerId = setInterval(() => this.refreshProjects(), this.refreshRate);
 	}
 
 	private async refreshProjects() {
-		try {
-			if (!this.user) {
-				MessageHandler.errorMessage(translate().t("errors.noUserFound"));
-				return;
+		if (!this.user) {
+			if (!this.noUserMessageDisplayed) {
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.noUserFound"));
+				this.noUserMessageDisplayed = true;
 			}
-			const projects = await this.fetchProjects(this.user);
+			return;
+		}
+		const projects = await this.fetchProjects(this.user.userId);
+		if (projects) {
+			if (!projects.length && !this.noProjectMessageDisplayed && !ConnectionHandler.isConnected) {
+				commands.executeCommand(
+					vsCommands.showErrorMessage,
+					translate().t("errors.noProjectsFound")
+				);
+				this.noProjectMessageDisplayed = true;
+			}
 			if (!isEqual(projects, this.projects)) {
 				this.projects = projects;
 				this.view.refresh(this.projects);
 			}
-		} catch (error: unknown) {
-			if (error instanceof Error) {
-				MessageHandler.errorMessage(error.message);
-			}
 		}
 	}
 
-	public disconnect = async () => {
-		this.updateServiceEnabled(false);
-		this.stopInterval();
+	public resetSidebar = () => {
 		this.projects = [];
 		this.view.refresh([]);
 	};
 
-	private updateServiceEnabled(enabled: boolean) {
-		workspace
-			.getConfiguration()
-			.update("autokitteh.serviceEnabled", enabled, ConfigurationTarget.Global);
-	}
+	public disconnect = () => {
+		this.stopInterval();
+		this.resetSidebar();
+	};
 
 	private stopInterval() {
 		if (this.intervalTimerId) {

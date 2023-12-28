@@ -61,6 +61,16 @@
 					"default": 1000,
 					"description": "Refresh interval in ms for the projects webview panel",
 					"type": "number"
+				},
+				"autokitteh.connectionTest.initial.interval.duration": {
+					"default": 5000,
+					"description": "Refresh interval in ms for the connection tester in the first minute (default: 5 seconds)",
+					"type": "number"
+				},
+				"autokitteh.connectionTest.interval.duration.slow": {
+					"default": 300000,
+					"description": "Refresh interval in ms for the connection tester after the first minute (default: 5 minutes)",
+					"type": "number"
 				}
 			},
 			"title": "autokitteh"
@@ -110,7 +120,7 @@
 				"when": "config.autokitteh.username && config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
 			},
 			{
-				"contents": "No instance setup has been found.\n[Setup Configuration](command:autokitteh.walkthrough)\n",
+				"contents": "No instance setup has been found.\n[Setup Configuration](command:autokitteh.openConfigSetupWalkthrough)\n",
 				"view": "autokittehSidebarTree",
 				"when": "!config.autokitteh.username || !config.autokitteh.baseURL"
 			}
@@ -118,7 +128,7 @@
 		"walkthroughs": [
 			{
 				"description": "Let's start",
-				"id": "autokitteh.walkthrough",
+				"id": "autokitteh.openConfigSetupWalkthrough",
 				"steps": [
 					{
 						"completionEvents": [
