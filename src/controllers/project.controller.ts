@@ -1,5 +1,5 @@
 import { RequestHandler } from "@controllers/utilities/requestHandler";
-import { MessageType } from "@enums";
+import { MessageType, SortOrder } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import {
@@ -55,7 +55,7 @@ export class ProjectController {
 		let deployments = await this.getProjectDeployments();
 		this.view.update({
 			type: MessageType.setDeployments,
-			payload: sortArray(deployments, "createdAt", "desc"),
+			payload: sortArray(deployments, "createdAt", SortOrder.DESC),
 		});
 
 		const sessions = await RequestHandler.handleServiceResponse(() =>
