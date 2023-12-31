@@ -26,9 +26,7 @@ export class DeploymentsService {
 							response.status === "fulfilled"
 					)
 					.map((response) =>
-						get(response, "value.deployments", []).map((deployment) =>
-							convertDeploymentProtoToModel(deployment)
-						)
+						get(response, "value.deployments", []).map(convertDeploymentProtoToModel)
 					)
 			);
 

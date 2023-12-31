@@ -1,12 +1,8 @@
 import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import { MessageType, Theme } from "@enums/index";
 import { IIncomingMessagesHandler } from "@interfaces";
-<<<<<<< HEAD
 import { Message } from "@type/index";
-=======
-import { Message, MessageType } from "@type/index";
 import { Deployment } from "@type/models";
->>>>>>> 979676f (feat: transform proto deployments to autokitteh models)
 
 export const HandleIncomingMessages = (
 	event: MessageEvent<Message>,
