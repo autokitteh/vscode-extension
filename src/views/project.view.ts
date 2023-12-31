@@ -1,7 +1,7 @@
-import { Theme } from "@enums";
+import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n/translation.i18n";
 import { IProjectView, IProjectViewDelegate } from "@interfaces";
-import { Message, MessageType } from "@type";
+import { Message } from "@type";
 import { getNonce } from "@utilities";
 import { getUri } from "@utilities/getUri.utils";
 import * as vscode from "vscode";

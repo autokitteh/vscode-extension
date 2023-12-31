@@ -2,7 +2,6 @@
 	"_moduleAliases": {
 		"@ak-proto-ts": "dist/src/autokitteh/proto/gen/ts/autokitteh",
 		"@api": "dist/src/api",
-		"@connection": "dist/src/connection.js",
 		"@constants": "dist/src/constants",
 		"@controllers": "dist/src/controllers",
 		"@enums": "dist/src/enums",
