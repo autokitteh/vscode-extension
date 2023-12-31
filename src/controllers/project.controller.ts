@@ -66,7 +66,7 @@ export class ProjectController {
 		const deployments = await this.getProjectDeployments();
 		if (!isEqual(this.deployments, deployments)) {
 			this.deployments = sortArray(deployments, "createdAt", SortOrder.DESC);
-			this.view.update({ type: MessageType.setDeployments, payload: deployments });
+			this.view.update({ type: MessageType.setDeployments, payload: this.deployments });
 		}
 
 		const sessions = await RequestHandler.handleServiceResponse(() =>
