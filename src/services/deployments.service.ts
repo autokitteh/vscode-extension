@@ -1,6 +1,7 @@
-import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { ActivateResponse, ListResponse } from "@ak-proto-ts/deployments/v1/svc_pb";
 import { deploymentsClient } from "@api/grpc/clients.grpc.api";
+import { convertDeploymentProtoToModel } from "@models/deployment.model";
+import { Deployment } from "@type/models";
 import { ServiceResponse } from "@type/services.types";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
@@ -24,7 +25,9 @@ export class DeploymentsService {
 						(response): response is PromiseFulfilledResult<ListResponse> =>
 							response.status === "fulfilled"
 					)
-					.map((response) => get(response, "value.deployments", []))
+					.map((response) =>
+						get(response, "value.deployments", []).map(convertDeploymentProtoToModel)
+					)
 			);
 
 			const unsettledResponses = deploymentsResponses
