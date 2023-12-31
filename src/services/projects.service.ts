@@ -20,7 +20,7 @@ export class ProjectsService {
 	static async list(userId: string): Promise<ServiceResponse<Project[]>> {
 		try {
 			const projects = (await projectsClient.listForOwner({ ownerId: userId })).projects.map(
-				(project) => convertProjectProtoToModel(project)
+				convertProjectProtoToModel
 			);
 			return { data: projects, error: undefined };
 		} catch (error) {
