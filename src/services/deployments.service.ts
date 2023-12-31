@@ -1,6 +1,6 @@
-import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { ActivateResponse, ListResponse } from "@ak-proto-ts/deployments/v1/svc_pb";
 import { deploymentsClient } from "@api/grpc/clients.grpc.api";
+import { Deployment } from "@type/models";
 import { ServiceResponse } from "@type/services.types";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";

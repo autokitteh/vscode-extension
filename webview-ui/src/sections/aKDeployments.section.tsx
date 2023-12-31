@@ -1,4 +1,3 @@
-import { Deployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
 import { AKDeploymentState } from "@components";
 import {
 	AKTable,
@@ -9,6 +8,7 @@ import {
 	AKTableHeaderCell,
 } from "@components/AKTable";
 import { translate } from "@i18n/index";
+import { Deployment } from "@type/models/index";
 import moment from "moment";
 
 export const AKDeployments = ({ deployments }: { deployments: Deployment[] | undefined }) => {
