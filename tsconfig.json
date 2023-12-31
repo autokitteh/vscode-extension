@@ -16,6 +16,8 @@
 			"@controllers/*": ["controllers/*"],
 			"@enums": ["enums/index"],
 			"@enums/*": ["enums/*"],
+			"@models": ["models/index"],
+			"@models/*": ["models/*"],
 			"@i18n/*": ["i18n/*"],
 			"@i18n": ["i18n/index"],
 			"@models": ["models/index"],
