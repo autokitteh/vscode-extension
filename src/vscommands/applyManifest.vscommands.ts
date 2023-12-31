@@ -1,5 +1,5 @@
-import { manifestClient } from "@api/grpc/clients.grpc.api";
 import { vsCommands } from "@constants";
+import { ManifestService } from "@services";
 import { commands, window } from "vscode";
 
 export const applyManifest = async () => {
@@ -14,7 +14,7 @@ export const applyManifest = async () => {
 
 	output.clear();
 
-	const resp = await manifestClient.applyManifest(text);
+	const resp = await ManifestService.applyManifest(text);
 	if (resp.error) {
 		const msg = `apply: ${resp.stage ? `${resp.stage}: ` : ""}${resp.error}`;
 
