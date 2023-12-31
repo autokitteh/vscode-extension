@@ -20,7 +20,6 @@ export class ProjectController {
 	private disposeCB?: ProjectCB;
 	public projectId: string;
 	public project?: Project;
-	private deployments?: Deployment[];
 	private sessions?: Session[];
 	private refreshRate: number;
 
@@ -53,11 +52,12 @@ export class ProjectController {
 	}
 
 	async refreshView() {
-		const deployments = await this.getProjectDeployments();
-		if (!isEqual(this.deployments, deployments)) {
-			this.deployments = deployments;
-			this.view.update({ type: MessageType.setDeployments, payload: deployments });
-		}
+		let deployments = await this.getProjectDeployments();
+		this.view.update({
+			type: MessageType.setDeployments,
+			payload: sortArray(deployments, "createdAt", "desc"),
+		});
+
 		const sessions = await RequestHandler.handleServiceResponse(() =>
 			SessionsService.listByProjectId(this.projectId)
 		);
