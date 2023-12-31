@@ -10,9 +10,8 @@ import { get } from "lodash";
 export class SessionsService {
 	static async listByEnvironmentId(environmentId: string): Promise<ServiceResponse<Session[]>> {
 		try {
-			const sessions = (await sessionsClient.list({ envId: environmentId })).sessions.map(
-				(session) => convertSessionProtoToModel(session)
-			);
+			const response = await sessionsClient.list({ envId: environmentId });
+			const sessions = response.sessions.map(convertSessionProtoToModel);
 			return { data: sessions, error: undefined };
 		} catch (error) {
 			return { data: undefined, error };
