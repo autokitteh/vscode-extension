@@ -61,6 +61,6 @@ export async function activate(context: ExtensionContext) {
 		.get("autokitteh.serviceEnabled")) as boolean;
 
 	if (isConnected) {
-		commands.executeCommand(vsCommands.testConnection);
+		commands.executeCommand(vsCommands.connect);
 	}
 }
