@@ -29,7 +29,8 @@
 			"@react-sections/*": ["src/sections/*"],
 			"@react-utilities": ["src/utilities/index"],
 			"@react-utilities/*": ["src/utilities/*"],
-			"@type/*": ["../src/types/*"]
+			"@type/*": ["../src/types/*"],
+			"@type": ["../src/types/index"]
 		},
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
