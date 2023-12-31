@@ -1,11 +1,11 @@
-import { GoTimestamp } from "@type/utilities";
+import { ProtoTimestamp } from "@type/utilities";
 
 /**
  * Converts a gRPC Timestamp to a JavaScript Date object.
  * @param timestamp The gRPC Timestamp object which might have 'seconds' and 'nanoseconds'.
  * @returns The JavaScript Date object or undefined.
  */
-export const convertTimestampToDate = (timestamp: GoTimestamp): Date | undefined => {
+export const convertTimestampToDate = (timestamp: ProtoTimestamp): Date | undefined => {
 	if (!timestamp) {
 		return undefined;
 	}

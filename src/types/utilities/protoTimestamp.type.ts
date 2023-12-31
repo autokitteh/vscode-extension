@@ -1,4 +1,4 @@
-export type GoTimestamp =
+export type ProtoTimestamp =
 	| {
 			seconds: bigint;
 			nanoseconds?: number;
