@@ -19,13 +19,13 @@ export const applyManifest = async () => {
 	const { data: logs, error } = await ManifestService.applyManifest(text);
 	if (error) {
 		errorHelper(error);
-	} else {
-		(logs || []).forEach((log) => output.appendLine(`${log}\r\n`));
-		commands.executeCommand(
-			vsCommands.showInfoMessage,
-			translate().t("manifest.appliedSuccessfully")
-		);
+		return;
 	}
+	(logs || []).forEach((log) => output.appendLine(`${log}\r\n`));
+	commands.executeCommand(
+		vsCommands.showInfoMessage,
+		translate().t("manifest.appliedSuccessfully")
+	);
 
 	output.show();
 };
