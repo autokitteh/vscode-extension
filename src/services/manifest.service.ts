@@ -1,11 +1,11 @@
-import { manifestClient } from "@api/grpc/clients.grpc.api";
+import { manifestApplyClient } from "@api/grpc/clients.grpc.api";
 import { ServiceResponse } from "@type/services.types";
 
 export class ManifestService {
-	static async applyManifest(manifestYaml: string): Promise<ServiceResponse<void>> {
+	static async applyManifest(manifestYaml: string): Promise<ServiceResponse<string[]>> {
 		try {
-			manifestClient.applyManifest(manifestYaml);
-			return { data: undefined, error: undefined };
+			const { logs } = await manifestApplyClient.apply({ manifest: manifestYaml });
+			return { data: logs, error: undefined };
 		} catch (error) {
 			return { data: undefined, error };
 		}

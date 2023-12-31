@@ -1,4 +1,6 @@
 import { vsCommands } from "@constants";
+import { errorHelper } from "@controllers/utilities/errorHelper";
+import { translate } from "@i18n";
 import { ManifestService } from "@services";
 import { commands, window } from "vscode";
 
@@ -14,20 +16,15 @@ export const applyManifest = async () => {
 
 	output.clear();
 
-	const resp = await ManifestService.applyManifest(text);
-	if (resp.error) {
-		const msg = `apply: ${resp.stage ? `${resp.stage}: ` : ""}${resp.error}`;
-
-		output.appendLine(msg);
-
-		window.showErrorMessage("apply failed, check outout");
+	const { data: logs, error } = await ManifestService.applyManifest(text);
+	if (error) {
+		errorHelper(error);
 	} else {
-		(resp.logs || []).forEach((l) =>
-			output.appendLine(`${l.msg} ${l.data ? ` (${JSON.stringify(l.data)})` : ""}`)
+		(logs || []).forEach((log) => output.appendLine(`${log}\r\n`));
+		commands.executeCommand(
+			vsCommands.showInfoMessage,
+			translate().t("manifest.appliedSuccessfully")
 		);
-		(resp.operations || []).forEach((o: any) => output.appendLine(`operation: ${o.description}`));
-
-		commands.executeCommand(vsCommands.showInfoMessage, "Manifest applied");
 	}
 
 	output.show();

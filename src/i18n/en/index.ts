@@ -1,5 +1,6 @@
 import errors from "@i18n/en/errors.i18n.json";
 import general from "@i18n/en/general.i18n.json";
+import manifest from "@i18n/en/manifest.i18n.json";
 import messages from "@i18n/en/messages.i18n.json";
 import projects from "@i18n/en/projects.i18n.json";
 import reactAppDeployments from "@i18n/en/reactApp/deployments.reactApp.i18n.json";
@@ -14,6 +15,7 @@ export const english = {
 	messages,
 	general,
 	walkthrough,
+	manifest,
 	reactApp: {
 		general: reactAppGeneral,
 		errors: reactAppErrors,
