@@ -22,6 +22,9 @@ export const AKDeployments = ({ deployments }: { deployments: Deployment[] | und
 
 		return () => clearInterval(interval);
 	}, []);
+	const canDeploymentBeStarted = (deploymentState: number) =>
+		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT ||
+		deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
 	return (
 		<div>
 			<AKTable classes="mt-4">
@@ -46,8 +49,7 @@ export const AKDeployments = ({ deployments }: { deployments: Deployment[] | und
 							<AKTableCell>0</AKTableCell>
 							<AKTableCell>{deployment.buildId}</AKTableCell>
 							<AKTableCell>
-								{deployment.state === DeploymentState.INACTIVE_DEPLOYMENT ||
-								deployment.state === DeploymentState.DRAINING_DEPLOYMENT ? (
+								{canDeploymentBeStarted(deployment.state) ? (
 									<div className="codicon codicon-debug-start"></div>
 								) : (
 									<div className="codicon codicon-debug-stop"></div>

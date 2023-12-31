@@ -16,12 +16,6 @@ export const AKDeploymentState = ({ deploymentState }: { deploymentState: number
 					{translate().t("reactApp.deployments.statuses.inactive")}
 				</div>
 			);
-		case DeploymentState.UNSPECIFIED_DEPLOYMENT:
-			return (
-				<div className="text-blue-500">
-					{translate().t("reactApp.deployments.statuses.unspecified")}
-				</div>
-			);
 		case DeploymentState.TESTING_DEPLOYMENT:
 			return (
 				<div className="text-white">{translate().t("reactApp.deployments.statuses.testing")}</div>
@@ -34,8 +28,8 @@ export const AKDeploymentState = ({ deploymentState }: { deploymentState: number
 			);
 		default:
 			return (
-				<div className=" text-orange-500">
-					{translate().t("reactApp.deployments.statuses.error")}
+				<div className="text-blue-500">
+					{translate().t("reactApp.deployments.statuses.unspecified")}
 				</div>
 			);
 	}
