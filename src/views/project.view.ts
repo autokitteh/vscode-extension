@@ -32,6 +32,9 @@ export class ProjectView implements IProjectView {
 					case MessageType.runProject:
 						this.delegate?.run?.();
 						break;
+					case MessageType.selectDeployment:
+						this.delegate?.selectDeployment?.(message.payload as string);
+						break;
 				}
 			},
 			undefined,

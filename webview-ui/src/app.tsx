@@ -7,7 +7,7 @@ import { IIncomingMessagesHandler } from "@interfaces/incomingMessagesHandler.in
 import { AKDeployments, AKSessions } from "@sections";
 import { Message, MessageType } from "@type/index";
 import { Session } from "@type/models/index";
-import { HandleIncomingMessages, vscodeWrapper } from "@utilities";
+import { HandleIncomingMessages, sendMessage } from "@utilities";
 import "./App.css";
 
 function App() {
@@ -34,10 +34,6 @@ function App() {
 			window.removeEventListener("message", handleMessagesFromExtension);
 		};
 	}, [handleMessagesFromExtension]);
-
-	const sendMessage = (type: MessageType) => {
-		vscodeWrapper.postMessage({ type } as Message);
-	};
 
 	return (
 		<main>

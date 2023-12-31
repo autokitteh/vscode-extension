@@ -8,6 +8,17 @@ import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
 export class SessionsService {
+	static async listByDeploymentId(deploymentId: string): Promise<ServiceResponse<Session[]>> {
+		try {
+			const sessions = (await sessionsClient.list({ deploymentId })).sessions.map((session) =>
+				convertSessionProtoToModel(session)
+			);
+			return { data: sessions, error: undefined };
+		} catch (error) {
+			return { data: undefined, error };
+		}
+	}
+
 	static async listByEnvironmentId(environmentId: string): Promise<ServiceResponse<Session[]>> {
 		try {
 			const sessions = (await sessionsClient.list({ envId: environmentId })).sessions.map(

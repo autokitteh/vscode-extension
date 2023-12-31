@@ -2,6 +2,7 @@ export interface IProjectViewDelegate {
 	onClose?: Callback;
 	onBlur?: Callback;
 	onFocus?: Callback;
+	selectDeployment?: CallbackWStringIdParam;
 	build: Callback;
 	run: Callback;
 }

@@ -9,6 +9,8 @@ import {
 	AKTableHeaderCell,
 } from "@components/AKTable";
 import { translate } from "@i18n/index";
+import { MessageType } from "@type/index";
+import { sendMessage } from "@utilities";
 import moment from "moment";
 
 export const AKDeployments = ({ deployments }: { deployments: Deployment[] | undefined }) => {
@@ -25,16 +27,32 @@ export const AKDeployments = ({ deployments }: { deployments: Deployment[] | und
 				{deployments &&
 					deployments.map((deployment) => (
 						<AKTableRow key={deployment.deploymentId}>
-							<AKTableCell>
+							<AKTableCell
+								onClick={() => sendMessage(MessageType.selectDeployment, deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
 								{moment(deployment.createdAt as unknown as string).fromNow()}
 							</AKTableCell>
-							<AKTableCell>
+							<AKTableCell
+								onClick={() => sendMessage(MessageType.selectDeployment, deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
 								<div className="flex justify-center">
 									<AKDeploymentState deploymentState={deployment.state.toString()} />
 								</div>
 							</AKTableCell>
-							<AKTableCell>0</AKTableCell>
-							<AKTableCell>{deployment.buildId}</AKTableCell>
+							<AKTableCell
+								onClick={() => sendMessage(MessageType.selectDeployment, deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
+								0
+							</AKTableCell>
+							<AKTableCell
+								onClick={() => sendMessage(MessageType.selectDeployment, deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
+								{deployment.buildId}
+							</AKTableCell>
 							<AKTableCell>
 								<div className="codicon codicon-debug-rerun"></div>
 								<div className="codicon codicon-close"></div>
