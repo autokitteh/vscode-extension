@@ -1,6 +1,5 @@
-import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import { Theme } from "@enums/index";
-import { Deployment } from "@type/models/index";
+import { Deployment, Session } from "@type/models/index";
 
 export interface IIncomingMessagesHandler {
 	setDeployments(deployments: Deployment[] | undefined): void;

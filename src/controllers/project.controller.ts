@@ -1,4 +1,3 @@
-import { Session } from "@ak-proto-ts/sessions/v1/session_pb";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
@@ -10,6 +9,7 @@ import {
 	SessionsService,
 } from "@services";
 import { Deployment, Project } from "@type/models";
+import { Session } from "@type/models/session.type";
 import { getIds } from "@utilities/getIds.utils";
 import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
