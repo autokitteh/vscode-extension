@@ -28,6 +28,8 @@
 			"@react-components": ["src/components/index"],
 			"@react-utilities": ["src/utilities/index"],
 			"@react-utilities/*": ["src/utilities/*"],
+			"@react-enums": ["src/enums/index"],
+			"@react-enums/*": ["src/enums/*"],
 			"@react-sections/*": ["src/sections/*"],
 			"@react-sections": ["src/sections/index"],
 			"@react-interfaces/*": ["src/interfaces/*"],
