@@ -26,6 +26,11 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 
 		return () => clearInterval(interval);
 	}, []);
+	useEffect(() => {
+		if (totalDeployments && totalDeployments <= DEFAULT_DEPLOYMENTS_PAGE_SIZE) {
+			setDisplayedDeploymentsCount(totalDeployments);
+		}
+	}, [totalDeployments]);
 	const isDeploymentStateStartable = (deploymentState: number) =>
 		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT ||
 		deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
@@ -58,7 +63,7 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 
 	return (
 		<div className="mt-4">
-			{deployments && (
+			{deployments && !!totalDeployments && (
 				<div className="flex justify-end mb-2 w-full">
 					{displayedDeploymentsCount} {translate().t("reactApp.general.outOf")} {totalDeployments}
 				</div>
@@ -98,13 +103,13 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 				<AKTableEmptyMessage>{translate().t("reactApp.general.loading")}...</AKTableEmptyMessage>
 			)}
 			<div className="flex w-full justify-center mt-4">
-				{deployments && displayedDeploymentsCount < (totalDeployments || 0) && (
+				{!!deployments && !!totalDeployments && displayedDeploymentsCount < totalDeployments && (
 					<VSCodeButton onClick={showMore} className="mr-1">
 						{translate().t("reactApp.general.showMore")}
 					</VSCodeButton>
 				)}
-				{deployments &&
-					deployments.length &&
+				{!!deployments &&
+					!!deployments.length &&
 					displayedDeploymentsCount > DEFAULT_DEPLOYMENTS_PAGE_SIZE && (
 						<VSCodeButton className="ml-1" onClick={showLess}>
 							{translate().t("reactApp.general.showLess")}
