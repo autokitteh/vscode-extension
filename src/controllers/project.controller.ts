@@ -33,7 +33,7 @@ export class ProjectController {
 	}
 
 	reveal(): void {
-		this.view.reveal();
+		this.view.reveal(this.project?.name || translate().t("errors.projectNotFound"));
 	}
 
 	async getProjectDeployments(): Promise<Deployment[] | undefined> {
@@ -99,6 +99,8 @@ export class ProjectController {
 
 	onBlur() {
 		this.stopInterval();
+		this.deployments = undefined;
+		this.sessions = undefined;
 	}
 
 	onFocus() {
