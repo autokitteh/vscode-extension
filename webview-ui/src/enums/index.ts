@@ -1,1 +1,1 @@
-export { DeploymentState } from "@enums/projectDeployment.enum";
+export { DeploymentState } from "@react-enums/projectDeployment.enum";
