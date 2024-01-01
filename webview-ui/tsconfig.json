@@ -20,19 +20,20 @@
 		"paths": {
 			"@ak-proto-ts/*": ["../src/autokitteh/proto/gen/ts/autokitteh/*"],
 			"@type/*": ["../src/types/*"],
-			"@assets/*": ["assets/*"],
-			"@constants/*": ["src/constants/*"],
-			"@constants": ["src/constants/index"],
+			"@react-assets/*": ["assets/*"],
+			"@react-constants/*": ["src/constants/*"],
+			"@react-constants": ["src/constants/index"],
 			"@i18n/*": ["../src/i18n/*"],
-			"@components/*": ["src/components/*"],
-			"@components": ["src/components/index"],
-			"@utilities": ["src/utilities/index"],
-			"@utilities/*": ["src/utilities/*"],
-			"@sections/*": ["src/sections/*"],
-			"@sections": ["src/sections/index"],
-			"@interfaces/*": ["src/interfaces/*"],
-			"@interfaces": ["src/interfaces/index"],
-			"@enums/*": ["../src/enums/*"]
+			"@react-components/*": ["src/components/*"],
+			"@react-components": ["src/components/index"],
+			"@react-utilities": ["src/utilities/index"],
+			"@react-utilities/*": ["src/utilities/*"],
+			"@react-sections/*": ["src/sections/*"],
+			"@react-sections": ["src/sections/index"],
+			"@react-interfaces/*": ["src/interfaces/*"],
+			"@react-interfaces": ["src/interfaces/index"],
+			"@enums/*": ["../src/enums/*"],
+			"@enums": ["../src/enums/index"]
 		}
 	},
 	"include": ["./src"]
