@@ -8,35 +8,39 @@ export const sortArray = <T>(
 	if (!array) {
 		return array;
 	}
-	const sortedArray = [...array];
-	sortedArray.sort((a, b) => {
-		if (a[propertyName] === undefined) {
+
+	return [...array].sort((a, b) => {
+		const aValue = a[propertyName];
+		const bValue = b[propertyName];
+
+		// Handle cases where either or both values are undefined
+		if (aValue === undefined && bValue === undefined) {
+			return 0;
+		}
+		if (aValue === undefined) {
 			return order === SortOrder.ASC ? 1 : -1;
 		}
-		if (b[propertyName] === undefined) {
+		if (bValue === undefined) {
 			return order === SortOrder.ASC ? -1 : 1;
 		}
 
-		if (typeof a[propertyName] === "string" && typeof b[propertyName] === "string") {
+		// Comparing Dates
+		if (aValue instanceof Date && bValue instanceof Date) {
 			return order === SortOrder.ASC
-				? String(a[propertyName]).localeCompare(String(b[propertyName]))
-				: String(b[propertyName]).localeCompare(String(a[propertyName]));
+				? aValue.getTime() - bValue.getTime()
+				: bValue.getTime() - aValue.getTime();
 		}
 
-		if (a[propertyName] instanceof Date && b[propertyName] instanceof Date) {
-			const dateA = (a[propertyName] as Date).getTime();
-			const dateB = (b[propertyName] as Date).getTime();
-			return order === SortOrder.ASC ? dateA - dateB : dateB - dateA;
+		// Comparing Numbers and Strings
+		const aNum = Number(aValue);
+		const bNum = Number(bValue);
+		if (!isNaN(aNum) && !isNaN(bNum)) {
+			return order === SortOrder.ASC ? aNum - bNum : bNum - aNum;
 		}
 
-		if (typeof a[propertyName] === "number" && typeof b[propertyName] === "number") {
-			return order === SortOrder.ASC
-				? Number(a[propertyName]) - Number(b[propertyName])
-				: Number(b[propertyName]) - Number(a[propertyName]);
-		}
-
-		return 0;
+		// Fallback to string comparison
+		return order === SortOrder.ASC
+			? String(aValue).localeCompare(String(bValue))
+			: String(bValue).localeCompare(String(aValue));
 	});
-
-	return sortedArray;
 };
