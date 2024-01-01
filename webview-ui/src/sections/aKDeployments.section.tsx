@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { DEFAULT_DEPLOYMENTS_PAGE_SIZE } from "@constants/deployments.view.constants";
 import { MessageType } from "@enums";
-import { translate } from "@i18n/index";
+import { translate } from "@i18n";
 import { AKDeploymentState } from "@react-components";
 import {
 	AKTable,
@@ -14,7 +14,6 @@ import {
 import { DeploymentState } from "@react-enums";
 import { sendMessage } from "@react-utilities";
 import { DeploymentSectionViewType } from "@type/views";
-import { getByTopLimit } from "@utils/index";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import moment from "moment";
 
@@ -36,10 +35,9 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 	);
 
 	const showMore = () => {
-		if (deployments) {
-			const calculateDeploymentsCount = getByTopLimit(
-				deployments.length,
-				DEFAULT_DEPLOYMENTS_PAGE_SIZE,
+		if (deployments && totalDeployments) {
+			const calculateDeploymentsCount = Math.min(
+				deployments.length + DEFAULT_DEPLOYMENTS_PAGE_SIZE,
 				totalDeployments
 			);
 			setDisplayedDeploymentsCount(calculateDeploymentsCount);

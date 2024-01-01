@@ -1,5 +1,4 @@
-import { vsCommands } from "@constants";
-import { DEFAULT_DEPLOYMENTS_PAGE_SIZE } from "@constants";
+import { DEFAULT_DEPLOYMENTS_PAGE_SIZE, vsCommands } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType, SortOrder } from "@enums";
 import { translate } from "@i18n";
@@ -71,13 +70,14 @@ export class ProjectController {
 	}
 
 	async refreshView() {
-		const deployments = sortArray(await this.getProjectDeployments(), "createdAt", SortOrder.DESC);
+		const projectDeployments = await this.getProjectDeployments();
+		const deployments = sortArray(projectDeployments, "createdAt", SortOrder.DESC);
 		this.totalDeployments = deployments?.length || 0;
 		const deploymentsForView =
 			deployments?.slice(
 				this.deploymentsPageLimits.startIndex,
 				this.deploymentsPageLimits.endIndex
-			) || [];
+			) || undefined;
 
 		if (!isEqual(this.deployments, deploymentsForView)) {
 			this.deployments = deploymentsForView;
@@ -140,14 +140,15 @@ export class ProjectController {
 	}
 
 	setDeploymentsPageSize({ startIndex, endIndex }: PageSize) {
-		const indexesAreValid = startIndex >= 0 && endIndex >= 0 && startIndex < endIndex;
+		const indexesAreValid = startIndex >= 0 && startIndex < endIndex;
 
 		if (indexesAreValid) {
-			if (endIndex >= this.totalDeployments) {
-				this.deploymentsPageLimits = { startIndex, endIndex: this.totalDeployments };
-				return;
-			}
-			this.deploymentsPageLimits = { startIndex, endIndex };
+			this.deploymentsPageLimits = {
+				startIndex,
+				endIndex: Math.min(this.totalDeployments, endIndex),
+			};
+		} else {
+			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.invalidPageSize"));
 		}
 	}
 

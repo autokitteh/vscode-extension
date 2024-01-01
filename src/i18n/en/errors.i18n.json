@@ -13,5 +13,9 @@
 	"buildFailed": "Build failed",
 	"deploymentFailed": "Deployment failed",
 	"projectEnvironmentsNotFound": "Project environments not found",
+<<<<<<< HEAD
 	"projectNameMissing": "Something went wrong, please try to re-open"
+=======
+	"invalidPageSize": "Cannot load the list, please try again"
+>>>>>>> 2fda3ab (fix: fix the latest rebase)
 }

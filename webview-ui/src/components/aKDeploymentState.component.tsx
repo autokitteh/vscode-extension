@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { translate } from "@i18n/index";
+import { translate } from "@i18n";
 import { DeploymentState } from "@react-enums";
 
 export const AKDeploymentState = ({

@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
-import { MessageType, Theme } from "@enums/index";
-import { translate } from "@i18n/index";
+import { MessageType, Theme } from "@enums";
+import { translate } from "@i18n";
 import { AKButton, AKLogo } from "@react-components";
 import { IIncomingMessagesHandler } from "@react-interfaces/incomingMessagesHandler.interface";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { HandleIncomingMessages, sendMessage } from "@react-utilities";
-import { Message } from "@type/index";
-import { Session } from "@type/models/index";
-import { DeploymentSectionViewType } from "@type/views/index";
+import { Message } from "@type";
+import { Session } from "@type/models";
+import { DeploymentSectionViewType } from "@type/views";
 import "./App.css";
 
 function App() {

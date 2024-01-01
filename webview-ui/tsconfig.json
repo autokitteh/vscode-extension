@@ -15,6 +15,8 @@
 			"@/*": ["src/*"],
 			"@ak-proto-ts/*": ["../src/autokitteh/proto/gen/ts/autokitteh/*"],
 			"@enums": ["../src/enums/index"],
+			"@enums/*": ["../src/enums/*"],
+			"@i18n": ["../src/i18n/index"],
 			"@i18n/*": ["../src/i18n/*"],
 			"@react-assets/*": ["assets/*"],
 			"@react-components": ["src/components/index"],
@@ -54,5 +56,5 @@
 		"types": ["vite-plugin-svgr/client"],
 		"useDefineForClassFields": true
 	},
-	"include": ["./src", "../src/constants/deployments.view.constants.ts"]
+	"include": ["./src"]
 }

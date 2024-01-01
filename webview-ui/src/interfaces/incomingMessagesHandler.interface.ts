@@ -1,5 +1,5 @@
-import { Theme } from "@enums/index";
-import { Session } from "@type/models/index";
+import { Theme } from "@enums";
+import { Session } from "@type/models";
 import { DeploymentSectionViewType } from "@type/views";
 
 export interface IIncomingMessagesHandler {

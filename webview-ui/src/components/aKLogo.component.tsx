@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Theme } from "@enums/index";
+import { Theme } from "@enums";
 import AKLogoBlack from "@react-assets/images/logo/ak-logo-black.svg?react";
 import AKLogoWhite from "@react-assets/images/logo/ak-logo-white.svg?react";
 

@@ -1,4 +1,4 @@
-import { translate } from "@i18n/index";
+import { translate } from "@i18n";
 import {
 	AKTable,
 	AKTableEmptyMessage,
@@ -7,7 +7,7 @@ import {
 	AKTableRow,
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
-import { Session } from "@type/models/index";
+import { Session } from "@type/models";
 import moment from "moment";
 
 export const AKSessions = ({ sessions }: { sessions: Session[] | undefined }) => {
