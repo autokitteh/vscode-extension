@@ -1,5 +1,5 @@
 import { RequestHandler } from "@controllers/utilities/requestHandler";
-import { MessageType } from "@enums";
+import { MessageType, SortOrder } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import {
@@ -10,6 +10,7 @@ import {
 } from "@services";
 import { Deployment, Project } from "@type/models";
 import { Session } from "@type/models/session.type";
+import { sortArray } from "@utilities";
 import { getIds } from "@utilities/getIds.utils";
 import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
@@ -55,7 +56,7 @@ export class ProjectController {
 	async refreshView() {
 		const deployments = await this.getProjectDeployments();
 		if (!isEqual(this.deployments, deployments)) {
-			this.deployments = deployments;
+			this.deployments = sortArray(deployments, "createdAt", SortOrder.DESC);
 			this.view.update({ type: MessageType.setDeployments, payload: deployments });
 		}
 
