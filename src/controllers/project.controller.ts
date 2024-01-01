@@ -1,6 +1,6 @@
 import { vsCommands } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
-import { MessageType, SortOrder } from "@enums";
+import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import {
