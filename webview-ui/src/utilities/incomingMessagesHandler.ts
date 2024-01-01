@@ -1,5 +1,5 @@
 import { MessageType, Theme } from "@enums/index";
-import { IIncomingMessagesHandler } from "@interfaces";
+import { IIncomingMessagesHandler } from "@react-interfaces";
 import { Message } from "@type/index";
 import { Deployment, Session } from "@type/models";
 

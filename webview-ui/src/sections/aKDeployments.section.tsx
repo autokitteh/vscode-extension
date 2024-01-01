@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { AKDeploymentState } from "@components";
+import { translate } from "@i18n/index";
+import { AKDeploymentState } from "@react-components";
 import {
 	AKTable,
 	AKTableEmptyMessage,
@@ -7,8 +8,7 @@ import {
 	AKTableHeader,
 	AKTableRow,
 	AKTableHeaderCell,
-} from "@components/AKTable";
-import { translate } from "@i18n/index";
+} from "@react-components/AKTable";
 import { Deployment } from "@type/models/index";
 import moment from "moment";
 

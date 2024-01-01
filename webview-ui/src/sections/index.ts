@@ -1,2 +1,2 @@
-export { AKDeployments } from "@sections/aKDeployments.section";
-export { AKSessions } from "@sections/aKSessions.section";
+export { AKDeployments } from "@react-sections/aKDeployments.section";
+export { AKSessions } from "@react-sections/aKSessions.section";

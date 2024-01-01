@@ -20,8 +20,6 @@
 			"@models/*": ["models/*"],
 			"@i18n/*": ["i18n/*"],
 			"@i18n": ["i18n/index"],
-			"@models": ["models/index"],
-			"@models/*": ["models/*"],
 			"@interfaces": ["interfaces/index"],
 			"@interfaces/*": ["interfaces/*"],
 			"@providers": ["providers/index"],

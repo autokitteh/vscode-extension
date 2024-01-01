@@ -1,1 +1,1 @@
-export type { IIncomingMessagesHandler } from "@interfaces/incomingMessagesHandler.interface";
+export type { IIncomingMessagesHandler } from "@react-interfaces/incomingMessagesHandler.interface";

@@ -1,1 +1,1 @@
-export { ApplyResponse } from "@type/entities/manifest.type";
+export type { ApplyResponse } from "@type/entities/manifest.type";
