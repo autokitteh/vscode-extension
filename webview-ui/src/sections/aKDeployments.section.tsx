@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
+<<<<<<< HEAD
 import { translate } from "@i18n/index";
 import { AKDeploymentState } from "@react-components";
+=======
+import { AKDeploymentState } from "@components";
+>>>>>>> 249f35d (refactor: update deployments only when it change and re-render the component every second)
 import {
 	AKTable,
 	AKTableEmptyMessage,
