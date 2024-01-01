@@ -43,7 +43,9 @@
 			"@sections": ["src/sections/index"],
 			"@sections/*": ["src/sections/*"],
 			"@utilities": ["src/utilities/index"],
-			"@utilities/*": ["src/utilities/*"]
+			"@utilities/*": ["src/utilities/*"],
+			"@utils": ["../src/utilities/index"],
+			"@utils/*": ["../src/utilities/*"]
 		},
 		"resolveJsonModule": true,
 		"skipLibCheck": true,

@@ -14,6 +14,7 @@ import {
 import { DeploymentState } from "@react-enums";
 import { sendMessage } from "@react-utilities";
 import { DeploymentSectionViewType } from "@type/views";
+import { getByTopLimit } from "@utils/index";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import moment from "moment";
 
@@ -36,23 +37,15 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 
 	const showMore = () => {
 		if (deployments) {
-			const newLengthBiggerThanTotal =
-				totalDeployments && deployments.length + DEFAULT_DEPLOYMENTS_PAGE_SIZE > totalDeployments;
-
-			if (newLengthBiggerThanTotal) {
-				sendMessage(MessageType.setDeploymentsPageSize, {
-					startIndex: 0,
-					endIndex: totalDeployments,
-				});
-				setDisplayedDeploymentsCount(totalDeployments);
-				return;
-			}
-			setDisplayedDeploymentsCount(
-				(displayedDeploymentsCount) => displayedDeploymentsCount + DEFAULT_DEPLOYMENTS_PAGE_SIZE
+			const calculateDeploymentsCount = getByTopLimit(
+				deployments.length,
+				DEFAULT_DEPLOYMENTS_PAGE_SIZE,
+				totalDeployments
 			);
+			setDisplayedDeploymentsCount(calculateDeploymentsCount);
 			sendMessage(MessageType.setDeploymentsPageSize, {
 				startIndex: 0,
-				endIndex: deployments.length + DEFAULT_DEPLOYMENTS_PAGE_SIZE,
+				endIndex: calculateDeploymentsCount,
 			});
 		}
 	};

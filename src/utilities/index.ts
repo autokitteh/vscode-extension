@@ -5,3 +5,4 @@ export { flattenArray } from "@utilities/flattenArray.utils";
 export { ValidateURL } from "@utilities/validateUrl.utils";
 export { convertTimestampToDate } from "@utilities/convertTimestampToDate.utils";
 export { sortArray } from "@utilities/sortArray.utils";
+export { getByTopLimit } from "@utilities/getNumberByTopLimit.utils";
