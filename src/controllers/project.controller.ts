@@ -53,7 +53,7 @@ export class ProjectController {
 	}
 
 	async refreshView() {
-		let deployments = await this.getProjectDeployments();
+		const deployments = await this.getProjectDeployments();
 		if (!isEqual(this.deployments, deployments)) {
 			this.deployments = deployments;
 			this.view.update({ type: MessageType.setDeployments, payload: deployments });
