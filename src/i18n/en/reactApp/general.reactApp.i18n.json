@@ -1,4 +1,8 @@
 {
 	"build": "Build",
-	"deploy": "Deploy"
+	"deploy": "Deploy",
+	"loading": "Loading",
+	"showMore": "Show more",
+	"showLess": "Show less",
+	"outOf": "out of"
 }

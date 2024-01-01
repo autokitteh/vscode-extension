@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-<<<<<<< HEAD
+import { DEFAULT_DEPLOYMENTS_PAGE_SIZE } from "@constants/deployments.view.constants";
+import { MessageType } from "@enums";
 import { translate } from "@i18n/index";
 import { AKDeploymentState } from "@react-components";
-=======
-import { AKDeploymentState } from "@components";
->>>>>>> 249f35d (refactor: update deployments only when it change and re-render the component every second)
 import {
 	AKTable,
 	AKTableEmptyMessage,
@@ -14,10 +12,12 @@ import {
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
 import { DeploymentState } from "@react-enums";
-import { Deployment } from "@type/models/index";
+import { sendMessage } from "@react-utilities";
+import { DeploymentSectionViewType } from "@type/views";
+import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import moment from "moment";
 
-export const AKDeployments = ({ deployments }: { deployments: Deployment[] | undefined }) => {
+export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSectionViewType) => {
 	const [rerender, setRerender] = useState(0);
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -29,9 +29,50 @@ export const AKDeployments = ({ deployments }: { deployments: Deployment[] | und
 	const isDeploymentStateStartable = (deploymentState: number) =>
 		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT ||
 		deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
+
+	const [displayedDeploymentsCount, setDisplayedDeploymentsCount] = useState<number>(
+		DEFAULT_DEPLOYMENTS_PAGE_SIZE
+	);
+
+	const showMore = () => {
+		if (deployments) {
+			const newLengthBiggerThanTotal =
+				totalDeployments && deployments.length + DEFAULT_DEPLOYMENTS_PAGE_SIZE > totalDeployments;
+
+			if (newLengthBiggerThanTotal) {
+				sendMessage(MessageType.setDeploymentsPageSize, {
+					startIndex: 0,
+					endIndex: totalDeployments,
+				});
+				setDisplayedDeploymentsCount(totalDeployments);
+				return;
+			}
+			setDisplayedDeploymentsCount(
+				(displayedDeploymentsCount) => displayedDeploymentsCount + DEFAULT_DEPLOYMENTS_PAGE_SIZE
+			);
+			sendMessage(MessageType.setDeploymentsPageSize, {
+				startIndex: 0,
+				endIndex: deployments.length + DEFAULT_DEPLOYMENTS_PAGE_SIZE,
+			});
+		}
+	};
+
+	const showLess = () => {
+		setDisplayedDeploymentsCount(DEFAULT_DEPLOYMENTS_PAGE_SIZE);
+		sendMessage(MessageType.setDeploymentsPageSize, {
+			startIndex: 0,
+			endIndex: DEFAULT_DEPLOYMENTS_PAGE_SIZE,
+		});
+	};
+
 	return (
-		<div>
-			<AKTable classes="mt-4">
+		<div className="mt-4">
+			{deployments && (
+				<div className="flex justify-end mb-2 w-full">
+					{displayedDeploymentsCount} {translate().t("reactApp.general.outOf")} {totalDeployments}
+				</div>
+			)}
+			<AKTable>
 				<AKTableHeader>
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.time")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.status")}</AKTableHeaderCell>
@@ -62,7 +103,24 @@ export const AKDeployments = ({ deployments }: { deployments: Deployment[] | und
 						</AKTableRow>
 					))}
 			</AKTable>
-			{!deployments && <AKTableEmptyMessage>Loading...</AKTableEmptyMessage>}
+			{!deployments && (
+				<AKTableEmptyMessage>{translate().t("reactApp.general.loading")}...</AKTableEmptyMessage>
+			)}
+			<div className="flex w-full justify-center mt-4">
+				{deployments && displayedDeploymentsCount < (totalDeployments || 0) && (
+					<VSCodeButton onClick={showMore} className="mr-1">
+						{translate().t("reactApp.general.showMore")}
+					</VSCodeButton>
+				)}
+				{deployments &&
+					deployments.length &&
+					displayedDeploymentsCount > DEFAULT_DEPLOYMENTS_PAGE_SIZE && (
+						<VSCodeButton className="ml-1" onClick={showLess}>
+							{translate().t("reactApp.general.showLess")}
+						</VSCodeButton>
+					)}
+			</div>
+
 			{deployments && deployments.length === 0 && (
 				<AKTableEmptyMessage>No deployments found</AKTableEmptyMessage>
 			)}

@@ -1,6 +1,7 @@
 import { vsCommands } from "@constants";
+import { DEFAULT_DEPLOYMENTS_PAGE_SIZE } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
-import { MessageType } from "@enums";
+import { MessageType, SortOrder } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import {
@@ -9,8 +10,8 @@ import {
 	ProjectsService,
 	SessionsService,
 } from "@services";
-import { Deployment, Project } from "@type/models";
-import { Session } from "@type/models/session.type";
+import { Deployment, Project, Session } from "@type/models";
+import { DeploymentSectionViewType } from "@type/views";
 import { sortArray } from "@utilities";
 import { getIds } from "@utilities/getIds.utils";
 import { MessageHandler } from "@views";
@@ -25,13 +26,20 @@ export class ProjectController {
 	public project?: Project;
 	private sessions?: Session[];
 	private deployments?: Deployment[];
+	private totalDeployments: number;
 	private refreshRate: number;
+	private deploymentsPageLimits: {
+		startIndex: number;
+		endIndex: number;
+	};
 
 	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
 		this.refreshRate = refreshRate;
+		this.deploymentsPageLimits = { startIndex: 0, endIndex: DEFAULT_DEPLOYMENTS_PAGE_SIZE };
+		this.totalDeployments = 0;
 	}
 
 	reveal(): void {
@@ -63,10 +71,25 @@ export class ProjectController {
 	}
 
 	async refreshView() {
-		const deployments = await this.getProjectDeployments();
-		if (!isEqual(this.deployments, deployments)) {
-			this.deployments = sortArray(deployments, "createdAt", SortOrder.DESC);
-			this.view.update({ type: MessageType.setDeployments, payload: this.deployments });
+		const deployments = sortArray(await this.getProjectDeployments(), "createdAt", SortOrder.DESC);
+		this.totalDeployments = deployments?.length || 0;
+		const deploymentsForView =
+			deployments?.slice(
+				this.deploymentsPageLimits.startIndex,
+				this.deploymentsPageLimits.endIndex
+			) || [];
+
+		if (!isEqual(this.deployments, deploymentsForView)) {
+			this.deployments = deploymentsForView;
+			const deploymentsViewObject: DeploymentSectionViewType = {
+				deployments: deploymentsForView,
+				totalDeployments: this.totalDeployments,
+			};
+
+			this.view.update({
+				type: MessageType.setDeployments,
+				payload: deploymentsViewObject,
+			});
 		}
 
 		const sessions = await RequestHandler.handleServiceResponse(() =>
@@ -114,6 +137,18 @@ export class ProjectController {
 
 	onFocus() {
 		this.startInterval();
+	}
+
+	setDeploymentsPageSize({ startIndex, endIndex }: PageSize) {
+		const indexesAreValid = startIndex >= 0 && endIndex >= 0 && startIndex < endIndex;
+
+		if (indexesAreValid) {
+			if (endIndex >= this.totalDeployments) {
+				this.deploymentsPageLimits = { startIndex, endIndex: this.totalDeployments };
+				return;
+			}
+			this.deploymentsPageLimits = { startIndex, endIndex };
+		}
 	}
 
 	onClose() {

@@ -4,20 +4,22 @@ import { translate } from "@i18n/index";
 import { AKButton, AKLogo } from "@react-components";
 import { IIncomingMessagesHandler } from "@react-interfaces/incomingMessagesHandler.interface";
 import { AKDeployments, AKSessions } from "@react-sections";
-import { HandleIncomingMessages, vscodeWrapper } from "@react-utilities";
+import { HandleIncomingMessages, sendMessage } from "@react-utilities";
 import { Message } from "@type/index";
-import { Deployment } from "@type/models/index";
 import { Session } from "@type/models/index";
+import { DeploymentSectionViewType } from "@type/views/index";
 import "./App.css";
 
 function App() {
-	const [deployments, setDeployments] = useState<Deployment[] | undefined>();
+	const [deploymentsSection, setDeploymentsSection] = useState<
+		DeploymentSectionViewType | undefined
+	>();
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [sessions, setSessions] = useState<Session[] | undefined>();
 
 	const messageHandlers: IIncomingMessagesHandler = {
-		setDeployments,
+		setDeploymentsSection,
 		setProjectName,
 		setThemeVisualType,
 		setSessions,
@@ -34,10 +36,6 @@ function App() {
 			window.removeEventListener("message", handleMessagesFromExtension);
 		};
 	}, [handleMessagesFromExtension]);
-
-	const sendMessage = (type: MessageType) => {
-		vscodeWrapper.postMessage({ type } as Message);
-	};
 
 	return (
 		<main>
@@ -58,7 +56,7 @@ function App() {
 						</AKButton>
 					</div>
 				</div>
-				<AKDeployments deployments={deployments} />
+				<AKDeployments {...deploymentsSection} />
 				<AKSessions sessions={sessions} />
 			</div>
 		</main>

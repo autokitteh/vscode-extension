@@ -12,9 +12,9 @@
 		"moduleResolution": "node",
 		"noEmit": true,
 		"paths": {
+			"@/*": ["src/*"],
 			"@ak-proto-ts/*": ["../src/autokitteh/proto/gen/ts/autokitteh/*"],
 			"@enums": ["../src/enums/index"],
-			"@enums/*": ["../src/enums/*"],
 			"@i18n/*": ["../src/i18n/*"],
 			"@react-assets/*": ["assets/*"],
 			"@react-components": ["src/components/index"],
@@ -30,7 +30,20 @@
 			"@react-utilities": ["src/utilities/index"],
 			"@react-utilities/*": ["src/utilities/*"],
 			"@type/*": ["../src/types/*"],
-			"@type": ["../src/types/index"]
+			"@type": ["../src/types/index"],
+			"@assets/*": ["assets/*"],
+			"@components": ["src/components/index"],
+			"@components/*": ["src/components/*"],
+			"@constants": ["../src/constants/index"],
+			"@constants/*": ["../src/constants/*"],
+			"@enum": ["src/enum/index"],
+			"@enum/*": ["src/enum/*"],
+			"@interfaces": ["src/interfaces/index"],
+			"@interfaces/*": ["src/interfaces/*"],
+			"@sections": ["src/sections/index"],
+			"@sections/*": ["src/sections/*"],
+			"@utilities": ["src/utilities/index"],
+			"@utilities/*": ["src/utilities/*"]
 		},
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
@@ -39,5 +52,5 @@
 		"types": ["vite-plugin-svgr/client"],
 		"useDefineForClassFields": true
 	},
-	"include": ["./src"]
+	"include": ["./src", "../src/constants/deployments.view.constants.ts"]
 }
