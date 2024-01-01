@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { AKDeploymentState } from "@components";
 import {
 	AKTable,
@@ -12,6 +13,14 @@ import { Deployment } from "@type/models/index";
 import moment from "moment";
 
 export const AKDeployments = ({ deployments }: { deployments: Deployment[] | undefined }) => {
+	const [rerender, setRerender] = useState(0);
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setRerender((rerender) => rerender + 1);
+		}, 1000);
+
+		return () => clearInterval(interval);
+	}, []);
 	return (
 		<div>
 			<AKTable classes="mt-4">
