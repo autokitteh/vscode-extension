@@ -21,6 +21,7 @@ export class ProjectController {
 	public projectId: string;
 	public project?: Project;
 	private sessions?: Session[];
+	private deployments?: Deployment[];
 	private refreshRate: number;
 
 	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
@@ -53,10 +54,10 @@ export class ProjectController {
 
 	async refreshView() {
 		let deployments = await this.getProjectDeployments();
-		this.view.update({
-			type: MessageType.setDeployments,
-			payload: sortArray(deployments, "createdAt", SortOrder.DESC),
-		});
+		if (!isEqual(this.deployments, deployments)) {
+			this.deployments = deployments;
+			this.view.update({ type: MessageType.setDeployments, payload: deployments });
+		}
 
 		const sessions = await RequestHandler.handleServiceResponse(() =>
 			SessionsService.listByProjectId(this.projectId)
