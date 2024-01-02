@@ -12,7 +12,6 @@
 		"moduleResolution": "node",
 		"noEmit": true,
 		"paths": {
-			"@/*": ["src/*"],
 			"@ak-proto-ts/*": ["../src/autokitteh/proto/gen/ts/autokitteh/*"],
 			"@enums": ["../src/enums/index"],
 			"@enums/*": ["../src/enums/*"],

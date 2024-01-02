@@ -7,7 +7,6 @@ import svgr from "vite-plugin-svgr";
 export default defineConfig({
 	resolve: {
 		alias: {
-			"@": path.resolve(__dirname, "./src"),
 			"@type": path.resolve(__dirname, "../src/types"),
 			"@enums": path.resolve(__dirname, "../src/enums"),
 			"@models": path.resolve(__dirname, "../src/models"),
