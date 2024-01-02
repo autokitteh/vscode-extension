@@ -23,7 +23,7 @@ export class ProjectController {
 	private disposeCB?: ProjectCB;
 	public projectId: string;
 	public project?: Project;
-	private sessions?: Session[];
+	private sessions?: Session[] = [];
 	private deployments?: Deployment[];
 	private totalDeployments: number;
 	private refreshRate: number;
@@ -102,6 +102,8 @@ export class ProjectController {
 
 	startInterval() {
 		if (!this.intervalTimerId) {
+			this.view.update({ type: MessageType.setSessions, payload: undefined });
+
 			this.intervalTimerId = setInterval(() => this.refreshView(), this.refreshRate);
 		}
 	}
@@ -130,7 +132,10 @@ export class ProjectController {
 
 	onBlur() {
 		this.stopInterval();
+<<<<<<< HEAD
 		this.deployments = undefined;
+=======
+>>>>>>> 6a7f3ef (fix: handle sections load on tab switch)
 		this.sessions = undefined;
 	}
 

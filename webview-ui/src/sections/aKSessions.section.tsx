@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { translate } from "@i18n";
 import {
 	AKTable,
@@ -11,6 +12,11 @@ import { Session } from "@type/models";
 import moment from "moment";
 
 export const AKSessions = ({ sessions }: { sessions: Session[] | undefined }) => {
+	const [isLoading, setIsLoading] = useState(true);
+	useEffect(() => {
+		setIsLoading(false);
+	}, [sessions]);
+
 	return (
 		<div>
 			<AKTable classes="mt-4">
@@ -31,7 +37,10 @@ export const AKSessions = ({ sessions }: { sessions: Session[] | undefined }) =>
 						</AKTableRow>
 					))}
 			</AKTable>
-			{!sessions && <AKTableMessage>Loading...</AKTableMessage>}
+			{isLoading && <AKTableMessage>Loading...</AKTableMessage>}
+			{!sessions && !isLoading && (
+				<AKTableMessage>Pick a project to display the sessions</AKTableMessage>
+			)}
 			{sessions && sessions.length === 0 && <AKTableMessage>No sessions found</AKTableMessage>}
 		</div>
 	);
