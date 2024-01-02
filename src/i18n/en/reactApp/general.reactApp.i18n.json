@@ -2,8 +2,8 @@
 	"build": "Build",
 	"deploy": "Deploy",
 	"loading": "Loading...",
-	"showMore": "Show more",
-	"showLess": "Show less",
 	"outOf": "out of",
-	"run": "Run"
+	"run": "Run",
+	"showLess": "Show less",
+	"showMore": "Show more"
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { DEFAULT_SESSIONS_PAGE_SIZE } from "@constants/sessions.view.constants";
-import { MessageType } from "@enums";
+import { pageLimits } from "@constants/projectsView.constants";
+import { MessageType, PaginationListEntity } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
 import {
@@ -11,49 +11,37 @@ import {
 	AKTableRow,
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
+import { usePagination } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import moment from "moment";
 
-export const AKSessions = ({ sessions, totalSessions }: SessionSectionViewModel) => {
-	const [sessionsCount, setSessionsCount] = useState<number>(DEFAULT_SESSIONS_PAGE_SIZE);
+export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewModel) => {
+	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
 	useEffect(() => {
 		setIsLoading(false);
 	}, [sessions]);
-
 	useEffect(() => {
-		if (totalSessions && totalSessions <= DEFAULT_SESSIONS_PAGE_SIZE) {
-			setSessionsCount(totalSessions);
-		}
-	}, [totalSessions]);
+		const interval = setInterval(() => {
+			setRerender((rerender) => rerender + 1);
+		}, 1000);
 
-	const showMore = () => {
-		if (!sessions || !totalSessions) {
-			return;
-		}
-		const sessionsCount = Math.min(sessions.length + DEFAULT_SESSIONS_PAGE_SIZE, totalSessions);
-		setSessionsCount(sessionsCount);
-		sendMessage(MessageType.setSessionsPageSize, {
-			startIndex: 0,
-			endIndex: sessionsCount,
-		});
-	};
+		return () => clearInterval(interval);
+	}, []);
 
-	const showLess = () => {
-		setSessionsCount(DEFAULT_SESSIONS_PAGE_SIZE);
-		sendMessage(MessageType.setDeploymentsPageSize, {
-			startIndex: 0,
-			endIndex: DEFAULT_SESSIONS_PAGE_SIZE,
-		});
-	};
+	const { endIndex, showMore, showLess } = usePagination(
+		pageLimits[PaginationListEntity.SESSIONS],
+		totalSessions,
+		PaginationListEntity.SESSIONS
+	);
 
 	return (
 		<div className="mt-4">
 			{sessions && !!totalSessions && (
 				<div className="flex justify-end mb-2 w-full">
-					{sessionsCount} {translate().t("reactApp.general.outOf")} {totalSessions}
+					{endIndex} {translate().t("reactApp.general.outOf")} {totalSessions}
 				</div>
 			)}
 			<AKTable>
@@ -84,16 +72,18 @@ export const AKSessions = ({ sessions, totalSessions }: SessionSectionViewModel)
 				<AKTableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</AKTableMessage>
 			)}
 			<div className="flex w-full justify-center mt-4">
-				{!!sessions && !!totalSessions && sessionsCount < totalSessions && (
+				{!!sessions && !!totalSessions && endIndex < totalSessions && (
 					<VSCodeButton onClick={showMore} className="mr-1">
 						{translate().t("reactApp.general.showMore")}
 					</VSCodeButton>
 				)}
-				{!!sessions && !!sessions.length && sessionsCount > DEFAULT_SESSIONS_PAGE_SIZE && (
-					<VSCodeButton className="ml-1" onClick={showLess}>
-						{translate().t("reactApp.general.showLess")}
-					</VSCodeButton>
-				)}
+				{!!sessions &&
+					!!sessions.length &&
+					endIndex > pageLimits[PaginationListEntity.SESSIONS] && (
+						<VSCodeButton className="ml-1" onClick={showLess}>
+							{translate().t("reactApp.general.showLess")}
+						</VSCodeButton>
+					)}
 			</div>
 		</div>
 	);

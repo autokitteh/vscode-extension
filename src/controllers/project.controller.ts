@@ -1,17 +1,18 @@
-import { DEFAULT_DEPLOYMENTS_PAGE_SIZE, vsCommands, DEFAULT_SESSIONS_PAGE_SIZE } from "@constants";
+import { vsCommands, pageLimits } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
-import { MessageType, SortOrder } from "@enums";
+import { MessageType, PaginationListEntity, SortOrder } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel } from "@models";
-import { SessionSectionViewModel } from "@models/views";
+import { PageLimits, SessionSectionViewModel } from "@models/views";
+import { CountEntitites } from "@models/views";
 import {
 	EnvironmentsService,
 	DeploymentsService,
 	ProjectsService,
 	SessionsService,
 } from "@services";
-import { PageSize, ProjectCB } from "@type/interfaces";
+import { EntityPageSize, PageSize, ProjectCB } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import { sortArray } from "@utilities";
 import { getIds } from "@utilities/getIds.utils";
@@ -27,25 +28,30 @@ export class ProjectController {
 	public project?: Project;
 	private sessions?: Session[] = [];
 	private deployments?: Deployment[];
-	private totalDeployments: number;
+	private countForPage: CountEntitites;
 	private refreshRate: number;
-	private deploymentsPageLimits: PageSize;
+	private entitiesDisplayLimits: PageLimits;
 	private selectedDeploymentId?: string;
-	private sessionsPageLimits: {
-		startIndex: number;
-		endIndex: number;
-	};
-	private totalSessions: number;
 
 	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
 		this.refreshRate = refreshRate;
-		this.deploymentsPageLimits = { startIndex: 0, endIndex: DEFAULT_DEPLOYMENTS_PAGE_SIZE };
-		this.totalDeployments = 0;
-		this.sessionsPageLimits = { startIndex: 0, endIndex: DEFAULT_SESSIONS_PAGE_SIZE };
-		this.totalSessions = 0;
+		this.countForPage = {
+			[PaginationListEntity.DEPLOYMENTS]: 0,
+			[PaginationListEntity.SESSIONS]: 0,
+		};
+		this.entitiesDisplayLimits = {
+			[PaginationListEntity.DEPLOYMENTS]: {
+				startIndex: 0,
+				endIndex: pageLimits[PaginationListEntity.DEPLOYMENTS],
+			},
+			[PaginationListEntity.SESSIONS]: {
+				startIndex: 0,
+				endIndex: pageLimits[PaginationListEntity.SESSIONS],
+			},
+		};
 	}
 
 	reveal(): void {
@@ -79,18 +85,18 @@ export class ProjectController {
 	async refreshView() {
 		const projectDeployments = await this.getProjectDeployments();
 		sortArray(projectDeployments, "createdAt", SortOrder.DESC);
-		this.totalDeployments = projectDeployments?.length || 0;
-		const deploymentsForView =
-			projectDeployments?.slice(
-				this.deploymentsPageLimits.startIndex,
-				this.deploymentsPageLimits.endIndex
-			) || undefined;
+		this.countForPage[PaginationListEntity.DEPLOYMENTS] = projectDeployments?.length || 0;
+
+		const startIndex = this.entitiesDisplayLimits[PaginationListEntity.DEPLOYMENTS].startIndex;
+		const endIndex = this.entitiesDisplayLimits[PaginationListEntity.DEPLOYMENTS].endIndex;
+
+		const deploymentsForView = projectDeployments?.slice(startIndex, endIndex) || undefined;
 
 		if (!isEqual(this.deployments, deploymentsForView)) {
 			this.deployments = deploymentsForView;
 			const deploymentsViewObject: DeploymentSectionViewModel = {
 				deployments: deploymentsForView,
-				totalDeployments: this.totalDeployments,
+				totalDeployments: this.countForPage[PaginationListEntity.DEPLOYMENTS],
 			};
 
 			this.view.update({
@@ -108,38 +114,22 @@ export class ProjectController {
 			SessionsService.listByDeploymentId(deploymentId)
 		);
 		sortArray(sessions, "createdAt", SortOrder.DESC);
-		this.totalSessions = sessions?.length || 0;
-		const sessionsForView =
-			sessions?.slice(this.sessionsPageLimits.startIndex, this.sessionsPageLimits.endIndex) ||
-			undefined;
+		this.countForPage[PaginationListEntity.SESSIONS] = sessions?.length || 0;
+		const startIndex = this.entitiesDisplayLimits[PaginationListEntity.SESSIONS].startIndex;
+		const endIndex = this.entitiesDisplayLimits[PaginationListEntity.SESSIONS].endIndex;
+		const sessionsForView = sessions?.slice(startIndex, endIndex) || undefined;
 
 		if (!isEqual(this.sessions, sessionsForView)) {
 			this.sessions = sessions;
 			const sessionsViewObject: SessionSectionViewModel = {
 				sessions: sessionsForView,
-				totalSessions: this.totalSessions,
+				totalSessions: this.countForPage[PaginationListEntity.SESSIONS],
 			};
 
 			this.view.update({
 				type: MessageType.setSessions,
 				payload: sessionsViewObject,
 			});
-		}
-	}
-
-	setSessionsPageSize({ startIndex, endIndex }: PageSize) {
-		const indexesAreValid = startIndex >= 0 && startIndex < endIndex;
-
-		if (indexesAreValid) {
-			this.sessionsPageLimits = {
-				startIndex,
-				endIndex: Math.min(this.totalSessions, endIndex),
-			};
-		} else {
-			this.sessionsPageLimits = {
-				startIndex: 0,
-				endIndex: DEFAULT_SESSIONS_PAGE_SIZE,
-			};
 		}
 	}
 
@@ -183,18 +173,18 @@ export class ProjectController {
 		this.startInterval();
 	}
 
-	setDeploymentsPageSize({ startIndex, endIndex }: PageSize) {
+	setPageSize({ startIndex, endIndex, entity }: EntityPageSize) {
 		const indexesAreValid = startIndex >= 0 && startIndex < endIndex;
 
 		if (indexesAreValid) {
-			this.deploymentsPageLimits = {
+			this.entitiesDisplayLimits[entity] = {
 				startIndex,
-				endIndex: Math.min(this.totalDeployments, endIndex),
+				endIndex: Math.min(this.countForPage[entity], endIndex),
 			};
 		} else {
-			this.deploymentsPageLimits = {
+			this.entitiesDisplayLimits[entity] = {
 				startIndex: 0,
-				endIndex: DEFAULT_DEPLOYMENTS_PAGE_SIZE,
+				endIndex: pageLimits[entity],
 			};
 		}
 	}

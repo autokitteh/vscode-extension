@@ -15,6 +15,7 @@ export default defineConfig({
 			"@react-assets": path.resolve(__dirname, "./assets"),
 			"@react-components": path.resolve(__dirname, "./src/components"),
 			"@react-enums": path.resolve(__dirname, "./src/enums"),
+			"@react-hooks": path.resolve(__dirname, "./src/hooks"),
 			"@react-constants": path.resolve(__dirname, "./src/constants"),
 			"@react-utilities": path.resolve(__dirname, "./src/utilities"),
 			"@react-sections": path.resolve(__dirname, "./src/sections"),
