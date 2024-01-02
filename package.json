@@ -188,7 +188,7 @@
 		"@types/glob": "^7.1.3",
 		"@types/js-yaml": "^4.0.9",
 		"@types/lodash": "^4.14.202",
-		"@types/node": "^12.11.7",
+		"@types/node": "^20.10.6",
 		"@types/vscode": "^1.46.0",
 		"@typescript-eslint/eslint-plugin": "^6.14.0",
 		"@typescript-eslint/parser": "^6.14.0",
@@ -202,6 +202,7 @@
 		"npm-run-all": "^4.1.5",
 		"prettier": "^3.1.1",
 		"typescript": "^5.3.3",
+		"vitest": "^1.1.1",
 		"vscode-test": "^1.5.0"
 	},
 	"engines": {
@@ -223,7 +224,8 @@
 		"prettier": "prettier . --ignore-path .prettierignore",
 		"format:check": "npm run prettier -- --check",
 		"format:fix": "npm run prettier -- --write",
-		"validate": "run-p lint type:check format:check"
+		"validate": "run-p lint type:check format:check",
+		"test": "vitest"
 	},
 	"lint-staged": {
 		"*.{ts,tsx}": [
