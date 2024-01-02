@@ -2,7 +2,11 @@ import React, { ReactNode } from "react";
 import { translate } from "@i18n/index";
 import { DeploymentState } from "@react-enums";
 
-export const AKDeploymentState = ({ deploymentState }: { deploymentState: number }): ReactNode => {
+export const AKDeploymentState = ({
+	deploymentState,
+}: {
+	deploymentState: DeploymentState;
+}): ReactNode => {
 	switch (deploymentState) {
 		case DeploymentState.ACTIVE_DEPLOYMENT:
 			return (
