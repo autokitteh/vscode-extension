@@ -2,6 +2,14 @@
 	"time": "Deployment Time",
 	"status": "Status",
 	"sessions": "Sessions",
-	"buildId": "Build-ID (Optional)",
-	"actions": "Actions"
+	"buildId": "Build-ID",
+	"actions": "Actions",
+	"statuses": {
+		"active": "Active",
+		"inactive": "Inactive",
+		"unspecified": "Unspecified",
+		"testing": "Testing",
+		"draining": "Draining",
+		"error": "Error - please reload"
+	}
 }

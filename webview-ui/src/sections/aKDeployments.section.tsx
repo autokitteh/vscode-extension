@@ -9,6 +9,7 @@ import {
 	AKTableRow,
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
+import { DeploymentState } from "@react-enums";
 import { Deployment } from "@type/models/index";
 import moment from "moment";
 
@@ -21,6 +22,9 @@ export const AKDeployments = ({ deployments }: { deployments: Deployment[] | und
 
 		return () => clearInterval(interval);
 	}, []);
+	const isDeploymentStateStartable = (deploymentState: number) =>
+		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT ||
+		deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
 	return (
 		<div>
 			<AKTable classes="mt-4">
@@ -39,14 +43,17 @@ export const AKDeployments = ({ deployments }: { deployments: Deployment[] | und
 							</AKTableCell>
 							<AKTableCell>
 								<div className="flex justify-center">
-									<AKDeploymentState deploymentState={deployment.state.toString()} />
+									<AKDeploymentState deploymentState={deployment.state} />
 								</div>
 							</AKTableCell>
 							<AKTableCell>0</AKTableCell>
 							<AKTableCell>{deployment.buildId}</AKTableCell>
 							<AKTableCell>
-								<div className="codicon codicon-debug-rerun"></div>
-								<div className="codicon codicon-close"></div>
+								{isDeploymentStateStartable(deployment.state) ? (
+									<div className="codicon codicon-debug-start"></div>
+								) : (
+									<div className="codicon codicon-debug-stop"></div>
+								)}
 							</AKTableCell>
 						</AKTableRow>
 					))}
