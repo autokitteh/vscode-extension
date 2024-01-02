@@ -28,6 +28,7 @@ export class ProjectController {
 	private totalDeployments: number;
 	private refreshRate: number;
 	private deploymentsPageLimits: PageSize;
+	private selectedDeploymentId?: string;
 
 	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
 		this.view = projectView;
@@ -88,11 +89,12 @@ export class ProjectController {
 				payload: deploymentsViewObject,
 			});
 		}
+	}
+	async selectDeployment(deploymentId: string) {
+		this.selectedDeploymentId = deploymentId;
+		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
 
-		const sessions = await RequestHandler.handleServiceResponse(() =>
-			SessionsService.listByProjectId(this.projectId)
-		);
-		if (!isEqual(this.sessions, sessions)) {
+		if (!error && !isEqual(this.sessions, sessions)) {
 			this.sessions = sessions;
 			this.view.update({ type: MessageType.setSessions, payload: sessions });
 		}

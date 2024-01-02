@@ -38,6 +38,8 @@ export class ProjectView implements IProjectView {
 						break;
 					case MessageType.setDeploymentsPageSize:
 						this.delegate?.setDeploymentsPageSize?.(message.payload as PageSize);
+					case MessageType.selectDeployment:
+						this.delegate?.selectDeployment?.(message.payload as string);
 						break;
 				}
 			},

@@ -5,6 +5,7 @@ export interface IProjectViewDelegate {
 	build: Callback;
 	run: Callback;
 	setDeploymentsPageSize: DeploymentPageSizeCB;
+	selectDeployment?: CallbackWStringIdParam;
 }
 
 export interface IProjectView {

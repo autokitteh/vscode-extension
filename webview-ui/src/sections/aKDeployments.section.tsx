@@ -83,16 +83,32 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 				{deployments &&
 					deployments.map((deployment: Deployment) => (
 						<AKTableRow key={deployment.deploymentId}>
-							<AKTableCell>
+							<AKTableCell
+								onClick={() => sendMessage(MessageType.selectDeployment, deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
 								{moment(deployment.createdAt as unknown as string).fromNow()}
 							</AKTableCell>
-							<AKTableCell>
+							<AKTableCell
+								onClick={() => sendMessage(MessageType.selectDeployment, deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
 								<div className="flex justify-center">
 									<AKDeploymentState deploymentState={deployment.state} />
 								</div>
 							</AKTableCell>
-							<AKTableCell>0</AKTableCell>
-							<AKTableCell>{deployment.buildId}</AKTableCell>
+							<AKTableCell
+								onClick={() => sendMessage(MessageType.selectDeployment, deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
+								0
+							</AKTableCell>
+							<AKTableCell
+								onClick={() => sendMessage(MessageType.selectDeployment, deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
+								{deployment.buildId}
+							</AKTableCell>
 							<AKTableCell>
 								{isDeploymentStateStartable(deployment.state) ? (
 									<div className="codicon codicon-debug-start"></div>
