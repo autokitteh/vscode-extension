@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DEFAULT_DEPLOYMENTS_PAGE_SIZE } from "@constants/deployments.view.constants";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
+import { DeploymentSectionViewModel } from "@models";
 import { AKDeploymentState } from "@react-components";
 import {
 	AKTable,
@@ -13,11 +14,11 @@ import {
 } from "@react-components/AKTable";
 import { DeploymentState } from "@react-enums";
 import { sendMessage } from "@react-utilities";
-import { DeploymentSectionViewType } from "@type/views";
+import { Deployment } from "@type/models";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import moment from "moment";
 
-export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSectionViewType) => {
+export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSectionViewModel) => {
 	const [rerender, setRerender] = useState(0);
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -28,33 +29,32 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 	}, []);
 	useEffect(() => {
 		if (totalDeployments && totalDeployments <= DEFAULT_DEPLOYMENTS_PAGE_SIZE) {
-			setDisplayedDeploymentsCount(totalDeployments);
+			setDeploymentsCount(totalDeployments);
 		}
 	}, [totalDeployments]);
 	const isDeploymentStateStartable = (deploymentState: number) =>
 		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT ||
 		deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
 
-	const [displayedDeploymentsCount, setDisplayedDeploymentsCount] = useState<number>(
-		DEFAULT_DEPLOYMENTS_PAGE_SIZE
-	);
+	const [deploymentsCount, setDeploymentsCount] = useState<number>(DEFAULT_DEPLOYMENTS_PAGE_SIZE);
 
 	const showMore = () => {
-		if (deployments && totalDeployments) {
-			const calculateDeploymentsCount = Math.min(
-				deployments.length + DEFAULT_DEPLOYMENTS_PAGE_SIZE,
-				totalDeployments
-			);
-			setDisplayedDeploymentsCount(calculateDeploymentsCount);
-			sendMessage(MessageType.setDeploymentsPageSize, {
-				startIndex: 0,
-				endIndex: calculateDeploymentsCount,
-			});
+		if (!deployments || !totalDeployments) {
+			return;
 		}
+		const calculateDeploymentsCount = Math.min(
+			deployments.length + DEFAULT_DEPLOYMENTS_PAGE_SIZE,
+			totalDeployments
+		);
+		setDeploymentsCount(calculateDeploymentsCount);
+		sendMessage(MessageType.setDeploymentsPageSize, {
+			startIndex: 0,
+			endIndex: calculateDeploymentsCount,
+		});
 	};
 
 	const showLess = () => {
-		setDisplayedDeploymentsCount(DEFAULT_DEPLOYMENTS_PAGE_SIZE);
+		setDeploymentsCount(DEFAULT_DEPLOYMENTS_PAGE_SIZE);
 		sendMessage(MessageType.setDeploymentsPageSize, {
 			startIndex: 0,
 			endIndex: DEFAULT_DEPLOYMENTS_PAGE_SIZE,
@@ -65,7 +65,7 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 		<div className="mt-4">
 			{deployments && !!totalDeployments && (
 				<div className="flex justify-end mb-2 w-full">
-					{displayedDeploymentsCount} {translate().t("reactApp.general.outOf")} {totalDeployments}
+					{deploymentsCount} {translate().t("reactApp.general.outOf")} {totalDeployments}
 				</div>
 			)}
 			<AKTable>
@@ -77,7 +77,7 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.actions")}</AKTableHeaderCell>
 				</AKTableHeader>
 				{deployments &&
-					deployments.map((deployment) => (
+					deployments.map((deployment: Deployment) => (
 						<AKTableRow key={deployment.deploymentId}>
 							<AKTableCell>
 								{moment(deployment.createdAt as unknown as string).fromNow()}
@@ -103,14 +103,14 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 				<AKTableEmptyMessage>{translate().t("reactApp.general.loading")}...</AKTableEmptyMessage>
 			)}
 			<div className="flex w-full justify-center mt-4">
-				{!!deployments && !!totalDeployments && displayedDeploymentsCount < totalDeployments && (
+				{!!deployments && !!totalDeployments && deploymentsCount < totalDeployments && (
 					<VSCodeButton onClick={showMore} className="mr-1">
 						{translate().t("reactApp.general.showMore")}
 					</VSCodeButton>
 				)}
 				{!!deployments &&
 					!!deployments.length &&
-					displayedDeploymentsCount > DEFAULT_DEPLOYMENTS_PAGE_SIZE && (
+					deploymentsCount > DEFAULT_DEPLOYMENTS_PAGE_SIZE && (
 						<VSCodeButton className="ml-1" onClick={showLess}>
 							{translate().t("reactApp.general.showLess")}
 						</VSCodeButton>

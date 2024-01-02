@@ -1,6 +1,6 @@
 import { Deployment } from "@type/models";
 
-export type DeploymentSectionViewType = {
+export type DeploymentSectionViewModel = {
 	deployments?: Deployment[];
 	totalDeployments?: number;
 };

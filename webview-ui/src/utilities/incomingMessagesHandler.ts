@@ -1,8 +1,8 @@
 import { MessageType, Theme } from "@enums";
+import { DeploymentSectionViewModel } from "@models";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
 import { Session } from "@type/models";
-import { DeploymentSectionViewType } from "@type/views";
 
 export const HandleIncomingMessages = (
 	event: MessageEvent<Message>,
@@ -15,7 +15,7 @@ export const HandleIncomingMessages = (
 			handlers.setThemeVisualType(payload as Theme);
 			break;
 		case MessageType.setDeployments:
-			handlers.setDeploymentsSection(payload as DeploymentSectionViewType);
+			handlers.setDeploymentsSection(payload as DeploymentSectionViewModel);
 			break;
 		case MessageType.setProjectName:
 			handlers.setProjectName(payload as string);

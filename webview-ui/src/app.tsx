@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
+import { DeploymentSectionViewModel } from "@models";
 import { AKButton, AKLogo } from "@react-components";
 import { IIncomingMessagesHandler } from "@react-interfaces/incomingMessagesHandler.interface";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { HandleIncomingMessages, sendMessage } from "@react-utilities";
 import { Message } from "@type";
 import { Session } from "@type/models";
-import { DeploymentSectionViewType } from "@type/views";
 import "./App.css";
 
 function App() {
 	const [deploymentsSection, setDeploymentsSection] = useState<
-		DeploymentSectionViewType | undefined
+		DeploymentSectionViewModel | undefined
 	>();
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();

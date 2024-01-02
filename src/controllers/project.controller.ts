@@ -3,6 +3,7 @@ import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType, SortOrder } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
+import { DeploymentSectionViewModel } from "@models";
 import {
 	EnvironmentsService,
 	DeploymentsService,
@@ -10,7 +11,6 @@ import {
 	SessionsService,
 } from "@services";
 import { Deployment, Project, Session } from "@type/models";
-import { DeploymentSectionViewType } from "@type/views";
 import { sortArray } from "@utilities";
 import { getIds } from "@utilities/getIds.utils";
 import { MessageHandler } from "@views";
@@ -27,10 +27,7 @@ export class ProjectController {
 	private deployments?: Deployment[];
 	private totalDeployments: number;
 	private refreshRate: number;
-	private deploymentsPageLimits: {
-		startIndex: number;
-		endIndex: number;
-	};
+	private deploymentsPageLimits: PageSize;
 
 	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
 		this.view = projectView;
@@ -81,7 +78,7 @@ export class ProjectController {
 
 		if (!isEqual(this.deployments, deploymentsForView)) {
 			this.deployments = deploymentsForView;
-			const deploymentsViewObject: DeploymentSectionViewType = {
+			const deploymentsViewObject: DeploymentSectionViewModel = {
 				deployments: deploymentsForView,
 				totalDeployments: this.totalDeployments,
 			};
@@ -148,7 +145,10 @@ export class ProjectController {
 				endIndex: Math.min(this.totalDeployments, endIndex),
 			};
 		} else {
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.invalidPageSize"));
+			this.deploymentsPageLimits = {
+				startIndex: 0,
+				endIndex: DEFAULT_DEPLOYMENTS_PAGE_SIZE,
+			};
 		}
 	}
 
