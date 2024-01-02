@@ -68,10 +68,10 @@ export class ProjectController {
 
 	async refreshView() {
 		const projectDeployments = await this.getProjectDeployments();
-		const deployments = sortArray(projectDeployments, "createdAt", SortOrder.DESC);
-		this.totalDeployments = deployments?.length || 0;
+		sortArray(projectDeployments, "createdAt", SortOrder.DESC);
+		this.totalDeployments = projectDeployments?.length || 0;
 		const deploymentsForView =
-			deployments?.slice(
+			projectDeployments?.slice(
 				this.deploymentsPageLimits.startIndex,
 				this.deploymentsPageLimits.endIndex
 			) || undefined;

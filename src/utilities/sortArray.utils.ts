@@ -9,7 +9,7 @@ export const sortArray = <T>(
 		return array;
 	}
 
-	return array.sort((a, b) => {
+	array.sort((a, b) => {
 		const aValue = a[propertyName];
 		const bValue = b[propertyName];
 
