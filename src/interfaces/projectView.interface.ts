@@ -6,7 +6,7 @@ export interface IProjectViewDelegate {
 	onFocus?: Callback;
 	build: Callback;
 	run: Callback;
-	setDeploymentsPageSize: DeploymentPageSizeCB;
+	setDeploymentsPageSize: PageSizeCB;
 	selectDeployment?: CallbackWStringIdParam;
 	setSessionsPageSize: PageSizeCB;
 }

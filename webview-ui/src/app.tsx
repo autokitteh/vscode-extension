@@ -56,13 +56,8 @@ function App() {
 						</AKButton>
 					</div>
 				</div>
-<<<<<<< HEAD
 				<AKDeployments {...deploymentsSection} />
-				<AKSessions sessions={sessions} />
-=======
-				<AKDeployments deployments={deployments} />
 				<AKSessions {...sessionsSection} />
->>>>>>> 91d8e68 (feat: sessions show-more/less)
 			</div>
 		</main>
 	);
