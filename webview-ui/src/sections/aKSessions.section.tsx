@@ -37,9 +37,14 @@ export const AKSessions = ({ sessions }: { sessions: Session[] | undefined }) =>
 						</AKTableRow>
 					))}
 			</AKTable>
-			{isLoading && <AKTableMessage>Loading...</AKTableMessage>}
+			{isLoading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
 			{!sessions && !isLoading && (
-				<AKTableMessage>Pick a project to display the sessions</AKTableMessage>
+				<AKTableMessage>
+					{translate().t("reactApp.sessions.pickDeploymentToShowSessions")}
+				</AKTableMessage>
+			)}
+			{sessions && sessions.length === 0 && (
+				<AKTableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</AKTableMessage>
 			)}
 			{sessions && sessions.length === 0 && <AKTableMessage>No sessions found</AKTableMessage>}
 		</div>
