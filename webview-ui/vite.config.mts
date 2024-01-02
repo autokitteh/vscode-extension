@@ -9,6 +9,8 @@ export default defineConfig({
 		alias: {
 			"@type": path.resolve(__dirname, "../src/types"),
 			"@enums": path.resolve(__dirname, "../src/enums"),
+			"@models": path.resolve(__dirname, "../src/models"),
+			"@constants": path.resolve(__dirname, "../src/constants"),
 			"@react-assets": path.resolve(__dirname, "./assets"),
 			"@react-components": path.resolve(__dirname, "./src/components"),
 			"@react-enums": path.resolve(__dirname, "./src/enums"),
@@ -16,6 +18,7 @@ export default defineConfig({
 			"@react-utilities": path.resolve(__dirname, "./src/utilities"),
 			"@react-sections": path.resolve(__dirname, "./src/sections"),
 			"@react-interfaces": path.resolve(__dirname, "./src/interfaces"),
+			"@assets": path.resolve(__dirname, "./assets"),
 			"@ak-proto-ts": path.resolve(__dirname, "../src/autokitteh/proto/gen/ts/autokitteh"),
 			"@i18n": path.resolve(__dirname, "../src/i18n"),
 		},

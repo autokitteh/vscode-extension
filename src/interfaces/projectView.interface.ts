@@ -4,6 +4,7 @@ export interface IProjectViewDelegate {
 	onFocus?: Callback;
 	build: Callback;
 	run: Callback;
+	setDeploymentsPageSize: DeploymentPageSizeCB;
 }
 
 export interface IProjectView {

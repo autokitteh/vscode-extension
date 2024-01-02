@@ -36,6 +36,9 @@ export class ProjectView implements IProjectView {
 					case MessageType.runProject:
 						this.delegate?.run?.();
 						break;
+					case MessageType.setDeploymentsPageSize:
+						this.delegate?.setDeploymentsPageSize?.(message.payload as PageSize);
+						break;
 				}
 			},
 			undefined,

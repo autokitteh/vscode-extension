@@ -11,5 +11,6 @@
 		"testing": "Testing",
 		"draining": "Draining",
 		"error": "Error - please reload"
-	}
+	},
+	"noDeployments": "No deployments found"
 }
