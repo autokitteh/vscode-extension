@@ -35,7 +35,7 @@ export const AKSessions = ({ sessions, totalSessions }: SessionSectionViewModel)
 		}
 		const sessionsCount = Math.min(sessions.length + DEFAULT_SESSIONS_PAGE_SIZE, totalSessions);
 		setSessionsCount(sessionsCount);
-		sendMessage(MessageType.setDeploymentsPageSize, {
+		sendMessage(MessageType.setSessionsPageSize, {
 			startIndex: 0,
 			endIndex: sessionsCount,
 		});

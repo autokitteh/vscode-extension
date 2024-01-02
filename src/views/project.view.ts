@@ -39,10 +39,11 @@ export class ProjectView implements IProjectView {
 						break;
 					case MessageType.setDeploymentsPageSize:
 						this.delegate?.setDeploymentsPageSize?.(message.payload as PageSize);
+						break;
 					case MessageType.selectDeployment:
 						this.delegate?.selectDeployment?.(message.payload as string);
 						break;
-					case MessageType.setDeploymentsPageSize:
+					case MessageType.setSessionsPageSize:
 						this.delegate?.setSessionsPageSize?.(message.payload as PageSize);
 						break;
 				}

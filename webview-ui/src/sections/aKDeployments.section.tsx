@@ -139,10 +139,6 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 						</VSCodeButton>
 					)}
 			</div>
-
-			{deployments && deployments.length === 0 && (
-				<AKTableMessage>No deployments found</AKTableMessage>
-			)}
 		</div>
 	);
 };
