@@ -1,4 +1,4 @@
-import { DEFAULT_DEPLOYMENTS_PAGE_SIZE, vsCommands } from "@constants";
+import { DEFAULT_DEPLOYMENTS_PAGE_SIZE, vsCommands, DEFAULT_SESSIONS_PAGE_SIZE } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType, SortOrder } from "@enums";
 import { translate } from "@i18n";
@@ -29,6 +29,11 @@ export class ProjectController {
 	private refreshRate: number;
 	private deploymentsPageLimits: PageSize;
 	private selectedDeploymentId?: string;
+	private sessionsPageLimits: {
+		startIndex: number;
+		endIndex: number;
+	};
+	private totalSessions: number;
 
 	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
 		this.view = projectView;
@@ -37,6 +42,8 @@ export class ProjectController {
 		this.refreshRate = refreshRate;
 		this.deploymentsPageLimits = { startIndex: 0, endIndex: DEFAULT_DEPLOYMENTS_PAGE_SIZE };
 		this.totalDeployments = 0;
+		this.sessionsPageLimits = { startIndex: 0, endIndex: DEFAULT_SESSIONS_PAGE_SIZE };
+		this.totalSessions = 0;
 	}
 
 	reveal(): void {
@@ -132,10 +139,7 @@ export class ProjectController {
 
 	onBlur() {
 		this.stopInterval();
-<<<<<<< HEAD
 		this.deployments = undefined;
-=======
->>>>>>> 6a7f3ef (fix: handle sections load on tab switch)
 		this.sessions = undefined;
 	}
 

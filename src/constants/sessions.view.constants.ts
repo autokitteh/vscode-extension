@@ -1,0 +1,1 @@
+export const DEFAULT_SESSIONS_PAGE_SIZE = 5;

@@ -8,3 +8,4 @@ export {
 export { BASE_URL } from "@constants/api.constants";
 export { vsCommands } from "@constants/vsCommands.constants";
 export { DEFAULT_DEPLOYMENTS_PAGE_SIZE } from "@constants/deployments.view.constants";
+export { DEFAULT_SESSIONS_PAGE_SIZE } from "@constants/sessions.view.constants";
