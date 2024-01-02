@@ -18,8 +18,12 @@ export class ProjectView implements IProjectView {
 	public update(data: any): void {
 		this.panel?.webview.postMessage(data);
 	}
-	public reveal(): void {
+	public reveal(projectName: string): void {
 		this.panel?.reveal();
+		this.panel?.webview.postMessage?.({
+			type: MessageType.setProjectName,
+			payload: projectName,
+		});
 	}
 
 	public setupWebviewMessageListener() {

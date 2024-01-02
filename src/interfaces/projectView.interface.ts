@@ -8,7 +8,7 @@ export interface IProjectViewDelegate {
 
 export interface IProjectView {
 	show(projectName: string): void;
-	reveal(): void;
+	reveal(projectName: string): void;
 	update(data: any): void;
 	dispose(): void;
 	delegate?: IProjectViewDelegate;
