@@ -6,7 +6,7 @@ import { DeploymentSectionViewModel } from "@models";
 import { AKDeploymentState } from "@react-components";
 import {
 	AKTable,
-	AKTableEmptyMessage,
+	AKTableMessage,
 	AKTableCell,
 	AKTableHeader,
 	AKTableRow,
@@ -20,6 +20,10 @@ import moment from "moment";
 
 export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSectionViewModel) => {
 	const [rerender, setRerender] = useState(0);
+	const [isLoading, setIsLoading] = useState(false);
+	useEffect(() => {
+		setIsLoading(false);
+	}, [deployments]);
 	useEffect(() => {
 		const interval = setInterval(() => {
 			setRerender((rerender) => rerender + 1);
@@ -42,14 +46,14 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 		if (!deployments || !totalDeployments) {
 			return;
 		}
-		const calculateDeploymentsCount = Math.min(
+		const deploymentsCount = Math.min(
 			deployments.length + DEFAULT_DEPLOYMENTS_PAGE_SIZE,
 			totalDeployments
 		);
-		setDeploymentsCount(calculateDeploymentsCount);
+		setDeploymentsCount(deploymentsCount);
 		sendMessage(MessageType.setDeploymentsPageSize, {
 			startIndex: 0,
-			endIndex: calculateDeploymentsCount,
+			endIndex: deploymentsCount,
 		});
 	};
 
@@ -99,8 +103,12 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 						</AKTableRow>
 					))}
 			</AKTable>
-			{!deployments && (
-				<AKTableEmptyMessage>{translate().t("reactApp.general.loading")}...</AKTableEmptyMessage>
+			{isLoading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
+			{!deployments && !isLoading && (
+				<AKTableMessage>{translate().t("reactApp.deployments.errorOccured")}</AKTableMessage>
+			)}
+			{deployments && deployments.length === 0 && (
+				<AKTableMessage>{translate().t("reactApp.deployments.noDeployments")}</AKTableMessage>
 			)}
 			<div className="flex w-full justify-center mt-4">
 				{!!deployments && !!totalDeployments && deploymentsCount < totalDeployments && (
@@ -118,7 +126,7 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 			</div>
 
 			{deployments && deployments.length === 0 && (
-				<AKTableEmptyMessage>No deployments found</AKTableEmptyMessage>
+				<AKTableMessage>No deployments found</AKTableMessage>
 			)}
 		</div>
 	);

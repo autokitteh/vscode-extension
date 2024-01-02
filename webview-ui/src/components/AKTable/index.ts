@@ -3,4 +3,4 @@ export { AKTableCell } from "./aKTableCell.component";
 export { AKTableHeader } from "./aKTableHeader.component";
 export { AKTableRow } from "./aKTableRow.component";
 export { AKTableHeaderCell } from "./aKTableHeaderCell.component";
-export { AKTableEmptyMessage } from "./aKTableEmptyMessage.component";
+export { AKTableMessage } from "./aKTableMessage.component";

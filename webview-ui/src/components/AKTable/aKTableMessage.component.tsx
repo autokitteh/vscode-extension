@@ -1,9 +1,9 @@
 import React, { ReactNode } from "react";
 
-interface AKTableEmptyMessageProps {
+interface AKTableMessageProps {
 	children: ReactNode;
 }
 
-export const AKTableEmptyMessage = ({ children }: AKTableEmptyMessageProps) => {
+export const AKTableMessage = ({ children }: AKTableMessageProps) => {
 	return <div className="w-full text-center m-4">{children}</div>;
 };

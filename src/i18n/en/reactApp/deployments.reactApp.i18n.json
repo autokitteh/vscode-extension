@@ -11,5 +11,7 @@
 		"testing": "Testing",
 		"draining": "Draining",
 		"error": "Error - please reload"
-	}
+	},
+	"noDeployments": "No deployments found",
+	"errorOccured": "An error occured, please reload"
 }

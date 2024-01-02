@@ -1,7 +1,7 @@
 import { translate } from "@i18n";
 import {
 	AKTable,
-	AKTableEmptyMessage,
+	AKTableMessage,
 	AKTableCell,
 	AKTableHeader,
 	AKTableRow,
@@ -31,10 +31,8 @@ export const AKSessions = ({ sessions }: { sessions: Session[] | undefined }) =>
 						</AKTableRow>
 					))}
 			</AKTable>
-			{!sessions && <AKTableEmptyMessage>Loading...</AKTableEmptyMessage>}
-			{sessions && sessions.length === 0 && (
-				<AKTableEmptyMessage>No sessions found</AKTableEmptyMessage>
-			)}
+			{!sessions && <AKTableMessage>Loading...</AKTableMessage>}
+			{sessions && sessions.length === 0 && <AKTableMessage>No sessions found</AKTableMessage>}
 		</div>
 	);
 };
