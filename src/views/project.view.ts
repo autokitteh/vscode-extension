@@ -2,6 +2,7 @@ import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n/translation.i18n";
 import { IProjectView, IProjectViewDelegate } from "@interfaces";
 import { Message } from "@type";
+import { PageSize } from "@type/interfaces";
 import { getNonce } from "@utilities";
 import { getUri } from "@utilities/getUri.utils";
 import * as vscode from "vscode";
@@ -40,6 +41,9 @@ export class ProjectView implements IProjectView {
 						this.delegate?.setDeploymentsPageSize?.(message.payload as PageSize);
 					case MessageType.selectDeployment:
 						this.delegate?.selectDeployment?.(message.payload as string);
+						break;
+					case MessageType.setDeploymentsPageSize:
+						this.delegate?.setSessionsPageSize?.(message.payload as PageSize);
 						break;
 				}
 			},

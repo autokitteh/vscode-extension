@@ -1,3 +1,5 @@
+import { Callback, CallbackWStringIdParam, PageSizeCB } from "@type/interfaces";
+
 export interface IProjectViewDelegate {
 	onClose?: Callback;
 	onBlur?: Callback;
@@ -6,6 +8,7 @@ export interface IProjectViewDelegate {
 	run: Callback;
 	setDeploymentsPageSize: DeploymentPageSizeCB;
 	selectDeployment?: CallbackWStringIdParam;
+	setSessionsPageSize: PageSizeCB;
 }
 
 export interface IProjectView {

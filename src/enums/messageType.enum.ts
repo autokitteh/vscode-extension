@@ -7,4 +7,5 @@ export enum MessageType {
 	setSessions = "SET_SESSIONS",
 	setDeploymentsPageSize = "SET_DEPLOYMENTS_PAGE_SIZE",
 	selectDeployment = "SELECT_DEPLOYMENT",
+	setDeploymentsPageSize = "SET_DEPLOYMENTS_PAGE_SIZE",
 }

@@ -1,5 +1,6 @@
-type Callback = () => void;
-type ProjectCB = (projectId: string) => void;
-type PageSize = { startIndex: number; endIndex: number };
-type DeploymentPageSizeCB = (value: PageSize) => void;
-type CallbackWStringIdParam = (id: string) => void;
+export type Callback = () => void;
+export type ProjectCB = (projectId: string) => void;
+export type CallbackWStringIdParam = (id: string) => void;
+export type PageSizeCB = (value: PageSize) => void;
+export type PageSize = { startIndex: number; endIndex: number };
+export type DeploymentPageSizeCB = (value: PageSize) => void;

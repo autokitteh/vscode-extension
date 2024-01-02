@@ -4,12 +4,14 @@ import { MessageType, SortOrder } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel } from "@models";
+import { SessionSectionViewModel } from "@models/views";
 import {
 	EnvironmentsService,
 	DeploymentsService,
 	ProjectsService,
 	SessionsService,
 } from "@services";
+import { PageSize, ProjectCB } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import { sortArray } from "@utilities";
 import { getIds } from "@utilities/getIds.utils";
@@ -96,14 +98,48 @@ export class ProjectController {
 				payload: deploymentsViewObject,
 			});
 		}
+		if (this.selectedDeploymentId) {
+			await this.selectDeployment(this.selectedDeploymentId);
+		}
 	}
 	async selectDeployment(deploymentId: string) {
 		this.selectedDeploymentId = deploymentId;
-		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
+		const sessions = await RequestHandler.handleServiceResponse(() =>
+			SessionsService.listByDeploymentId(deploymentId)
+		);
+		sortArray(sessions, "createdAt", SortOrder.DESC);
+		this.totalSessions = sessions?.length || 0;
+		const sessionsForView =
+			sessions?.slice(this.sessionsPageLimits.startIndex, this.sessionsPageLimits.endIndex) ||
+			undefined;
 
-		if (!error && !isEqual(this.sessions, sessions)) {
+		if (!isEqual(this.sessions, sessionsForView)) {
 			this.sessions = sessions;
-			this.view.update({ type: MessageType.setSessions, payload: sessions });
+			const sessionsViewObject: SessionSectionViewModel = {
+				sessions: sessionsForView,
+				totalSessions: this.totalSessions,
+			};
+
+			this.view.update({
+				type: MessageType.setSessions,
+				payload: sessionsViewObject,
+			});
+		}
+	}
+
+	setSessionsPageSize({ startIndex, endIndex }: PageSize) {
+		const indexesAreValid = startIndex >= 0 && startIndex < endIndex;
+
+		if (indexesAreValid) {
+			this.sessionsPageLimits = {
+				startIndex,
+				endIndex: Math.min(this.totalSessions, endIndex),
+			};
+		} else {
+			this.sessionsPageLimits = {
+				startIndex: 0,
+				endIndex: DEFAULT_SESSIONS_PAGE_SIZE,
+			};
 		}
 	}
 

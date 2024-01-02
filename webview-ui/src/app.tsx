@@ -2,12 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
+import { SessionSectionViewModel } from "@models/views";
 import { AKButton, AKLogo } from "@react-components";
 import { IIncomingMessagesHandler } from "@react-interfaces/incomingMessagesHandler.interface";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { HandleIncomingMessages, sendMessage } from "@react-utilities";
 import { Message } from "@type";
-import { Session } from "@type/models";
 import "./App.css";
 
 function App() {
@@ -16,13 +16,13 @@ function App() {
 	>();
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
-	const [sessions, setSessions] = useState<Session[] | undefined>();
+	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 
 	const messageHandlers: IIncomingMessagesHandler = {
 		setDeploymentsSection,
 		setProjectName,
 		setThemeVisualType,
-		setSessions,
+		setSessions: setSessionsSection,
 	};
 
 	const handleMessagesFromExtension = useCallback(
@@ -56,8 +56,13 @@ function App() {
 						</AKButton>
 					</div>
 				</div>
+<<<<<<< HEAD
 				<AKDeployments {...deploymentsSection} />
 				<AKSessions sessions={sessions} />
+=======
+				<AKDeployments deployments={deployments} />
+				<AKSessions {...sessionsSection} />
+>>>>>>> 91d8e68 (feat: sessions show-more/less)
 			</div>
 		</main>
 	);

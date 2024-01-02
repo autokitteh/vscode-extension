@@ -1,6 +1,6 @@
 import { Session } from "@type/models";
 
-export type SessionSectionViewType = {
+export type SessionSectionViewModel = {
 	sessions?: Session[];
 	totalSessions?: number;
 };
