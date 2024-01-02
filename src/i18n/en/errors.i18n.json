@@ -12,5 +12,6 @@
 	"defaultEnvironmentNotFound": "Default environment not found",
 	"buildFailed": "Build failed",
 	"deploymentFailed": "Deployment failed",
-	"projectEnvironmentsNotFound": "Project environments not found"
+	"projectEnvironmentsNotFound": "Project environments not found",
+	"projectNameMissing": "Something went wrong, please try to re-open"
 }

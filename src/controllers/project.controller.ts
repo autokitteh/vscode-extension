@@ -1,3 +1,4 @@
+import { vsCommands } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType, SortOrder } from "@enums";
 import { translate } from "@i18n";
@@ -14,6 +15,7 @@ import { sortArray } from "@utilities";
 import { getIds } from "@utilities/getIds.utils";
 import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
+import { commands } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
@@ -33,7 +35,14 @@ export class ProjectController {
 	}
 
 	reveal(): void {
-		this.view.reveal(this.project?.name || translate().t("errors.projectNotFound"));
+		if (!this.project) {
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				translate().t("errors.projectNameMissing")
+			);
+			return;
+		}
+		this.view.reveal(this.project.name);
 	}
 
 	async getProjectDeployments(): Promise<Deployment[] | undefined> {
