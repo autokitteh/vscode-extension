@@ -103,9 +103,8 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 						</AKTableRow>
 					))}
 			</AKTable>
-			{isLoading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
-			{!deployments && !isLoading && (
-				<AKTableMessage>{translate().t("reactApp.deployments.errorOccured")}</AKTableMessage>
+			{(isLoading || !deployments) && (
+				<AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>
 			)}
 			{deployments && deployments.length === 0 && (
 				<AKTableMessage>{translate().t("reactApp.deployments.noDeployments")}</AKTableMessage>

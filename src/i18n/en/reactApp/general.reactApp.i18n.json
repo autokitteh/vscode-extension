@@ -1,7 +1,7 @@
 {
 	"build": "Build",
 	"deploy": "Deploy",
-	"loading": "Loading",
+	"loading": "Loading...",
 	"showMore": "Show more",
 	"showLess": "Show less",
 	"outOf": "out of"
