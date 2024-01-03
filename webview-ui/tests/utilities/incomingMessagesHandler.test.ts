@@ -1,4 +1,3 @@
-// Import the function and types
 import { MessageType, Theme } from "@enums";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { HandleIncomingMessages } from "@react-utilities";

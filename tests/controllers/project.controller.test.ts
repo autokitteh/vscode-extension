@@ -11,7 +11,6 @@ describe("ProjectController", () => {
 	let mockView: IProjectView;
 
 	beforeEach(() => {
-		// Assuming IProjectView has a reveal method
 		mockView = {
 			reveal: vi.fn(),
 			delegate: {
@@ -31,9 +30,8 @@ describe("ProjectController", () => {
 						return {
 							get: vi.fn((key: string) => {
 								if (key === "autokitteh.baseURL") {
-									return "http://mocked.url"; // Your mocked value
+									return "http://mocked.url";
 								}
-								// Handle other configuration keys if needed
 							}),
 						};
 					}),
