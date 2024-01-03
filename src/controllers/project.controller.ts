@@ -1,18 +1,20 @@
-import { DEFAULT_DEPLOYMENTS_PAGE_SIZE, vsCommands } from "@constants";
+import { vsCommands, pageLimits } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
-import { MessageType, SortOrder } from "@enums";
+import { MessageType, ProjectViewSections, SortOrder } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
-import { DeploymentSectionViewModel } from "@models";
+import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import {
 	EnvironmentsService,
 	DeploymentsService,
 	ProjectsService,
 	SessionsService,
 } from "@services";
+import { TotalEntityCount, PageLimits } from "@type/configuration";
+import { ProjectCB } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
-import { sortArray } from "@utilities";
-import { getIds } from "@utilities/getIds.utils";
+import { EntitySectionRowsRange } from "@type/views/webview";
+import { sortArray, getIds } from "@utilities";
 import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
 import { commands } from "vscode";
@@ -23,27 +25,37 @@ export class ProjectController {
 	private disposeCB?: ProjectCB;
 	public projectId: string;
 	public project?: Project;
-	private sessions?: Session[];
+	private sessions?: Session[] = [];
 	private deployments?: Deployment[];
-	private totalDeployments: number;
+	private totalItemsPerSection: TotalEntityCount;
 	private refreshRate: number;
-	private deploymentsPageLimits: PageSize;
+	private entitySectionDisplayBounds: PageLimits;
+	private selectedDeploymentId?: string;
 
 	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
 		this.refreshRate = refreshRate;
-		this.deploymentsPageLimits = { startIndex: 0, endIndex: DEFAULT_DEPLOYMENTS_PAGE_SIZE };
-		this.totalDeployments = 0;
+		this.totalItemsPerSection = {
+			[ProjectViewSections.DEPLOYMENTS]: 0,
+			[ProjectViewSections.SESSIONS]: 0,
+		};
+		this.entitySectionDisplayBounds = {
+			[ProjectViewSections.DEPLOYMENTS]: {
+				startIndex: 0,
+				endIndex: pageLimits[ProjectViewSections.DEPLOYMENTS],
+			},
+			[ProjectViewSections.SESSIONS]: {
+				startIndex: 0,
+				endIndex: pageLimits[ProjectViewSections.SESSIONS],
+			},
+		};
 	}
 
 	reveal(): void {
 		if (!this.project) {
-			commands.executeCommand(
-				vsCommands.showErrorMessage,
-				translate().t("errors.projectNameMissing")
-			);
+			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.unexpectedError"));
 			return;
 		}
 		this.view.reveal(this.project.name);
@@ -69,18 +81,18 @@ export class ProjectController {
 	async refreshView() {
 		const projectDeployments = await this.getProjectDeployments();
 		sortArray(projectDeployments, "createdAt", SortOrder.DESC);
-		this.totalDeployments = projectDeployments?.length || 0;
-		const deploymentsForView =
-			projectDeployments?.slice(
-				this.deploymentsPageLimits.startIndex,
-				this.deploymentsPageLimits.endIndex
-			) || undefined;
+		this.totalItemsPerSection[ProjectViewSections.DEPLOYMENTS] = projectDeployments?.length || 0;
+
+		const { startIndex, endIndex } =
+			this.entitySectionDisplayBounds[ProjectViewSections.DEPLOYMENTS];
+
+		const deploymentsForView = projectDeployments?.slice(startIndex, endIndex) || undefined;
 
 		if (!isEqual(this.deployments, deploymentsForView)) {
 			this.deployments = deploymentsForView;
 			const deploymentsViewObject: DeploymentSectionViewModel = {
 				deployments: deploymentsForView,
-				totalDeployments: this.totalDeployments,
+				totalDeployments: this.totalItemsPerSection[ProjectViewSections.DEPLOYMENTS],
 			};
 
 			this.view.update({
@@ -88,18 +100,38 @@ export class ProjectController {
 				payload: deploymentsViewObject,
 			});
 		}
-
+		if (this.selectedDeploymentId) {
+			await this.selectDeployment(this.selectedDeploymentId);
+		}
+	}
+	async selectDeployment(deploymentId: string) {
+		this.selectedDeploymentId = deploymentId;
 		const sessions = await RequestHandler.handleServiceResponse(() =>
-			SessionsService.listByProjectId(this.projectId)
+			SessionsService.listByDeploymentId(deploymentId)
 		);
-		if (!isEqual(this.sessions, sessions)) {
-			this.sessions = sessions;
-			this.view.update({ type: MessageType.setSessions, payload: sessions });
+		sortArray(sessions, "createdAt", SortOrder.DESC);
+		this.totalItemsPerSection[ProjectViewSections.SESSIONS] = sessions?.length || 0;
+		const { startIndex, endIndex } = this.entitySectionDisplayBounds[ProjectViewSections.SESSIONS];
+		const sessionsForView = sessions?.slice(startIndex, endIndex) || undefined;
+
+		if (!isEqual(this.sessions, sessionsForView)) {
+			this.sessions = sessionsForView;
+			const sessionsViewObject: SessionSectionViewModel = {
+				sessions: sessionsForView,
+				totalSessions: this.totalItemsPerSection[ProjectViewSections.SESSIONS],
+			};
+
+			this.view.update({
+				type: MessageType.setSessionsSection,
+				payload: sessionsViewObject,
+			});
 		}
 	}
 
 	startInterval() {
 		if (!this.intervalTimerId) {
+			this.view.update({ type: MessageType.setSessionsSection, payload: undefined });
+
 			this.intervalTimerId = setInterval(() => this.refreshView(), this.refreshRate);
 		}
 	}
@@ -136,18 +168,19 @@ export class ProjectController {
 		this.startInterval();
 	}
 
-	setDeploymentsPageSize({ startIndex, endIndex }: PageSize) {
+	setRowsRangePerSection({ startIndex, endIndex, entity }: EntitySectionRowsRange) {
 		const indexesAreValid = startIndex >= 0 && startIndex < endIndex;
 
 		if (indexesAreValid) {
-			this.deploymentsPageLimits = {
+			const endIndexCalc = Math.min(this.totalItemsPerSection[entity], endIndex);
+			this.entitySectionDisplayBounds[entity] = {
 				startIndex,
-				endIndex: Math.min(this.totalDeployments, endIndex),
+				endIndex: endIndexCalc,
 			};
 		} else {
-			this.deploymentsPageLimits = {
+			this.entitySectionDisplayBounds[entity] = {
 				startIndex: 0,
-				endIndex: DEFAULT_DEPLOYMENTS_PAGE_SIZE,
+				endIndex: pageLimits[entity],
 			};
 		}
 	}

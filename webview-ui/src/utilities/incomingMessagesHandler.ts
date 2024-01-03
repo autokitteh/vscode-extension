@@ -1,8 +1,7 @@
 import { MessageType, Theme } from "@enums";
-import { DeploymentSectionViewModel } from "@models";
+import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
-import { Session } from "@type/models";
 
 export const HandleIncomingMessages = (
 	event: MessageEvent<Message>,
@@ -20,8 +19,8 @@ export const HandleIncomingMessages = (
 		case MessageType.setProjectName:
 			handlers.setProjectName(payload as string);
 			break;
-		case MessageType.setSessions:
-			handlers.setSessions(payload as Session[]);
+		case MessageType.setSessionsSection:
+			handlers.setSessionsSection(payload as SessionSectionViewModel);
 		default:
 	}
 };

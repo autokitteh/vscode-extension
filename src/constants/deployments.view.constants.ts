@@ -1,1 +1,0 @@
-export const DEFAULT_DEPLOYMENTS_PAGE_SIZE = 5;

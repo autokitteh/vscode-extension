@@ -4,6 +4,7 @@ export enum MessageType {
 	setTheme = "SET_THEME",
 	runProject = "RUN_PROJECT",
 	buildProject = "BUILD_PROJECT",
-	setSessions = "SET_SESSIONS",
-	setDeploymentsPageSize = "SET_DEPLOYMENTS_PAGE_SIZE",
+	setSessionsSection = "SET_SESSIONS_SECTION",
+	setRowsRangePerSection = "SET_ROWS_RANGE_PER_SECTION",
+	selectDeployment = "SELECT_DEPLOYMENT",
 }

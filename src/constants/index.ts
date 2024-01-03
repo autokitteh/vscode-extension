@@ -7,4 +7,4 @@ export {
 } from "@constants/extensionConfiguration.constants";
 export { BASE_URL } from "@constants/api.constants";
 export { vsCommands } from "@constants/vsCommands.constants";
-export { DEFAULT_DEPLOYMENTS_PAGE_SIZE } from "@constants/deployments.view.constants";
+export { pageLimits } from "@constants/projectsView.constants";

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { DEFAULT_DEPLOYMENTS_PAGE_SIZE } from "@constants/deployments.view.constants";
-import { MessageType } from "@enums";
+import { pageLimits } from "@constants/projectsView.constants";
+import { MessageType, ProjectViewSections } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
-import { AKDeploymentState } from "@react-components";
+import { AKButton, AKDeploymentState } from "@react-components";
 import {
 	AKTable,
 	AKTableMessage,
@@ -13,14 +13,17 @@ import {
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
 import { DeploymentState } from "@react-enums";
+import { usePagination } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import { Deployment } from "@type/models";
-import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import moment from "moment";
 
-export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSectionViewModel) => {
+export const AKDeployments = ({
+	deployments,
+	totalDeployments = 0,
+}: DeploymentSectionViewModel) => {
 	const [rerender, setRerender] = useState(0);
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 	useEffect(() => {
 		setIsLoading(false);
 	}, [deployments]);
@@ -31,45 +34,25 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 
 		return () => clearInterval(interval);
 	}, []);
-	useEffect(() => {
-		if (totalDeployments && totalDeployments <= DEFAULT_DEPLOYMENTS_PAGE_SIZE) {
-			setDeploymentsCount(totalDeployments);
-		}
-	}, [totalDeployments]);
+
 	const isDeploymentStateStartable = (deploymentState: number) =>
 		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT ||
 		deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
 
-	const [deploymentsCount, setDeploymentsCount] = useState<number>(DEFAULT_DEPLOYMENTS_PAGE_SIZE);
+	const { endIndex, showMore, showLess } = usePagination(
+		pageLimits[ProjectViewSections.DEPLOYMENTS],
+		totalDeployments,
+		ProjectViewSections.DEPLOYMENTS
+	);
 
-	const showMore = () => {
-		if (!deployments || !totalDeployments) {
-			return;
-		}
-		const deploymentsCount = Math.min(
-			deployments.length + DEFAULT_DEPLOYMENTS_PAGE_SIZE,
-			totalDeployments
-		);
-		setDeploymentsCount(deploymentsCount);
-		sendMessage(MessageType.setDeploymentsPageSize, {
-			startIndex: 0,
-			endIndex: deploymentsCount,
-		});
-	};
-
-	const showLess = () => {
-		setDeploymentsCount(DEFAULT_DEPLOYMENTS_PAGE_SIZE);
-		sendMessage(MessageType.setDeploymentsPageSize, {
-			startIndex: 0,
-			endIndex: DEFAULT_DEPLOYMENTS_PAGE_SIZE,
-		});
-	};
+	const getSessionsByDeploymentId = (deploymentId: string) =>
+		sendMessage(MessageType.selectDeployment, deploymentId);
 
 	return (
 		<div className="mt-4">
 			{deployments && !!totalDeployments && (
 				<div className="flex justify-end mb-2 w-full">
-					{deploymentsCount} {translate().t("reactApp.general.outOf")} {totalDeployments}
+					{endIndex} {translate().t("reactApp.general.outOf")} {totalDeployments}
 				</div>
 			)}
 			<AKTable>
@@ -83,16 +66,32 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 				{deployments &&
 					deployments.map((deployment: Deployment) => (
 						<AKTableRow key={deployment.deploymentId}>
-							<AKTableCell>
+							<AKTableCell
+								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
 								{moment(deployment.createdAt as unknown as string).fromNow()}
 							</AKTableCell>
-							<AKTableCell>
+							<AKTableCell
+								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
 								<div className="flex justify-center">
 									<AKDeploymentState deploymentState={deployment.state} />
 								</div>
 							</AKTableCell>
-							<AKTableCell>0</AKTableCell>
-							<AKTableCell>{deployment.buildId}</AKTableCell>
+							<AKTableCell
+								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
+								0
+							</AKTableCell>
+							<AKTableCell
+								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
+								{deployment.buildId}
+							</AKTableCell>
 							<AKTableCell>
 								{isDeploymentStateStartable(deployment.state) ? (
 									<div className="codicon codicon-debug-start"></div>
@@ -110,23 +109,19 @@ export const AKDeployments = ({ deployments, totalDeployments }: DeploymentSecti
 				<AKTableMessage>{translate().t("reactApp.deployments.noDeployments")}</AKTableMessage>
 			)}
 			<div className="flex w-full justify-center mt-4">
-				{!!deployments && !!totalDeployments && deploymentsCount < totalDeployments && (
-					<VSCodeButton onClick={showMore} className="mr-1">
+				{!!deployments && !!totalDeployments && endIndex < totalDeployments && (
+					<AKButton onClick={showMore} classes="mr-1">
 						{translate().t("reactApp.general.showMore")}
-					</VSCodeButton>
+					</AKButton>
 				)}
 				{!!deployments &&
 					!!deployments.length &&
-					deploymentsCount > DEFAULT_DEPLOYMENTS_PAGE_SIZE && (
-						<VSCodeButton className="ml-1" onClick={showLess}>
+					endIndex > pageLimits[ProjectViewSections.DEPLOYMENTS] && (
+						<AKButton classes="ml-1" onClick={showLess}>
 							{translate().t("reactApp.general.showLess")}
-						</VSCodeButton>
+						</AKButton>
 					)}
 			</div>
-
-			{deployments && deployments.length === 0 && (
-				<AKTableMessage>No deployments found</AKTableMessage>
-			)}
 		</div>
 	);
 };

@@ -1,10 +1,13 @@
+import { Callback, CallbackWStringIdParam, SectionRowsRangeCB } from "@type/interfaces";
+
 export interface IProjectViewDelegate {
 	onClose?: Callback;
 	onBlur?: Callback;
 	onFocus?: Callback;
 	build: Callback;
 	run: Callback;
-	setDeploymentsPageSize: DeploymentPageSizeCB;
+	setRowsRangePerSection: SectionRowsRangeCB;
+	selectDeployment?: CallbackWStringIdParam;
 }
 
 export interface IProjectView {

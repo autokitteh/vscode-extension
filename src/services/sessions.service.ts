@@ -18,6 +18,16 @@ export class SessionsService {
 		}
 	}
 
+	static async listByDeploymentId(deploymentId: string): Promise<ServiceResponse<Session[]>> {
+		try {
+			const response = await sessionsClient.list({ deploymentId });
+			const sessions = response.sessions.map((session) => convertSessionProtoToModel(session));
+			return { data: sessions, error: undefined };
+		} catch (error) {
+			return { data: undefined, error };
+		}
+	}
+
 	static async listByProjectId(projectId: string): Promise<ServiceResponse<Session[]>> {
 		try {
 			const { data: projectEnvironments } = await EnvironmentsService.listByProjectId(projectId);

@@ -12,7 +12,5 @@
 	"defaultEnvironmentNotFound": "Default environment not found",
 	"buildFailed": "Build failed",
 	"deploymentFailed": "Deployment failed",
-	"projectEnvironmentsNotFound": "Project environments not found",
-	"projectNameMissing": "Something went wrong, please try to re-open",
-	"invalidPageSize": "Cannot load the list, please try again"
+	"projectEnvironmentsNotFound": "Project environments not found"
 }
