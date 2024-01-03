@@ -208,7 +208,7 @@
 		"vscode": "^1.75.0"
 	},
 	"main": "./dist/src/extension.js",
-	"name": "vscode-v2",
+	"name": "autokitteh",
 	"scripts": {
 		"build:webview": "cd webview-ui && npm run build",
 		"compile": "tsc -p ./",
