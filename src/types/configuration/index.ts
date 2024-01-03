@@ -1,1 +1,1 @@
-export type { PageLimits, CountEntitites } from "@type/configuration/projectView/pageLimits.type";
+export type { PageLimits, TotalEntityCount } from "@type/configuration/projectView/pageLimits.type";

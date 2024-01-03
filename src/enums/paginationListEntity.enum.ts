@@ -1,4 +1,4 @@
-export enum PaginationListEntity {
+export enum ProjectViewSections {
 	SESSIONS,
 	DEPLOYMENTS,
 }

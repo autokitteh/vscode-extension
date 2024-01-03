@@ -1,6 +1,6 @@
-import { PaginationListEntity } from "@enums";
+import { ProjectViewSections } from "@enums";
 
 export const pageLimits = {
-	[PaginationListEntity.SESSIONS]: 5,
-	[PaginationListEntity.DEPLOYMENTS]: 5,
+	[ProjectViewSections.SESSIONS]: 5,
+	[ProjectViewSections.DEPLOYMENTS]: 5,
 };

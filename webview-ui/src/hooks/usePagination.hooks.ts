@@ -1,41 +1,45 @@
 import { useState, useCallback, useEffect } from "react";
-import { MessageType, PaginationListEntity } from "@enums";
+import { MessageType, ProjectViewSections } from "@enums";
 import { sendMessage } from "@react-utilities";
 
 export const usePagination = (
-	defaultPageSize: number,
+	defaultSectionRowsRange: number,
 	totalItems: number,
-	listType: PaginationListEntity
+	listType: ProjectViewSections
 ) => {
 	const [startIndex, setStartIndex] = useState(0);
-	const [endIndex, setEndIndex] = useState(defaultPageSize);
+	const [endIndex, setEndIndex] = useState(defaultSectionRowsRange);
 
-	const updatePageSize = useCallback(() => {
-		if (totalItems <= defaultPageSize) {
+	const updateSectionRowsRange = useCallback(() => {
+		if (totalItems <= defaultSectionRowsRange) {
 			setEndIndex(totalItems);
 		} else {
-			setEndIndex(defaultPageSize);
+			setEndIndex(defaultSectionRowsRange);
 		}
-	}, [totalItems, defaultPageSize]);
+	}, [totalItems, defaultSectionRowsRange]);
 
 	useEffect(() => {
-		updatePageSize();
-	}, [updatePageSize]);
+		updateSectionRowsRange();
+	}, [updateSectionRowsRange]);
 
 	const showMore = useCallback(() => {
-		const newEndIndex = Math.min(endIndex + defaultPageSize, totalItems);
+		const newEndIndex = Math.min(endIndex + defaultSectionRowsRange, totalItems);
 		setEndIndex(newEndIndex);
-		sendMessage(MessageType.setPageSize, { startIndex, endIndex: newEndIndex, entity: listType });
-	}, [startIndex, endIndex, totalItems, defaultPageSize]);
-
-	const showLess = useCallback(() => {
-		setEndIndex(defaultPageSize);
-		sendMessage(MessageType.setPageSize, {
-			startIndex: 0,
-			endIndex: defaultPageSize,
+		sendMessage(MessageType.setRowsRangePerSection, {
+			startIndex,
+			endIndex: newEndIndex,
 			entity: listType,
 		});
-	}, [defaultPageSize]);
+	}, [startIndex, endIndex, totalItems, defaultSectionRowsRange]);
+
+	const showLess = useCallback(() => {
+		setEndIndex(defaultSectionRowsRange);
+		sendMessage(MessageType.setRowsRangePerSection, {
+			startIndex: 0,
+			endIndex: defaultSectionRowsRange,
+			entity: listType,
+		});
+	}, [defaultSectionRowsRange]);
 
 	return { startIndex, endIndex, showMore, showLess };
 };

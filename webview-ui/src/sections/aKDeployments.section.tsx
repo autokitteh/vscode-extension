@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { pageLimits } from "@constants/projectsView.constants";
-import { MessageType, PaginationListEntity } from "@enums";
+import { MessageType, ProjectViewSections } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
 import { AKButton, AKDeploymentState } from "@react-components";
@@ -40,9 +40,9 @@ export const AKDeployments = ({
 		deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
 
 	const { endIndex, showMore, showLess } = usePagination(
-		pageLimits[PaginationListEntity.DEPLOYMENTS],
+		pageLimits[ProjectViewSections.DEPLOYMENTS],
 		totalDeployments,
-		PaginationListEntity.DEPLOYMENTS
+		ProjectViewSections.DEPLOYMENTS
 	);
 
 	const getSessionsByDeploymentId = (deploymentId: string) =>
@@ -116,7 +116,7 @@ export const AKDeployments = ({
 				)}
 				{!!deployments &&
 					!!deployments.length &&
-					endIndex > pageLimits[PaginationListEntity.DEPLOYMENTS] && (
+					endIndex > pageLimits[ProjectViewSections.DEPLOYMENTS] && (
 						<AKButton classes="ml-1" onClick={showLess}>
 							{translate().t("reactApp.general.showLess")}
 						</AKButton>

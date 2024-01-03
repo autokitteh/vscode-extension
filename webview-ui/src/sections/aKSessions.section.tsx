@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { pageLimits } from "@constants/projectsView.constants";
-import { MessageType, PaginationListEntity } from "@enums";
+import { ProjectViewSections } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
 import { AKButton } from "@react-components";
@@ -31,9 +31,9 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 	}, []);
 
 	const { endIndex, showMore, showLess } = usePagination(
-		pageLimits[PaginationListEntity.SESSIONS],
+		pageLimits[ProjectViewSections.SESSIONS],
 		totalSessions,
-		PaginationListEntity.SESSIONS
+		ProjectViewSections.SESSIONS
 	);
 
 	return (
@@ -76,13 +76,11 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 						{translate().t("reactApp.general.showMore")}
 					</AKButton>
 				)}
-				{!!sessions &&
-					!!sessions.length &&
-					endIndex > pageLimits[PaginationListEntity.SESSIONS] && (
-						<AKButton classes="ml-1" onClick={showLess}>
-							{translate().t("reactApp.general.showLess")}
-						</AKButton>
-					)}
+				{!!sessions && !!sessions.length && endIndex > pageLimits[ProjectViewSections.SESSIONS] && (
+					<AKButton classes="ml-1" onClick={showLess}>
+						{translate().t("reactApp.general.showLess")}
+					</AKButton>
+				)}
 			</div>
 		</div>
 	);

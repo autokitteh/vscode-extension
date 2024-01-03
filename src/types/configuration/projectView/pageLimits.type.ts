@@ -1,10 +1,10 @@
-import { PaginationListEntity } from "@enums";
-import { PageSize } from "@type/interfaces";
+import { ProjectViewSections } from "@enums";
+import { SectionRowsRange } from "@type/interfaces";
 
 export type PageLimits = {
-	[key in PaginationListEntity]: PageSize;
+	[key in ProjectViewSections]: SectionRowsRange;
 };
 
-export type CountEntitites = {
-	[key in PaginationListEntity]: number;
+export type TotalEntityCount = {
+	[key in ProjectViewSections]: number;
 };
