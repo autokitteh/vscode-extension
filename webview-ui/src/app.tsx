@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
+import { Player } from "@lottiefiles/react-lottie-player";
 import { DeploymentSectionViewModel } from "@models";
 import { SessionSectionViewModel } from "@models/views";
+import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKButton, AKLogo } from "@react-components";
 import { IIncomingMessagesHandler } from "@react-interfaces/incomingMessagesHandler.interface";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { HandleIncomingMessages, sendMessage } from "@react-utilities";
 import { Message } from "@type";
+
 import "./App.css";
 
 function App() {
@@ -67,7 +70,9 @@ function App() {
 					/>
 				</div>
 			) : (
-				translate().t("reactApp.general.loading")
+				<div className="flex justify-center items-center h-screen w-screen">
+					<Player src={loaderAnimation} className="player" loop autoplay />
+				</div>
 			)}
 		</main>
 	);
