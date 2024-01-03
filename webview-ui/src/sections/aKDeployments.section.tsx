@@ -45,7 +45,7 @@ export const AKDeployments = ({
 		PaginationListEntity.DEPLOYMENTS
 	);
 
-	const revealSessionsPerDeploymentId = (deploymentId: string) =>
+	const getSessionsByDeploymentId = (deploymentId: string) =>
 		sendMessage(MessageType.selectDeployment, deploymentId);
 
 	return (
@@ -67,13 +67,13 @@ export const AKDeployments = ({
 					deployments.map((deployment: Deployment) => (
 						<AKTableRow key={deployment.deploymentId}>
 							<AKTableCell
-								onClick={() => revealSessionsPerDeploymentId(deployment.deploymentId)}
+								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
 							>
 								{moment(deployment.createdAt as unknown as string).fromNow()}
 							</AKTableCell>
 							<AKTableCell
-								onClick={() => revealSessionsPerDeploymentId(deployment.deploymentId)}
+								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
 							>
 								<div className="flex justify-center">
@@ -81,13 +81,13 @@ export const AKDeployments = ({
 								</div>
 							</AKTableCell>
 							<AKTableCell
-								onClick={() => revealSessionsPerDeploymentId(deployment.deploymentId)}
+								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
 							>
 								0
 							</AKTableCell>
 							<AKTableCell
-								onClick={() => revealSessionsPerDeploymentId(deployment.deploymentId)}
+								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
 							>
 								{deployment.buildId}
