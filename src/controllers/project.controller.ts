@@ -3,9 +3,12 @@ import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType, PaginationListEntity, SortOrder } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
-import { DeploymentSectionViewModel } from "@models";
-import { PageLimits, SessionSectionViewModel } from "@models/views";
-import { CountEntitites } from "@models/views";
+import {
+	DeploymentSectionViewModel,
+	PageLimits,
+	SessionSectionViewModel,
+	CountEntitites,
+} from "@models/views";
 import {
 	EnvironmentsService,
 	DeploymentsService,
@@ -14,8 +17,7 @@ import {
 } from "@services";
 import { EntityPageSize, ProjectCB } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
-import { sortArray } from "@utilities";
-import { getIds } from "@utilities/getIds.utils";
+import { sortArray, getIds } from "@utilities";
 import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
 import { commands } from "vscode";
