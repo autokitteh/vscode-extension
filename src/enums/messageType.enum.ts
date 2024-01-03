@@ -4,7 +4,7 @@ export enum MessageType {
 	setTheme = "SET_THEME",
 	runProject = "RUN_PROJECT",
 	buildProject = "BUILD_PROJECT",
-	setSessions = "SET_SESSIONS",
+	setSessionsSection = "SET_SESSIONS_SECTION",
 	setPageSize = "SET_PAGE_SIZE",
 	selectDeployment = "SELECT_DEPLOYMENT",
 }

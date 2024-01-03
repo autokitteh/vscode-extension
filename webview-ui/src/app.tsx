@@ -22,7 +22,7 @@ function App() {
 		setDeploymentsSection,
 		setProjectName,
 		setThemeVisualType,
-		setSessions: setSessionsSection,
+		setSessionsSection,
 	};
 
 	const handleMessagesFromExtension = useCallback(

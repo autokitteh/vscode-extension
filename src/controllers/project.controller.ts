@@ -120,7 +120,7 @@ export class ProjectController {
 			};
 
 			this.view.update({
-				type: MessageType.setSessions,
+				type: MessageType.setSessionsSection,
 				payload: sessionsViewObject,
 			});
 		}
@@ -128,7 +128,7 @@ export class ProjectController {
 
 	startInterval() {
 		if (!this.intervalTimerId) {
-			this.view.update({ type: MessageType.setSessions, payload: undefined });
+			this.view.update({ type: MessageType.setSessionsSection, payload: undefined });
 
 			this.intervalTimerId = setInterval(() => this.refreshView(), this.refreshRate);
 		}

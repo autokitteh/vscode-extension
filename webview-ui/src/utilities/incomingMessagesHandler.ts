@@ -19,8 +19,8 @@ export const HandleIncomingMessages = (
 		case MessageType.setProjectName:
 			handlers.setProjectName(payload as string);
 			break;
-		case MessageType.setSessions:
-			handlers.setSessions(payload as SessionSectionViewModel);
+		case MessageType.setSessionsSection:
+			handlers.setSessionsSection(payload as SessionSectionViewModel);
 		default:
 	}
 };
