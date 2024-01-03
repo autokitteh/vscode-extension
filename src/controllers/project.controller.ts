@@ -170,9 +170,10 @@ export class ProjectController {
 		const indexesAreValid = startIndex >= 0 && startIndex < endIndex;
 
 		if (indexesAreValid) {
+			const endIndexCalc = Math.min(this.countForPage[entity], endIndex);
 			this.entitiesDisplayLimits[entity] = {
 				startIndex,
-				endIndex: Math.min(this.countForPage[entity], endIndex),
+				endIndex: endIndexCalc,
 			};
 		} else {
 			this.entitiesDisplayLimits[entity] = {
