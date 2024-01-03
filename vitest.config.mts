@@ -22,6 +22,7 @@ export default defineConfig({
 			"@views": path.resolve(__dirname, "./src/views"),
 			"@tests": path.resolve(__dirname, "./tests"),
 			"@ak-proto-ts": path.resolve(__dirname, "./src/autokitteh/proto/gen/ts/autokitteh"),
+			"vscode": path.resolve(__dirname, "./tests/mocks/vscode.mock.ts"),
 		},
 		exclude: ["node_modules", "dist"],
 	},

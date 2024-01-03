@@ -1,14 +1,10 @@
-import { vi } from "vitest";
-
-export const vscodeMock = {
+const vscode = {
 	workspace: {
 		getConfiguration: () => ({
-			get: (key: string) => {
-				if (key === "baseURL") {
-					return "http://autokitteh.com";
-				}
-				return null;
-			},
+			get: (key: string) => (key === "baseURL" ? "http://autokitteh.com" : null),
+			has: () => false,
+			inspect: () => undefined,
+			update: () => Promise.resolve(),
 		}),
 	},
 	window: {
@@ -17,6 +13,8 @@ export const vscodeMock = {
 		},
 	},
 	commands: {
-		executeCommand: vi.fn(),
+		executeCommand: () => Promise.resolve(),
 	},
 };
+
+module.exports = vscode;

@@ -6,7 +6,7 @@ export const mockViewInterface = {
 	delegate: {
 		build: vi.fn(),
 		run: vi.fn(),
-		setDeploymentsPageSize: vi.fn(),
+		setRowsRangePerSection: vi.fn(),
 	},
 	update: vi.fn(),
 	show: vi.fn(),
