@@ -13,7 +13,7 @@ describe("HandleIncomingMessages", () => {
 		const messageEvent = {
 			data: {
 				type: MessageType.setTheme,
-				payload: Theme.DARK, // Example theme
+				payload: Theme.DARK,
 			},
 		};
 
@@ -28,14 +28,14 @@ describe("HandleIncomingMessages", () => {
 	it("handles setDeployments MessageType correctly", () => {
 		const mockHandler = {
 			setDeploymentsSection: vi.fn(),
-			// Mock other methods if necessary
 		};
 
 		const messageEvent = {
 			data: {
 				type: MessageType.setDeployments,
 				payload: {
-					/* Mock DeploymentSectionViewModel data */
+					deployments: [],
+					totalDeployments: 0,
 				},
 			},
 		};
