@@ -5,7 +5,6 @@ import messages from "@i18n/en/messages.i18n.json";
 import projects from "@i18n/en/projects.i18n.json";
 import reactAppDeployments from "@i18n/en/reactApp/deployments.reactApp.i18n.json";
 import reactAppGeneral from "@i18n/en/reactApp/general.reactApp.i18n.json";
-import reactAppProjects from "@i18n/en/reactApp/projects.reactApp.i18n.json";
 import reactAppSessions from "@i18n/en/reactApp/sessions.reactApp.i18n.json";
 import walkthrough from "@i18n/en/walkthrough.i18n.json";
 
@@ -18,7 +17,6 @@ export const english = {
 	manifest,
 	reactApp: {
 		general: reactAppGeneral,
-		projects: reactAppProjects,
 		deployments: reactAppDeployments,
 		sessions: reactAppSessions,
 	},
