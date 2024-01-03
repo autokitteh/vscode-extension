@@ -56,8 +56,14 @@ function App() {
 						</AKButton>
 					</div>
 				</div>
-				<AKDeployments {...deploymentsSection} />
-				<AKSessions {...sessionsSection} />
+				<AKDeployments
+					deployments={deploymentsSection?.deployments}
+					totalDeployments={deploymentsSection?.totalDeployments}
+				/>
+				<AKSessions
+					sessions={sessionsSection?.sessions}
+					totalSessions={sessionsSection?.totalSessions}
+				/>
 			</div>
 		</main>
 	);

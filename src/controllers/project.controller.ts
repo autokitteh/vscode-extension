@@ -58,10 +58,7 @@ export class ProjectController {
 
 	reveal(): void {
 		if (!this.project) {
-			commands.executeCommand(
-				vsCommands.showErrorMessage,
-				translate().t("errors.projectNameMissing")
-			);
+			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.unexpectedError"));
 			return;
 		}
 		this.view.reveal(this.project.name);
@@ -89,8 +86,7 @@ export class ProjectController {
 		sortArray(projectDeployments, "createdAt", SortOrder.DESC);
 		this.countForPage[PaginationListEntity.DEPLOYMENTS] = projectDeployments?.length || 0;
 
-		const startIndex = this.entitiesDisplayLimits[PaginationListEntity.DEPLOYMENTS].startIndex;
-		const endIndex = this.entitiesDisplayLimits[PaginationListEntity.DEPLOYMENTS].endIndex;
+		const { startIndex, endIndex } = this.entitiesDisplayLimits[PaginationListEntity.DEPLOYMENTS];
 
 		const deploymentsForView = projectDeployments?.slice(startIndex, endIndex) || undefined;
 
@@ -117,8 +113,7 @@ export class ProjectController {
 		);
 		sortArray(sessions, "createdAt", SortOrder.DESC);
 		this.countForPage[PaginationListEntity.SESSIONS] = sessions?.length || 0;
-		const startIndex = this.entitiesDisplayLimits[PaginationListEntity.SESSIONS].startIndex;
-		const endIndex = this.entitiesDisplayLimits[PaginationListEntity.SESSIONS].endIndex;
+		const { startIndex, endIndex } = this.entitiesDisplayLimits[PaginationListEntity.SESSIONS];
 		const sessionsForView = sessions?.slice(startIndex, endIndex) || undefined;
 
 		if (!isEqual(this.sessions, sessionsForView)) {
