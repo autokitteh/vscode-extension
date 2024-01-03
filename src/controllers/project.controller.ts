@@ -12,7 +12,7 @@ import {
 	ProjectsService,
 	SessionsService,
 } from "@services";
-import { EntityPageSize, PageSize, ProjectCB } from "@type/interfaces";
+import { EntityPageSize, ProjectCB } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import { sortArray } from "@utilities";
 import { getIds } from "@utilities/getIds.utils";
