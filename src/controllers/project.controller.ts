@@ -3,18 +3,14 @@ import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType, PaginationListEntity, SortOrder } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
-import {
-	DeploymentSectionViewModel,
-	PageLimits,
-	SessionSectionViewModel,
-	CountEntitites,
-} from "@models/views";
+import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import {
 	EnvironmentsService,
 	DeploymentsService,
 	ProjectsService,
 	SessionsService,
 } from "@services";
+import { CountEntitites, PageLimits } from "@type/configuration";
 import { EntityPageSize, ProjectCB } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import { sortArray, getIds } from "@utilities";

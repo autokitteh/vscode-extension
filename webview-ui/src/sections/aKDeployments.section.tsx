@@ -3,7 +3,7 @@ import { pageLimits } from "@constants/projectsView.constants";
 import { MessageType, PaginationListEntity } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
-import { AKDeploymentState } from "@react-components";
+import { AKButton, AKDeploymentState } from "@react-components";
 import {
 	AKTable,
 	AKTableMessage,
@@ -16,7 +16,6 @@ import { DeploymentState } from "@react-enums";
 import { usePagination } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import { Deployment } from "@type/models";
-import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import moment from "moment";
 
 export const AKDeployments = ({
@@ -108,16 +107,16 @@ export const AKDeployments = ({
 			)}
 			<div className="flex w-full justify-center mt-4">
 				{!!deployments && !!totalDeployments && endIndex < totalDeployments && (
-					<VSCodeButton onClick={showMore} className="mr-1">
+					<AKButton onClick={showMore} classes="mr-1">
 						{translate().t("reactApp.general.showMore")}
-					</VSCodeButton>
+					</AKButton>
 				)}
 				{!!deployments &&
 					!!deployments.length &&
 					endIndex > pageLimits[PaginationListEntity.DEPLOYMENTS] && (
-						<VSCodeButton className="ml-1" onClick={showLess}>
+						<AKButton classes="ml-1" onClick={showLess}>
 							{translate().t("reactApp.general.showLess")}
-						</VSCodeButton>
+						</AKButton>
 					)}
 			</div>
 		</div>

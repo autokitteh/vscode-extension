@@ -3,6 +3,7 @@ import { pageLimits } from "@constants/projectsView.constants";
 import { MessageType, PaginationListEntity } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
+import { AKButton } from "@react-components";
 import {
 	AKTable,
 	AKTableMessage,
@@ -12,9 +13,7 @@ import {
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
 import { usePagination } from "@react-hooks";
-import { sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
-import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import moment from "moment";
 
 export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewModel) => {
@@ -73,16 +72,16 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 			)}
 			<div className="flex w-full justify-center mt-4">
 				{!!sessions && !!totalSessions && endIndex < totalSessions && (
-					<VSCodeButton onClick={showMore} className="mr-1">
+					<AKButton onClick={showMore} classes="mr-1">
 						{translate().t("reactApp.general.showMore")}
-					</VSCodeButton>
+					</AKButton>
 				)}
 				{!!sessions &&
 					!!sessions.length &&
 					endIndex > pageLimits[PaginationListEntity.SESSIONS] && (
-						<VSCodeButton className="ml-1" onClick={showLess}>
+						<AKButton classes="ml-1" onClick={showLess}>
 							{translate().t("reactApp.general.showLess")}
-						</VSCodeButton>
+						</AKButton>
 					)}
 			</div>
 		</div>
