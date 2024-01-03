@@ -10,8 +10,7 @@ import { IIncomingMessagesHandler } from "@react-interfaces/incomingMessagesHand
 import { AKDeployments, AKSessions } from "@react-sections";
 import { HandleIncomingMessages, sendMessage } from "@react-utilities";
 import { Message } from "@type";
-
-import "./App.css";
+import "./app.css";
 
 function App() {
 	const [deploymentsSection, setDeploymentsSection] = useState<
