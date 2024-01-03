@@ -20,6 +20,7 @@ export default defineConfig({
 			"@api": path.resolve(__dirname, "./src/api"),
 			"@models": path.resolve(__dirname, "./src/models"),
 			"@views": path.resolve(__dirname, "./src/views"),
+			"@tests": path.resolve(__dirname, "./tests"),
 			"@ak-proto-ts": path.resolve(__dirname, "./src/autokitteh/proto/gen/ts/autokitteh"),
 		},
 		exclude: ["node_modules", "dist"],

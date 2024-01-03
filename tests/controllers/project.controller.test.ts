@@ -1,46 +1,20 @@
+/* eslint-disable import/order */
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { vscodeMock, mockViewInterface } from "@tests/mocks";
 import { vsCommands } from "@constants";
 import { ProjectController } from "@controllers/project.controller";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
-import { get } from "lodash";
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { commands } from "vscode";
+vi.mock("vscode", () => vscodeMock);
 
 describe("ProjectController", () => {
 	let projectController: ProjectController;
 	let mockView: IProjectView;
 
 	beforeEach(() => {
-		mockView = {
-			reveal: vi.fn(),
-			delegate: {
-				build: vi.fn(),
-				run: vi.fn(),
-				setDeploymentsPageSize: vi.fn(),
-			},
-			update: vi.fn(),
-			show: vi.fn(),
-			dispose: vi.fn(),
-		} as IProjectView;
+		mockView = mockViewInterface;
 		projectController = new ProjectController(mockView, "project-id", 1000);
-		vi.mock("vscode", () => {
-			return {
-				workspace: {
-					getConfiguration: vi.fn(() => {
-						return {
-							get: vi.fn((key: string) => {
-								if (key === "autokitteh.baseURL") {
-									return "http://mocked.url";
-								}
-							}),
-						};
-					}),
-				},
-				commands: {
-					executeCommand: vi.fn(),
-				},
-			};
-		});
 	});
 
 	afterEach(() => {

@@ -28,6 +28,8 @@
 			"@services/*": ["services/*"],
 			"@type": ["types/index"],
 			"@type/*": ["types/*"],
+			"@tests": ["../tests/index"],
+			"@tests/*": ["../tests/*"],
 			"@utilities": ["utilities/index"],
 			"@utilities/*": ["utilities/*"],
 			"@views": ["views/index"],
