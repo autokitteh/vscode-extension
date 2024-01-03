@@ -17,15 +17,13 @@
 			}
 		},
 		{
-			"name": "Extension Tests",
-			"type": "extensionHost",
+			"type": "node",
 			"request": "launch",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/dist/test/suite/index"
-			],
-			"outFiles": ["${workspaceFolder}/dist/test/**/*.js"],
-			"preLaunchTask": "${defaultBuildTask}"
+			"name": "Run Vitest",
+			"program": "${workspaceFolder}/node_modules/vitest/vitest.mjs",
+			"args": ["run", "--run", "--environment", "node"],
+			"console": "integratedTerminal",
+			"internalConsoleOptions": "neverOpen"
 		}
 	]
 }
