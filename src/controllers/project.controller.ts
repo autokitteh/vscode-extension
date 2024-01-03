@@ -113,7 +113,7 @@ export class ProjectController {
 		const sessionsForView = sessions?.slice(startIndex, endIndex) || undefined;
 
 		if (!isEqual(this.sessions, sessionsForView)) {
-			this.sessions = sessions;
+			this.sessions = sessionsForView;
 			const sessionsViewObject: SessionSectionViewModel = {
 				sessions: sessionsForView,
 				totalSessions: this.countForPage[PaginationListEntity.SESSIONS],
