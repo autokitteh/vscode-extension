@@ -14,7 +14,14 @@
 			"group": {
 				"kind": "build",
 				"isDefault": true
-			}
+			},
+			"dependsOn": ["Delete_Dist_Folder"]
+		},
+		{
+			"label": "Delete_Dist_Folder",
+			"command": "rm -rf dist",
+			"type": "shell",
+			"group": "build"
 		}
 	]
 }
