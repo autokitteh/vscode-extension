@@ -18,7 +18,7 @@ export const openBaseURLInputDialog = async () => {
 export const setBaseURL = async (baseURL: string) => {
 	const hostBaseURL = ValidateURL(baseURL);
 	if (hostBaseURL) {
-		workspace.getConfiguration().update("autokitteh.baseURL", hostBaseURL);
+		workspace.getConfiguration().update("autokitteh.baseURL", baseURL);
 		commands.executeCommand(vsCommands.showInfoMessage, translate().t("messages.baseURLUpdated"));
 		commands.executeCommand(vsCommands.baseURLUpdated);
 	} else {

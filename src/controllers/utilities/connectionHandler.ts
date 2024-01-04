@@ -1,6 +1,5 @@
 import { BASE_URL, vsCommands } from "@constants";
 import { connectionHandlerInterval, connectionHandlerSlowInterval } from "@constants/api.constants";
-import { errorHelper } from "@controllers/utilities/errorHelper";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { translate } from "@i18n";
 import { ProjectsService } from "@services";

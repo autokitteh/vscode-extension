@@ -14,6 +14,7 @@
 		"@views": "dist/src/views",
 		"@vscommands": "dist/src/vscommands"
 	},
+	"license": "SEE LICENSE IN LICENSE.md",
 	"contributes": {
 		"commands": [
 			{
@@ -38,7 +39,7 @@
 		"configuration": {
 			"properties": {
 				"autokitteh.baseURL": {
-					"default": "",
+					"default": "http://localhost:9980",
 					"description": "Server URL",
 					"type": "string"
 				},
@@ -58,7 +59,7 @@
 					"type": "number"
 				},
 				"autokitteh.project.refresh.interval": {
-					"default": 1000,
+					"default": 500,
 					"description": "Refresh interval in ms for the projects webview panel",
 					"type": "number"
 				},
@@ -174,6 +175,7 @@
 	"dependencies": {
 		"@connectrpc/connect": "^1.1.4",
 		"@connectrpc/connect-node": "^1.1.4",
+		"@vscode/codicons": "^0.0.35",
 		"axios": "^1.6.2",
 		"i18next": "^23.7.11",
 		"js-yaml": "^4.1.0",
@@ -190,7 +192,7 @@
 		"@types/lodash": "^4.14.202",
 		"@types/node": "^20.10.6",
 		"@types/sinon": "^17.0.2",
-		"@types/vscode": "^1.46.0",
+		"@types/vscode": "^1.85.0",
 		"@typescript-eslint/eslint-plugin": "^6.14.0",
 		"@typescript-eslint/parser": "^6.14.0",
 		"eslint": "^8.56.0",
@@ -208,10 +210,15 @@
 		"vscode-test": "^1.5.0"
 	},
 	"engines": {
-		"vscode": "^1.75.0"
+		"vscode": "^1.85.0"
 	},
 	"main": "./dist/src/extension.js",
 	"name": "autokitteh",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/autokitteh/vscode-v2"
+	},
+	"homepage": "https://autokitteh.com",
 	"scripts": {
 		"build:webview": "cd webview-ui && npm run build",
 		"compile": "tsc -p ./",

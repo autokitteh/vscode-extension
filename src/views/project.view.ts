@@ -7,8 +7,6 @@ import { getNonce } from "@utilities";
 import { getUri } from "@utilities/getUri.utils";
 import * as vscode from "vscode";
 import { Uri, window } from "vscode";
-import * as TSConfig from "../../tsconfig.json";
-const appDistFolderName = TSConfig.compilerOptions.outDir;
 
 export class ProjectView implements IProjectView {
 	private panel?: vscode.WebviewPanel;
@@ -55,6 +53,7 @@ export class ProjectView implements IProjectView {
 	}
 
 	public onFocus() {
+		this.setThemeByEditor();
 		this.delegate?.onFocus?.();
 	}
 
@@ -70,9 +69,9 @@ export class ProjectView implements IProjectView {
 			{
 				enableScripts: true,
 				localResourceRoots: [
-					Uri.joinPath(this.context.extensionUri, appDistFolderName),
+					Uri.joinPath(this.context.extensionUri, "dist"),
 					Uri.joinPath(this.context.extensionUri, "webview-ui/build"),
-					Uri.joinPath(this.context.extensionUri, "webview-ui/node_modules/@vscode/codicons/dist"),
+					Uri.joinPath(this.context.extensionUri, "node_modules/@vscode/codicons/dist"),
 				],
 			}
 		);
@@ -100,7 +99,14 @@ export class ProjectView implements IProjectView {
 		const themeKind = window.activeColorTheme.kind as number as Theme;
 		this.changeTheme(themeKind);
 		this.addThemeListener();
+		this.setThemeByEditor();
 	}
+
+	setThemeByEditor = () => {
+		const themeKind = window.activeColorTheme.kind as number as Theme;
+		this.changeTheme(themeKind);
+		this.addThemeListener();
+	};
 
 	private changeTheme(themeKind: Theme) {
 		this.panel?.webview.postMessage?.({
@@ -133,7 +139,6 @@ export class ProjectView implements IProjectView {
 				"index.js",
 			]);
 			const codiconsUri = getUri(this.panel.webview, this.context.extensionUri, [
-				"webview-ui",
 				"node_modules",
 				"@vscode",
 				"codicons",
@@ -154,7 +159,7 @@ export class ProjectView implements IProjectView {
 				http-equiv="Content-Security-Policy"
 				content="default-src 'none'; font-src ${this.panel.webview.cspSource}; 
 				style-src ${this.panel.webview.cspSource}; script-src 'nonce-${nonce}';">
-			  
+							  
 			  <link rel="stylesheet" type="text/css" href="${stylesUri}">
 			  <link rel="stylesheet" type="text/css" href="${codiconsUri}">
 			  <title>${translate().t("general.companyName")}</title>

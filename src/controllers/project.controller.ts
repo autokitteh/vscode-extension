@@ -15,7 +15,6 @@ import { ProjectCB } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import { EntitySectionRowsRange } from "@type/views/webview";
 import { sortArray, getIds } from "@utilities";
-import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
 import { commands } from "vscode";
 
@@ -144,6 +143,10 @@ export class ProjectController {
 	startInterval() {
 		if (!this.intervalTimerId) {
 			this.view.update({ type: MessageType.setSessionsSection, payload: undefined });
+			this.view.update({
+				type: MessageType.setProjectName,
+				payload: this.project?.name,
+			});
 
 			this.intervalTimerId = setInterval(() => this.refreshView(), this.refreshRate);
 		}
