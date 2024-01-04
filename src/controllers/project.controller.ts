@@ -21,7 +21,7 @@ import { commands } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
-	private intervalTimerId?: NodeJS.Timer;
+	private intervalTimerId?: NodeJS.Timeout;
 	private disposeCB?: ProjectCB;
 	public projectId: string;
 	public project?: Project;
