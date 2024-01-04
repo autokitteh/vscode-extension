@@ -56,7 +56,9 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 						<AKTableRow key={session.sessionId}>
 							<AKTableCell>{moment(session.createdAt as unknown as string).fromNow()}</AKTableCell>
 							<AKTableCell>{session.sessionId}</AKTableCell>
-							<AKTableCell></AKTableCell>
+							<AKTableCell>
+								<div className="codicon codicon-output"></div>
+							</AKTableCell>
 						</AKTableRow>
 					))}
 			</AKTable>
