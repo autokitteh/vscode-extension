@@ -13,20 +13,22 @@ export class TabsManagerController {
 	}
 
 	public async openWebview(project: SidebarTreeItem) {
-		if (!this.openWebviews[project.key]) {
-			const newView = new ProjectView(this.context);
+		if (project.key) {
+			if (!this.openWebviews[project.key]) {
+				const newView = new ProjectView(this.context);
 
-			const newController = new ProjectController(
-				newView,
-				project.key,
-				projectControllerRefreshRate
-			);
-			newController.openProject(() => this.disposeWebview(project.key));
-			this.openWebviews[project.key] = newController;
-			return;
+				const newController = new ProjectController(
+					newView,
+					project.key,
+					projectControllerRefreshRate
+				);
+				newController.openProject(() => this.disposeWebview(project.key as string));
+				this.openWebviews[project.key] = newController;
+				return;
+			}
+
+			this.openWebviews[project.key].reveal();
 		}
-
-		this.openWebviews[project.key].reveal();
 	}
 
 	private disposeWebview(controllerId: string) {
