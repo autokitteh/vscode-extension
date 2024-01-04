@@ -34,16 +34,20 @@ export class SidebarController {
 		if (!this.user) {
 			return;
 		}
+		this.refreshProjects();
 		this.startInterval();
 	};
 
 	private fetchProjects = async (userId: string): Promise<SidebarTreeItem[] | undefined> => {
 		const projects = await RequestHandler.handleServiceResponse(() => ProjectsService.list(userId));
 		if (projects) {
-			return projects.map((project) => ({
-				label: project.name,
-				key: project.projectId,
-			}));
+			if (projects.length) {
+				return projects.map((project) => ({
+					label: project.name,
+					key: project.projectId,
+				}));
+			}
+			return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
 		}
 	};
 

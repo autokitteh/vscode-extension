@@ -1,6 +1,7 @@
 {
 	"clickHere": "Click here to connect",
 	"projects": "Projects",
+	"noProjectsFound": "No projects found",
 	"openProject": "Open project",
 	"projectBuildSucceed": "Project build succeed",
 	"projectBuildFailed": "Project build failed",

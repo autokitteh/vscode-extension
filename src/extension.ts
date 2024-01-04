@@ -33,7 +33,9 @@ export async function activate(context: ExtensionContext) {
 	});
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {
-			tabsManager.openWebview(project);
+			if (project) {
+				tabsManager.openWebview(project);
+			}
 		})
 	);
 
