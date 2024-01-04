@@ -29,43 +29,42 @@ export class ProjectsService {
 	}
 
 	static async build(projectId: string): Promise<ServiceResponse<string>> {
-		try {
-			const response = await projectsClient.build({ projectId });
-			const { buildId } = response;
-			return { data: buildId, error: undefined };
-		} catch (error) {
-			return { data: undefined, error };
-		}
+		const response = await projectsClient.build({ projectId });
+		const { buildId, error } = response;
+		return { data: buildId, error: error };
 	}
 
 	static async deploy(projectId: string): Promise<ServiceResponse<string>> {
-		const { data: buildId } = await this.build(projectId);
-		if (buildId) {
-			const { data: environments } = await EnvironmentsService.listByProjectId(projectId);
-			const environment = environments?.find(
-				(environment) => environment.name === DEFAULT_ENVIRONMENT
-			);
-
-			if (environment) {
-				const { data: deploymentId } = await DeploymentsService.create({
-					buildId,
-					envId: environment.envId,
-				});
-
-				return { data: deploymentId, error: undefined };
-			} else {
-				return { data: undefined, error: translate().t("errors.defaultEnvironmentNotFound") };
-			}
+		const { data: buildId, error: buildError } = await this.build(projectId);
+		if (buildError) {
+			return { data: undefined, error: buildError };
 		}
-		return { data: undefined, error: translate().t("errors.buildFailed") };
+		const { data: environments, error: envError } =
+			await EnvironmentsService.listByProjectId(projectId);
+		if (envError) {
+			return { data: undefined, error: envError };
+		}
+
+		const environment = environments![0];
+
+		if (environment && buildId) {
+			const { data: deploymentId, error } = await DeploymentsService.create({
+				buildId,
+				envId: environment.envId,
+			});
+
+			return { data: deploymentId, error: error };
+		} else {
+			return { data: undefined, error: translate().t("errors.defaultEnvironmentNotFound") };
+		}
 	}
 
 	static async run(projectId: string): Promise<ServiceResponse<ActivateResponse>> {
 		const { data: deploymentId } = await this.deploy(projectId);
 		if (deploymentId) {
 			try {
-				const { data: activateResponse } = await DeploymentsService.activate(deploymentId);
-				return { data: activateResponse, error: undefined };
+				const { data: activateResponse, error } = await DeploymentsService.activate(deploymentId);
+				return { data: activateResponse, error: error };
 			} catch (error) {
 				return { data: undefined, error: error };
 			}
