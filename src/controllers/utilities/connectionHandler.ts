@@ -2,7 +2,7 @@ import { BASE_URL, vsCommands } from "@constants";
 import { connectionHandlerInterval, connectionHandlerSlowInterval } from "@constants/api.constants";
 import { errorHelper } from "@controllers/utilities/errorHelper";
 import { translate } from "@i18n";
-import { AuthorizationService } from "@services";
+import { HealthService } from "@services/health.service";
 import { ValidateURL } from "@utilities";
 import { ConfigurationTarget, commands, workspace } from "vscode";
 
@@ -20,7 +20,7 @@ export class ConnectionHandler {
 			return;
 		}
 
-		const { error } = await AuthorizationService.whoAmI();
+		const { error } = await HealthService.testConnection();
 		if (error) {
 			errorHelper(error);
 			ConnectionHandler.isConnected = false;
@@ -46,7 +46,7 @@ export class ConnectionHandler {
 
 	static async getConnectionStatus() {
 		try {
-			const { error } = await AuthorizationService.whoAmI();
+			const { error } = await HealthService.testConnection();
 			return !error;
 		} catch (error: unknown) {
 			return false;
