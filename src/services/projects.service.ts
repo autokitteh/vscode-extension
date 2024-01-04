@@ -17,9 +17,9 @@ export class ProjectsService {
 		}
 	}
 
-	static async list(userId: string): Promise<ServiceResponse<Project[]>> {
+	static async list(): Promise<ServiceResponse<Project[]>> {
 		try {
-			const projects = (await projectsClient.listForOwner({ ownerId: userId })).projects.map(
+			const projects = (await projectsClient.listForOwner({ ownerId: "" })).projects.map(
 				convertProjectProtoToModel
 			);
 			return { data: projects, error: undefined };
