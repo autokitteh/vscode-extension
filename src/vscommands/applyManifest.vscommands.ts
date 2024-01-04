@@ -1,3 +1,5 @@
+import * as path from "path";
+import { ConnectError } from "@connectrpc/connect";
 import { vsCommands } from "@constants";
 import { errorHelper } from "@controllers/utilities/errorHelper";
 import { translate } from "@i18n";
@@ -12,13 +14,19 @@ export const applyManifest = async () => {
 	}
 
 	let { document } = window.activeTextEditor;
-	const text = document.getText();
+	const mainfestYaml = document.getText();
+	const filePath = document.uri.fsPath;
+	const fileDirPath = path.dirname(filePath);
 
 	output.clear();
 
-	const { data: logs, error } = await ManifestService.applyManifest(text);
+	const { data: logs, error } = await ManifestService.applyManifest(mainfestYaml, fileDirPath);
 	if (error) {
 		errorHelper(error);
+
+		if (error instanceof ConnectError) {
+			output.appendLine(error.rawMessage);
+		}
 		return;
 	}
 	(logs || []).forEach((log) => output.appendLine(`${log}\r\n`));
