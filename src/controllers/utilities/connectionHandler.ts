@@ -8,25 +8,21 @@ import { ConfigurationTarget, commands, workspace } from "vscode";
 
 export class ConnectionHandler {
 	static connectTestIntervalId: NodeJS.Timeout | null = null;
-	static isConnected = false;
 	static startTime: number | null = null;
 	static intervalDuration = connectionHandlerInterval;
 
 	static connect = async (): Promise<void> => {
 		if (!ValidateURL(BASE_URL)) {
 			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.badHostURL"));
-			ConnectionHandler.isConnected = false;
 			await ConnectionHandler.updateConnectionStatus(false);
 			return;
 		}
 
 		if (!this.getConnectionStatus()) {
-			ConnectionHandler.isConnected = false;
 			ConnectionHandler.updateConnectionStatus(false);
 			return;
 		}
 
-		ConnectionHandler.isConnected = true;
 		ConnectionHandler.updateConnectionStatus(true);
 		ConnectionHandler.testConnection();
 	};
@@ -58,14 +54,12 @@ export class ConnectionHandler {
 	static async performConnectionTest() {
 		const isConnected = await ConnectionHandler.getConnectionStatus();
 		if (isConnected) {
-			ConnectionHandler.isConnected = true;
 			await ConnectionHandler.updateConnectionStatus(true);
 
 			if (ConnectionHandler.intervalDuration !== connectionHandlerInterval) {
 				ConnectionHandler.changeInterval(connectionHandlerInterval);
 			}
 		} else {
-			ConnectionHandler.isConnected = false;
 			await ConnectionHandler.updateConnectionStatus(false);
 
 			const currentTime = Date.now();

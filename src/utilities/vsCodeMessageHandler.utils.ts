@@ -2,12 +2,12 @@ import { LoggerService } from "@services";
 import { window } from "vscode";
 
 export class MessageHandler {
-	static infoMessage(messageText: string): void {
+	static infoMessage(namespace: string, messageText: string): void {
 		window.showInformationMessage(messageText);
-		LoggerService.getInstance().log(messageText);
+		LoggerService.getInstance().log(namespace, messageText);
 	}
-	static errorMessage(messageText: string): void {
+	static errorMessage(namespace: string, messageText: string): void {
 		window.showErrorMessage(messageText);
-		LoggerService.getInstance().error(messageText);
+		LoggerService.getInstance().error(namespace, messageText);
 	}
 }

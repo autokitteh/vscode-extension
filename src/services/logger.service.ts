@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 export class LoggerService {
 	private static instance: LoggerService;
 	private outputChannel: vscode.OutputChannel;
+	private loggerNamespace: string = "autokitteh";
 
 	private constructor() {
 		this.outputChannel = vscode.window.createOutputChannel("autokitteh");
@@ -16,14 +17,11 @@ export class LoggerService {
 		return LoggerService.instance;
 	}
 
-	public log(message: string): void {
-		this.outputChannel.appendLine(`[LOG] ${message}`);
+	public log(namespace: string, message: string): void {
+		this.outputChannel.appendLine(`[${namespace}] [LOG] ${message}`);
 	}
 
-	public error(message: string): void {
-		this.outputChannel.appendLine(`[ERROR] ${message}`);
+	public error(namespace: string, message: string): void {
+		this.outputChannel.appendLine(`[${namespace}] [ERROR] ${message}`);
 	}
-
-	// You can add more methods for different log levels if needed
 }
-5;

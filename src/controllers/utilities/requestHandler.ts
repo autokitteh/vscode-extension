@@ -1,7 +1,8 @@
-import { vsCommands } from "@constants";
+import { nameSpaces, vsCommands } from "@constants";
 import { ConnectionHandler } from "@controllers/utilities/connectionHandler";
 import { errorHelper } from "@controllers/utilities/errorHelper";
 import { translate } from "@i18n";
+import { LoggerService } from "@services";
 import { ServiceResponse } from "@type/services.types";
 import { commands } from "vscode";
 
@@ -13,17 +14,18 @@ export class RequestHandler {
 			onFailureMessage?: string;
 		}
 	): Promise<{ data: T | undefined; error: unknown }> {
-		if (!ConnectionHandler.isConnected) {
-			return { data: undefined, error: new Error(translate().t("errors.notConnected")) };
-		}
 		const { error, data } = await requestPromise();
 		if (!error) {
 			if (messages?.onSuccessMessage) {
-				commands.executeCommand(vsCommands.showInfoMessage, messages.onSuccessMessage);
+				commands.executeCommand(
+					vsCommands.showInfoMessage,
+					nameSpaces.serverRequests,
+					messages.onSuccessMessage
+				);
 			}
 			return { data, error };
 		}
-		errorHelper(error, messages?.onFailureMessage);
+		errorHelper(nameSpaces.serverRequests, error, messages?.onFailureMessage);
 		return { data, error };
 	}
 }
