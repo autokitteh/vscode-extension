@@ -14,8 +14,7 @@ export class RequestHandler {
 		}
 	): Promise<{ data: T | undefined; error: unknown }> {
 		if (!ConnectionHandler.isConnected) {
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.notConnected"));
-			return { data: undefined, error: undefined };
+			return { data: undefined, error: new Error(translate().t("errors.notConnected")) };
 		}
 		const { error, data } = await requestPromise();
 		if (!error) {

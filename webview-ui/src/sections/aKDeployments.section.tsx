@@ -25,7 +25,9 @@ export const AKDeployments = ({
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
 	useEffect(() => {
-		setIsLoading(false);
+		if (deployments && isLoading) {
+			setIsLoading(false);
+		}
 	}, [deployments]);
 	useEffect(() => {
 		const interval = setInterval(() => {

@@ -20,7 +20,9 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
 	useEffect(() => {
-		setIsLoading(false);
+		if (isLoading) {
+			setIsLoading(false);
+		}
 	}, [sessions]);
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -54,10 +56,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 						<AKTableRow key={session.sessionId}>
 							<AKTableCell>{moment(session.createdAt as unknown as string).fromNow()}</AKTableCell>
 							<AKTableCell>{session.sessionId}</AKTableCell>
-							<AKTableCell>
-								<div className="codicon codicon-stop"></div>
-								<div className="codicon codicon-close"></div>
-							</AKTableCell>
+							<AKTableCell></AKTableCell>
 						</AKTableRow>
 					))}
 			</AKTable>

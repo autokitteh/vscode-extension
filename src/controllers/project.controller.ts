@@ -67,18 +67,20 @@ export class ProjectController {
 				() => EnvironmentsService.listByProjectId(this.projectId),
 				{ onFailureMessage: translate().t("errors.environmentsNotDefinedForProject") }
 			);
-		if (!environmentsError || !environments?.length) {
-			MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
-			return;
+
+		if (environmentsError || !environments?.length) {
+			return [];
 		}
+
 		const environmentIds = getIds(environments, "envId");
 		const { data: projectDeployments, error: deploymentsError } =
 			await RequestHandler.handleServiceResponse(
 				() => DeploymentsService.listByEnvironmentIds(environmentIds),
 				{ onFailureMessage: translate().t("errors.deploymentsNotDefinedForProject") }
 			);
+
 		if (deploymentsError) {
-			return;
+			return [];
 		}
 		return projectDeployments;
 	}
@@ -114,23 +116,29 @@ export class ProjectController {
 		const { data: sessions, error } = await RequestHandler.handleServiceResponse(() =>
 			SessionsService.listByDeploymentId(deploymentId)
 		);
+		if (error) {
+			return;
+		}
+
 		sortArray(sessions, "createdAt", SortOrder.DESC);
 		this.totalItemsPerSection[ProjectViewSections.SESSIONS] = sessions?.length || 0;
 		const { startIndex, endIndex } = this.entitySectionDisplayBounds[ProjectViewSections.SESSIONS];
 		const sessionsForView = sessions?.slice(startIndex, endIndex) || undefined;
 
-		if (!isEqual(this.sessions, sessionsForView)) {
-			this.sessions = sessionsForView;
-			const sessionsViewObject: SessionSectionViewModel = {
-				sessions: sessionsForView,
-				totalSessions: this.totalItemsPerSection[ProjectViewSections.SESSIONS],
-			};
-
-			this.view.update({
-				type: MessageType.setSessionsSection,
-				payload: sessionsViewObject,
-			});
+		if (isEqual(this.sessions, sessionsForView) && this.sessions?.length) {
+			return;
 		}
+
+		this.sessions = sessionsForView;
+		const sessionsViewObject: SessionSectionViewModel = {
+			sessions: sessionsForView,
+			totalSessions: this.totalItemsPerSection[ProjectViewSections.SESSIONS],
+		};
+
+		this.view.update({
+			type: MessageType.setSessionsSection,
+			payload: sessionsViewObject,
+		});
 	}
 
 	startInterval() {
@@ -150,7 +158,7 @@ export class ProjectController {
 
 	public async openProject(disposeCB: ProjectCB) {
 		this.disposeCB = disposeCB;
-		const { data: project, error } = await RequestHandler.handleServiceResponse(
+		const { data: project } = await RequestHandler.handleServiceResponse(
 			() => ProjectsService.get(this.projectId),
 			{
 				onFailureMessage: translate().t("errors.projectNotFound"),
