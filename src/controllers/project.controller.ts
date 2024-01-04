@@ -111,6 +111,9 @@ export class ProjectController {
 		);
 		sortArray(sessions, "createdAt", SortOrder.DESC);
 		this.totalItemsPerSection[ProjectViewSections.SESSIONS] = sessions?.length || 0;
+		if (sessions && sessions.length > 0) {
+			SessionsService.getSessionHistory(sessions[0].sessionId);
+		}
 		const { startIndex, endIndex } = this.entitySectionDisplayBounds[ProjectViewSections.SESSIONS];
 		const sessionsForView = sessions?.slice(startIndex, endIndex) || undefined;
 
