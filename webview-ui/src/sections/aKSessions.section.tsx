@@ -40,10 +40,12 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 
 	return (
 		<div className="mt-4">
-			{sessions && !!totalSessions && (
-				<div className="flex justify-end mb-2 w-full">
+			{sessions && !!totalSessions ? (
+				<div className="flex justify-end mb-2 w-full min-h-[20px]">
 					{endIndex} {translate().t("reactApp.general.outOf")} {totalSessions}
 				</div>
+			) : (
+				<div className="mb-2 w-full min-h-[20px]" />
 			)}
 			<AKTable>
 				<AKTableHeader>

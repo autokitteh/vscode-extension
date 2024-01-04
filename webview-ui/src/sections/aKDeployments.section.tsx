@@ -52,10 +52,12 @@ export const AKDeployments = ({
 
 	return (
 		<div className="mt-4">
-			{deployments && !!totalDeployments && (
-				<div className="flex justify-end mb-2 w-full">
+			{deployments && !!totalDeployments ? (
+				<div className="flex justify-end mb-2 w-full min-h-[20px]">
 					{endIndex} {translate().t("reactApp.general.outOf")} {totalDeployments}
 				</div>
+			) : (
+				<div className="flex mb-2 w-full min-h-[20px]" />
 			)}
 			<AKTable>
 				<AKTableHeader>

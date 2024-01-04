@@ -84,7 +84,7 @@ export class ProjectController {
 		return projectDeployments;
 	}
 
-	async refreshView() {
+	async loadDeployments() {
 		const projectDeployments = await this.getProjectDeployments();
 		sortArray(projectDeployments, "createdAt", SortOrder.DESC);
 		this.totalItemsPerSection[ProjectViewSections.DEPLOYMENTS] = projectDeployments?.length || 0;
@@ -106,6 +106,10 @@ export class ProjectController {
 				payload: deploymentsViewObject,
 			});
 		}
+	}
+
+	async refreshView() {
+		await this.loadDeployments();
 		if (this.selectedDeploymentId) {
 			await this.selectDeployment(this.selectedDeploymentId);
 		}
@@ -140,8 +144,9 @@ export class ProjectController {
 		});
 	}
 
-	startInterval() {
+	async startInterval() {
 		if (!this.intervalTimerId) {
+			await this.loadDeployments();
 			this.view.update({ type: MessageType.setSessionsSection, payload: undefined });
 			this.view.update({
 				type: MessageType.setProjectName,
@@ -198,6 +203,12 @@ export class ProjectController {
 				startIndex: 0,
 				endIndex: pageLimits[entity],
 			};
+		}
+		if (entity === ProjectViewSections.DEPLOYMENTS) {
+			this.loadDeployments();
+		}
+		if (entity === ProjectViewSections.SESSIONS && this.selectedDeploymentId) {
+			this.selectDeployment(this.selectedDeploymentId);
 		}
 	}
 
