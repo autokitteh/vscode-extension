@@ -1,4 +1,3 @@
-import { User } from "@ak-proto-ts/users/v1/user_pb";
 import { vsCommands } from "@constants";
 import { ConnectionHandler } from "@controllers/utilities/connectionHandler";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
