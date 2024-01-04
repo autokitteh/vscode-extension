@@ -33,12 +33,14 @@ export class SidebarController {
 			ProjectsService.list()
 		);
 		if (!error && projects) {
-			return projects.map((project) => ({
-				label: project.name,
-				key: project.projectId,
-			}));
+			if (projects.length) {
+				return projects.map((project) => ({
+					label: project.name,
+					key: project.projectId,
+				}));
+			}
+			return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
 		}
-		return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
 	};
 
 	private startInterval() {
@@ -49,7 +51,7 @@ export class SidebarController {
 	private async refreshProjects() {
 		const projects = await this.fetchProjects();
 		if (projects) {
-			if (!projects.length && !this.noProjectMessageDisplayed && !ConnectionHandler.isConnected) {
+			if (!projects.length && !this.noProjectMessageDisplayed && ConnectionHandler.isConnected) {
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
 					translate().t("errors.noProjectsFound")
