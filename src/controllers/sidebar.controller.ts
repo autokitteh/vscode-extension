@@ -29,16 +29,16 @@ export class SidebarController {
 	};
 
 	private fetchProjects = async (): Promise<SidebarTreeItem[] | undefined> => {
-		const projects = await RequestHandler.handleServiceResponse(() => ProjectsService.list());
-		if (projects) {
-			if (projects.length) {
-				return projects.map((project) => ({
-					label: project.name,
-					key: project.projectId,
-				}));
-			}
-			return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
+		const { data: projects, error } = await RequestHandler.handleServiceResponse(() =>
+			ProjectsService.list()
+		);
+		if (!error && projects) {
+			return projects.map((project) => ({
+				label: project.name,
+				key: project.projectId,
+			}));
 		}
+		return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
 	};
 
 	private startInterval() {

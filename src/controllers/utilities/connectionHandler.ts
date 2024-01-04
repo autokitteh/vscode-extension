@@ -44,8 +44,8 @@ export class ConnectionHandler {
 	}
 
 	static async getConnectionStatus() {
-		const projects = await RequestHandler.handleServiceResponse(() => ProjectsService.list());
-		return !!projects;
+		const { error } = await RequestHandler.handleServiceResponse(() => ProjectsService.list());
+		return !error;
 	}
 
 	static testConnection() {

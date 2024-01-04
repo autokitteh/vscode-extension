@@ -62,19 +62,24 @@ export class ProjectController {
 	}
 
 	async getProjectDeployments(): Promise<Deployment[] | undefined> {
-		const environments = await RequestHandler.handleServiceResponse(
-			() => EnvironmentsService.listByProjectId(this.projectId),
-			{ onFailureMessage: translate().t("errors.environmentsNotDefinedForProject") }
-		);
-		if (!environments || environments.length === 0) {
+		const { data: environments, error: environmentsError } =
+			await RequestHandler.handleServiceResponse(
+				() => EnvironmentsService.listByProjectId(this.projectId),
+				{ onFailureMessage: translate().t("errors.environmentsNotDefinedForProject") }
+			);
+		if (!environmentsError || !environments?.length) {
 			MessageHandler.errorMessage(translate().t("errors.environmentsNotDefinedForProject"));
 			return;
 		}
 		const environmentIds = getIds(environments, "envId");
-		const projectDeployments = await RequestHandler.handleServiceResponse(
-			() => DeploymentsService.listByEnvironmentIds(environmentIds),
-			{ onFailureMessage: translate().t("errors.deploymentsNotDefinedForProject") }
-		);
+		const { data: projectDeployments, error: deploymentsError } =
+			await RequestHandler.handleServiceResponse(
+				() => DeploymentsService.listByEnvironmentIds(environmentIds),
+				{ onFailureMessage: translate().t("errors.deploymentsNotDefinedForProject") }
+			);
+		if (deploymentsError) {
+			return;
+		}
 		return projectDeployments;
 	}
 
@@ -106,7 +111,7 @@ export class ProjectController {
 	}
 	async selectDeployment(deploymentId: string) {
 		this.selectedDeploymentId = deploymentId;
-		const sessions = await RequestHandler.handleServiceResponse(() =>
+		const { data: sessions, error } = await RequestHandler.handleServiceResponse(() =>
 			SessionsService.listByDeploymentId(deploymentId)
 		);
 		sortArray(sessions, "createdAt", SortOrder.DESC);
@@ -145,7 +150,7 @@ export class ProjectController {
 
 	public async openProject(disposeCB: ProjectCB) {
 		this.disposeCB = disposeCB;
-		const project = await RequestHandler.handleServiceResponse(
+		const { data: project, error } = await RequestHandler.handleServiceResponse(
 			() => ProjectsService.get(this.projectId),
 			{
 				onFailureMessage: translate().t("errors.projectNotFound"),
