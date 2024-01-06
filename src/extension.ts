@@ -39,6 +39,13 @@ export async function activate(context: ExtensionContext) {
 		})
 	);
 
+	const ch = window.createOutputChannel(extensionName);
+	client = new TiltfileLspClient(context, ch);
+	client.start();
+	tiltfileErrorWatcher = new TiltfileErrorWatcher(context, ch);
+	tiltfileErrorWatcher.start();
+	addTiltLinkToStatusBar(context);
+
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
 	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));
 	context.subscriptions.push(
