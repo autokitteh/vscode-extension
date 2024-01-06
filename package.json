@@ -16,6 +16,28 @@
 	},
 	"license": "SEE LICENSE IN LICENSE.md",
 	"contributes": {
+		"languages": [
+			{
+				"id": "tiltfile",
+				"aliases": [
+					"Tiltfile",
+					"tiltfile"
+				],
+				"extensions": [
+					"Tiltfile",
+					".tiltfile",
+					".tilt"
+				],
+				"configuration": "./src/language/syntaxes/tiltfile.configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "tiltfile",
+				"scopeName": "source.tiltfile",
+				"path": "./src/language/syntaxes/tiltfile.tmLanguage.json"
+			}
+		],
 		"commands": [
 			{
 				"command": "autokitteh.applyManifest",
@@ -34,10 +56,62 @@
 				"command": "autokitteh.disconnect",
 				"icon": "./resources/sidebar/top-panel-disconnect.svg",
 				"title": "Autokitteh: Disconnect from server"
+			},
+			{
+				"command": "autokitteh.restartServer",
+				"title": "Restart Tiltfile LSP Server"
 			}
+		],
+		"activationEvents": [
+			"onLanguage:tiltfile"
 		],
 		"configuration": {
 			"properties": {
+				"autokitteh.trace.server": {
+					"type": [
+						"string",
+						"null"
+					],
+					"default": "off",
+					"description": "Log requests and responses to Tiltfile LSP",
+					"enum": [
+						"off",
+						"verbose",
+						"debug"
+					],
+					"pattern": "off|verbose|debug",
+					"patternErrorMessage": "Invalid log level"
+				},
+				"autokitteh.server.port": {
+					"type": [
+						"number",
+						"null"
+					],
+					"default": null,
+					"description": "Port (on localhost) of running language server",
+					"scope": "machine-overridable"
+				},
+				"autokitteh.tilt.path": {
+					"type": [
+						"string",
+						"null"
+					],
+					"default": null,
+					"description": "File path of Tilt program to run the language server",
+					"scope": "machine-overridable"
+				},
+				"autokitteh.showStatusBarButton": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to show a button for this extension in the VSCode StatusBar",
+					"scope": "machine-overridable"
+				},
+				"autokitteh.tilt.webui.port": {
+					"type": "number",
+					"default": 10350,
+					"description": "Port to open the Tilt Web UI on",
+					"scope": "machine-overridable"
+				},
 				"autokitteh.baseURL": {
 					"default": "http://localhost:9980",
 					"description": "Server URL",
@@ -181,6 +255,7 @@
 		"js-yaml": "^4.1.0",
 		"lodash": "^4.17.21",
 		"module-alias": "^2.2.3",
+		"split2": "^4.2.0",
 		"vscode-languageclient": "^9.0.1"
 	},
 	"description": "AutoKitteh is an open-source automation framework designed to simplify the process of automating tasks across various environments and tools. Its primary focus is on providing a versatile and user-friendly platform for automating operations, particularly in DevOps and software development contexts.",
@@ -193,6 +268,7 @@
 		"@types/lodash": "^4.14.202",
 		"@types/node": "^20.10.6",
 		"@types/sinon": "^17.0.2",
+		"@types/split2": "^4.2.3",
 		"@types/vscode": "^1.85.0",
 		"@typescript-eslint/eslint-plugin": "^6.14.0",
 		"@typescript-eslint/parser": "^6.14.0",

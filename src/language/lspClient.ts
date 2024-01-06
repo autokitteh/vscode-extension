@@ -3,7 +3,7 @@ import net = require("net");
 import { commands, Disposable, ExtensionContext, OutputChannel, window, workspace } from "vscode";
 import { LanguageClient, LanguageClientOptions, StreamInfo } from "vscode-languageclient/node";
 import { getServerPort, getTrace, Port } from "../language/config";
-import { PlaceholderErrorHandler, TiltfileErrorHandler } from "../language/error-handlers";
+import { PlaceholderErrorHandler, TiltfileErrorHandler } from "../language/errorHandlers";
 import { checkTiltVersion } from "../language/version";
 
 const extensionLang = "tiltfile";

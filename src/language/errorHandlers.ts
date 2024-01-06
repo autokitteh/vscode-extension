@@ -1,11 +1,11 @@
 /* eslint-disable unicorn/filename-case */
+import { TiltfileLspClient } from "./lspClient";
 import {
 	CloseHandlerResult,
 	ErrorHandler,
 	ErrorHandlerResult,
 	Message,
 } from "vscode-languageclient";
-import { TiltfileLspClient } from "../services/tilt.service";
 
 export class PlaceholderErrorHandler implements ErrorHandler {
 	public delegate: ErrorHandler | undefined;

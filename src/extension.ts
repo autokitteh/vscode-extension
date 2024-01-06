@@ -12,7 +12,10 @@ import {
 	openUsernameInputDialog,
 	openWalkthrough,
 } from "@vscommands/walkthrough";
-import { commands, ExtensionContext, workspace } from "vscode";
+import { TiltfileErrorWatcher } from "language/errorWatcher";
+import { addTiltLinkToStatusBar } from "language/link";
+import { TiltfileLspClient } from "language/lspClient";
+import { commands, ExtensionContext, workspace, window } from "vscode";
 
 export async function activate(context: ExtensionContext) {
 	const sidebarView = new SidebarView();
@@ -39,7 +42,12 @@ export async function activate(context: ExtensionContext) {
 		})
 	);
 
-	const ch = window.createOutputChannel(extensionName);
+	const extensionName = "tiltfile";
+
+	let client: TiltfileLspClient;
+	let tiltfileErrorWatcher: TiltfileErrorWatcher;
+
+	const ch = window.createOutputChannel("autokitteh-tilt");
 	client = new TiltfileLspClient(context, ch);
 	client.start();
 	tiltfileErrorWatcher = new TiltfileErrorWatcher(context, ch);
