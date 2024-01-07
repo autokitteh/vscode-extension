@@ -12,23 +12,18 @@ export class RequestHandler {
 			onSuccessMessage?: string;
 			onFailureMessage?: string;
 		}
-	): Promise<T | undefined> {
+	): Promise<{ data: T | undefined; error: unknown }> {
 		if (!ConnectionHandler.isConnected) {
-			return;
+			return { data: undefined, error: new Error(translate().t("errors.notConnected")) };
 		}
 		const { error, data } = await requestPromise();
 		if (!error) {
 			if (messages?.onSuccessMessage) {
 				commands.executeCommand(vsCommands.showInfoMessage, messages.onSuccessMessage);
 			}
-			return data as T;
-		}
-		if (error && data) {
-			errorHelper(error, messages?.onFailureMessage);
-			return data as T;
+			return { data, error };
 		}
 		errorHelper(error, messages?.onFailureMessage);
-
-		return;
+		return { data, error };
 	}
 }

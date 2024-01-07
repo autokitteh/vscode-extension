@@ -1,8 +1,9 @@
 import { BASE_URL, vsCommands } from "@constants";
 import { connectionHandlerInterval, connectionHandlerSlowInterval } from "@constants/api.constants";
 import { errorHelper } from "@controllers/utilities/errorHelper";
+import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { translate } from "@i18n";
-import { AuthorizationService } from "@services";
+import { ProjectsService } from "@services";
 import { ValidateURL } from "@utilities";
 import { ConfigurationTarget, commands, workspace } from "vscode";
 
@@ -20,9 +21,7 @@ export class ConnectionHandler {
 			return;
 		}
 
-		const { error } = await AuthorizationService.whoAmI();
-		if (error) {
-			errorHelper(error);
+		if (!this.getConnectionStatus()) {
 			ConnectionHandler.isConnected = false;
 			ConnectionHandler.updateConnectionStatus(false);
 			return;
@@ -45,12 +44,8 @@ export class ConnectionHandler {
 	}
 
 	static async getConnectionStatus() {
-		try {
-			const { error } = await AuthorizationService.whoAmI();
-			return !error;
-		} catch (error: unknown) {
-			return false;
-		}
+		const { error } = await RequestHandler.handleServiceResponse(() => ProjectsService.list());
+		return !error;
 	}
 
 	static testConnection() {
