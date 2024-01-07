@@ -4,6 +4,7 @@ import { ProjectViewSections } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
 import { AKButton } from "@react-components";
+import { AKSessionState } from "@react-components";
 import {
 	AKTable,
 	AKTableMessage,
@@ -50,13 +51,17 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 			<AKTable>
 				<AKTableHeader>
 					<AKTableHeaderCell>{translate().t("reactApp.sessions.time")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.sessions.status")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.sessions.sessionId")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.sessions.actions")}</AKTableHeaderCell>
 				</AKTableHeader>
 				{sessions &&
 					sessions.map((session: Session) => (
 						<AKTableRow key={session.sessionId}>
-							<AKTableCell>{moment(session.createdAt as unknown as string).fromNow()}</AKTableCell>
+							<AKTableCell>{moment(session.createdAt).fromNow()}</AKTableCell>
+							<AKTableCell>
+								<AKSessionState sessionState={session.state} />
+							</AKTableCell>
 							<AKTableCell>{session.sessionId}</AKTableCell>
 							<AKTableCell>
 								<div className="codicon codicon-output"></div>

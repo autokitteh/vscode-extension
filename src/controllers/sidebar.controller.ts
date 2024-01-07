@@ -18,6 +18,7 @@ export class SidebarController {
 		this.view = sidebarView;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
 		this.refreshRate = refreshRate;
+		this.refreshProjects();
 	}
 
 	public connect = async () => {
@@ -51,6 +52,7 @@ export class SidebarController {
 
 	private async refreshProjects() {
 		const projects = await this.fetchProjects();
+
 		if (projects) {
 			const isConnected = await ConnectionHandler.getConnectionStatus();
 			if (!projects.length && !this.noProjectMessageDisplayed && isConnected) {

@@ -158,7 +158,8 @@ export class ProjectView implements IProjectView {
 			  <meta
 				http-equiv="Content-Security-Policy"
 				content="default-src 'none'; font-src ${this.panel.webview.cspSource}; 
-				style-src ${this.panel.webview.cspSource}; script-src 'nonce-${nonce}';">
+				style-src vscode-resource: 'self' 'unsafe-inline';
+				script-src 'nonce-${nonce}';">
 							  
 			  <link rel="stylesheet" type="text/css" href="${stylesUri}">
 			  <link rel="stylesheet" type="text/css" href="${codiconsUri}">
