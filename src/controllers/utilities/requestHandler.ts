@@ -1,5 +1,4 @@
 import { nameSpaces, vsCommands } from "@constants";
-import { errorHelper } from "@controllers/utilities/errorHelper";
 import { ServiceResponse } from "@type/services.types";
 import { commands } from "vscode";
 
@@ -22,7 +21,6 @@ export class RequestHandler {
 			}
 			return { data, error };
 		}
-		errorHelper(nameSpaces.serverRequests, error, messages?.onFailureMessage);
 		return { data, error };
 	}
 }

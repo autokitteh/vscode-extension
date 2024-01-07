@@ -1,4 +1,5 @@
 import { vsCommands, pageLimits } from "@constants";
+import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType, ProjectViewSections, SortOrder } from "@enums";
 import { translate } from "@i18n";
@@ -61,27 +62,31 @@ export class ProjectController {
 	}
 
 	async getProjectDeployments(): Promise<Deployment[] | undefined> {
-		const { data: environments, error: environmentsError } =
-			await RequestHandler.handleServiceResponse(
-				() => EnvironmentsService.listByProjectId(this.projectId),
-				{ onFailureMessage: translate().t("errors.environmentsNotDefinedForProject") }
-			);
+		const isAppOn = await AppStateHandler.getConnectionStatus();
+		if (isAppOn) {
+			const { data: environments, error: environmentsError } =
+				await RequestHandler.handleServiceResponse(
+					() => EnvironmentsService.listByProjectId(this.projectId),
+					{ onFailureMessage: translate().t("errors.environmentsNotDefinedForProject") }
+				);
 
-		if (environmentsError || !environments?.length) {
-			return [];
+			if (environmentsError || !environments?.length) {
+				return [];
+			}
+
+			const environmentIds = getIds(environments, "envId");
+			const { data: projectDeployments, error: deploymentsError } =
+				await RequestHandler.handleServiceResponse(
+					() => DeploymentsService.listByEnvironmentIds(environmentIds),
+					{ onFailureMessage: translate().t("errors.deploymentsNotDefinedForProject") }
+				);
+
+			if (deploymentsError) {
+				return;
+			}
+			return projectDeployments;
 		}
-
-		const environmentIds = getIds(environments, "envId");
-		const { data: projectDeployments, error: deploymentsError } =
-			await RequestHandler.handleServiceResponse(
-				() => DeploymentsService.listByEnvironmentIds(environmentIds),
-				{ onFailureMessage: translate().t("errors.deploymentsNotDefinedForProject") }
-			);
-
-		if (deploymentsError) {
-			return [];
-		}
-		return projectDeployments;
+		return;
 	}
 
 	async loadDeployments() {

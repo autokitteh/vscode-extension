@@ -1,5 +1,5 @@
-import { vsCommands } from "@constants";
-import { ConnectionHandler } from "@controllers/utilities/connectionHandler";
+import { nameSpaces, vsCommands } from "@constants";
+import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { translate } from "@i18n";
 import { ProjectsService } from "@services";
@@ -13,19 +13,17 @@ export class SidebarController {
 	private refreshRate: number;
 	private projects?: SidebarTreeItem[];
 	private noProjectMessageDisplayed = false;
+	private connectionErrorDisplayed = false;
 
 	constructor(sidebarView: ISidebarView, refreshRate: number) {
 		this.view = sidebarView;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
 		this.refreshRate = refreshRate;
-		this.refreshProjects();
+		this.connectionErrorDisplayed = false;
 	}
 
 	public connect = async () => {
-		const isConnected = await ConnectionHandler.getConnectionStatus();
-		if (!isConnected) {
-			return;
-		}
+		this.refreshProjects();
 
 		this.startInterval();
 	};
@@ -43,6 +41,8 @@ export class SidebarController {
 			}
 			return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
 		}
+		commands.executeCommand(vsCommands.disconnect);
+		return [];
 	};
 
 	private startInterval() {
@@ -53,10 +53,11 @@ export class SidebarController {
 	private async refreshProjects() {
 		const projects = await this.fetchProjects();
 		if (projects) {
-			const isConnected = await ConnectionHandler.getConnectionStatus();
-			if (!projects.length && !this.noProjectMessageDisplayed && isConnected) {
+			const isAppOn = await AppStateHandler.getConnectionStatus();
+			if (!projects.length && !this.noProjectMessageDisplayed && isAppOn) {
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
+					nameSpaces.connection,
 					translate().t("errors.noProjectsFound")
 				);
 				this.noProjectMessageDisplayed = true;
