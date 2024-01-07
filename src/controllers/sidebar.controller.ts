@@ -52,10 +52,8 @@ export class SidebarController {
 
 	private async refreshProjects() {
 		const projects = await this.fetchProjects();
-
 		if (projects) {
-			const isConnected = await ConnectionHandler.getConnectionStatus();
-			if (!projects.length && !this.noProjectMessageDisplayed && isConnected) {
+			if (!projects.length && !this.noProjectMessageDisplayed && ConnectionHandler.isConnected) {
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
 					translate().t("errors.noProjectsFound")
