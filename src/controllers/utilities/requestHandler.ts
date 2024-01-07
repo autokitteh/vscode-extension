@@ -1,8 +1,5 @@
 import { nameSpaces, vsCommands } from "@constants";
-import { ConnectionHandler } from "@controllers/utilities/connectionHandler";
 import { errorHelper } from "@controllers/utilities/errorHelper";
-import { translate } from "@i18n";
-import { LoggerService } from "@services";
 import { ServiceResponse } from "@type/services.types";
 import { commands } from "vscode";
 
