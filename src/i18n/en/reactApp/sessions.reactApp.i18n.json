@@ -8,6 +8,7 @@
 	"statuses": {
 		"created": "Created",
 		"running": "Running",
+		"unspecified": "Unspecified",
 		"error": "Error",
 		"completed": "Completed"
 	}

@@ -62,31 +62,27 @@ export class ProjectController {
 	}
 
 	async getProjectDeployments(): Promise<Deployment[] | undefined> {
-		const isAppOn = await AppStateHandler.getConnectionStatus();
-		if (isAppOn) {
-			const { data: environments, error: environmentsError } =
-				await RequestHandler.handleServiceResponse(
-					() => EnvironmentsService.listByProjectId(this.projectId),
-					{ onFailureMessage: translate().t("errors.environmentsNotDefinedForProject") }
-				);
+		const { data: environments, error: environmentsError } =
+			await RequestHandler.handleServiceResponse(
+				() => EnvironmentsService.listByProjectId(this.projectId),
+				{ onFailureMessage: translate().t("errors.environmentsNotDefinedForProject") }
+			);
 
-			if (environmentsError || !environments?.length) {
-				return [];
-			}
-
-			const environmentIds = getIds(environments, "envId");
-			const { data: projectDeployments, error: deploymentsError } =
-				await RequestHandler.handleServiceResponse(
-					() => DeploymentsService.listByEnvironmentIds(environmentIds),
-					{ onFailureMessage: translate().t("errors.deploymentsNotDefinedForProject") }
-				);
-
-			if (deploymentsError) {
-				return;
-			}
-			return projectDeployments;
+		if (environmentsError || !environments?.length) {
+			return [];
 		}
-		return;
+
+		const environmentIds = getIds(environments, "envId");
+		const { data: projectDeployments, error: deploymentsError } =
+			await RequestHandler.handleServiceResponse(
+				() => DeploymentsService.listByEnvironmentIds(environmentIds),
+				{ onFailureMessage: translate().t("errors.deploymentsNotDefinedForProject") }
+			);
+
+		if (deploymentsError) {
+			return;
+		}
+		return projectDeployments;
 	}
 
 	async loadDeployments() {
@@ -97,7 +93,8 @@ export class ProjectController {
 		const { startIndex, endIndex } =
 			this.entitySectionDisplayBounds[ProjectViewSections.DEPLOYMENTS];
 
-		const deploymentsForView = projectDeployments?.slice(startIndex, endIndex) || undefined;
+		// const deploymentsForView = projectDeployments?.slice(startIndex, endIndex) || undefined;
+		const deploymentsForView = projectDeployments;
 
 		if (!isEqual(this.deployments, deploymentsForView)) {
 			this.deployments = deploymentsForView;
@@ -131,7 +128,8 @@ export class ProjectController {
 		sortArray(sessions, "createdAt", SortOrder.DESC);
 		this.totalItemsPerSection[ProjectViewSections.SESSIONS] = sessions?.length || 0;
 		const { startIndex, endIndex } = this.entitySectionDisplayBounds[ProjectViewSections.SESSIONS];
-		const sessionsForView = sessions?.slice(startIndex, endIndex) || undefined;
+		// const sessionsForView = sessions?.slice(startIndex, endIndex) || undefined;
+		const sessionsForView = sessions;
 
 		if (isEqual(this.sessions, sessionsForView) && this.sessions?.length) {
 			return;

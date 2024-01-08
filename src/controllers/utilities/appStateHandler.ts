@@ -1,13 +1,13 @@
 import { ConfigurationTarget, workspace } from "vscode";
 
 export class AppStateHandler {
-	static async updateConnectionStatus(isEnabled: boolean): Promise<void> {
+	static async set(isEnabled: boolean): Promise<void> {
 		await workspace
 			.getConfiguration()
 			.update("autokitteh.serviceEnabled", isEnabled, ConfigurationTarget.Global);
 	}
 
-	static async getConnectionStatus(): Promise<boolean> {
+	static async get(): Promise<boolean> {
 		return (await workspace
 			.getConfiguration()
 			.get("autokitteh.serviceEnabled", ConfigurationTarget.Global)) as unknown as boolean;

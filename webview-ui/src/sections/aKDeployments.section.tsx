@@ -55,10 +55,15 @@ export const AKDeployments = ({
 	};
 
 	return (
-		<div className="mt-4 min-h-48 max-h-48 overflow-y-auto overflow-x-hidden" onScroll={console.log}>
+		<div
+			className="mt-4 min-h-48 max-h-48 overflow-y-auto overflow-x-hidden"
+			onScroll={console.log}
+		>
 			{deployments && !!totalDeployments ? (
 				<div className="flex justify-end mb-2 w-full min-h-[20px] sticky">
-					{endIndex} {translate().t("reactApp.general.outOf")} {totalDeployments}
+					{`${translate().t("reactApp.general.totalOf")} ${totalDeployments} ${translate().t(
+						"reactApp.general.deployments"
+					)}`}
 				</div>
 			) : (
 				<div className="flex mb-2 w-full min-h-[20px]" />
@@ -119,20 +124,6 @@ export const AKDeployments = ({
 			{deployments && deployments.length === 0 && (
 				<AKTableMessage>{translate().t("reactApp.deployments.noDeployments")}</AKTableMessage>
 			)}
-			<div className="flex w-full justify-center mt-4">
-				{!!deployments && !!totalDeployments && endIndex < totalDeployments && (
-					<AKButton onClick={showMore} classes="mr-1">
-						{translate().t("reactApp.general.showMore")}
-					</AKButton>
-				)}
-				{!!deployments &&
-					!!deployments.length &&
-					endIndex > pageLimits[ProjectViewSections.DEPLOYMENTS] && (
-						<AKButton classes="ml-1" onClick={showLess}>
-							{translate().t("reactApp.general.showLess")}
-						</AKButton>
-					)}
-			</div>
 		</div>
 	);
 };

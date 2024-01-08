@@ -1,4 +1,4 @@
-export const nameSpaces = {
+export const namespaces = {
 	applyManifest: "Manifest Application",
 	connection: "Connection",
 	serverRequests: "Server Requests",

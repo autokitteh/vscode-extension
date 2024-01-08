@@ -1,5 +1,5 @@
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
-import { nameSpaces } from "@constants";
+import { namespaces } from "@constants";
 import { translate } from "@i18n";
 import { convertSessionProtoToModel } from "@models/session.model";
 import { LoggerService } from "@services";
@@ -16,7 +16,7 @@ export class SessionsService {
 			const sessions = response.sessions.map(convertSessionProtoToModel);
 			return { data: sessions, error: undefined };
 		} catch (error) {
-			LoggerService.getInstance().error(nameSpaces.sessionsService, (error as Error).message);
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 			return { data: undefined, error };
 		}
 	}
@@ -27,7 +27,7 @@ export class SessionsService {
 			const sessions = response.sessions.map((session) => convertSessionProtoToModel(session));
 			return { data: sessions, error: undefined };
 		} catch (error) {
-			LoggerService.getInstance().error(nameSpaces.sessionsService, (error as Error).message);
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 
 			return { data: undefined, error };
 		}
@@ -58,8 +58,8 @@ export class SessionsService {
 
 				return { data: sessions, error: undefined };
 			} else {
-				LoggerService.getInstance().error(
-					nameSpaces.sessionsService,
+				LoggerService.error(
+					namespaces.sessionsService,
 					translate().t("errors.projectEnvironmentsNotFound")
 				);
 
@@ -69,7 +69,7 @@ export class SessionsService {
 				};
 			}
 		} catch (error) {
-			LoggerService.getInstance().error(nameSpaces.sessionsService, (error as Error).message);
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 
 			return {
 				data: undefined,

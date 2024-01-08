@@ -1,13 +1,13 @@
 import * as path from "path";
 import { ConnectError } from "@connectrpc/connect";
-import { nameSpaces, vsCommands } from "@constants";
+import { namespaces, vsCommands } from "@constants";
 import { errorHelper } from "@controllers/utilities/errorHelper";
 import { translate } from "@i18n";
 import { LoggerService, ManifestService } from "@services";
 import { commands, window } from "vscode";
 
 export const applyManifest = async () => {
-	const logger = LoggerService.getInstance();
+	const logger = LoggerService;
 	if (!window.activeTextEditor) {
 		return;
 	}
@@ -19,13 +19,13 @@ export const applyManifest = async () => {
 
 	const { data: logs, error } = await ManifestService.applyManifest(mainfestYaml, fileDirPath);
 	if (error) {
-		errorHelper(nameSpaces.applyManifest, error);
+		errorHelper(namespaces.applyManifest, error);
 		return;
 	}
-	(logs || []).forEach((log) => logger.log(nameSpaces.applyManifest, `${log}`));
+	(logs || []).forEach((log) => logger.info(namespaces.applyManifest, `${log}`));
 	commands.executeCommand(
 		vsCommands.showInfoMessage,
-		nameSpaces.applyManifest,
+		namespaces.applyManifest,
 		translate().t("manifest.appliedSuccessfully")
 	);
 };

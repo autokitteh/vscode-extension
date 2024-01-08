@@ -1,28 +1,37 @@
-import * as vscode from "vscode";
-import  moment from "moment"
+import moment from "moment";
+import { window, OutputChannel } from "vscode";
 
 export class LoggerService {
-	private static instance: LoggerService;
-	private outputChannel: vscode.OutputChannel;
+	private outputChannel: OutputChannel;
 	private loggerNamespace: string = "autokitteh";
+	static outputChannel: OutputChannel;
 
 	private constructor() {
-		this.outputChannel = vscode.window.createOutputChannel("autokitteh");
+		this.outputChannel = window.createOutputChannel(this.loggerNamespace);
 		this.outputChannel.show();
 	}
 
-	public static getInstance(): LoggerService {
-		if (!LoggerService.instance) {
-			LoggerService.instance = new LoggerService();
-		}
-		return LoggerService.instance;
+	public static info(namespace: string, message: string): void {
+		this.outputChannel.appendLine(
+			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [LOG] ${message}`
+		);
 	}
 
-	public log(namespace: string, message: string): void {
-		this.outputChannel.appendLine(`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [LOG] ${message}`);
+	public static debug(namespace: string, message: string): void {
+		this.outputChannel.appendLine(
+			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [DEBUG] ${message}`
+		);
 	}
 
-	public error(namespace: string, message: string): void {
-		this.outputChannel.appendLine(`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [ERROR] ${message}`);
+	public static log(namespace: string, message: string): void {
+		this.outputChannel.appendLine(
+			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [LOG] ${message}`
+		);
+	}
+
+	public static error(namespace: string, message: string): void {
+		this.outputChannel.appendLine(
+			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [ERROR] ${message}`
+		);
 	}
 }

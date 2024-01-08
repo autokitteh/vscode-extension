@@ -40,16 +40,18 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 	);
 
 	return (
-		<div className="mt-4 min-h-48 max-h-4 overflow-y-auto overflow-x-hidden">
+		<div className="mt-4 min-h-48 max-h-48 overflow-y-auto overflow-x-hidden">
 			{sessions && !!totalSessions ? (
-				<div className="flex justify-end mb-2 w-full min-h-[20px]">
-					{endIndex} {translate().t("reactApp.general.outOf")} {totalSessions}
+				<div className="flex justify-end mb-2 w-full min-h-[20px] sticky">
+					{`${translate().t("reactApp.general.totalOf")} ${totalSessions} ${translate().t(
+						"reactApp.general.sessions"
+					)}`}
 				</div>
 			) : (
 				<div className="mb-2 w-full min-h-[20px]" />
 			)}
 			<AKTable>
-			<AKTableHeader classes="sticky top-0">
+				<AKTableHeader classes="sticky top-0">
 					<AKTableHeaderCell>{translate().t("reactApp.sessions.time")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.sessions.status")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.sessions.sessionId")}</AKTableHeaderCell>
@@ -78,18 +80,6 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 			{sessions && sessions.length === 0 && (
 				<AKTableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</AKTableMessage>
 			)}
-			<div className="flex w-full justify-center mt-4">
-				{!!sessions && !!totalSessions && endIndex < totalSessions && (
-					<AKButton onClick={showMore} classes="mr-1">
-						{translate().t("reactApp.general.showMore")}
-					</AKButton>
-				)}
-				{!!sessions && !!sessions.length && endIndex > pageLimits[ProjectViewSections.SESSIONS] && (
-					<AKButton classes="ml-1" onClick={showLess}>
-						{translate().t("reactApp.general.showLess")}
-					</AKButton>
-				)}
-			</div>
 		</div>
 	);
 };

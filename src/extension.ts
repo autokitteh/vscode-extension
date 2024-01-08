@@ -21,11 +21,11 @@ export async function activate(context: ExtensionContext) {
 	const tabsManager = new TabsManagerController(context);
 
 	commands.registerCommand(vsCommands.connect, async () => {
-		await AppStateHandler.updateConnectionStatus(true);
+		await AppStateHandler.set(true);
 		sidebarController.connect();
 	});
 	commands.registerCommand(vsCommands.disconnect, async () => {
-		await AppStateHandler.updateConnectionStatus(false);
+		await AppStateHandler.set(false);
 		sidebarController.disconnect();
 	});
 	context.subscriptions.push(
@@ -55,7 +55,7 @@ export async function activate(context: ExtensionContext) {
 		commands.registerCommand(vsCommands.openConfigSetupWalkthrough, openWalkthrough)
 	);
 
-	const isAppOn = await AppStateHandler.getConnectionStatus();
+	const isAppOn = await AppStateHandler.get();
 
 	if (isAppOn) {
 		commands.executeCommand(vsCommands.connect);

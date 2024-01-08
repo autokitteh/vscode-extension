@@ -1,4 +1,4 @@
-import { nameSpaces, vsCommands } from "@constants";
+import { namespaces, vsCommands } from "@constants";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { translate } from "@i18n";
@@ -41,8 +41,7 @@ export class SidebarController {
 			}
 			return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
 		}
-		commands.executeCommand(vsCommands.disconnect);
-		return [];
+		return;
 	};
 
 	private startInterval() {
@@ -53,15 +52,6 @@ export class SidebarController {
 	private async refreshProjects() {
 		const projects = await this.fetchProjects();
 		if (projects) {
-			const isAppOn = await AppStateHandler.getConnectionStatus();
-			if (!projects.length && !this.noProjectMessageDisplayed && isAppOn) {
-				commands.executeCommand(
-					vsCommands.showErrorMessage,
-					nameSpaces.connection,
-					translate().t("errors.notConnected")
-				);
-				this.noProjectMessageDisplayed = true;
-			}
 			if (!isEqual(projects, this.projects)) {
 				this.projects = projects;
 				this.view.refresh(this.projects);

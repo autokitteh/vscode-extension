@@ -1,6 +1,6 @@
 import { ActivateResponse, ListResponse } from "@ak-proto-ts/deployments/v1/svc_pb";
 import { deploymentsClient } from "@api/grpc/clients.grpc.api";
-import { nameSpaces } from "@constants";
+import { namespaces } from "@constants";
 import { convertDeploymentProtoToModel } from "@models/deployment.model";
 import { LoggerService } from "@services/logger.service";
 import { Deployment } from "@type/models";
@@ -41,7 +41,7 @@ export class DeploymentsService {
 				error: unsettledResponses.length > 0 ? unsettledResponses : undefined,
 			};
 		} catch (error) {
-			LoggerService.getInstance().error(nameSpaces.deploymentsService, (error as Error).message);
+			LoggerService.error(namespaces.deploymentsService, (error as Error).message);
 			return { data: undefined, error };
 		}
 	}
@@ -54,7 +54,7 @@ export class DeploymentsService {
 
 			return { data: createResponse.deploymentId, error: undefined };
 		} catch (error) {
-			LoggerService.getInstance().error(nameSpaces.deploymentsService, (error as Error).message);
+			LoggerService.error(namespaces.deploymentsService, (error as Error).message);
 			return { data: undefined, error };
 		}
 	}
@@ -63,7 +63,7 @@ export class DeploymentsService {
 			const activateResponse = await deploymentsClient.activate({ deploymentId });
 			return { data: activateResponse, error: undefined };
 		} catch (error) {
-			LoggerService.getInstance().error(nameSpaces.deploymentsService, (error as Error).message);
+			LoggerService.error(namespaces.deploymentsService, (error as Error).message);
 			return { data: undefined, error };
 		}
 	}
