@@ -1,14 +1,13 @@
 import * as path from "path";
 import { ConnectError } from "@connectrpc/connect";
-import { vsCommands } from "@constants";
+import { namespaces, vsCommands } from "@constants";
 import { errorHelper } from "@controllers/utilities/errorHelper";
 import { translate } from "@i18n";
-import { ManifestService } from "@services";
+import { LoggerService, ManifestService } from "@services";
 import { commands, window } from "vscode";
 
 export const applyManifest = async () => {
-	let output = window.createOutputChannel("autokitteh");
-
+	const logger = LoggerService;
 	if (!window.activeTextEditor) {
 		return;
 	}
@@ -18,22 +17,15 @@ export const applyManifest = async () => {
 	const filePath = document.uri.fsPath;
 	const fileDirPath = path.dirname(filePath);
 
-	output.clear();
-
 	const { data: logs, error } = await ManifestService.applyManifest(mainfestYaml, fileDirPath);
 	if (error) {
-		errorHelper(error);
-
-		if (error instanceof ConnectError) {
-			output.appendLine(error.rawMessage);
-		}
+		errorHelper(namespaces.applyManifest, error);
 		return;
 	}
-	(logs || []).forEach((log) => output.appendLine(`${log}\r\n`));
+	(logs || []).forEach((log) => logger.info(namespaces.applyManifest, `${log}`));
 	commands.executeCommand(
 		vsCommands.showInfoMessage,
+		namespaces.applyManifest,
 		translate().t("manifest.appliedSuccessfully")
 	);
-
-	output.show();
 };

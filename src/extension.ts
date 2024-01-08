@@ -4,7 +4,7 @@ import { vsCommands } from "@constants";
 import { sidebarControllerRefreshRate } from "@constants/api.constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
-import { ConnectionHandler } from "@controllers/utilities/connectionHandler";
+import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
 import {
@@ -21,14 +21,11 @@ export async function activate(context: ExtensionContext) {
 	const tabsManager = new TabsManagerController(context);
 
 	commands.registerCommand(vsCommands.connect, async () => {
-		await ConnectionHandler.connect();
+		await AppStateHandler.set(true);
 		sidebarController.connect();
 	});
-	commands.registerCommand(vsCommands.testConnection, async () => {
-		await ConnectionHandler.testConnection();
-	});
 	commands.registerCommand(vsCommands.disconnect, async () => {
-		await ConnectionHandler.disconnect();
+		await AppStateHandler.set(false);
 		sidebarController.disconnect();
 	});
 	context.subscriptions.push(
@@ -58,11 +55,9 @@ export async function activate(context: ExtensionContext) {
 		commands.registerCommand(vsCommands.openConfigSetupWalkthrough, openWalkthrough)
 	);
 
-	const isConnected = (await workspace
-		.getConfiguration()
-		.get("autokitteh.serviceEnabled")) as boolean;
+	const isAppOn = await AppStateHandler.get();
 
-	if (isConnected) {
+	if (isAppOn) {
 		commands.executeCommand(vsCommands.connect);
 	}
 }

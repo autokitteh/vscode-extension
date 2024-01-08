@@ -1,7 +1,9 @@
 import { SessionHistory } from "@ak-proto-ts/sessions/v1/session_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
+import { namespaces } from "@constants";
 import { translate } from "@i18n";
 import { convertSessionProtoToModel } from "@models/session.model";
+import { LoggerService } from "@services";
 import { EnvironmentsService } from "@services/environments.service";
 import { Session } from "@type/models";
 import { ServiceResponse } from "@type/services.types";
@@ -15,6 +17,7 @@ export class SessionsService {
 			const sessions = response.sessions.map(convertSessionProtoToModel);
 			return { data: sessions, error: undefined };
 		} catch (error) {
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 			return { data: undefined, error };
 		}
 	}
@@ -25,6 +28,8 @@ export class SessionsService {
 			const sessions = response.sessions.map((session) => convertSessionProtoToModel(session));
 			return { data: sessions, error: undefined };
 		} catch (error) {
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
+
 			return { data: undefined, error };
 		}
 	}
@@ -42,9 +47,10 @@ export class SessionsService {
 
 	static async listByProjectId(projectId: string): Promise<ServiceResponse<Session[]>> {
 		try {
-			const { data: projectEnvironments } = await EnvironmentsService.listByProjectId(projectId);
+			const { data: projectEnvironments, error: environmentsError } =
+				await EnvironmentsService.listByProjectId(projectId);
 
-			if (projectEnvironments) {
+			if (!environmentsError && projectEnvironments) {
 				const sessionsPromises = projectEnvironments.map(async (environment) => {
 					const sessions = await this.listByEnvironmentId(environment.envId);
 					return sessions;
@@ -64,12 +70,19 @@ export class SessionsService {
 
 				return { data: sessions, error: undefined };
 			} else {
+				LoggerService.error(
+					namespaces.sessionsService,
+					translate().t("errors.projectEnvironmentsNotFound")
+				);
+
 				return {
 					data: undefined,
 					error: new Error(translate().t("errors.projectEnvironmentsNotFound")),
 				};
 			}
 		} catch (error) {
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
+
 			return {
 				data: undefined,
 				error,

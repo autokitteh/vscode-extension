@@ -1,4 +1,5 @@
 import { vsCommands, pageLimits } from "@constants";
+import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType, ProjectViewSections, SortOrder } from "@enums";
 import { translate } from "@i18n";
@@ -15,7 +16,6 @@ import { ProjectCB } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import { EntitySectionRowsRange } from "@type/views/webview";
 import { sortArray, getIds } from "@utilities";
-import { MessageHandler } from "@views";
 import isEqual from "lodash/isEqual";
 import { commands } from "vscode";
 
@@ -80,12 +80,12 @@ export class ProjectController {
 			);
 
 		if (deploymentsError) {
-			return [];
+			return;
 		}
 		return projectDeployments;
 	}
 
-	async refreshView() {
+	async loadDeployments() {
 		const projectDeployments = await this.getProjectDeployments();
 		sortArray(projectDeployments, "createdAt", SortOrder.DESC);
 		this.totalItemsPerSection[ProjectViewSections.DEPLOYMENTS] = projectDeployments?.length || 0;
@@ -93,7 +93,8 @@ export class ProjectController {
 		const { startIndex, endIndex } =
 			this.entitySectionDisplayBounds[ProjectViewSections.DEPLOYMENTS];
 
-		const deploymentsForView = projectDeployments?.slice(startIndex, endIndex) || undefined;
+		// const deploymentsForView = projectDeployments?.slice(startIndex, endIndex) || undefined; @TODO: if we want to implement local pagination
+		const deploymentsForView = projectDeployments;
 
 		if (!isEqual(this.deployments, deploymentsForView)) {
 			this.deployments = deploymentsForView;
@@ -107,6 +108,10 @@ export class ProjectController {
 				payload: deploymentsViewObject,
 			});
 		}
+	}
+
+	async refreshView() {
+		await this.loadDeployments();
 		if (this.selectedDeploymentId) {
 			await this.selectDeployment(this.selectedDeploymentId);
 		}
@@ -123,7 +128,8 @@ export class ProjectController {
 		sortArray(sessions, "createdAt", SortOrder.DESC);
 		this.totalItemsPerSection[ProjectViewSections.SESSIONS] = sessions?.length || 0;
 		const { startIndex, endIndex } = this.entitySectionDisplayBounds[ProjectViewSections.SESSIONS];
-		const sessionsForView = sessions?.slice(startIndex, endIndex) || undefined;
+		// const sessionsForView = sessions?.slice(startIndex, endIndex) || undefined; @TODO: if we want to implement local pagination
+		const sessionsForView = sessions;
 
 		if (isEqual(this.sessions, sessionsForView) && this.sessions?.length) {
 			return;
@@ -145,9 +151,14 @@ export class ProjectController {
 		SessionsService.getHistory(sessionId);
 	}
 
-	startInterval() {
+	async startInterval() {
 		if (!this.intervalTimerId) {
+			await this.loadDeployments();
 			this.view.update({ type: MessageType.setSessionsSection, payload: undefined });
+			this.view.update({
+				type: MessageType.setProjectName,
+				payload: this.project?.name,
+			});
 
 			this.intervalTimerId = setInterval(() => this.refreshView(), this.refreshRate);
 		}
@@ -199,6 +210,12 @@ export class ProjectController {
 				startIndex: 0,
 				endIndex: pageLimits[entity],
 			};
+		}
+		if (entity === ProjectViewSections.DEPLOYMENTS) {
+			this.loadDeployments();
+		}
+		if (entity === ProjectViewSections.SESSIONS && this.selectedDeploymentId) {
+			this.selectDeployment(this.selectedDeploymentId);
 		}
 	}
 

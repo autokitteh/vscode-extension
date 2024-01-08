@@ -16,7 +16,7 @@ export const AKDeploymentState = ({
 			);
 		case DeploymentState.INACTIVE_DEPLOYMENT:
 			return (
-				<div className="text-red-500">
+				<div className="text-gray-400">
 					{translate().t("reactApp.deployments.statuses.inactive")}
 				</div>
 			);

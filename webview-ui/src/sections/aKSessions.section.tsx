@@ -3,7 +3,7 @@ import { pageLimits } from "@constants/projectsView.constants";
 import { MessageType, ProjectViewSections } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
-import { AKButton } from "@react-components";
+import { AKSessionState } from "@react-components";
 import {
 	AKTable,
 	AKTableMessage,
@@ -46,22 +46,30 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 	};
 
 	return (
-		<div className="mt-4">
-			{sessions && !!totalSessions && (
-				<div className="flex justify-end mb-2 w-full">
-					{endIndex} {translate().t("reactApp.general.outOf")} {totalSessions}
+		<div className="mt-4 min-h-48 max-h-48 overflow-y-auto overflow-x-hidden">
+			{sessions && !!totalSessions ? (
+				<div className="flex justify-end mb-2 w-full min-h-[20px] sticky">
+					{`${translate().t("reactApp.general.totalOf")} ${totalSessions} ${translate().t(
+						"reactApp.general.sessions"
+					)}`}
 				</div>
+			) : (
+				<div className="mb-2 w-full min-h-[20px]" />
 			)}
 			<AKTable>
-				<AKTableHeader>
+				<AKTableHeader classes="sticky top-0">
 					<AKTableHeaderCell>{translate().t("reactApp.sessions.time")}</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.sessions.status")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.sessions.sessionId")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.sessions.actions")}</AKTableHeaderCell>
 				</AKTableHeader>
 				{sessions &&
 					sessions.map((session: Session) => (
 						<AKTableRow key={session.sessionId}>
-							<AKTableCell>{moment(session.createdAt as unknown as string).fromNow()}</AKTableCell>
+							<AKTableCell>{moment(session.createdAt).fromNow()}</AKTableCell>
+							<AKTableCell>
+								<AKSessionState sessionState={session.state} />
+							</AKTableCell>
 							<AKTableCell>{session.sessionId}</AKTableCell>
 							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)}>
 								<div className="codicon codicon-output"></div>
@@ -78,18 +86,6 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 			{sessions && sessions.length === 0 && (
 				<AKTableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</AKTableMessage>
 			)}
-			<div className="flex w-full justify-center mt-4">
-				{!!sessions && !!totalSessions && endIndex < totalSessions && (
-					<AKButton onClick={showMore} classes="mr-1">
-						{translate().t("reactApp.general.showMore")}
-					</AKButton>
-				)}
-				{!!sessions && !!sessions.length && endIndex > pageLimits[ProjectViewSections.SESSIONS] && (
-					<AKButton classes="ml-1" onClick={showLess}>
-						{translate().t("reactApp.general.showLess")}
-					</AKButton>
-				)}
-			</div>
 		</div>
 	);
 };

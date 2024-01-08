@@ -3,7 +3,7 @@ import { vsCommands } from "@constants";
 import { translate } from "@i18n/translation.i18n";
 import { commands } from "vscode";
 
-export const errorHelper = (error: unknown, onFailureMessage?: string) => {
+export const errorHelper = (namespace: string, error: unknown, onFailureMessage?: string) => {
 	let errorMessage = translate().t(["errors.unexpectedError"]);
 	if (onFailureMessage) {
 		errorMessage = translate().t(onFailureMessage);
@@ -18,9 +18,9 @@ export const errorHelper = (error: unknown, onFailureMessage?: string) => {
 		errorMessage = `${errorMessage}. ${error}`;
 		if (process.env.DEBUG_MODE === "true") {
 			console.error(errorMessage);
-			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+			commands.executeCommand(vsCommands.showErrorMessage, namespace, errorMessage);
 			throw new Error(errorMessage);
 		}
 	}
-	commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+	commands.executeCommand(vsCommands.showErrorMessage, namespace, errorMessage);
 };
