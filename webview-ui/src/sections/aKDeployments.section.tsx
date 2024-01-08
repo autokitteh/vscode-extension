@@ -55,16 +55,16 @@ export const AKDeployments = ({
 	};
 
 	return (
-		<div className="mt-4">
+		<div className="mt-4 max-h-48 overflow-y-auto overflow-x-hidden" onScroll={console.log}>
 			{deployments && !!totalDeployments ? (
-				<div className="flex justify-end mb-2 w-full min-h-[20px]">
+				<div className="flex justify-end mb-2 w-full min-h-[20px] sticky">
 					{endIndex} {translate().t("reactApp.general.outOf")} {totalDeployments}
 				</div>
 			) : (
 				<div className="flex mb-2 w-full min-h-[20px]" />
 			)}
 			<AKTable>
-				<AKTableHeader>
+				<AKTableHeader classes="sticky top-0">
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.time")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.status")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.sessions")}</AKTableHeaderCell>
