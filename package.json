@@ -24,9 +24,8 @@
 					"tiltfile"
 				],
 				"extensions": [
-					"Tiltfile",
-					".tiltfile",
-					".tilt"
+					"Starlark",
+					".star"
 				],
 				"configuration": "./src/language/syntaxes/tiltfile.configuration.json"
 			}
