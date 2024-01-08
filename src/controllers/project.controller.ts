@@ -17,10 +17,10 @@ import { ProjectCB } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import { EntitySectionRowsRange } from "@type/views/webview";
 import { sortArray, getIds } from "@utilities";
-import { SessionView } from "@views/sessionHistory.view";
 import { get } from "lodash";
 import isEqual from "lodash/isEqual";
-import { commands } from "vscode";
+import moment from "moment";
+import { commands, OutputChannel, window } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
@@ -34,6 +34,7 @@ export class ProjectController {
 	private refreshRate: number;
 	private entitySectionDisplayBounds: PageLimits;
 	private selectedDeploymentId?: string;
+	private outputChannel: OutputChannel;
 
 	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
 		this.view = projectView;
@@ -54,6 +55,8 @@ export class ProjectController {
 				endIndex: pageLimits[ProjectViewSections.SESSIONS],
 			},
 		};
+
+		this.outputChannel = window.createOutputChannel("autokitteh-logs");
 	}
 
 	reveal(): void {
@@ -123,11 +126,28 @@ export class ProjectController {
 		const { data: sessionHistory } = await SessionsService.getHistoryBySessionId(sessionId);
 		const sessionStates = sessionHistory?.states || [];
 		const lastState = sessionStates[sessionStates.length - 1] as { states: { case: string } };
-
+		this.outputChannel.clear();
+		this.outputChannel.appendLine(`Session: ${sessionId}`);
 		if (lastState.states!.case === "completed") {
 			const lastStateLogs = get(lastState, "states.value.prints", []);
-			commands.executeCommand(vsCommands.showSessionLog, lastStateLogs);
+
+			if (!lastStateLogs.length) {
+				this.outputChannel.appendLine("No logs to display");
+			}
+
+			for (let i = 0; i < lastStateLogs.length; i++) {
+				const logStr = lastStateLogs[i] as string;
+				const logTime = logStr.split("\t")[0];
+				this.outputChannel.appendLine(lastStateLogs[i]);
+			}
 		}
+		if (lastState.states!.case === "error") {
+			const lastStateErrorMessage = get(lastState, "states.value.error.message", "");
+			const logTime = (lastStateErrorMessage as string).split(" ")[0];
+
+			this.outputChannel.appendLine(`Error: ${lastStateErrorMessage}`);
+		}
+		this.outputChannel.show();
 	}
 	async selectDeployment(deploymentId: string) {
 		this.selectedDeploymentId = deploymentId;
