@@ -24,7 +24,7 @@ export const AKDeployments = ({
 }: DeploymentSectionViewModel) => {
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
-	const [selectDeployment, setSelectedDeployment] = useState("");
+	const [selectedDeployment, setSelectedDeployment] = useState("");
 
 	useEffect(() => {
 		if (deployments && isLoading) {
@@ -80,7 +80,7 @@ export const AKDeployments = ({
 					deployments.map((deployment: Deployment) => (
 						<AKTableRow
 							key={deployment.deploymentId}
-							isSelected={selectDeployment === deployment.deploymentId}
+							isSelected={selectedDeployment === deployment.deploymentId}
 						>
 							<AKTableCell
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}

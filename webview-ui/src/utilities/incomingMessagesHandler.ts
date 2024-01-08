@@ -1,5 +1,6 @@
 import { MessageType, Theme } from "@enums";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
+import { SessionLogViewModel } from "@models/views";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
 
@@ -21,6 +22,8 @@ export const HandleIncomingMessages = (
 			break;
 		case MessageType.setSessionsSection:
 			handlers.setSessionsSection(payload as SessionSectionViewModel);
+		case MessageType.setSessionLogs:
+			handlers.setSessionLogsPage(payload as SessionLogViewModel);
 		default:
 	}
 };

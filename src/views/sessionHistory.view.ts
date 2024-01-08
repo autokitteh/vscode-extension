@@ -1,16 +1,14 @@
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n/translation.i18n";
-import { IProjectView, IProjectViewDelegate } from "@interfaces";
-import { Message } from "@type";
-import { EntitySectionRowsRange } from "@type/views/webview";
+import { ISessionView, ISessionViewDelegate } from "@interfaces/sessionView.interface";
 import { getNonce } from "@utilities";
 import { getUri } from "@utilities/getUri.utils";
 import * as vscode from "vscode";
-import { Uri, window } from "vscode";
+import { Uri } from "vscode";
 
-export class ProjectView implements IProjectView {
+export class SessionView implements ISessionView {
 	private panel?: vscode.WebviewPanel;
-	public delegate?: IProjectViewDelegate;
+	public delegate?: ISessionViewDelegate;
 
 	constructor(private context: vscode.ExtensionContext) {}
 
@@ -25,38 +23,11 @@ export class ProjectView implements IProjectView {
 		});
 	}
 
-	public setupWebviewMessageListener() {
-		this.panel?.webview.onDidReceiveMessage(
-			(message: Message) => {
-				switch (message.type) {
-					case MessageType.buildProject:
-						this.delegate?.build?.();
-						break;
-					case MessageType.runProject:
-						this.delegate?.run?.();
-						break;
-					case MessageType.setRowsRangePerSection:
-						this.delegate?.setRowsRangePerSection?.(message.payload as EntitySectionRowsRange);
-						break;
-					case MessageType.selectDeployment:
-						this.delegate?.selectDeployment?.(message.payload as string);
-						break;
-					case MessageType.displaySessionLogs:
-						this.delegate?.displaySessionLogs?.(message.payload as string);
-						break;
-				}
-			},
-			undefined,
-			this.context.subscriptions
-		);
-	}
-
 	public onBlur() {
 		this.delegate?.onBlur?.();
 	}
 
 	public onFocus() {
-		this.setThemeByEditor();
 		this.delegate?.onFocus?.();
 	}
 
@@ -64,11 +35,11 @@ export class ProjectView implements IProjectView {
 		this.delegate?.onFocus?.();
 	}
 
-	public show(projectName: string) {
+	public show(sessionLogs: Array<string>) {
 		this.panel = vscode.window.createWebviewPanel(
-			"project",
-			`${translate().t("general.companyName")}: ${projectName}`,
-			vscode.ViewColumn.One,
+			"sessionLog",
+			`${translate().t("general.companyName")}`,
+			vscode.ViewColumn.Two,
 			{
 				enableScripts: true,
 				localResourceRoots: [
@@ -90,40 +61,12 @@ export class ProjectView implements IProjectView {
 		this.panel.onDidDispose(() => {
 			this.delegate?.onClose?.();
 		});
-		this.setupWebviewMessageListener();
 
 		this.panel.webview.html = this.getWebviewContent();
 
 		this.panel.webview.postMessage?.({
-			type: MessageType.setProjectName,
-			payload: projectName,
-		});
-
-		const themeKind = window.activeColorTheme.kind as number as Theme;
-		this.changeTheme(themeKind);
-		this.addThemeListener();
-		this.setThemeByEditor();
-	}
-
-	setThemeByEditor = () => {
-		const themeKind = window.activeColorTheme.kind as number as Theme;
-		this.changeTheme(themeKind);
-		this.addThemeListener();
-	};
-
-	private changeTheme(themeKind: Theme) {
-		this.panel?.webview.postMessage?.({
-			type: MessageType.setTheme,
-			payload: themeKind,
-		});
-	}
-
-	private addThemeListener() {
-		return window.onDidChangeActiveColorTheme((editor) => {
-			if (editor) {
-				const themeKind = (editor.kind || window.activeColorTheme.kind) as number as Theme;
-				this.changeTheme(themeKind);
-			}
+			type: MessageType.setSessionLogs,
+			payload: sessionLogs,
 		});
 	}
 

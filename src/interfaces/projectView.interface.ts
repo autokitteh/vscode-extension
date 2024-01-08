@@ -8,6 +8,7 @@ export interface IProjectViewDelegate {
 	run: Callback;
 	setRowsRangePerSection: SectionRowsRangeCB;
 	selectDeployment?: CallbackWStringIdParam;
+	displaySessionLogs?: CallbackWStringIdParam;
 }
 
 export interface IProjectView {

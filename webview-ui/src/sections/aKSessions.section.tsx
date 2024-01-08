@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { pageLimits } from "@constants/projectsView.constants";
-import { ProjectViewSections } from "@enums";
+import { MessageType, ProjectViewSections } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
 import { AKSessionState } from "@react-components";
@@ -13,12 +13,15 @@ import {
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
 import { usePagination } from "@react-hooks";
+import { sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
 import moment from "moment";
 
 export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewModel) => {
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
+	const [selectedSession, setSelectedSession] = useState("");
+
 	useEffect(() => {
 		if (isLoading) {
 			setIsLoading(false);
@@ -37,6 +40,14 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 		totalSessions,
 		ProjectViewSections.SESSIONS
 	);
+
+	const selectSession = (selectedSessionId: string) => {
+		setSelectedSession(selectedSessionId);
+	};
+
+	const displaySessionLogs = (sessionId: string) => {
+		sendMessage(MessageType.displaySessionLogs, sessionId);
+	};
 
 	return (
 		<div className="mt-4 min-h-48 max-h-48 overflow-y-auto overflow-x-hidden">
@@ -58,14 +69,33 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 				</AKTableHeader>
 				{sessions &&
 					sessions.map((session: Session) => (
-						<AKTableRow key={session.sessionId}>
-							<AKTableCell>{moment(session.createdAt).fromNow()}</AKTableCell>
-							<AKTableCell>
+						<AKTableRow key={session.sessionId} isSelected={selectedSession === session.sessionId}>
+							<AKTableCell
+								onClick={() => selectSession(session.sessionId)}
+								classes={["cursor-pointer"]}
+							>
+								{moment(session.createdAt).fromNow()}
+							</AKTableCell>
+							<AKTableCell
+								onClick={() => selectSession(session.sessionId)}
+								classes={["cursor-pointer"]}
+							>
 								<AKSessionState sessionState={session.state} />
 							</AKTableCell>
-							<AKTableCell>{session.sessionId}</AKTableCell>
-							<AKTableCell>
-								<div className="codicon codicon-output"></div>
+							<AKTableCell
+								onClick={() => selectSession(session.sessionId)}
+								classes={["cursor-pointer"]}
+							>
+								{session.sessionId}
+							</AKTableCell>
+							<AKTableCell
+								onClick={() => selectSession(session.sessionId)}
+								classes={["cursor-pointer"]}
+							>
+								<div
+									className="codicon codicon-output"
+									onClick={() => displaySessionLogs(session.sessionId)}
+								></div>
 							</AKTableCell>
 						</AKTableRow>
 					))}
