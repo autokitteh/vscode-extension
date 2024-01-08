@@ -55,7 +55,7 @@ export const AKDeployments = ({
 	};
 
 	return (
-		<div className="mt-4 max-h-48 overflow-y-auto overflow-x-hidden" onScroll={console.log}>
+		<div className="mt-4 min-h-48 max-h-48 overflow-y-auto overflow-x-hidden" onScroll={console.log}>
 			{deployments && !!totalDeployments ? (
 				<div className="flex justify-end mb-2 w-full min-h-[20px] sticky">
 					{endIndex} {translate().t("reactApp.general.outOf")} {totalDeployments}
