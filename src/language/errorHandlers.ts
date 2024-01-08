@@ -1,5 +1,5 @@
 /* eslint-disable unicorn/filename-case */
-import { TiltfileLspClient } from "./lspClient";
+import { StarlarkfileLspClient } from "./lspClient";
 import {
 	CloseHandlerResult,
 	ErrorHandler,
@@ -31,7 +31,7 @@ export class PlaceholderErrorHandler implements ErrorHandler {
 
 export class TiltfileErrorHandler extends PlaceholderErrorHandler {
 	constructor(
-		private client: TiltfileLspClient,
+		private client: StarlarkfileLspClient,
 		maxRestartCount: number
 	) {
 		super();

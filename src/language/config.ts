@@ -1,7 +1,7 @@
 import { Uri, window, workspace } from "vscode";
 
-export const TILT = "tilt";
-const SECTION = "tiltfile";
+export const STARLARK_LSP = "starlark-lsp";
+const SECTION = "autokitteh";
 
 export function getConfig(uri?: Uri) {
 	if (!uri) {
@@ -9,26 +9,28 @@ export function getConfig(uri?: Uri) {
 			uri = window.activeTextEditor.document.uri;
 		}
 	}
+	console.log(workspace.getConfiguration(SECTION, uri));
+
 	return workspace.getConfiguration(SECTION, uri);
 }
 
 export type Port = number | null;
 export function getServerPort(): Port {
-	return getConfig().get<Port>("server.port") || 8080;
+	return getConfig().get<Port>("starlark-lsp.port") || 8080;
 }
 
 export function getTrace(): string {
-	return getConfig().get<string>("trace.server") || "off";
+	return getConfig().get<string>("starlark-lsp.trace") || "off";
 }
 
-export function getTiltPath(): string {
-	const path = getConfig().get<string>("tilt.path");
+export function getArguments(): string {
+	return getConfig().get<string>("autokitteh.starlark-lsp.arguments") || "";
+}
+
+export function getStarlarkLSPPath(): string {
+	const path = getConfig().get<string>("starlark-lsp.path");
 	if (path === null) {
-		return TILT;
+		return STARLARK_LSP;
 	}
-	return path || TILT;
-}
-
-export function getShowStatusBarButton(): boolean {
-	return getConfig().get<boolean>("showStatusBarButton") || true;
+	return path || STARLARK_LSP;
 }

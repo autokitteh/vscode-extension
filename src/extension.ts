@@ -1,5 +1,7 @@
 require("module-alias/register");
 
+import { TiltfileErrorWatcher } from "./language/errorWatcher";
+import { StarlarkfileLspClient } from "./language/lspClient";
 import { vsCommands } from "@constants";
 import { sidebarControllerRefreshRate } from "@constants/api.constants";
 import { SidebarController } from "@controllers";
@@ -12,8 +14,6 @@ import {
 	openUsernameInputDialog,
 	openWalkthrough,
 } from "@vscommands/walkthrough";
-import { TiltfileErrorWatcher } from "language/errorWatcher";
-import { TiltfileLspClient } from "language/lspClient";
 import { commands, ExtensionContext, workspace, window } from "vscode";
 
 export async function activate(context: ExtensionContext) {
@@ -43,11 +43,11 @@ export async function activate(context: ExtensionContext) {
 
 	const extensionName = "tiltfile";
 
-	let client: TiltfileLspClient;
+	let client: StarlarkfileLspClient;
 	let tiltfileErrorWatcher: TiltfileErrorWatcher;
 
 	const ch = window.createOutputChannel("autokitteh-tilt");
-	client = new TiltfileLspClient(context, ch);
+	client = new StarlarkfileLspClient(context, ch);
 	client.start();
 	tiltfileErrorWatcher = new TiltfileErrorWatcher(context, ch);
 	tiltfileErrorWatcher.start();

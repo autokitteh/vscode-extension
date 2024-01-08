@@ -62,17 +62,17 @@
 			}
 		],
 		"activationEvents": [
-			"onLanguage:tiltfile"
+			"onLanguage:starlark"
 		],
 		"configuration": {
 			"properties": {
-				"autokitteh.trace.server": {
+				"autokitteh.starlark-lsp.trace": {
 					"type": [
 						"string",
 						"null"
 					],
 					"default": "off",
-					"description": "Log requests and responses to Tiltfile LSP",
+					"description": "Log requests and responses to Starlark LSP",
 					"enum": [
 						"off",
 						"verbose",
@@ -81,28 +81,31 @@
 					"pattern": "off|verbose|debug",
 					"patternErrorMessage": "Invalid log level"
 				},
-				"autokitteh.server.port": {
+				"autokitteh.starlark-lsp.port": {
 					"type": [
 						"number",
 						"null"
 					],
 					"default": null,
-					"description": "Port (on localhost) of running language server",
+					"description": "Port (on localhost) of running Starlark language server",
 					"scope": "machine-overridable"
 				},
-				"autokitteh.tilt.path": {
+				"autokitteh.starlark-lsp.path": {
 					"type": [
 						"string",
 						"null"
 					],
 					"default": null,
-					"description": "File path of Tilt program to run the language server",
+					"description": "File path of Starlark language server",
 					"scope": "machine-overridable"
 				},
-				"autokitteh.showStatusBarButton": {
-					"type": "boolean",
-					"default": true,
-					"description": "Whether to show a button for this extension in the VSCode StatusBar",
+				"autokitteh.starlark-lsp.arguments": {
+					"type": [
+						"string",
+						"null"
+					],
+					"default": null,
+					"description": "Arguments for Starlark language server",
 					"scope": "machine-overridable"
 				},
 				"autokitteh.baseURL": {

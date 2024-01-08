@@ -2,20 +2,25 @@ import { ChildProcess, spawn } from "child_process";
 import net = require("net");
 import { commands, Disposable, ExtensionContext, OutputChannel, window, workspace } from "vscode";
 import { LanguageClient, LanguageClientOptions, StreamInfo } from "vscode-languageclient/node";
-import { getServerPort, getTrace, Port } from "../language/config";
+import {
+	getArguments,
+	getServerPort,
+	getStarlarkLSPPath,
+	getTrace,
+	Port,
+} from "../language/config";
 import { PlaceholderErrorHandler, TiltfileErrorHandler } from "../language/errorHandlers";
-import { checkTiltVersion } from "../language/version";
 
-const extensionLang = "tiltfile";
-const extensionName = "Tiltfile";
+const extensionLang = "starlark";
+const extensionName = "Starlark";
 const maxRestartCount = 5;
-const tiltUnavailableNotification = "Tilt language server could not be started";
-const tiltUnavailableMessage =
-	"Could not find a version of Tilt to use with the Tiltfile extension. " +
-	"Please visit https://docs.tilt.dev/install.html to install Tilt v0.26 or higher. " +
-	"Autocomplete will not function without a compatible version of Tilt installed.";
+const starlarkUnavailableNotification = "Starlark language server could not be started";
+const starlarkUnavailableMessage =
+	"Could not find a version of Starlark to use with the Starlarkfile extension. " +
+	"Please visit https://docs.starlark.dev/install.html to install Starlark v0.26 or higher. " +
+	"Autocomplete will not function without a compatible version of Starlark installed.";
 
-export class TiltfileLspClient extends LanguageClient {
+export class StarlarkfileLspClient extends LanguageClient {
 	private _usingDebugServer = false;
 
 	public constructor(
@@ -25,8 +30,8 @@ export class TiltfileLspClient extends LanguageClient {
 		super(
 			extensionLang,
 			extensionName,
-			() => this.startServer(),
-			TiltfileLspClient.clientOptions(ch)
+			() => this.startStarlarkLSPServer(),
+			StarlarkfileLspClient.clientOptions(ch)
 		);
 		this.registerCommands();
 		this.installErrorHandler();
@@ -37,7 +42,7 @@ export class TiltfileLspClient extends LanguageClient {
 			documentSelector: [{ scheme: "file", language: extensionLang }],
 			synchronize: {
 				// Notify the server about file changes to relevant files contained in the workspace
-				fileEvents: workspace.createFileSystemWatcher("**/Tiltfile"),
+				fileEvents: workspace.createFileSystemWatcher("**/Starlarkfile"),
 			},
 			outputChannel: ch,
 			traceOutputChannel: ch,
@@ -51,13 +56,13 @@ export class TiltfileLspClient extends LanguageClient {
 
 	public start(): Promise<void> {
 		const disp = super.start();
-		this.info("Tiltfile LSP started");
+		this.info("Starlarkfile LSP started");
 		return disp;
 	}
 
 	public registerCommands() {
 		this.context.subscriptions.push(
-			commands.registerCommand("tiltfile.restartServer", () => {
+			commands.registerCommand("starlarkfile.restartServer", () => {
 				this.info("Restarting server");
 				this.restart();
 			})
@@ -69,7 +74,7 @@ export class TiltfileLspClient extends LanguageClient {
 		await this.start();
 	}
 
-	private async startServer(): Promise<ChildProcess | StreamInfo> {
+	private async startStarlarkLSPServer(): Promise<ChildProcess | StreamInfo> {
 		const port = await this.checkForDebugLspServer();
 		if (port) {
 			this.info("Connect to debug server");
@@ -80,8 +85,9 @@ export class TiltfileLspClient extends LanguageClient {
 		}
 
 		try {
-			const tiltPath = await checkTiltVersion(this);
-			const args = ["lsp", "start"];
+			const starlarkPath = getStarlarkLSPPath();
+			const configArgs = getArguments();
+			const args = ["start"];
 			this.info("Starting child process");
 			const trace = getTrace();
 			switch (trace) {
@@ -93,11 +99,13 @@ export class TiltfileLspClient extends LanguageClient {
 					args.push("--debug");
 					break;
 			}
-			return spawn(tiltPath, args);
+			console.log(starlarkPath, args);
+
+			return spawn(starlarkPath, args);
 		} catch (e) {
-			this.warn(tiltUnavailableMessage);
+			this.warn(starlarkUnavailableMessage);
 			this.outputChannel.show();
-			window.showErrorMessage(tiltUnavailableNotification);
+			window.showErrorMessage(starlarkUnavailableNotification);
 			throw (e as Error).toString();
 		}
 	}
