@@ -3,7 +3,7 @@ import { pageLimits } from "@constants/projectsView.constants";
 import { MessageType, ProjectViewSections } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
-import { AKButton, AKDeploymentState } from "@react-components";
+import { AKDeploymentState } from "@react-components";
 import {
 	AKTable,
 	AKTableMessage,

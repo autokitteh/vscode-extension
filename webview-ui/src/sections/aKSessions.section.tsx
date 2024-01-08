@@ -3,7 +3,6 @@ import { pageLimits } from "@constants/projectsView.constants";
 import { ProjectViewSections } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
-import { AKButton } from "@react-components";
 import { AKSessionState } from "@react-components";
 import {
 	AKTable,

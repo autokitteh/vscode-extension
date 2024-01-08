@@ -1,3 +1,4 @@
+import { namespaces } from "@constants";
 import { LoggerService } from "@services";
 import { ConfigurationTarget, workspace } from "vscode";
 
@@ -12,7 +13,10 @@ export class AppStateHandler {
 		const appState = (await workspace
 			.getConfiguration()
 			.get("autokitteh.serviceEnabled", ConfigurationTarget.Global)) as unknown as boolean;
-		LoggerService.log("AppStateHandler", `App state is ${appState ? "enabled" : "disabled"}`);
+		LoggerService.log(
+			namespaces.appStateHandler,
+			`App state is ${appState ? "enabled" : "disabled"}`
+		);
 
 		return appState;
 	}

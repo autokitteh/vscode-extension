@@ -7,4 +7,5 @@ export const namespaces = {
 	manifestService: "Manifest Service",
 	projectService: "Project Service",
 	sessionsService: "Sessions Service",
+	appStateHandler: "Application State",
 };
