@@ -59,7 +59,7 @@
 					"type": "number"
 				},
 				"autokitteh.project.refresh.interval": {
-					"default": 500,
+					"default": 1000,
 					"description": "Refresh interval in ms for the projects webview panel",
 					"type": "number"
 				},
@@ -180,7 +180,8 @@
 		"i18next": "^23.7.11",
 		"js-yaml": "^4.1.0",
 		"lodash": "^4.17.21",
-		"module-alias": "^2.2.3"
+		"module-alias": "^2.2.3",
+		"moment": "^2.30.1"
 	},
 	"description": "AutoKitteh is an open-source automation framework designed to simplify the process of automating tasks across various environments and tools. Its primary focus is on providing a versatile and user-friendly platform for automating operations, particularly in DevOps and software development contexts.",
 	"devDependencies": {

@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import  moment from "moment"
 
 export class LoggerService {
 	private static instance: LoggerService;
@@ -18,10 +19,10 @@ export class LoggerService {
 	}
 
 	public log(namespace: string, message: string): void {
-		this.outputChannel.appendLine(`[${namespace}] [LOG] ${message}`);
+		this.outputChannel.appendLine(`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [LOG] ${message}`);
 	}
 
 	public error(namespace: string, message: string): void {
-		this.outputChannel.appendLine(`[${namespace}] [ERROR] ${message}`);
+		this.outputChannel.appendLine(`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [ERROR] ${message}`);
 	}
 }
