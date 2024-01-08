@@ -58,7 +58,7 @@ export class SidebarController {
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
 					nameSpaces.connection,
-					translate().t("errors.noProjectsFound")
+					translate().t("errors.notConnected")
 				);
 				this.noProjectMessageDisplayed = true;
 			}

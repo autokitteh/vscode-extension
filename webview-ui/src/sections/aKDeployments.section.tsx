@@ -24,6 +24,8 @@ export const AKDeployments = ({
 }: DeploymentSectionViewModel) => {
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
+	const [selectDeployment, setSelectedDeployment] = useState("");
+
 	useEffect(() => {
 		if (deployments && isLoading) {
 			setIsLoading(false);
@@ -47,8 +49,10 @@ export const AKDeployments = ({
 		ProjectViewSections.DEPLOYMENTS
 	);
 
-	const getSessionsByDeploymentId = (deploymentId: string) =>
+	const getSessionsByDeploymentId = (deploymentId: string) => {
 		sendMessage(MessageType.selectDeployment, deploymentId);
+		setSelectedDeployment(deploymentId);
+	};
 
 	return (
 		<div className="mt-4">
@@ -69,7 +73,10 @@ export const AKDeployments = ({
 				</AKTableHeader>
 				{deployments &&
 					deployments.map((deployment: Deployment) => (
-						<AKTableRow key={deployment.deploymentId}>
+						<AKTableRow
+							key={deployment.deploymentId}
+							isSelected={selectDeployment === deployment.deploymentId}
+						>
 							<AKTableCell
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
