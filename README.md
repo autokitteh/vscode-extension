@@ -31,12 +31,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## How to Contribute 🤝
 
-To contribute to AutoKitteh:
-
-1. Fork the repository.
-2. Create a new branch for your feature.
-3. Commit your changes.
-4. Push to the branch.
-5. Create a new Pull Request.
+To contribute to AutoKitteh, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 We appreciate contributions from everyone! For more details, check the CONTRIBUTING.md file.
