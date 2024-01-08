@@ -18,23 +18,23 @@
 	"contributes": {
 		"languages": [
 			{
-				"id": "tiltfile",
+				"id": "starlark",
 				"aliases": [
-					"Tiltfile",
-					"tiltfile"
+					"Starlark",
+					"starlark"
 				],
 				"extensions": [
 					"Starlark",
 					".star"
 				],
-				"configuration": "./src/language/syntaxes/tiltfile.configuration.json"
+				"configuration": "./src/language/syntaxes/starlark.configuration.json"
 			}
 		],
 		"grammars": [
 			{
-				"language": "tiltfile",
-				"scopeName": "source.tiltfile",
-				"path": "./src/language/syntaxes/tiltfile.tmLanguage.json"
+				"language": "starlark",
+				"scopeName": "source.starlark",
+				"path": "./src/language/syntaxes/starlark.tmLanguage.json"
 			}
 		],
 		"commands": [
