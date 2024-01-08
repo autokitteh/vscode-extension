@@ -32,7 +32,3 @@ export function getTiltPath(): string {
 export function getShowStatusBarButton(): boolean {
 	return getConfig().get<boolean>("showStatusBarButton") || true;
 }
-
-export function getTiltWebUIPort(): number {
-	return getConfig().get<number>("tilt.webui.port") || 10350;
-}

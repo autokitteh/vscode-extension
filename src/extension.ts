@@ -13,7 +13,6 @@ import {
 	openWalkthrough,
 } from "@vscommands/walkthrough";
 import { TiltfileErrorWatcher } from "language/errorWatcher";
-import { addTiltLinkToStatusBar } from "language/link";
 import { TiltfileLspClient } from "language/lspClient";
 import { commands, ExtensionContext, workspace, window } from "vscode";
 
@@ -52,7 +51,6 @@ export async function activate(context: ExtensionContext) {
 	client.start();
 	tiltfileErrorWatcher = new TiltfileErrorWatcher(context, ch);
 	tiltfileErrorWatcher.start();
-	addTiltLinkToStatusBar(context);
 
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
 	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));
