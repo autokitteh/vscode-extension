@@ -196,6 +196,7 @@
 		"@types/vscode": "^1.85.0",
 		"@typescript-eslint/eslint-plugin": "^6.14.0",
 		"@typescript-eslint/parser": "^6.14.0",
+		"esbuild": "^0.19.11",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-import": "^2.29.0",
@@ -228,15 +229,24 @@
 		"lint": "eslint src --ext .ts,.tsx .",
 		"pretest": "npm run compile && npm run lint",
 		"start:webview": "cd webview-ui && npm run start",
-		"vscode:prepublish": "npm run compile",
+		"vscode:prepublish": "npm run esbuild-base -- --minify",
 		"watch": "tsc -watch -p ./",
 		"type:check": "tsc",
 		"prettier": "prettier . --ignore-path .prettierignore",
 		"format:check": "npm run prettier -- --check",
 		"format:fix": "npm run prettier -- --write",
 		"validate": "run-p lint type:check format:check",
-		"test": "vitest"
+		"test": "vitest",
+		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+		"esbuild": "npm run esbuild-base -- --sourcemap",
+		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch"
 	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/autokitteh/vscode-v2"
+	},
+	"homepage": "https://autokitteh.com",
+	"license": "SEE LICENSE IN LICENSE.md",
 	"lint-staged": {
 		"*.{ts,tsx}": [
 			"prettier --write",
