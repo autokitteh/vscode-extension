@@ -127,7 +127,6 @@ export class ProjectController {
 		const sessionStates = sessionHistory?.states || [];
 		const lastState = sessionStates[sessionStates.length - 1] as { states: { case: string } };
 		this.outputChannel.clear();
-		this.outputChannel.appendLine(`Session: ${sessionId}`);
 		if (lastState.states!.case === "completed") {
 			const lastStateLogs = get(lastState, "states.value.prints", []);
 

@@ -40,7 +40,7 @@ export class SessionsService {
 			const sessionHistory = convertSessionHistoryProtoToModel(response.history);
 			return { data: sessionHistory, error: undefined };
 		} catch (error) {
-			LoggerService.getInstance().error(nameSpaces.sessionsService, (error as Error).message);
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 
 			return { data: undefined, error };
 		}
