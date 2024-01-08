@@ -20,6 +20,8 @@ import moment from "moment";
 export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewModel) => {
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
+	const [selectedSession, setSelectedSession] = useState("");
+
 	useEffect(() => {
 		if (isLoading) {
 			setIsLoading(false);
@@ -40,9 +42,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 	);
 
 	const displaySessionLogs = (sessionId: string) => {
-		console.log("displaySessionLogs", sessionId);
-
-		sendMessage(MessageType.displaySessionStats, sessionId);
+		sendMessage(MessageType.displaySessionLogs, sessionId);
 	};
 
 	return (
@@ -65,14 +65,33 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 				</AKTableHeader>
 				{sessions &&
 					sessions.map((session: Session) => (
-						<AKTableRow key={session.sessionId}>
-							<AKTableCell>{moment(session.createdAt).fromNow()}</AKTableCell>
-							<AKTableCell>
+						<AKTableRow key={session.sessionId} isSelected={selectedSession === session.sessionId}>
+							<AKTableCell
+								onClick={() => displaySessionLogs(session.sessionId)}
+								classes={["cursor-pointer"]}
+							>
+								{moment(session.createdAt).fromNow()}
+							</AKTableCell>
+							<AKTableCell
+								onClick={() => displaySessionLogs(session.sessionId)}
+								classes={["cursor-pointer"]}
+							>
 								<AKSessionState sessionState={session.state} />
 							</AKTableCell>
-							<AKTableCell>{session.sessionId}</AKTableCell>
-							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)}>
-								<div className="codicon codicon-output"></div>
+							<AKTableCell
+								onClick={() => displaySessionLogs(session.sessionId)}
+								classes={["cursor-pointer"]}
+							>
+								{session.sessionId}
+							</AKTableCell>
+							<AKTableCell
+								onClick={() => displaySessionLogs(session.sessionId)}
+								classes={["cursor-pointer"]}
+							>
+								<div
+									className="codicon codicon-output"
+									onClick={() => displaySessionLogs(session.sessionId)}
+								></div>
 							</AKTableCell>
 						</AKTableRow>
 					))}

@@ -4,8 +4,10 @@ import { vsCommands } from "@constants";
 import { sidebarControllerRefreshRate } from "@constants/api.constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
+import { SessionController } from "@controllers/session.controller";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { MessageHandler, SidebarView } from "@views";
+import { SessionView } from "@views/sessionHistory.view";
 import { applyManifest, buildOnRightClick } from "@vscommands";
 import {
 	openBaseURLInputDialog,
@@ -28,6 +30,13 @@ export async function activate(context: ExtensionContext) {
 		await AppStateHandler.set(false);
 		sidebarController.disconnect();
 	});
+
+	commands.registerCommand(vsCommands.showSessionLog, async (sessionLogs) => {
+		const sessionView = new SessionView(context);
+		const sessionController = new SessionController(sessionView);
+		sessionController.showSessionLog(sessionLogs);
+	});
+
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {
 			if (project) {

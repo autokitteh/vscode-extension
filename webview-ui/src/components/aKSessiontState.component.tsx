@@ -22,6 +22,12 @@ export const AKSessionState = ({ sessionState }: { sessionState: SessionState })
 			return (
 				<div className="text-red-500">{translate().t("reactApp.sessions.statuses.error")}</div>
 			);
+		case SessionState.COMPLETED:
+			return (
+				<div className="text-green-500">
+					{translate().t("reactApp.sessions.statuses.completed")}
+				</div>
+			);
 		default:
 			return (
 				<div className="text-blue-500">

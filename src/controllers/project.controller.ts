@@ -1,4 +1,5 @@
 import { vsCommands, pageLimits } from "@constants";
+import { SessionController } from "@controllers/session.controller";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType, ProjectViewSections, SortOrder } from "@enums";
@@ -16,6 +17,8 @@ import { ProjectCB } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import { EntitySectionRowsRange } from "@type/views/webview";
 import { sortArray, getIds } from "@utilities";
+import { SessionView } from "@views/sessionHistory.view";
+import { get } from "lodash";
 import isEqual from "lodash/isEqual";
 import { commands } from "vscode";
 
@@ -114,6 +117,16 @@ export class ProjectController {
 		await this.loadDeployments();
 		if (this.selectedDeploymentId) {
 			await this.selectDeployment(this.selectedDeploymentId);
+		}
+	}
+	async displaySessionLogs(sessionId: string) {
+		const { data: sessionHistory } = await SessionsService.getHistoryBySessionId(sessionId);
+		const sessionStates = sessionHistory?.states || [];
+		const lastState = sessionStates[sessionStates.length - 1] as { states: { case: string } };
+
+		if (lastState.states!.case === "completed") {
+			const lastStateLogs = get(lastState, "states.value.prints", []);
+			commands.executeCommand(vsCommands.showSessionLog, lastStateLogs);
 		}
 	}
 	async selectDeployment(deploymentId: string) {

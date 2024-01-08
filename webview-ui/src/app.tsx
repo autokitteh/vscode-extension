@@ -3,10 +3,11 @@ import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
 import { DeploymentSectionViewModel } from "@models";
-import { SessionSectionViewModel } from "@models/views";
+import { SessionLogViewModel, SessionSectionViewModel } from "@models/views";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKButton, AKLogo } from "@react-components";
 import { IIncomingMessagesHandler } from "@react-interfaces/incomingMessagesHandler.interface";
+import { AKSessionLogs } from "@react-pages";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { HandleIncomingMessages, sendMessage } from "@react-utilities";
 import { Message } from "@type";
@@ -19,12 +20,14 @@ function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
+	const [sessionLogsPage, setSessionLogsPage] = useState<SessionLogViewModel | undefined>();
 
 	const messageHandlers: IIncomingMessagesHandler = {
 		setDeploymentsSection,
 		setProjectName,
 		setThemeVisualType,
 		setSessionsSection,
+		setSessionLogsPage,
 	};
 
 	const handleMessagesFromExtension = useCallback(
@@ -68,6 +71,8 @@ function App() {
 						totalSessions={sessionsSection?.totalSessions}
 					/>
 				</div>
+			) : sessionLogsPage!! ? (
+				<AKSessionLogs sessionLogs={sessionLogsPage} />
 			) : (
 				<div className="flex justify-center items-center h-screen w-screen">
 					<Player src={loaderAnimation} className="player" loop autoplay />
