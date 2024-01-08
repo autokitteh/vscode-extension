@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { pageLimits } from "@constants/projectsView.constants";
-import { ProjectViewSections } from "@enums";
+import { MessageType, ProjectViewSections } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
 import { AKButton } from "@react-components";
@@ -13,6 +13,7 @@ import {
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
 import { usePagination } from "@react-hooks";
+import { sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
 import moment from "moment";
 
@@ -38,6 +39,12 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 		ProjectViewSections.SESSIONS
 	);
 
+	const displaySessionLogs = (sessionId: string) => {
+		console.log("displaySessionLogs", sessionId);
+
+		sendMessage(MessageType.displaySessionStats, sessionId);
+	};
+
 	return (
 		<div className="mt-4">
 			{sessions && !!totalSessions && (
@@ -56,7 +63,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 						<AKTableRow key={session.sessionId}>
 							<AKTableCell>{moment(session.createdAt as unknown as string).fromNow()}</AKTableCell>
 							<AKTableCell>{session.sessionId}</AKTableCell>
-							<AKTableCell>
+							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)}>
 								<div className="codicon codicon-output"></div>
 							</AKTableCell>
 						</AKTableRow>

@@ -140,6 +140,10 @@ export class ProjectController {
 			payload: sessionsViewObject,
 		});
 	}
+	async displaySessionStats(sessionId: string) {
+		console.log(sessionId);
+		SessionsService.getHistory(sessionId);
+	}
 
 	startInterval() {
 		if (!this.intervalTimerId) {

@@ -1,3 +1,4 @@
+import { SessionHistory } from "@ak-proto-ts/sessions/v1/session_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { translate } from "@i18n";
 import { convertSessionProtoToModel } from "@models/session.model";
@@ -23,6 +24,17 @@ export class SessionsService {
 			const response = await sessionsClient.list({ deploymentId });
 			const sessions = response.sessions.map((session) => convertSessionProtoToModel(session));
 			return { data: sessions, error: undefined };
+		} catch (error) {
+			return { data: undefined, error };
+		}
+	}
+
+	static async getHistory(sessionId: string): Promise<ServiceResponse<SessionHistory[]>> {
+		try {
+			const response = await sessionsClient.getHistory({ sessionId });
+			console.log("response history", response);
+
+			return { data: [], error: undefined };
 		} catch (error) {
 			return { data: undefined, error };
 		}
