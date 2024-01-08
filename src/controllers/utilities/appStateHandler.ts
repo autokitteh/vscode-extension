@@ -1,3 +1,4 @@
+import { LoggerService } from "@services";
 import { ConfigurationTarget, workspace } from "vscode";
 
 export class AppStateHandler {
@@ -8,8 +9,11 @@ export class AppStateHandler {
 	}
 
 	static async get(): Promise<boolean> {
-		return (await workspace
+		const appState = (await workspace
 			.getConfiguration()
 			.get("autokitteh.serviceEnabled", ConfigurationTarget.Global)) as unknown as boolean;
+		LoggerService.log("AppStateHandler", `App state is ${appState ? "enabled" : "disabled"}`);
+
+		return appState;
 	}
 }
