@@ -1,7 +1,6 @@
 export enum MessageType {
 	setDeployments = "SET_DEPLOYMENTS",
 	setProjectName = "SET_PROJECT_NAME",
-	setSessionLogs = "SET_SESSION_LOGS",
 	setTheme = "SET_THEME",
 	runProject = "RUN_PROJECT",
 	buildProject = "BUILD_PROJECT",

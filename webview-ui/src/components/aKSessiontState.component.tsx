@@ -10,13 +10,7 @@ export const AKSessionState = ({ sessionState }: { sessionState: SessionState })
 			);
 		case SessionState.RUNNING:
 			return (
-				<div className="text-green-500">{translate().t("reactApp.sessions.statuses.running")}</div>
-			);
-		case SessionState.COMPLETED:
-			return (
-				<div className="text-green-500">
-					{translate().t("reactApp.sessions.statuses.completed")}
-				</div>
+				<div className="text-blue-500">{translate().t("reactApp.sessions.statuses.running")}</div>
 			);
 		case SessionState.ERROR:
 			return (

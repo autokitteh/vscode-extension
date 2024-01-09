@@ -13,5 +13,4 @@ export const vsCommands = {
 	baseURLUpdated: "autokitteh.baseURLUpdated",
 	showErrorMessage: "autokitteh.showErrorMessage",
 	showInfoMessage: "autokitteh.showInfoMessage",
-	showSessionLog: "autokitteh.showSessionLog",
 };
