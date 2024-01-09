@@ -17,7 +17,7 @@ import { Deployment, Project, Session } from "@type/models";
 import { EntitySectionRowsRange } from "@type/views/webview";
 import { sortArray, getIds } from "@utilities";
 import isEqual from "lodash/isEqual";
-import { OutputChannel, commands, window } from "vscode";
+import { commands } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
