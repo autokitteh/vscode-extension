@@ -1,11 +1,7 @@
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { translate } from "@i18n";
-import {
-	SessionState,
-	convertSessionProtoToModel,
-	convertSessionHistoryStatesProtoToModel,
-} from "@models";
+import { SessionState, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
 import { Session } from "@type/models";
@@ -41,7 +37,7 @@ export class SessionsService {
 	): Promise<ServiceResponse<Array<SessionState>>> {
 		try {
 			const response = await sessionsClient.getHistory({ sessionId });
-			const sessionHistory = convertSessionHistoryStatesProtoToModel(response.history?.states);
+			const sessionHistory = response.history?.states.map((state) => new SessionState(state));
 			return { data: sessionHistory, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.sessionsService, (error as Error).message);

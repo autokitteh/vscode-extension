@@ -1,4 +1,4 @@
-import { vsCommands, pageLimits, appOutputLogName } from "@constants";
+import { vsCommands, pageLimits, namespaces, channels } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType, ProjectViewSections, SortOrder } from "@enums";
 import { translate } from "@i18n";
@@ -9,6 +9,7 @@ import {
 	DeploymentsService,
 	ProjectsService,
 	SessionsService,
+	LoggerService,
 } from "@services";
 import { TotalEntityCount, PageLimits } from "@type/configuration";
 import { ProjectCB } from "@type/interfaces";
@@ -30,7 +31,6 @@ export class ProjectController {
 	private refreshRate: number;
 	private entitySectionDisplayBounds: PageLimits;
 	private selectedDeploymentId?: string;
-	private outputChannel: OutputChannel;
 
 	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
 		this.view = projectView;
@@ -51,7 +51,6 @@ export class ProjectController {
 				endIndex: pageLimits[ProjectViewSections.SESSIONS],
 			},
 		};
-		this.outputChannel = window.createOutputChannel(appOutputLogName);
 	}
 
 	reveal(): void {
@@ -156,29 +155,32 @@ export class ProjectController {
 			return;
 		}
 
+		LoggerService.clearOutputChannel(channels.appOutputLogName);
+
 		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 
-		this.outputChannel.clear();
-
 		if (!lastState.containsLogs() && !lastState.isError()) {
-			this.outputChannel.appendLine("No logs to display");
-			this.outputChannel.show();
+			LoggerService.print(
+				channels.appOutputLogName,
+				namespaces.sessionLogs,
+				translate().t("sessions.noLogs")
+			);
+
 			return;
 		}
 
 		if (lastState.isError()) {
-			this.outputChannel.appendLine(
+			LoggerService.print(
+				channels.appOutputLogName,
+				namespaces.sessionLogs,
 				`Error: ${lastState?.getError() || translate().t("errors.unexpectedError")}`
 			);
-			this.outputChannel.show();
 			return;
 		}
 
 		lastState.getLogs().forEach((logStr) => {
-			this.outputChannel.appendLine(logStr);
+			LoggerService.print(channels.appOutputLogName, namespaces.sessionLogs, logStr);
 		});
-
-		this.outputChannel.show();
 	}
 
 	async startInterval() {

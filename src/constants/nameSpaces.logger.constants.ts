@@ -8,4 +8,5 @@ export const namespaces = {
 	projectService: "Project Service",
 	sessionsService: "Sessions Service",
 	appStateHandler: "Application State",
+	sessionLogs: "Session Logs",
 };
