@@ -14,12 +14,11 @@
 		"@views": "dist/src/views",
 		"@vscommands": "dist/src/vscommands"
 	},
-	"license": "SEE LICENSE IN LICENSE.md",
 	"contributes": {
 		"commands": [
 			{
 				"command": "autokitteh.applyManifest",
-				"title": "Autokitteh V2: Apply Manifest"
+				"title": "autokitteh V2: Apply Manifest"
 			},
 			{
 				"command": "autokitteh.buildFolder",
@@ -28,12 +27,12 @@
 			{
 				"command": "autokitteh.connect",
 				"icon": "./resources/sidebar/top-panel-connect.svg",
-				"title": "Autokitteh: Connect to server"
+				"title": "autokitteh: Connect to server"
 			},
 			{
 				"command": "autokitteh.disconnect",
 				"icon": "./resources/sidebar/top-panel-disconnect.svg",
-				"title": "Autokitteh: Disconnect from server"
+				"title": "autokitteh: Disconnect from server"
 			}
 		],
 		"configuration": {
@@ -42,26 +41,6 @@
 					"default": "http://localhost:9980",
 					"description": "Server URL",
 					"type": "string"
-				},
-				"autokitteh.serviceEnabled": {
-					"default": false,
-					"description": "Is connected to the server",
-					"type": "boolean"
-				},
-				"autokitteh.username": {
-					"default": "anonymous",
-					"description": "Username used for the connection",
-					"type": "string"
-				},
-				"autokitteh.sidebar.refresh.interval": {
-					"default": 1000,
-					"description": "Refresh interval in ms for the sidebar panel",
-					"type": "number"
-				},
-				"autokitteh.project.refresh.interval": {
-					"default": 1000,
-					"description": "Refresh interval in ms for the projects webview panel",
-					"type": "number"
 				},
 				"autokitteh.connectionTest.initial.interval.duration": {
 					"default": 5000,
@@ -72,6 +51,26 @@
 					"default": 300000,
 					"description": "Refresh interval in ms for the connection tester after the first minute (default: 5 minutes)",
 					"type": "number"
+				},
+				"autokitteh.project.refresh.interval": {
+					"default": 1000,
+					"description": "Refresh interval in ms for the projects webview panel",
+					"type": "number"
+				},
+				"autokitteh.serviceEnabled": {
+					"default": false,
+					"description": "Is connected to the server",
+					"type": "boolean"
+				},
+				"autokitteh.sidebar.refresh.interval": {
+					"default": 1000,
+					"description": "Refresh interval in ms for the sidebar panel",
+					"type": "number"
+				},
+				"autokitteh.username": {
+					"default": "anonymous",
+					"description": "Username used for the connection",
+					"type": "string"
 				}
 			},
 			"title": "autokitteh"
@@ -110,7 +109,7 @@
 				{
 					"icon": "./resources/sidebar/ak-sidebar-icon.svg",
 					"id": "autokittehSidebarTree",
-					"title": "Autokitteh"
+					"title": "autokitteh"
 				}
 			]
 		},
@@ -168,7 +167,7 @@
 						"title": "Now you can connect"
 					}
 				],
-				"title": "Welcome to Autokitteh"
+				"title": "Welcome to autokitteh"
 			}
 		]
 	},
@@ -183,7 +182,7 @@
 		"module-alias": "^2.2.3",
 		"moment": "^2.30.1"
 	},
-	"description": "AutoKitteh is an open-source automation framework designed to simplify the process of automating tasks across various environments and tools. Its primary focus is on providing a versatile and user-friendly platform for automating operations, particularly in DevOps and software development contexts.",
+	"description": "autokitteh is an open-source automation framework designed to simplify the process of automating tasks across various environments and tools. Its primary focus is on providing a versatile and user-friendly platform for automating operations, particularly in DevOps and software development contexts.",
 	"devDependencies": {
 		"@commitlint/cli": "^18.4.3",
 		"@commitlint/config-conventional": "^18.4.3",
@@ -214,38 +213,8 @@
 	"engines": {
 		"vscode": "^1.85.0"
 	},
-	"main": "./dist/src/extension.js",
-	"name": "autokitteh",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/autokitteh/vscode-v2"
-	},
 	"homepage": "https://autokitteh.com",
-	"scripts": {
-		"build:webview": "cd webview-ui && npm run build",
-		"compile": "tsc -p ./",
-		"install:all": "npm install && cd webview-ui && npm install",
-		"fetch-protos": "git submodule update --init",
-		"lint": "eslint src --ext .ts,.tsx .",
-		"pretest": "npm run compile && npm run lint",
-		"start:webview": "cd webview-ui && npm run start",
-		"vscode:prepublish": "npm run esbuild-base -- --minify",
-		"watch": "tsc -watch -p ./",
-		"type:check": "tsc",
-		"prettier": "prettier . --ignore-path .prettierignore",
-		"format:check": "npm run prettier -- --check",
-		"format:fix": "npm run prettier -- --write",
-		"validate": "run-p lint type:check format:check",
-		"test": "vitest",
-		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
-		"esbuild": "npm run esbuild-base -- --sourcemap",
-		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/autokitteh/vscode-v2"
-	},
-	"homepage": "https://autokitteh.com",
+	"icon": "./resources/sidebar/ak-extension-icon.png",
 	"license": "SEE LICENSE IN LICENSE.md",
 	"lint-staged": {
 		"*.{ts,tsx}": [
@@ -253,5 +222,31 @@
 			"eslint --fix"
 		]
 	},
-	"version": "0.0.1"
+	"main": "./dist/src/extension.js",
+	"name": "autokitteh",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/autokitteh/vscode-v2"
+	},
+	"scripts": {
+		"build:webview": "cd webview-ui && npm run build",
+		"compile": "tsc -p ./",
+		"esbuild": "npm run esbuild-base -- --sourcemap",
+		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
+		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+		"fetch-protos": "git submodule update --init",
+		"format:check": "npm run prettier -- --check",
+		"format:fix": "npm run prettier -- --write",
+		"install:all": "npm install && cd webview-ui && npm install",
+		"lint": "eslint src --ext .ts,.tsx .",
+		"pretest": "npm run compile && npm run lint",
+		"prettier": "prettier . --ignore-path .prettierignore",
+		"start:webview": "cd webview-ui && npm run start",
+		"test": "vitest",
+		"type:check": "tsc",
+		"validate": "run-p lint type:check format:check",
+		"vscode:prepublish": "npm run esbuild-base -- --minify",
+		"watch": "tsc -watch -p ./"
+	},
+	"version": "0.0.5"
 }
