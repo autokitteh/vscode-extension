@@ -18,7 +18,7 @@
 		"commands": [
 			{
 				"command": "autokitteh.applyManifest",
-				"title": "autokitteh V2: Apply Manifest"
+				"title": "autokitteh: Apply Manifest"
 			},
 			{
 				"command": "autokitteh.buildFolder",
