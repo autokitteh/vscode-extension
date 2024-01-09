@@ -4,7 +4,6 @@ import { vsCommands } from "@constants";
 import { sidebarControllerRefreshRate } from "@constants/api.constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
-import { SessionController } from "@controllers/session.controller";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
