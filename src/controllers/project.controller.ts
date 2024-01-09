@@ -1,4 +1,4 @@
-import { vsCommands, pageLimits } from "@constants";
+import { vsCommands, pageLimits, appOutputLogName } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType, ProjectViewSections, SortOrder } from "@enums";
 import { translate } from "@i18n";
@@ -15,7 +15,6 @@ import { ProjectCB } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import { EntitySectionRowsRange } from "@type/views/webview";
 import { sortArray, getIds } from "@utilities";
-import { get } from "lodash";
 import isEqual from "lodash/isEqual";
 import { OutputChannel, commands, window } from "vscode";
 
@@ -52,7 +51,7 @@ export class ProjectController {
 				endIndex: pageLimits[ProjectViewSections.SESSIONS],
 			},
 		};
-		this.outputChannel = window.createOutputChannel("autokitteh-logs");
+		this.outputChannel = window.createOutputChannel(appOutputLogName);
 	}
 
 	reveal(): void {
@@ -151,28 +150,34 @@ export class ProjectController {
 	}
 
 	async displaySessionLogs(sessionId: string) {
-		const { data: sessionHistory } = await SessionsService.getHistoryBySessionId(sessionId);
-		const sessionStates = sessionHistory?.states || [];
-		const lastState = sessionStates[sessionStates.length - 1] as { states: { case: string } };
-		this.outputChannel.clear();
-		if (lastState.states!.case !== "error") {
-			const lastStateLogs = get(lastState, "states.value.prints", []);
-
-			if (!lastStateLogs.length) {
-				this.outputChannel.appendLine("No logs to display");
-			}
-
-			for (let i = 0; i < lastStateLogs.length; i++) {
-				const logStr = lastStateLogs[i] as string;
-				const logTime = logStr.split("\t")[0];
-				this.outputChannel.appendLine(lastStateLogs[i]);
-			}
-			this.outputChannel.show();
-
+		const { data: sessionHistoryStates, error } =
+			await SessionsService.getHistoryBySessionId(sessionId);
+		if (error || !sessionHistoryStates?.length) {
 			return;
 		}
-		const lastStateErrorMessage = get(lastState, "states.value.error.message", "");
-		this.outputChannel.appendLine(`Error: ${lastStateErrorMessage}`);
+
+		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
+
+		this.outputChannel.clear();
+
+		if (!lastState.containsLogs() && !lastState.isError()) {
+			this.outputChannel.appendLine("No logs to display");
+			this.outputChannel.show();
+			return;
+		}
+
+		if (lastState.isError()) {
+			this.outputChannel.appendLine(
+				`Error: ${lastState?.getError() || translate().t("errors.unexpectedError")}`
+			);
+			this.outputChannel.show();
+			return;
+		}
+
+		lastState.getLogs().forEach((logStr) => {
+			this.outputChannel.appendLine(logStr);
+		});
+
 		this.outputChannel.show();
 	}
 

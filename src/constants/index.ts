@@ -9,3 +9,4 @@ export { BASE_URL } from "@constants/api.constants";
 export { vsCommands } from "@constants/vsCommands.constants";
 export { pageLimits } from "@constants/projectsView.constants";
 export { namespaces } from "@constants/namespaces.logger.constants";
+export { appOutputLogName } from "@constants/general.constants";

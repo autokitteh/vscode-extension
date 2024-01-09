@@ -1,12 +1,11 @@
 import { ActivateResponse } from "@ak-proto-ts/deployments/v1/svc_pb";
 import { projectsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
-import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { translate } from "@i18n";
-import { convertProjectProtoToModel } from "@models/project.model";
+import { convertProjectProtoToModel } from "@models";
 import { DeploymentsService, EnvironmentsService, LoggerService } from "@services";
+import { ServiceResponse } from "@type";
 import { Project } from "@type/models";
-import { ServiceResponse } from "@type/services.types";
 
 export class ProjectsService {
 	static async get(projectId: string): Promise<ServiceResponse<Project>> {

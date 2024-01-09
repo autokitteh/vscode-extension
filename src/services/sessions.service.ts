@@ -1,12 +1,14 @@
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { translate } from "@i18n";
-import { convertSessionProtoToModel } from "@models/session.model";
-import { convertSessionHistoryProtoToModel } from "@models/sessionHistory.model";
-import { LoggerService } from "@services";
-import { EnvironmentsService } from "@services/environments.service";
-import { Session, SessionHistory } from "@type/models";
-import { ServiceResponse } from "@type/services.types";
+import {
+	SessionState,
+	convertSessionProtoToModel,
+	convertSessionHistoryStatesProtoToModel,
+} from "@models";
+import { EnvironmentsService, LoggerService } from "@services";
+import { ServiceResponse } from "@type";
+import { Session } from "@type/models";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
@@ -34,10 +36,12 @@ export class SessionsService {
 		}
 	}
 
-	static async getHistoryBySessionId(sessionId: string): Promise<ServiceResponse<SessionHistory>> {
+	static async getHistoryBySessionId(
+		sessionId: string
+	): Promise<ServiceResponse<Array<SessionState>>> {
 		try {
 			const response = await sessionsClient.getHistory({ sessionId });
-			const sessionHistory = convertSessionHistoryProtoToModel(response.history);
+			const sessionHistory = convertSessionHistoryStatesProtoToModel(response.history?.states);
 			return { data: sessionHistory, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.sessionsService, (error as Error).message);

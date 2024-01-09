@@ -1,10 +1,10 @@
 import { ActivateResponse, ListResponse } from "@ak-proto-ts/deployments/v1/svc_pb";
 import { deploymentsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
-import { convertDeploymentProtoToModel } from "@models/deployment.model";
-import { LoggerService } from "@services/logger.service";
+import { convertDeploymentProtoToModel } from "@models";
+import { LoggerService } from "@services";
+import { ServiceResponse } from "@type";
 import { Deployment } from "@type/models";
-import { ServiceResponse } from "@type/services.types";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
 

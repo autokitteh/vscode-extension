@@ -12,5 +12,7 @@
 	"defaultEnvironmentNotFound": "Default environment not found",
 	"buildFailed": "Build failed",
 	"deploymentFailed": "Deployment failed",
-	"projectEnvironmentsNotFound": "Project environments not found"
+	"projectEnvironmentsNotFound": "Project environments not found",
+	"unexpectedSessionStateType": "Unexpected session state type",
+	"missingSessionStateType": "Missing session state type"
 }
