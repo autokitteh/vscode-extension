@@ -12,7 +12,7 @@ import {
 	openUsernameInputDialog,
 	openWalkthrough,
 } from "@vscommands/walkthrough";
-import { commands, ExtensionContext, workspace } from "vscode";
+import { commands, ExtensionContext } from "vscode";
 
 export async function activate(context: ExtensionContext) {
 	const sidebarView = new SidebarView();
