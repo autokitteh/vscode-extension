@@ -43,6 +43,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogs, sessionId);
+		setSelectedSession(sessionId);
 	};
 
 	return (
