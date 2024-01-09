@@ -155,7 +155,7 @@ export class ProjectController {
 		const sessionStates = sessionHistory?.states || [];
 		const lastState = sessionStates[sessionStates.length - 1] as { states: { case: string } };
 		this.outputChannel.clear();
-		if (lastState.states!.case === "completed") {
+		if (lastState.states!.case !== "error") {
 			const lastStateLogs = get(lastState, "states.value.prints", []);
 
 			if (!lastStateLogs.length) {
@@ -167,13 +167,12 @@ export class ProjectController {
 				const logTime = logStr.split("\t")[0];
 				this.outputChannel.appendLine(lastStateLogs[i]);
 			}
-		}
-		if (lastState.states!.case === "error") {
-			const lastStateErrorMessage = get(lastState, "states.value.error.message", "");
-			const logTime = (lastStateErrorMessage as string).split(" ")[0];
+			this.outputChannel.show();
 
-			this.outputChannel.appendLine(`Error: ${lastStateErrorMessage}`);
+			return;
 		}
+		const lastStateErrorMessage = get(lastState, "states.value.error.message", "");
+		this.outputChannel.appendLine(`Error: ${lastStateErrorMessage}`);
 		this.outputChannel.show();
 	}
 

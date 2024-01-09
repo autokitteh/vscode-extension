@@ -1,5 +1,4 @@
 import * as path from "path";
-import { ConnectError } from "@connectrpc/connect";
 import { namespaces, vsCommands } from "@constants";
 import { errorHelper } from "@controllers/utilities/errorHelper";
 import { translate } from "@i18n";
@@ -15,9 +14,8 @@ export const applyManifest = async () => {
 	let { document } = window.activeTextEditor;
 	const mainfestYaml = document.getText();
 	const filePath = document.uri.fsPath;
-	const fileDirPath = path.dirname(filePath);
 
-	const { data: logs, error } = await ManifestService.applyManifest(mainfestYaml, fileDirPath);
+	const { data: logs, error } = await ManifestService.applyManifest(mainfestYaml, filePath);
 	if (error) {
 		errorHelper(namespaces.applyManifest, error);
 		return;
