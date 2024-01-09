@@ -56,6 +56,11 @@
 					"default": 1,
 					"description": "Refresh interval in seconds for the sidebar panel",
 					"type": "number"
+				},
+				"autokitteh.username": {
+					"default": "anonymous",
+					"description": "Username used for the connection",
+					"type": "string"
 				}
 			},
 			"title": "autokitteh"
