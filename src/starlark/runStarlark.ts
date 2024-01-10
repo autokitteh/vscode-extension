@@ -29,7 +29,7 @@ export const runStarlark = () => {
 		if (starlarkLSPPreloadDirPath !== "") {
 			args.push("--builtin-paths", starlarkLSPPreloadDirPath);
 		}
-	} else {
+	} else if (startlarkLSPServerType === StarlarkLSPServerType.rust) {
 		if (args?.indexOf("--lsp") === -1) {
 			args.push("--lsp");
 		}
@@ -50,7 +50,10 @@ export const runStarlark = () => {
 					translate().t("errors.lspPathNotSet")
 				);
 				lspServerErrorDisplayed = true;
-			} else if (!client) {
+				return;
+			}
+
+			if (!client) {
 				let serverOptions: ServerOptions = { command: startlarkLSPPath, args: args };
 
 				let clientOptions: LanguageClientOptions = {
@@ -60,7 +63,7 @@ export const runStarlark = () => {
 
 				client = new LanguageClient(
 					"Starlark",
-					"Starlark language server",
+					"autokitteh: Starlark language server",
 					serverOptions,
 					clientOptions
 				);

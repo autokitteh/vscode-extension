@@ -5,8 +5,9 @@ import { sidebarControllerRefreshRate } from "@constants/api.constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
+import { runStarlark } from "@starlark";
 import { MessageHandler, SidebarView } from "@views";
-import { applyManifest, buildOnRightClick, runStarlark } from "@vscommands";
+import { applyManifest, buildOnRightClick } from "@vscommands";
 import {
 	openBaseURLInputDialog,
 	openUsernameInputDialog,

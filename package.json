@@ -79,7 +79,7 @@
 						"type": "string"
 					},
 					"default": [
-						"--lsp"
+						"start"
 					],
 					"description": "Additional arguments that should be passed to the binary at starlark.startlarkLSPPath"
 				},
