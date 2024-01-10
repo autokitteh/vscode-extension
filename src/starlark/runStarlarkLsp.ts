@@ -7,13 +7,13 @@ import {
 } from "@constants/language";
 import { StarlarkLSPServerType } from "@enums";
 import { translate } from "@i18n";
-import { StarlarkFileHandler } from "@models/language";
+import { StarlarkFileHandler } from "@models/starlark";
 import { workspace, window, commands } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient";
 
 let client: LanguageClient;
 
-export const runStarlark = () => {
+export const runStarlarkLSP = () => {
 	workspace.registerTextDocumentContentProvider(
 		starlarkLSPUriScheme,
 		new StarlarkFileHandler(client)
@@ -22,20 +22,23 @@ export const runStarlark = () => {
 	let args: string[] = workspace.getConfiguration().get("autokitteh.starlarkLSPArguments") || [];
 	let lspServerErrorDisplayed: boolean = false;
 
-	if (startlarkLSPServerType === StarlarkLSPServerType.tilt) {
-		if (args.indexOf("start") === -1) {
-			args.unshift("start");
-		}
-		if (starlarkLSPPreloadDirPath !== "") {
-			args.push("--builtin-paths", starlarkLSPPreloadDirPath);
-		}
-	} else if (startlarkLSPServerType === StarlarkLSPServerType.rust) {
-		if (args.indexOf("--lsp") === -1) {
-			args.unshift("--lsp");
-		}
-		if (starlarkLSPPreloadDirPath !== "") {
-			args.push("--prelude", starlarkLSPPreloadDirPath);
-		}
+	switch (startlarkLSPServerType) {
+		case StarlarkLSPServerType.tilt:
+			if (args.indexOf("start") === -1) {
+				args.unshift("start");
+			}
+			if (starlarkLSPPreloadDirPath !== "") {
+				args.push("--builtin-paths", starlarkLSPPreloadDirPath);
+			}
+			break;
+		case StarlarkLSPServerType.rust:
+			if (args.indexOf("--lsp") === -1) {
+				args.unshift("--lsp");
+			}
+			if (starlarkLSPPreloadDirPath !== "") {
+				args.push("--prelude", starlarkLSPPreloadDirPath);
+			}
+			break;
 	}
 
 	window.onDidChangeActiveTextEditor((editor) => {
@@ -47,7 +50,7 @@ export const runStarlark = () => {
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
 					namespaces.startlarkLSPServer,
-					translate().t("errors.lspPathNotSet")
+					translate().t("errors.missingStarlarkLSPPath")
 				);
 				lspServerErrorDisplayed = true;
 				return;

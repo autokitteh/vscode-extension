@@ -21,19 +21,18 @@ export class StarlarkFileHandler implements TextDocumentContentProvider {
 	provideTextDocumentContent(uri: Uri, _token: CancellationToken): ProviderResult<string> {
 		if (this.client === undefined) {
 			return null;
-		} else {
-			return this.client
-				.sendRequest<StarlarkFileContentsResponse>(
-					STARLARK_FILE_CONTENTS_METHOD,
-					new StarlarkFileContentsParams(uri.toString())
-				)
-				.then((response: StarlarkFileContentsResponse) => {
-					if (response.contents !== undefined && response.contents !== null) {
-						return response.contents;
-					} else {
-						return null;
-					}
-				});
 		}
+		return this.client
+			.sendRequest<StarlarkFileContentsResponse>(
+				STARLARK_FILE_CONTENTS_METHOD,
+				new StarlarkFileContentsParams(uri.toString())
+			)
+			.then((response: StarlarkFileContentsResponse) => {
+				if (response.contents !== undefined && response.contents !== null) {
+					return response.contents;
+				} else {
+					return null;
+				}
+			});
 	}
 }

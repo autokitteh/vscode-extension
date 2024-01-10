@@ -1,1 +1,1 @@
-export { runStarlark } from "@starlark/runStarlark";
+export { runStarlarkLSP } from "@starlark/runStarlarkLsp";

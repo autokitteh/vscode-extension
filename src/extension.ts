@@ -5,7 +5,7 @@ import { sidebarControllerRefreshRate } from "@constants/api.constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
-import { runStarlark } from "@starlark";
+import { runStarlarkLSP } from "@starlark";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
 import {
@@ -16,7 +16,7 @@ import {
 import { commands, ExtensionContext } from "vscode";
 
 export async function activate(context: ExtensionContext) {
-	runStarlark();
+	runStarlarkLSP();
 
 	const sidebarView = new SidebarView();
 

@@ -80,7 +80,7 @@
 					"default": [
 						"start"
 					],
-					"description": "Additional arguments that should be passed to the binary at starlark.starlarkLSPPath"
+					"description": "Additional arguments for the starlark.starlarkLSPPath"
 				},
 				"autokitteh.starlarkLSPType": {
 					"type": [
@@ -90,7 +90,7 @@
 						"startlark-fb-rust",
 						"starlark-tilt-go"
 					],
-					"description": "The LSP implementation to use for Starlark files",
+					"description": "Starlark LSP server to implementation",
 					"default": "starlark-tilt-go"
 				},
 				"autokitteh.baseURL": {
@@ -100,7 +100,7 @@
 				},
 				"autokitteh.project.refresh.interval": {
 					"default": 1,
-					"description": "Refresh interval in seconds for the projects webview panel",
+					"description": "Refresh interval in seconds for the projects panel",
 					"type": "number"
 				},
 				"autokitteh.serviceEnabled": {
