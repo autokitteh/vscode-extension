@@ -1,6 +1,6 @@
 import { vsCommands, pageLimits, namespaces, channels } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
-import { LoggerLevel, MessageType, ProjectViewSections, SortOrder } from "@enums";
+import { MessageType, ProjectViewSections, SortOrder } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
@@ -90,10 +90,6 @@ export class ProjectController {
 		sortArray(projectDeployments, "createdAt", SortOrder.DESC);
 		this.totalItemsPerSection[ProjectViewSections.DEPLOYMENTS] = projectDeployments?.length || 0;
 
-		const { startIndex, endIndex } =
-			this.entitySectionDisplayBounds[ProjectViewSections.DEPLOYMENTS];
-
-		// const deploymentsForView = projectDeployments?.slice(startIndex, endIndex) || undefined; @TODO: if we want to implement local pagination
 		const deploymentsForView = projectDeployments;
 
 		if (!isEqual(this.deployments, deploymentsForView)) {
@@ -128,8 +124,6 @@ export class ProjectController {
 
 		sortArray(sessions, "createdAt", SortOrder.DESC);
 		this.totalItemsPerSection[ProjectViewSections.SESSIONS] = sessions?.length || 0;
-		const { startIndex, endIndex } = this.entitySectionDisplayBounds[ProjectViewSections.SESSIONS];
-		// const sessionsForView = sessions?.slice(startIndex, endIndex) || undefined; @TODO: if we want to implement local pagination
 		const sessionsForView = sessions;
 
 		if (isEqual(this.sessions, sessionsForView) && this.sessions?.length) {
