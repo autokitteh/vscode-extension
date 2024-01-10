@@ -13,4 +13,5 @@ export const vsCommands = {
 	baseURLUpdated: "autokitteh.baseURLUpdated",
 	showErrorMessage: "autokitteh.showErrorMessage",
 	showInfoMessage: "autokitteh.showInfoMessage",
+	startStarlarkLSP: "autokitteh.startStarlarkLSP",
 };
