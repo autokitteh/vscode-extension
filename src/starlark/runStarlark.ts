@@ -75,7 +75,13 @@ export const runStarlark = () => {
 	workspace.onDidChangeConfiguration((event) => {
 		const settingsChanged = event.affectsConfiguration("autokitteh.starlarkLSPType");
 		if (settingsChanged) {
-			console.log(event);
+			const newStarlarkLSPType =
+				workspace.getConfiguration().get("autokitteh.starlarkLSPType") || "";
+			if (newStarlarkLSPType === StarlarkLSPServerType.tilt) {
+				workspace.getConfiguration().update("autokitteh.starlarkLSPArguments", ["start"]);
+			} else if (newStarlarkLSPType === StarlarkLSPServerType.rust) {
+				workspace.getConfiguration().update("autokitteh.starlarkLSPArguments", ["--lsp"]);
+			}
 		}
 	});
 };
