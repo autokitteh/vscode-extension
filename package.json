@@ -111,17 +111,17 @@
 		],
 		"configuration": {
 			"properties": {
-				"autokitteh.lspPath": {
+				"autokitteh.starlarkLSPPath": {
 					"type": "string",
 					"default": "starlark",
 					"description": "The path to the binary to invoke (possibly on the path) for the plugin to invoke that handles LSP over stdin/stdout"
 				},
-				"autokitteh.preloadDirPath": {
+				"autokitteh.starlarkLSPPreloadDir": {
 					"type": "string",
 					"default": "",
 					"description": "The path to the directory to preload"
 				},
-				"autokitteh.lspArguments": {
+				"autokitteh.starlarkLSPArguments": {
 					"type": "array",
 					"items": {
 						"type": "string"
@@ -131,7 +131,7 @@
 					],
 					"description": "Additional arguments that should be passed to the binary at starlark.lspPath"
 				},
-				"autokitteh.starlarkLSP": {
+				"autokitteh.starlarkLSPType": {
 					"type": [
 						"string"
 					],

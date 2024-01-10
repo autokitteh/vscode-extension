@@ -74,18 +74,20 @@ export async function activate(context: ExtensionContext) {
 	// are handled, and requested from the LSP.
 	workspace.registerTextDocumentContentProvider(STARLARK_URI_SCHEME, new StarlarkFileHandler());
 
-	const path: string = requireSetting("autokitteh.lspPath");
-	const lspServer: string = requireSetting("autokitteh.starlarkLSP");
-	const preloadDirPath: string = requireSetting("autokitteh.preloadDirPath");
+	const path: string = requireSetting("autokitteh.starlarkLSPPath");
+	const lspServerType: string = requireSetting("autokitteh.starlarkLSPType");
+	const preloadDirPath: string = requireSetting("autokitteh.starlarkLSPPreloadDir");
 
-	let args: [string] = requireSetting("autokitteh.lspArguments");
+	let args: [string] = requireSetting("autokitteh.starlarkLSPArguments");
 
-	if (lspServer === LspServerType.tilt) {
+	if (lspServerType === LspServerType.tilt) {
 		if (args.indexOf("start") === -1) {
 			args.push("start");
 		}
 		if (preloadDirPath !== "") {
 			args.push("--builtin-paths", preloadDirPath);
+		} else {
+			args.push("--builtin-paths", path);
 		}
 	} else {
 		if (args.indexOf("--lsp") === -1) {
@@ -93,6 +95,8 @@ export async function activate(context: ExtensionContext) {
 		}
 		if (preloadDirPath !== "") {
 			args.push("--prelude", preloadDirPath);
+		} else {
+			args.push("--prelude", path);
 		}
 	}
 
