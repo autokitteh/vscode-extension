@@ -1,7 +1,7 @@
 import { ActivateResponse } from "@ak-proto-ts/deployments/v1/svc_pb";
 import { projectsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
-import { LogLevel } from "@enums";
+import { LoggerLevel } from "@enums";
 import { translate } from "@i18n";
 import { convertProjectProtoToModel } from "@models";
 import { DeploymentsService, EnvironmentsService, LoggerService } from "@services";
@@ -16,12 +16,12 @@ export class ProjectsService {
 				LoggerService.log(
 					namespaces.projectService,
 					translate().t("errors.projectNotFound"),
-					LogLevel.error
+					LoggerLevel.error
 				);
 			}
 			return { data: project, error: undefined };
 		} catch (error) {
-			LoggerService.log(namespaces.projectService, (error as Error).message, LogLevel.error);
+			LoggerService.log(namespaces.projectService, (error as Error).message, LoggerLevel.error);
 
 			return { data: undefined, error };
 		}
@@ -34,7 +34,7 @@ export class ProjectsService {
 			);
 			return { data: projects, error: undefined };
 		} catch (error) {
-			LoggerService.log(namespaces.projectService, (error as Error).message, LogLevel.error);
+			LoggerService.log(namespaces.projectService, (error as Error).message, LoggerLevel.error);
 			return { data: undefined, error };
 		}
 	}
@@ -42,7 +42,7 @@ export class ProjectsService {
 	static async build(projectId: string): Promise<ServiceResponse<string>> {
 		const { buildId, error } = await projectsClient.build({ projectId });
 		if (error) {
-			LoggerService.log(namespaces.projectService, error.message, LogLevel.error);
+			LoggerService.log(namespaces.projectService, error.message, LoggerLevel.error);
 		}
 		return { data: buildId, error: error };
 	}
@@ -50,14 +50,18 @@ export class ProjectsService {
 	static async deploy(projectId: string): Promise<ServiceResponse<string>> {
 		const { data: buildId, error: buildError } = await this.build(projectId);
 		if (buildError) {
-			LoggerService.log(namespaces.projectService, (buildError as Error).message, LogLevel.error);
+			LoggerService.log(
+				namespaces.projectService,
+				(buildError as Error).message,
+				LoggerLevel.error
+			);
 			return { data: undefined, error: buildError };
 		}
 
 		const { data: environments, error: envError } =
 			await EnvironmentsService.listByProjectId(projectId);
 		if (envError) {
-			LoggerService.log(namespaces.projectService, (envError as Error).message, LogLevel.error);
+			LoggerService.log(namespaces.projectService, (envError as Error).message, LoggerLevel.error);
 
 			return { data: undefined, error: envError };
 		}
@@ -66,7 +70,7 @@ export class ProjectsService {
 		try {
 			environment = environments![0];
 		} catch (error) {
-			LoggerService.log(namespaces.projectService, (error as Error).message, LogLevel.error);
+			LoggerService.log(namespaces.projectService, (error as Error).message, LoggerLevel.error);
 		}
 
 		const { data: deploymentId, error } = await DeploymentsService.create({
@@ -75,7 +79,7 @@ export class ProjectsService {
 		});
 
 		if (error) {
-			LoggerService.log(namespaces.projectService, (error as Error).message, LogLevel.error);
+			LoggerService.log(namespaces.projectService, (error as Error).message, LoggerLevel.error);
 		}
 
 		return { data: deploymentId, error: error };
@@ -87,11 +91,11 @@ export class ProjectsService {
 			try {
 				const { data: activateResponse, error } = await DeploymentsService.activate(deploymentId);
 				if (error) {
-					LoggerService.log(namespaces.projectService, (error as Error).message, LogLevel.error);
+					LoggerService.log(namespaces.projectService, (error as Error).message, LoggerLevel.error);
 				}
 				return { data: activateResponse, error: error };
 			} catch (error) {
-				LoggerService.log(namespaces.projectService, (error as Error).message, LogLevel.error);
+				LoggerService.log(namespaces.projectService, (error as Error).message, LoggerLevel.error);
 
 				return { data: undefined, error: error };
 			}
@@ -99,7 +103,7 @@ export class ProjectsService {
 			LoggerService.log(
 				namespaces.projectService,
 				translate().t("errors.deploymentFailed"),
-				LogLevel.error
+				LoggerLevel.error
 			);
 
 			return { data: undefined, error: new Error(translate().t("errors.deploymentFailed")) };

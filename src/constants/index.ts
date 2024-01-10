@@ -8,5 +8,5 @@ export {
 export { BASE_URL } from "@constants/api.constants";
 export { vsCommands } from "@constants/vsCommands.constants";
 export { pageLimits } from "@constants/projectsView.constants";
-export { namespaces } from "@constants/namespaces.logger.constants";
+export { namespaces } from "@constants/nameFpaces.logger.constants";
 export { channels } from "@constants/output.constants";

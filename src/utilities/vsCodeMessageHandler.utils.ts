@@ -1,4 +1,4 @@
-import { LogLevel } from "@enums";
+import { LoggerLevel } from "@enums";
 import { LoggerService } from "@services";
 import { window } from "vscode";
 
@@ -9,6 +9,6 @@ export class MessageHandler {
 	}
 	static errorMessage(namespace: string, messageText: string): void {
 		window.showErrorMessage(messageText);
-		LoggerService.log(namespace, messageText, LogLevel.error);
+		LoggerService.log(namespace, messageText, LoggerLevel.error);
 	}
 }

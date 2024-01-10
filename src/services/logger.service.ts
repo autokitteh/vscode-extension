@@ -1,4 +1,4 @@
-import { LogLevel } from "@enums";
+import { LoggerLevel } from "@enums";
 import moment from "moment";
 import { window, OutputChannel } from "vscode";
 
@@ -22,10 +22,10 @@ export class LoggerService {
 		namespace: string,
 		message: string,
 		channelName: string = LoggerService.defaultChannelName,
-		level: string = LogLevel.info
+		level: string = LoggerLevel.info
 	): void {
 		this.initializeOutputChannel(channelName);
-		if (level === LogLevel.print) {
+		if (level === LoggerLevel.print) {
 			this.outputChannels[channelName].appendLine(`[${namespace}]: ${message}`);
 			return;
 		}

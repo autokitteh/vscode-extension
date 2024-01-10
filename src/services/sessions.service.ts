@@ -1,6 +1,6 @@
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
-import { LogLevel } from "@enums";
+import { LoggerLevel } from "@enums";
 import { translate } from "@i18n";
 import { SessionState, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
@@ -16,7 +16,7 @@ export class SessionsService {
 			const sessions = response.sessions.map(convertSessionProtoToModel);
 			return { data: sessions, error: undefined };
 		} catch (error) {
-			LoggerService.log(namespaces.sessionsService, (error as Error).message, LogLevel.error);
+			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
 			return { data: undefined, error };
 		}
 	}
@@ -27,7 +27,7 @@ export class SessionsService {
 			const sessions = response.sessions.map((session) => convertSessionProtoToModel(session));
 			return { data: sessions, error: undefined };
 		} catch (error) {
-			LoggerService.log(namespaces.sessionsService, (error as Error).message, LogLevel.error);
+			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
 
 			return { data: undefined, error };
 		}
@@ -41,7 +41,7 @@ export class SessionsService {
 			const sessionHistory = response.history?.states.map((state) => new SessionState(state));
 			return { data: sessionHistory, error: undefined };
 		} catch (error) {
-			LoggerService.log(namespaces.sessionsService, (error as Error).message, LogLevel.error);
+			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
 
 			return { data: undefined, error };
 		}
@@ -75,7 +75,7 @@ export class SessionsService {
 				LoggerService.log(
 					namespaces.sessionsService,
 					translate().t("errors.projectEnvironmentsNotFound"),
-					LogLevel.error
+					LoggerLevel.error
 				);
 
 				return {
@@ -84,7 +84,7 @@ export class SessionsService {
 				};
 			}
 		} catch (error) {
-			LoggerService.log(namespaces.sessionsService, (error as Error).message, LogLevel.error);
+			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
 
 			return {
 				data: undefined,

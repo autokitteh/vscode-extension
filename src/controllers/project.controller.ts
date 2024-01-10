@@ -1,6 +1,6 @@
 import { vsCommands, pageLimits, namespaces, channels } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
-import { LogLevel, MessageType, ProjectViewSections, SortOrder } from "@enums";
+import { LoggerLevel, MessageType, ProjectViewSections, SortOrder } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
@@ -164,7 +164,7 @@ export class ProjectController {
 				channels.appOutputLogName,
 				namespaces.sessionLogs,
 				translate().t("sessions.noLogs"),
-				LogLevel.print
+				LoggerLevel.print
 			);
 
 			return;
@@ -175,13 +175,18 @@ export class ProjectController {
 				channels.appOutputLogName,
 				namespaces.sessionLogs,
 				`Error: ${lastState?.getError() || translate().t("errors.unexpectedError")}`,
-				LogLevel.print
+				LoggerLevel.print
 			);
 			return;
 		}
 
 		lastState.getLogs().forEach((logStr) => {
-			LoggerService.log(channels.appOutputLogName, namespaces.sessionLogs, logStr, LogLevel.print);
+			LoggerService.log(
+				channels.appOutputLogName,
+				namespaces.sessionLogs,
+				logStr,
+				LoggerLevel.print
+			);
 		});
 	}
 
