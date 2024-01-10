@@ -1,10 +1,12 @@
+import { channels } from "@constants";
 import { LoggerLevel } from "@enums";
 import moment from "moment";
 import { window, OutputChannel } from "vscode";
 
 export class LoggerService {
 	private static outputChannels: { [key: string]: OutputChannel } = {};
-	private static defaultChannelName: string = "autokitteh-logs";
+	private static defaultChannelName: string = channels.appOutputLogName;
+	private static defaultSessionsChannelName: string = channels.appOutputSessionsLogName;
 
 	private static initializeOutputChannel(channelName: string = LoggerService.defaultChannelName) {
 		if (!this.outputChannels[channelName]) {
@@ -25,12 +27,15 @@ export class LoggerService {
 		level: string = LoggerLevel.info
 	): void {
 		this.initializeOutputChannel(channelName);
-		if (level === LoggerLevel.print) {
-			this.outputChannels[channelName].appendLine(`[${namespace}]: ${message}`);
-			return;
-		}
+
 		this.outputChannels[channelName].appendLine(
 			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [${level}] ${message}`
 		);
+	}
+
+	public static print(namespace: string, message: string): void {
+		this.initializeOutputChannel(this.defaultSessionsChannelName);
+
+		this.outputChannels[this.defaultSessionsChannelName].appendLine(`[${namespace}]: ${message}`);
 	}
 }

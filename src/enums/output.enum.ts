@@ -4,5 +4,4 @@ export enum LoggerLevel {
 	debug = "DEBUG",
 	error = "ERROR",
 	warn = "WARNING",
-	print = "PRINT",
 }

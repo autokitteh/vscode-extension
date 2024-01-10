@@ -155,38 +155,24 @@ export class ProjectController {
 			return;
 		}
 
-		LoggerService.clearOutputChannel(channels.appOutputLogName);
+		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
 		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 
 		if (!lastState.containLogs() && !lastState.isError()) {
-			LoggerService.log(
-				channels.appOutputLogName,
-				namespaces.sessionLogs,
-				translate().t("sessions.noLogs"),
-				LoggerLevel.print
-			);
+			LoggerService.print(namespaces.sessionLogs, translate().t("sessions.noLogs"));
 
 			return;
 		}
 
 		if (lastState.isError()) {
-			LoggerService.log(
-				channels.appOutputLogName,
-				namespaces.sessionLogs,
-				`Error: ${lastState?.getError() || translate().t("errors.unexpectedError")}`,
-				LoggerLevel.print
-			);
+			const printedError = lastState?.getError() || translate().t("errors.unexpectedError");
+			LoggerService.print(namespaces.sessionLogs, `Error: ${printedError}}`);
 			return;
 		}
 
 		lastState.getLogs().forEach((logStr) => {
-			LoggerService.log(
-				channels.appOutputLogName,
-				namespaces.sessionLogs,
-				logStr,
-				LoggerLevel.print
-			);
+			LoggerService.print(namespaces.sessionLogs, logStr);
 		});
 	}
 
