@@ -1,6 +1,6 @@
 import { vsCommands, pageLimits, namespaces, channels } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
-import { MessageType, ProjectViewSections, SortOrder } from "@enums";
+import { LogLevel, MessageType, ProjectViewSections, SortOrder } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
@@ -160,26 +160,28 @@ export class ProjectController {
 		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 
 		if (!lastState.containLogs() && !lastState.isError()) {
-			LoggerService.print(
+			LoggerService.log(
 				channels.appOutputLogName,
 				namespaces.sessionLogs,
-				translate().t("sessions.noLogs")
+				translate().t("sessions.noLogs"),
+				LogLevel.print
 			);
 
 			return;
 		}
 
 		if (lastState.isError()) {
-			LoggerService.print(
+			LoggerService.log(
 				channels.appOutputLogName,
 				namespaces.sessionLogs,
-				`Error: ${lastState?.getError() || translate().t("errors.unexpectedError")}`
+				`Error: ${lastState?.getError() || translate().t("errors.unexpectedError")}`,
+				LogLevel.print
 			);
 			return;
 		}
 
 		lastState.getLogs().forEach((logStr) => {
-			LoggerService.print(channels.appOutputLogName, namespaces.sessionLogs, logStr);
+			LoggerService.log(channels.appOutputLogName, namespaces.sessionLogs, logStr, LogLevel.print);
 		});
 	}
 

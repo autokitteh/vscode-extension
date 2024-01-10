@@ -25,6 +25,10 @@ export class LoggerService {
 		level: string = LogLevel.info
 	): void {
 		this.initializeOutputChannel(channelName);
+		if (level === LogLevel.print) {
+			this.outputChannels[channelName].appendLine(`[${namespace}]: ${message}`);
+			return;
+		}
 		this.outputChannels[channelName].appendLine(
 			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [${level}] ${message}`
 		);
