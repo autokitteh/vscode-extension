@@ -1,11 +1,13 @@
 require("module-alias/register");
 
-import { vsCommands } from "@constants";
+import { namespaces, vsCommands } from "@constants";
 import { sidebarControllerRefreshRate } from "@constants/api.constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { LspServerType } from "@enums";
+import { translate } from "@i18n";
+import { LoggerService } from "@services";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
 import {
@@ -99,7 +101,9 @@ export async function activate(context: ExtensionContext) {
 
 	window.onDidChangeActiveTextEditor((editor) => {
 		if (editor && editor.document.languageId === "starlark") {
-			if (!isStarlarkLSPRunning) {
+			if (path === "" || preloadDirPath === "") {
+				LoggerService.error(namespaces.lspServer, translate().t("errors.lspPathNotSet"));
+			} else if (!isStarlarkLSPRunning) {
 				isStarlarkLSPRunning = true;
 				// Otherwise to spawn the server
 				let serverOptions: ServerOptions = { command: path, args: args };
