@@ -2,10 +2,6 @@ import {
 	DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL,
 	DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL,
 } from "@constants";
-import {
-	DEFAULT_CONNECTION_TEST_INTERVAL,
-	DEFAULT_CONNECTION_TEST_SLOW_INTERVAL,
-} from "@constants/extensionConfiguration.constants";
 import { ValidateURL } from "@utilities";
 import { workspace } from "vscode";
 
