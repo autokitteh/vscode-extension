@@ -24,14 +24,14 @@ export const runStarlark = () => {
 
 	if (startlarkLSPServerType === StarlarkLSPServerType.tilt) {
 		if (args.indexOf("start") === -1) {
-			args.push("start");
+			args.unshift("start");
 		}
 		if (starlarkLSPPreloadDirPath !== "") {
 			args.push("--builtin-paths", starlarkLSPPreloadDirPath);
 		}
 	} else if (startlarkLSPServerType === StarlarkLSPServerType.rust) {
 		if (args?.indexOf("--lsp") === -1) {
-			args.push("--lsp");
+			args.unshift("--lsp");
 		}
 		if (starlarkLSPPreloadDirPath !== "") {
 			args.push("--prelude", starlarkLSPPreloadDirPath);
