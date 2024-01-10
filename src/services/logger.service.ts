@@ -1,3 +1,4 @@
+import { LogLevel } from "@enums";
 import moment from "moment";
 import { window, OutputChannel } from "vscode";
 
@@ -17,52 +18,15 @@ export class LoggerService {
 		}
 	}
 
-	public static info(
-		namespace: string,
-		message: string,
-		channelName: string = LoggerService.defaultChannelName
-	): void {
-		this.initializeOutputChannel(channelName);
-		this.outputChannels[channelName].appendLine(
-			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [LOG] ${message}`
-		);
-	}
-
-	public static print(channelName: string, namespace: string, message: string): void {
-		this.initializeOutputChannel(channelName);
-		this.outputChannels[channelName].appendLine(`[${namespace}] - ${message}`);
-	}
-
-	public static debug(
-		namespace: string,
-		message: string,
-		channelName: string = LoggerService.defaultChannelName
-	): void {
-		this.initializeOutputChannel(channelName);
-		this.outputChannels[channelName].appendLine(
-			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [DEBUG] ${message}`
-		);
-	}
-
 	public static log(
 		namespace: string,
 		message: string,
-		channelName: string = LoggerService.defaultChannelName
+		channelName: string = LoggerService.defaultChannelName,
+		level: string = LogLevel.info
 	): void {
 		this.initializeOutputChannel(channelName);
 		this.outputChannels[channelName].appendLine(
-			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [LOG] ${message}`
-		);
-	}
-
-	public static error(
-		namespace: string,
-		message: string,
-		channelName: string = LoggerService.defaultChannelName
-	): void {
-		this.initializeOutputChannel(channelName);
-		this.outputChannels[channelName].appendLine(
-			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [ERROR] ${message}`
+			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [${level}] ${message}`
 		);
 	}
 }

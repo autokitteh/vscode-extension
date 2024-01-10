@@ -20,7 +20,7 @@ export const applyManifest = async () => {
 		errorHelper(namespaces.applyManifest, error);
 		return;
 	}
-	(logs || []).forEach((log) => logger.info(namespaces.applyManifest, `${log}`));
+	(logs || []).forEach((log) => logger.log(namespaces.applyManifest, `${log}`));
 	commands.executeCommand(
 		vsCommands.showInfoMessage,
 		namespaces.applyManifest,

@@ -69,17 +69,11 @@ export class SessionState {
 					this.state = new CompletedState(prints, exports, returnValue);
 					break;
 				default:
-					LoggerService.error(
-						namespaces.sessionsService,
-						translate().t("errors.unexpectedSessionStateType")
-					);
+					this.state = new ErrorState(translate().t("errors.unexpectedSessionStateType"));
 			}
 			return;
 		}
-		LoggerService.error(
-			namespaces.sessionsService,
-			translate().t("errors.missingSessionStateType")
-		);
+		this.state = new ErrorState(translate().t("errors.missingSessionStateType"));
 	}
 
 	getError(): string {
@@ -93,7 +87,7 @@ export class SessionState {
 		return this.state instanceof ErrorState;
 	}
 
-	containsLogs(): boolean {
+	containLogs(): boolean {
 		return (
 			(this.state instanceof RunningState || this.state instanceof CompletedState) &&
 			this.state.logs.length > 0
@@ -101,7 +95,8 @@ export class SessionState {
 	}
 
 	getLogs(): string[] {
-		if (this.state instanceof RunningState || this.state instanceof CompletedState) {
+		if (this.containLogs()) {
+			//@ts-ignore
 			return this.state.logs;
 		}
 		return [];

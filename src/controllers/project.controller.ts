@@ -159,7 +159,7 @@ export class ProjectController {
 
 		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 
-		if (!lastState.containsLogs() && !lastState.isError()) {
+		if (!lastState.containLogs() && !lastState.isError()) {
 			LoggerService.print(
 				channels.appOutputLogName,
 				namespaces.sessionLogs,
