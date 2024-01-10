@@ -5,6 +5,7 @@ import { sidebarControllerRefreshRate } from "@constants/api.constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
+import { LspServerType } from "@enums";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
 import {
@@ -74,7 +75,26 @@ export async function activate(context: ExtensionContext) {
 	workspace.registerTextDocumentContentProvider(STARLARK_URI_SCHEME, new StarlarkFileHandler());
 
 	const path: string = requireSetting("autokitteh.lspPath");
-	const args: [string] = requireSetting("autokitteh.lspArguments");
+	const lspServer: string = requireSetting("autokitteh.starlarkLSP");
+	const preloadDirPath: string = requireSetting("autokitteh.preloadDirPath");
+
+	let args: [string] = requireSetting("autokitteh.lspArguments");
+
+	if (lspServer === LspServerType.tilt) {
+		if (args.indexOf("start") === -1) {
+			args.push("start");
+		}
+		if (preloadDirPath !== "") {
+			args.push("--builtin-paths", preloadDirPath);
+		}
+	} else {
+		if (args.indexOf("--lsp") === -1) {
+			args.push("--lsp");
+		}
+		if (preloadDirPath !== "") {
+			args.push("--prelude", preloadDirPath);
+		}
+	}
 
 	// Otherwise to spawn the server
 	let serverOptions: ServerOptions = { command: path, args: args };

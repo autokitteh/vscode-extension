@@ -116,6 +116,11 @@
 					"default": "starlark",
 					"description": "The path to the binary to invoke (possibly on the path) for the plugin to invoke that handles LSP over stdin/stdout"
 				},
+				"autokitteh.preloadDirPath": {
+					"type": "string",
+					"default": "",
+					"description": "The path to the directory to preload"
+				},
 				"autokitteh.lspArguments": {
 					"type": "array",
 					"items": {
@@ -135,7 +140,7 @@
 						"starlark-tilt-go"
 					],
 					"description": "The LSP implementation to use for Starlark files",
-					"default": "startlark-fb-rust"
+					"default": "starlark-tilt-go"
 				},
 				"autokitteh.baseURL": {
 					"default": "http://localhost:9980",
