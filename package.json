@@ -111,12 +111,12 @@
 		],
 		"configuration": {
 			"properties": {
-				"starlark.lspPath": {
+				"autokitteh.lspPath": {
 					"type": "string",
 					"default": "starlark",
 					"description": "The path to the binary to invoke (possibly on the path) for the plugin to invoke that handles LSP over stdin/stdout"
 				},
-				"starlark.lspArguments": {
+				"autokitteh.lspArguments": {
 					"type": "array",
 					"items": {
 						"type": "string"
@@ -126,10 +126,16 @@
 					],
 					"description": "Additional arguments that should be passed to the binary at starlark.lspPath"
 				},
-				"starlark.enableGotoDefinition": {
-					"type": "boolean",
-					"default": true,
-					"description": "Whether to ask the LSP server to enable Goto Definition functionality"
+				"autokitteh.starlarkLSP": {
+					"type": [
+						"string"
+					],
+					"enum": [
+						"startlark-fb-rust",
+						"starlark-tilt-go"
+					],
+					"description": "The LSP implementation to use for Starlark files",
+					"default": "startlark-fb-rust"
 				},
 				"autokitteh.baseURL": {
 					"default": "http://localhost:9980",

@@ -73,8 +73,8 @@ export async function activate(context: ExtensionContext) {
 	// are handled, and requested from the LSP.
 	workspace.registerTextDocumentContentProvider(STARLARK_URI_SCHEME, new StarlarkFileHandler());
 
-	const path: string = requireSetting("starlark.lspPath");
-	const args: [string] = requireSetting("starlark.lspArguments");
+	const path: string = requireSetting("autokitteh.lspPath");
+	const args: [string] = requireSetting("autokitteh.lspArguments");
 
 	// Otherwise to spawn the server
 	let serverOptions: ServerOptions = { command: path, args: args };
