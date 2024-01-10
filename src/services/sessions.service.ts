@@ -1,12 +1,11 @@
-import { SessionHistory } from "@ak-proto-ts/sessions/v1/session_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
+import { LoggerLevel } from "@enums";
 import { translate } from "@i18n";
-import { convertSessionProtoToModel } from "@models/session.model";
-import { LoggerService } from "@services";
-import { EnvironmentsService } from "@services/environments.service";
+import { SessionState, convertSessionProtoToModel } from "@models";
+import { EnvironmentsService, LoggerService } from "@services";
+import { ServiceResponse } from "@type";
 import { Session } from "@type/models";
-import { ServiceResponse } from "@type/services.types";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
@@ -17,7 +16,7 @@ export class SessionsService {
 			const sessions = response.sessions.map(convertSessionProtoToModel);
 			return { data: sessions, error: undefined };
 		} catch (error) {
-			LoggerService.error(namespaces.sessionsService, (error as Error).message);
+			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
 			return { data: undefined, error };
 		}
 	}
@@ -28,19 +27,22 @@ export class SessionsService {
 			const sessions = response.sessions.map((session) => convertSessionProtoToModel(session));
 			return { data: sessions, error: undefined };
 		} catch (error) {
-			LoggerService.error(namespaces.sessionsService, (error as Error).message);
+			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
 
 			return { data: undefined, error };
 		}
 	}
 
-	static async getHistory(sessionId: string): Promise<ServiceResponse<SessionHistory[]>> {
+	static async getHistoryBySessionId(
+		sessionId: string
+	): Promise<ServiceResponse<Array<SessionState>>> {
 		try {
 			const response = await sessionsClient.getHistory({ sessionId });
-			console.log("response history", response);
-
-			return { data: [], error: undefined };
+			const sessionHistory = response.history?.states.map((state) => new SessionState(state));
+			return { data: sessionHistory, error: undefined };
 		} catch (error) {
+			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
+
 			return { data: undefined, error };
 		}
 	}
@@ -70,9 +72,10 @@ export class SessionsService {
 
 				return { data: sessions, error: undefined };
 			} else {
-				LoggerService.error(
+				LoggerService.log(
 					namespaces.sessionsService,
-					translate().t("errors.projectEnvironmentsNotFound")
+					translate().t("errors.projectEnvironmentsNotFound"),
+					LoggerLevel.error
 				);
 
 				return {
@@ -81,7 +84,7 @@ export class SessionsService {
 				};
 			}
 		} catch (error) {
-			LoggerService.error(namespaces.sessionsService, (error as Error).message);
+			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
 
 			return {
 				data: undefined,

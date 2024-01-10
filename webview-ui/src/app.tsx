@@ -6,7 +6,7 @@ import { DeploymentSectionViewModel } from "@models";
 import { SessionSectionViewModel } from "@models/views";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKButton, AKLogo } from "@react-components";
-import { IIncomingMessagesHandler } from "@react-interfaces/incomingMessagesHandler.interface";
+import { IIncomingMessagesHandler } from "@react-interfaces";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { HandleIncomingMessages, sendMessage } from "@react-utilities";
 import { Message } from "@type";

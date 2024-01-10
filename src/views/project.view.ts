@@ -41,8 +41,8 @@ export class ProjectView implements IProjectView {
 					case MessageType.selectDeployment:
 						this.delegate?.selectDeployment?.(message.payload as string);
 						break;
-					case MessageType.displaySessionStats:
-						this.delegate?.displaySessionStats?.(message.payload as string);
+					case MessageType.displaySessionLogs:
+						this.delegate?.displaySessionLogs?.(message.payload as string);
 						break;
 				}
 			},

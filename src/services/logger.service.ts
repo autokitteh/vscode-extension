@@ -1,43 +1,41 @@
+import { channels } from "@constants";
+import { LoggerLevel } from "@enums";
 import moment from "moment";
 import { window, OutputChannel } from "vscode";
 
 export class LoggerService {
-	private static outputChannel: OutputChannel;
-	private static loggerNamespace: string = "autokitteh";
+	private static outputChannels: { [key: string]: OutputChannel } = {};
+	private static defaultChannelName: string = channels.appOutputLogName;
+	private static defaultSessionsChannelName: string = channels.appOutputSessionsLogName;
 
-	// Static initializer for OutputChannel
-	private static initializeOutputChannel() {
-		if (!this.outputChannel) {
-			this.outputChannel = window.createOutputChannel(this.loggerNamespace);
-			this.outputChannel.show();
+	private static initializeOutputChannel(channelName: string = LoggerService.defaultChannelName) {
+		if (!this.outputChannels[channelName]) {
+			this.outputChannels[channelName] = window.createOutputChannel(channelName);
+			this.outputChannels[channelName].show();
+		}
+	}
+	public static clearOutputChannel(channelName: string = LoggerService.defaultChannelName) {
+		if (this.outputChannels[channelName]) {
+			this.outputChannels[channelName].clear();
 		}
 	}
 
-	public static info(namespace: string, message: string): void {
-		this.initializeOutputChannel();
-		this.outputChannel.appendLine(
-			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [LOG] ${message}`
+	public static log(
+		namespace: string,
+		message: string,
+		channelName: string = LoggerService.defaultChannelName,
+		level: string = LoggerLevel.info
+	): void {
+		this.initializeOutputChannel(channelName);
+
+		this.outputChannels[channelName].appendLine(
+			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [${level}] ${message}`
 		);
 	}
 
-	public static debug(namespace: string, message: string): void {
-		this.initializeOutputChannel();
-		this.outputChannel.appendLine(
-			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [DEBUG] ${message}`
-		);
-	}
+	public static print(namespace: string, message: string): void {
+		this.initializeOutputChannel(this.defaultSessionsChannelName);
 
-	public static log(namespace: string, message: string): void {
-		this.initializeOutputChannel();
-		this.outputChannel.appendLine(
-			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [LOG] ${message}`
-		);
-	}
-
-	public static error(namespace: string, message: string): void {
-		this.initializeOutputChannel();
-		this.outputChannel.appendLine(
-			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [ERROR] ${message}`
-		);
+		this.outputChannels[this.defaultSessionsChannelName].appendLine(`[${namespace}]: ${message}`);
 	}
 }

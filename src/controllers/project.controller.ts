@@ -1,7 +1,6 @@
-import { vsCommands, pageLimits } from "@constants";
-import { AppStateHandler } from "@controllers/utilities/appStateHandler";
+import { vsCommands, pageLimits, namespaces, channels } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
-import { MessageType, ProjectViewSections, SortOrder } from "@enums";
+import { LoggerLevel, MessageType, ProjectViewSections, SortOrder } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
@@ -10,6 +9,7 @@ import {
 	DeploymentsService,
 	ProjectsService,
 	SessionsService,
+	LoggerService,
 } from "@services";
 import { TotalEntityCount, PageLimits } from "@type/configuration";
 import { ProjectCB } from "@type/interfaces";
@@ -116,6 +116,7 @@ export class ProjectController {
 			await this.selectDeployment(this.selectedDeploymentId);
 		}
 	}
+
 	async selectDeployment(deploymentId: string) {
 		this.selectedDeploymentId = deploymentId;
 		const { data: sessions, error } = await RequestHandler.handleServiceResponse(() =>
@@ -146,9 +147,33 @@ export class ProjectController {
 			payload: sessionsViewObject,
 		});
 	}
-	async displaySessionStats(sessionId: string) {
-		console.log(sessionId);
-		SessionsService.getHistory(sessionId);
+
+	async displaySessionLogs(sessionId: string) {
+		const { data: sessionHistoryStates, error } =
+			await SessionsService.getHistoryBySessionId(sessionId);
+		if (error || !sessionHistoryStates?.length) {
+			return;
+		}
+
+		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+
+		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
+
+		if (!lastState.containLogs() && !lastState.isError()) {
+			LoggerService.print(namespaces.sessionLogs, translate().t("sessions.noLogs"));
+
+			return;
+		}
+
+		if (lastState.isError()) {
+			const printedError = lastState?.getError() || translate().t("errors.unexpectedError");
+			LoggerService.print(namespaces.sessionLogs, `Error: ${printedError}}`);
+			return;
+		}
+
+		lastState.getLogs().forEach((logStr) => {
+			LoggerService.print(namespaces.sessionLogs, logStr);
+		});
 	}
 
 	async startInterval() {

@@ -12,7 +12,7 @@ import {
 	openUsernameInputDialog,
 	openWalkthrough,
 } from "@vscommands/walkthrough";
-import { commands, ExtensionContext, workspace } from "vscode";
+import { commands, ExtensionContext } from "vscode";
 
 export async function activate(context: ExtensionContext) {
 	const sidebarView = new SidebarView();
@@ -28,6 +28,7 @@ export async function activate(context: ExtensionContext) {
 		await AppStateHandler.set(false);
 		sidebarController.disconnect();
 	});
+
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {
 			if (project) {

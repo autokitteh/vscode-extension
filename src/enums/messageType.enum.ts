@@ -7,5 +7,5 @@ export enum MessageType {
 	setSessionsSection = "SET_SESSIONS_SECTION",
 	setRowsRangePerSection = "SET_ROWS_RANGE_PER_SECTION",
 	selectDeployment = "SELECT_DEPLOYMENT",
-	displaySessionStats = "DISPLAY_SESSION_STATS",
+	displaySessionLogs = "DISPLAY_SESSION_LOGS",
 }
