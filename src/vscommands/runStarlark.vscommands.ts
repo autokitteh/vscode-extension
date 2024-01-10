@@ -8,8 +8,6 @@ import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-lan
 let client: LanguageClient;
 
 export const runStarlark = () => {
-	// Make sure that any starlark: URIs that come back from the LSP
-	// are handled, and requested from the LSP.
 	workspace.registerTextDocumentContentProvider(starlarkUriScheme, new StarlarkFileHandler(client));
 
 	const path: string = workspace.getConfiguration().get("autokitteh.starlarkLSPPath") || "";
