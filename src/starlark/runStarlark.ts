@@ -30,7 +30,7 @@ export const runStarlark = () => {
 			args.push("--builtin-paths", starlarkLSPPreloadDirPath);
 		}
 	} else if (startlarkLSPServerType === StarlarkLSPServerType.rust) {
-		if (args?.indexOf("--lsp") === -1) {
+		if (args.indexOf("--lsp") === -1) {
 			args.unshift("--lsp");
 		}
 		if (starlarkLSPPreloadDirPath !== "") {
