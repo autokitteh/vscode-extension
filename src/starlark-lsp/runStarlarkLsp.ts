@@ -7,7 +7,7 @@ import {
 } from "@constants/language";
 import { StarlarkLSPServerType } from "@enums";
 import { translate } from "@i18n";
-import { StarlarkFileHandler } from "@models/starlark";
+import { StarlarkFileHandler } from "@starlarkLsp";
 import { workspace, window, commands } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient";
 

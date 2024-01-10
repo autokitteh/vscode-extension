@@ -9,7 +9,7 @@
 		"@models": "dist/src/models",
 		"@providers": "dist/src/providers",
 		"@services": "dist/src/services",
-		"@starlark": "dist/src/starlark",
+		"@starlarkLsp": "dist/src/starlark-lsp",
 		"@type": "dist/src/types",
 		"@utilities": "dist/src/utilities",
 		"@views": "dist/src/views",

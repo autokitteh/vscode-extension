@@ -11,7 +11,6 @@ class StarlarkFileContentsResponse {
 	constructor(public contents?: string | null) {}
 }
 
-/// Ask the server for the contents of a starlark: file
 export class StarlarkFileHandler implements TextDocumentContentProvider {
 	private client: LanguageClient;
 	constructor(client: LanguageClient) {
