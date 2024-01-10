@@ -18,12 +18,12 @@ export const gRPCErrors = {
 
 export const sidebarControllerRefreshRate =
 	Number(workspace.getConfiguration().get("autokitteh.sidebar.refresh.interval")) >= 0
-		? Number(workspace.getConfiguration().get("autokitteh.sidebar.refresh.interval"))
+		? Number(workspace.getConfiguration().get("autokitteh.sidebar.refresh.interval")) * 1000
 		: DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL;
 
 export const projectControllerRefreshRate =
 	Number(workspace.getConfiguration().get("autokitteh.project.refresh.interval")) >= 0
-		? Number(workspace.getConfiguration().get("autokitteh.project.refresh.interval"))
+		? Number(workspace.getConfiguration().get("autokitteh.project.refresh.interval")) * 1000
 		: DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL;
 export const connectionHandlerInterval =
 	Number(workspace.getConfiguration().get("autokitteh.connectionTest.initial.interval.duration")) >=
