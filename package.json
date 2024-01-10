@@ -42,35 +42,20 @@
 					"description": "Server URL",
 					"type": "string"
 				},
-				"autokitteh.connectionTest.initial.interval.duration": {
-					"default": 5000,
-					"description": "Refresh interval in ms for the connection tester in the first minute (default: 5 seconds)",
-					"type": "number"
-				},
-				"autokitteh.connectionTest.interval.duration.slow": {
-					"default": 300000,
-					"description": "Refresh interval in ms for the connection tester after the first minute (default: 5 minutes)",
-					"type": "number"
-				},
 				"autokitteh.project.refresh.interval": {
-					"default": 1000,
-					"description": "Refresh interval in ms for the projects webview panel",
+					"default": 1,
+					"description": "Refresh interval in seconds for the projects webview panel",
 					"type": "number"
 				},
 				"autokitteh.serviceEnabled": {
 					"default": false,
-					"description": "Is connected to the server",
+					"description": "Is extension ON",
 					"type": "boolean"
 				},
 				"autokitteh.sidebar.refresh.interval": {
-					"default": 1000,
-					"description": "Refresh interval in ms for the sidebar panel",
+					"default": 1,
+					"description": "Refresh interval in seconds for the sidebar panel",
 					"type": "number"
-				},
-				"autokitteh.username": {
-					"default": "anonymous",
-					"description": "Username used for the connection",
-					"type": "string"
 				}
 			},
 			"title": "autokitteh"
@@ -117,12 +102,12 @@
 			{
 				"contents": "No connection instance has been found.\n[Connect](command:autokitteh.connect)",
 				"view": "autokittehSidebarTree",
-				"when": "config.autokitteh.username && config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
+				"when": "config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
 			},
 			{
 				"contents": "No instance setup has been found.\n[Setup Configuration](command:autokitteh.openConfigSetupWalkthrough)\n",
 				"view": "autokittehSidebarTree",
-				"when": "!config.autokitteh.username || !config.autokitteh.baseURL"
+				"when": "!config.autokitteh.baseURL"
 			}
 		],
 		"walkthroughs": [
