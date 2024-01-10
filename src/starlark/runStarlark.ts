@@ -63,7 +63,7 @@ export const runStarlark = () => {
 
 				client = new LanguageClient(
 					"Starlark",
-					"autokitteh: Starlark language server",
+					"autokitteh: Starlark LSP",
 					serverOptions,
 					clientOptions
 				);
