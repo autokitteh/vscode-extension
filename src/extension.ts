@@ -102,8 +102,11 @@ export async function activate(context: ExtensionContext) {
 	window.onDidChangeActiveTextEditor((editor) => {
 		if (editor && editor.document.languageId === "starlark") {
 			if ((path === "" || preloadDirPath === "") && !lspServerErrorDisplayed) {
-				LoggerService.error(namespaces.lspServer, translate().t("errors.lspPathNotSet"));
-				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.lspPathNotSet"));
+				commands.executeCommand(
+					vsCommands.showErrorMessage,
+					namespaces.lspServer,
+					translate().t("errors.lspPathNotSet")
+				);
 				lspServerErrorDisplayed = true;
 			} else if (!client) {
 				// Otherwise to spawn the server
