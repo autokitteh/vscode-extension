@@ -6,7 +6,6 @@ import { window, OutputChannel } from "vscode";
 export class LoggerService {
 	private static outputChannels: { [key: string]: OutputChannel } = {};
 	private static defaultChannelName: string = channels.appOutputLogName;
-	private static defaultSessionsChannelName: string;
 
 	private static initializeOutputChannel(channelName: string = LoggerService.defaultChannelName) {
 		if (!this.outputChannels[channelName]) {
