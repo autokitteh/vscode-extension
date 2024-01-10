@@ -6,7 +6,7 @@ import {
 	lspStarlarkUriScheme,
 } from "@constants/language";
 import { StarlarkLSPServerType } from "@enums";
-import { translate } from "@i18n/index";
+import { translate } from "@i18n";
 import { StarlarkFileHandler } from "@models/language";
 import { workspace, window, commands } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient";
@@ -70,6 +70,12 @@ export const runStarlark = () => {
 
 				client.start();
 			}
+		}
+	});
+	workspace.onDidChangeConfiguration((event) => {
+		const settingsChanged = event.affectsConfiguration("autokitteh.starlarkLSPType");
+		if (settingsChanged) {
+			console.log(event);
 		}
 	});
 };
