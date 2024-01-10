@@ -15,6 +15,80 @@
 		"@vscommands": "dist/src/vscommands"
 	},
 	"contributes": {
+		"languages": [
+			{
+				"id": "starlark",
+				"aliases": [
+					"Starlark",
+					"skylark",
+					"Skylark"
+				],
+				"extensions": [
+					".star",
+					".sky",
+					".bxl",
+					".bzl",
+					".bazel"
+				],
+				"filenames": [
+					"BUILD",
+					"WORKSPACE",
+					"BUCK",
+					"BUCK.v2",
+					"BUILD_DEFS",
+					"DEFS",
+					"TARGETS",
+					"TARGETS.v2",
+					"PACKAGE"
+				],
+				"configuration": "./src/starlark/syntaxes/starlark.configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "starlark",
+				"scopeName": "source.starlark",
+				"path": "./src/starlark/syntaxes/starlark.tmLanguage.json"
+			}
+		],
+		"breakpoints": [
+			{
+				"language": "starlark"
+			}
+		],
+		"debuggers": [
+			{
+				"type": "starlark",
+				"label": "Starlark Debug",
+				"program": "/usr/bin/env",
+				"args": [
+					"starlark",
+					"--dap"
+				],
+				"languages": [
+					"starlark"
+				],
+				"configurationAttributes": {
+					"launch": {
+						"properties": {
+							"program": {
+								"type": "string",
+								"description": "The program to debug.",
+								"default": "${file}"
+							}
+						}
+					}
+				},
+				"initialConfigurations": [
+					{
+						"type": "starlark",
+						"request": "launch",
+						"name": "Launch Program",
+						"program": "${file}"
+					}
+				]
+			}
+		],
 		"commands": [
 			{
 				"command": "autokitteh.applyManifest",
@@ -37,6 +111,26 @@
 		],
 		"configuration": {
 			"properties": {
+				"starlark.lspPath": {
+					"type": "string",
+					"default": "starlark",
+					"description": "The path to the binary to invoke (possibly on the path) for the plugin to invoke that handles LSP over stdin/stdout"
+				},
+				"starlark.lspArguments": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [
+						"--lsp"
+					],
+					"description": "Additional arguments that should be passed to the binary at starlark.lspPath"
+				},
+				"starlark.enableGotoDefinition": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to ask the LSP server to enable Goto Definition functionality"
+				},
 				"autokitteh.baseURL": {
 					"default": "http://localhost:9980",
 					"description": "Server URL",
@@ -165,7 +259,8 @@
 		"js-yaml": "^4.1.0",
 		"lodash": "^4.17.21",
 		"module-alias": "^2.2.3",
-		"moment": "^2.30.1"
+		"moment": "^2.30.1",
+		"vscode-languageclient": "^6.1.3"
 	},
 	"description": "autokitteh is an open-source automation framework designed to simplify the process of automating tasks across various environments and tools. Its primary focus is on providing a versatile and user-friendly platform for automating operations, particularly in DevOps and software development contexts.",
 	"devDependencies": {
@@ -198,27 +293,11 @@
 	"engines": {
 		"vscode": "^1.85.0"
 	},
-	"homepage": "https://autokitteh.com",
-	"icon": "./resources/sidebar/ak-extension-icon.png",
-	"license": "SEE LICENSE IN LICENSE.md",
-	"lint-staged": {
-		"*.{ts,tsx}": [
-			"prettier --write",
-			"eslint --fix"
-		]
-	},
 	"main": "./dist/src/extension.js",
 	"name": "autokitteh",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/autokitteh/vscode-v2"
-	},
 	"scripts": {
 		"build:webview": "cd webview-ui && npm run build",
 		"compile": "tsc -p ./",
-		"esbuild": "npm run esbuild-base -- --sourcemap",
-		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
-		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
 		"fetch-protos": "git submodule update --init",
 		"format:check": "npm run prettier -- --check",
 		"format:fix": "npm run prettier -- --write",
@@ -227,11 +306,24 @@
 		"pretest": "npm run compile && npm run lint",
 		"prettier": "prettier . --ignore-path .prettierignore",
 		"start:webview": "cd webview-ui && npm run start",
-		"test": "vitest",
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
-		"vscode:prepublish": "npm run esbuild-base -- --minify",
-		"watch": "tsc -watch -p ./"
+		"test": "vitest",
+		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
+		"esbuild": "npm run esbuild-base -- --sourcemap",
+		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/autokitteh/vscode-v2"
+	},
+	"homepage": "https://autokitteh.com",
+	"license": "SEE LICENSE IN LICENSE.md",
+	"lint-staged": {
+		"*.{ts,tsx}": [
+			"prettier --write",
+			"eslint --fix"
+		]
 	},
 	"version": "0.0.6"
 }
