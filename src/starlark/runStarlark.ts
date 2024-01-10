@@ -77,6 +77,7 @@ export const runStarlark = () => {
 		if (settingsChanged) {
 			const newStarlarkLSPType =
 				workspace.getConfiguration().get("autokitteh.starlarkLSPType") || "";
+
 			if (newStarlarkLSPType === StarlarkLSPServerType.tilt) {
 				workspace.getConfiguration().update("autokitteh.starlarkLSPArguments", ["start"]);
 			} else if (newStarlarkLSPType === StarlarkLSPServerType.rust) {
