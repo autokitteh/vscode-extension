@@ -80,8 +80,8 @@ export async function activate(context: ExtensionContext) {
 	const path: string = requireSetting("autokitteh.starlarkLSPPath");
 	const lspServerType: string = requireSetting("autokitteh.starlarkLSPType");
 	const preloadDirPath: string = requireSetting("autokitteh.starlarkLSPPreloadDir");
-	let isStarlarkLSPRunning: boolean = false;
 	let args: [string] = requireSetting("autokitteh.starlarkLSPArguments");
+	let lspServerErrorDisplayed: boolean = false;
 
 	if (lspServerType === LspServerType.tilt) {
 		if (args.indexOf("start") === -1) {
@@ -101,10 +101,11 @@ export async function activate(context: ExtensionContext) {
 
 	window.onDidChangeActiveTextEditor((editor) => {
 		if (editor && editor.document.languageId === "starlark") {
-			if (path === "" || preloadDirPath === "") {
+			if ((path === "" || preloadDirPath === "") && !lspServerErrorDisplayed) {
 				LoggerService.error(namespaces.lspServer, translate().t("errors.lspPathNotSet"));
-			} else if (!isStarlarkLSPRunning) {
-				isStarlarkLSPRunning = true;
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.lspPathNotSet"));
+				lspServerErrorDisplayed = true;
+			} else if (!client) {
 				// Otherwise to spawn the server
 				let serverOptions: ServerOptions = { command: path, args: args };
 
