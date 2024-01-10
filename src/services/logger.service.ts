@@ -6,7 +6,6 @@ import { window, OutputChannel } from "vscode";
 export class LoggerService {
 	private static outputChannels: { [key: string]: OutputChannel } = {};
 	private static defaultChannelName: string = channels.appOutputLogName;
-	private static defaultSessionsChannelName: string = channels.appOutputSessionsLogName;
 
 	private static initializeOutputChannel(channelName: string = LoggerService.defaultChannelName) {
 		if (!this.outputChannels[channelName]) {
@@ -23,8 +22,8 @@ export class LoggerService {
 	public static log(
 		namespace: string,
 		message: string,
-		channelName: string = LoggerService.defaultChannelName,
-		level: string = LoggerLevel.info
+		level: string = LoggerLevel.info,
+		channelName: string = LoggerService.defaultChannelName
 	): void {
 		this.initializeOutputChannel(channelName);
 
@@ -33,9 +32,9 @@ export class LoggerService {
 		);
 	}
 
-	public static print(namespace: string, message: string): void {
-		this.initializeOutputChannel(this.defaultSessionsChannelName);
+	public static print(namespace: string, message: string, channelName: string): void {
+		this.initializeOutputChannel(channelName);
 
-		this.outputChannels[this.defaultSessionsChannelName].appendLine(`[${namespace}]: ${message}`);
+		this.outputChannels[channelName].appendLine(`[${namespace}]: ${message}`);
 	}
 }

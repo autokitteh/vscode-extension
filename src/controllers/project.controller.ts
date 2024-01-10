@@ -160,19 +160,27 @@ export class ProjectController {
 		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 
 		if (!lastState.containLogs() && !lastState.isError()) {
-			LoggerService.print(namespaces.sessionLogs, translate().t("sessions.noLogs"));
+			LoggerService.print(
+				namespaces.sessionLogs,
+				translate().t("sessions.noLogs"),
+				channels.appOutputSessionsLogName
+			);
 
 			return;
 		}
 
 		if (lastState.isError()) {
 			const printedError = lastState?.getError() || translate().t("errors.unexpectedError");
-			LoggerService.print(namespaces.sessionLogs, `Error: ${printedError}}`);
+			LoggerService.print(
+				namespaces.sessionLogs,
+				`Error: ${printedError}}`,
+				channels.appOutputSessionsLogName
+			);
 			return;
 		}
 
 		lastState.getLogs().forEach((logStr) => {
-			LoggerService.print(namespaces.sessionLogs, logStr);
+			LoggerService.print(namespaces.sessionLogs, logStr, channels.appOutputSessionsLogName);
 		});
 	}
 
