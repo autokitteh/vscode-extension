@@ -47,17 +47,13 @@ export const runStarlark = () => {
 				);
 				lspServerErrorDisplayed = true;
 			} else if (!client) {
-				// Otherwise to spawn the server
 				let serverOptions: ServerOptions = { command: path, args: args };
 
-				// Options to control the language client
 				let clientOptions: LanguageClientOptions = {
-					// Register the server for Starlark documents
 					documentSelector: [{ scheme: "file", language: "starlark" }],
 					initializationOptions: {},
 				};
 
-				// Create the language client and start the client.
 				client = new LanguageClient(
 					"Starlark",
 					"Starlark language server",
@@ -65,7 +61,6 @@ export const runStarlark = () => {
 					clientOptions
 				);
 
-				// Start the client. This will also launch the server
 				client.start();
 			}
 		}
