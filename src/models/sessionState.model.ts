@@ -1,7 +1,5 @@
-import { namespaces } from "@constants";
 import { SessionStateType } from "@enums";
 import { translate } from "@i18n/index";
-import { LoggerService } from "@services";
 import { ProtoSessionHistoryState } from "@type/models";
 import { get } from "lodash";
 

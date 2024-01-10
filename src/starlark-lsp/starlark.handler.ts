@@ -1,4 +1,4 @@
-import { CancellationToken, ProviderResult, TextDocumentContentProvider, Uri } from "vscode";
+import { ProviderResult, TextDocumentContentProvider, Uri } from "vscode";
 import { LanguageClient } from "vscode-languageclient";
 
 const STARLARK_FILE_CONTENTS_METHOD = "starlark/fileContents";
@@ -16,8 +16,7 @@ export class StarlarkFileHandler implements TextDocumentContentProvider {
 	constructor(client: LanguageClient) {
 		this.client = client;
 	}
-	// eslint-disable-next-line @typescript-eslint/naming-convention
-	provideTextDocumentContent(uri: Uri, _token: CancellationToken): ProviderResult<string> {
+	provideTextDocumentContent(uri: Uri): ProviderResult<string> {
 		if (this.client === undefined) {
 			return null;
 		}
