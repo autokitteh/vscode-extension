@@ -1,5 +1,5 @@
 export {
-	lspStarlarkUriScheme,
+	starlarkLSPUriScheme,
 	startlarkLSPPath,
 	startlarkLSPServerType,
 	starlarkLSPPreloadDirPath,

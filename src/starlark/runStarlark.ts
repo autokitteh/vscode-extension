@@ -3,7 +3,7 @@ import {
 	startlarkLSPPath,
 	starlarkLSPPreloadDirPath,
 	startlarkLSPServerType,
-	lspStarlarkUriScheme,
+	starlarkLSPUriScheme,
 } from "@constants/language";
 import { StarlarkLSPServerType } from "@enums";
 import { translate } from "@i18n";
@@ -15,7 +15,7 @@ let client: LanguageClient;
 
 export const runStarlark = () => {
 	workspace.registerTextDocumentContentProvider(
-		lspStarlarkUriScheme,
+		starlarkLSPUriScheme,
 		new StarlarkFileHandler(client)
 	);
 
