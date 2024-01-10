@@ -24,22 +24,7 @@
 					"Skylark"
 				],
 				"extensions": [
-					".star",
-					".sky",
-					".bxl",
-					".bzl",
-					".bazel"
-				],
-				"filenames": [
-					"BUILD",
-					"WORKSPACE",
-					"BUCK",
-					"BUCK.v2",
-					"BUILD_DEFS",
-					"DEFS",
-					"TARGETS",
-					"TARGETS.v2",
-					"PACKAGE"
+					".star"
 				],
 				"configuration": "./src/starlark/syntaxes/starlark.configuration.json"
 			}
@@ -54,39 +39,6 @@
 		"breakpoints": [
 			{
 				"language": "starlark"
-			}
-		],
-		"debuggers": [
-			{
-				"type": "starlark",
-				"label": "Starlark Debug",
-				"program": "/usr/bin/env",
-				"args": [
-					"starlark",
-					"--dap"
-				],
-				"languages": [
-					"starlark"
-				],
-				"configurationAttributes": {
-					"launch": {
-						"properties": {
-							"program": {
-								"type": "string",
-								"description": "The program to debug.",
-								"default": "${file}"
-							}
-						}
-					}
-				},
-				"initialConfigurations": [
-					{
-						"type": "starlark",
-						"request": "launch",
-						"name": "Launch Program",
-						"program": "${file}"
-					}
-				]
 			}
 		],
 		"commands": [
@@ -114,12 +66,12 @@
 				"autokitteh.starlarkLSPPath": {
 					"type": "string",
 					"default": "starlark",
-					"description": "The path to the binary to invoke (possibly on the path) for the plugin to invoke that handles LSP over stdin/stdout"
+					"description": "The path to the Starlark LSP Server"
 				},
 				"autokitteh.starlarkLSPPreloadDir": {
 					"type": "string",
 					"default": "",
-					"description": "The path to the directory to preload"
+					"description": "The path to the autokitteh's API definitions for Starlark"
 				},
 				"autokitteh.starlarkLSPArguments": {
 					"type": "array",
@@ -129,7 +81,7 @@
 					"default": [
 						"--lsp"
 					],
-					"description": "Additional arguments that should be passed to the binary at starlark.lspPath"
+					"description": "Additional arguments that should be passed to the binary at starlark.startlarkLSPPath"
 				},
 				"autokitteh.starlarkLSPType": {
 					"type": [

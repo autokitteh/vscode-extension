@@ -1,5 +1,11 @@
-import { namespaces, starlarkUriScheme, vsCommands } from "@constants";
-import { LspServerType } from "@enums";
+import { namespaces, vsCommands } from "@constants";
+import {
+	startlarkLSPPath,
+	starlarkLSPPreloadDirPath,
+	startlarkLSPServerType,
+	lspStarlarkUriScheme,
+} from "@constants/language";
+import { StarlarkLSPServerType } from "@enums";
 import { translate } from "@i18n/index";
 import { StarlarkFileHandler } from "@models/language";
 import { workspace, window, commands } from "vscode";
@@ -8,44 +14,44 @@ import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-lan
 let client: LanguageClient;
 
 export const runStarlark = () => {
-	workspace.registerTextDocumentContentProvider(starlarkUriScheme, new StarlarkFileHandler(client));
+	workspace.registerTextDocumentContentProvider(
+		lspStarlarkUriScheme,
+		new StarlarkFileHandler(client)
+	);
 
-	const path: string = workspace.getConfiguration().get("autokitteh.starlarkLSPPath") || "";
-	const lspServerType: string | undefined = workspace
-		.getConfiguration()
-		.get("autokitteh.starlarkLSPType");
-	const preloadDirPath: string =
-		workspace.getConfiguration().get("autokitteh.starlarkLSPPreloadDir") || "";
 	let args: string[] = workspace.getConfiguration().get("autokitteh.starlarkLSPArguments") || [];
 	let lspServerErrorDisplayed: boolean = false;
 
-	if (lspServerType === LspServerType.tilt) {
+	if (startlarkLSPServerType === StarlarkLSPServerType.tilt) {
 		if (args.indexOf("start") === -1) {
 			args.push("start");
 		}
-		if (preloadDirPath !== "") {
-			args.push("--builtin-paths", preloadDirPath);
+		if (starlarkLSPPreloadDirPath !== "") {
+			args.push("--builtin-paths", starlarkLSPPreloadDirPath);
 		}
 	} else {
 		if (args?.indexOf("--lsp") === -1) {
 			args.push("--lsp");
 		}
-		if (preloadDirPath !== "") {
-			args.push("--prelude", preloadDirPath);
+		if (starlarkLSPPreloadDirPath !== "") {
+			args.push("--prelude", starlarkLSPPreloadDirPath);
 		}
 	}
 
 	window.onDidChangeActiveTextEditor((editor) => {
 		if (editor && editor.document.languageId === "starlark") {
-			if ((path === "" || preloadDirPath === "") && !lspServerErrorDisplayed) {
+			if (
+				(startlarkLSPPath === "" || starlarkLSPPreloadDirPath === "") &&
+				!lspServerErrorDisplayed
+			) {
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
-					namespaces.lspServer,
+					namespaces.startlarkLSPServer,
 					translate().t("errors.lspPathNotSet")
 				);
 				lspServerErrorDisplayed = true;
 			} else if (!client) {
-				let serverOptions: ServerOptions = { command: path, args: args };
+				let serverOptions: ServerOptions = { command: startlarkLSPPath, args: args };
 
 				let clientOptions: LanguageClientOptions = {
 					documentSelector: [{ scheme: "file", language: "starlark" }],

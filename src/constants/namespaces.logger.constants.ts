@@ -9,5 +9,5 @@ export const namespaces = {
 	sessionsService: "Sessions Service",
 	appStateHandler: "Application State",
 	sessionLogs: "Session Logs",
-	lspServer: "LSP Initialization",
+	startlarkLSPServer: "LSP Initialization",
 };

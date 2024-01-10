@@ -10,4 +10,3 @@ export { vsCommands } from "@constants/vsCommands.constants";
 export { pageLimits } from "@constants/projectsView.constants";
 export { namespaces } from "@constants/namespaces.logger.constants";
 export { channels } from "@constants/output.constants";
-export { starlarkUriScheme } from "@constants/language/starlark.constants";
