@@ -21,6 +21,7 @@ import {
 	ProviderResult,
 	TextDocumentContentProvider,
 	workspace,
+	window,
 } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient";
 
@@ -77,7 +78,7 @@ export async function activate(context: ExtensionContext) {
 	const path: string = requireSetting("autokitteh.starlarkLSPPath");
 	const lspServerType: string = requireSetting("autokitteh.starlarkLSPType");
 	const preloadDirPath: string = requireSetting("autokitteh.starlarkLSPPreloadDir");
-
+	let isStarlarkLSPRunning: boolean = false;
 	let args: [string] = requireSetting("autokitteh.starlarkLSPArguments");
 
 	if (lspServerType === LspServerType.tilt) {
@@ -86,8 +87,6 @@ export async function activate(context: ExtensionContext) {
 		}
 		if (preloadDirPath !== "") {
 			args.push("--builtin-paths", preloadDirPath);
-		} else {
-			args.push("--builtin-paths", path);
 		}
 	} else {
 		if (args.indexOf("--lsp") === -1) {
@@ -95,26 +94,36 @@ export async function activate(context: ExtensionContext) {
 		}
 		if (preloadDirPath !== "") {
 			args.push("--prelude", preloadDirPath);
-		} else {
-			args.push("--prelude", path);
 		}
 	}
 
-	// Otherwise to spawn the server
-	let serverOptions: ServerOptions = { command: path, args: args };
+	window.onDidChangeActiveTextEditor((editor) => {
+		if (editor && editor.document.languageId === "starlark") {
+			if (!isStarlarkLSPRunning) {
+				isStarlarkLSPRunning = true;
+				// Otherwise to spawn the server
+				let serverOptions: ServerOptions = { command: path, args: args };
 
-	// Options to control the language client
-	let clientOptions: LanguageClientOptions = {
-		// Register the server for Starlark documents
-		documentSelector: [{ scheme: "file", language: "starlark" }],
-		initializationOptions: {},
-	};
+				// Options to control the language client
+				let clientOptions: LanguageClientOptions = {
+					// Register the server for Starlark documents
+					documentSelector: [{ scheme: "file", language: "starlark" }],
+					initializationOptions: {},
+				};
 
-	// Create the language client and start the client.
-	client = new LanguageClient("Starlark", "Starlark language server", serverOptions, clientOptions);
+				// Create the language client and start the client.
+				client = new LanguageClient(
+					"Starlark",
+					"Starlark language server",
+					serverOptions,
+					clientOptions
+				);
 
-	// Start the client. This will also launch the server
-	client.start();
+				// Start the client. This will also launch the server
+				client.start();
+			}
+		}
+	});
 
 	const sidebarView = new SidebarView();
 
