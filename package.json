@@ -233,5 +233,5 @@
 		"vscode:prepublish": "npm run esbuild-base -- --minify",
 		"watch": "tsc -watch -p ./"
 	},
-	"version": "0.0.5"
+	"version": "0.0.6"
 }
