@@ -1,7 +1,7 @@
 import { workspace } from "vscode";
 
 export const starlarkLSPUriScheme = "starlark";
-export const startlarkLSPPath: string =
+export const starlarkLSPPath: string =
 	workspace.getConfiguration().get("autokitteh.starlarkLSPPath") || "";
 export const startlarkLSPServerType: string =
 	workspace.getConfiguration().get("autokitteh.starlarkLSPType") || "";

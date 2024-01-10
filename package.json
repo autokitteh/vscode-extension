@@ -80,7 +80,7 @@
 					"default": [
 						"start"
 					],
-					"description": "Additional arguments that should be passed to the binary at starlark.startlarkLSPPath"
+					"description": "Additional arguments that should be passed to the binary at starlark.starlarkLSPPath"
 				},
 				"autokitteh.starlarkLSPType": {
 					"type": [

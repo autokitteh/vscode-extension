@@ -1,6 +1,6 @@
 export {
 	starlarkLSPUriScheme,
-	startlarkLSPPath,
+	starlarkLSPPath,
 	startlarkLSPServerType,
 	starlarkLSPPreloadDirPath,
 } from "@constants/language/starlark.constants";

@@ -1,6 +1,6 @@
 import { namespaces, vsCommands } from "@constants";
 import {
-	startlarkLSPPath,
+	starlarkLSPPath,
 	starlarkLSPPreloadDirPath,
 	startlarkLSPServerType,
 	starlarkLSPUriScheme,
@@ -41,7 +41,7 @@ export const runStarlark = () => {
 	window.onDidChangeActiveTextEditor((editor) => {
 		if (editor && editor.document.languageId === "starlark") {
 			if (
-				(startlarkLSPPath === "" || starlarkLSPPreloadDirPath === "") &&
+				(starlarkLSPPath === "" || starlarkLSPPreloadDirPath === "") &&
 				!lspServerErrorDisplayed
 			) {
 				commands.executeCommand(
@@ -54,7 +54,7 @@ export const runStarlark = () => {
 			}
 
 			if (!client) {
-				let serverOptions: ServerOptions = { command: startlarkLSPPath, args: args };
+				let serverOptions: ServerOptions = { command: starlarkLSPPath, args: args };
 
 				let clientOptions: LanguageClientOptions = {
 					documentSelector: [{ scheme: "file", language: "starlark" }],
