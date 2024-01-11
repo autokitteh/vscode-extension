@@ -9,7 +9,7 @@
 		"@models": "dist/src/models",
 		"@providers": "dist/src/providers",
 		"@services": "dist/src/services",
-		"@starlarkLsp": "dist/src/starlark-lsp",
+		"@starlark": "dist/src/starlark",
 		"@type": "dist/src/types",
 		"@utilities": "dist/src/utilities",
 		"@views": "dist/src/views",
@@ -287,5 +287,5 @@
 			"eslint --fix"
 		]
 	},
-	"version": "0.0.7"
+	"version": "0.0.8"
 }
