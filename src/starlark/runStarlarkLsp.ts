@@ -54,7 +54,7 @@ export const runStarlarkLSP = () => {
 					translate().t("errors.missingStarlarkLSPPath")
 				);
 				lspServerErrorDisplayed = true;
-				// return;
+				return;
 			}
 
 			if (true) {
