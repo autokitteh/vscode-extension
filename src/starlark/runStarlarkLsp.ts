@@ -14,7 +14,6 @@ import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-lan
 let client: LanguageClient;
 
 export const runStarlarkLSP = () => {
-	debugger;
 	workspace.registerTextDocumentContentProvider(
 		starlarkLSPUriScheme,
 		new StarlarkFileHandler(client)
@@ -57,7 +56,7 @@ export const runStarlarkLSP = () => {
 				return;
 			}
 
-			if (true) {
+			if (!client) {
 				let serverOptions: ServerOptions = { command: starlarkLSPPath, args: args };
 
 				let clientOptions: LanguageClientOptions = {
