@@ -7,13 +7,14 @@ import {
 } from "@constants/language";
 import { StarlarkLSPServerType } from "@enums";
 import { translate } from "@i18n";
-import { StarlarkFileHandler } from "@starlarkLsp";
+import { StarlarkFileHandler } from "@starlark";
 import { workspace, window, commands } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient";
 
 let client: LanguageClient;
 
 export const runStarlarkLSP = () => {
+	debugger;
 	workspace.registerTextDocumentContentProvider(
 		starlarkLSPUriScheme,
 		new StarlarkFileHandler(client)
@@ -53,10 +54,10 @@ export const runStarlarkLSP = () => {
 					translate().t("errors.missingStarlarkLSPPath")
 				);
 				lspServerErrorDisplayed = true;
-				return;
+				// return;
 			}
 
-			if (!client) {
+			if (true) {
 				let serverOptions: ServerOptions = { command: starlarkLSPPath, args: args };
 
 				let clientOptions: LanguageClientOptions = {
