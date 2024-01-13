@@ -1,7 +1,9 @@
 {
     "name": "Starlark",
     "scopeName": "source.starlark",
-    "fileTypes": ["starlark"],
+    "fileTypes": [
+        "starlark"
+    ],
     "patterns": [
         {
             "include": "#statement"
@@ -165,11 +167,11 @@
                 },
                 {
                     "name": "keyword.control.flow.starlark",
-                    "match": "\\b(?<!\\.)(break|continue|elif|else|for|if|pass|return|lambda)\\b"
+                    "match": "\\b(?<!\\.)(break|continue|elif|else|for|if|pass|return|lambda|while)\\b"
                 },
                 {
                     "name": "invalid.illegal.keyword.starlark",
-                    "match": "\\b(?<!\\.)(as|class|del|except|finally|from|global|import|is|nonlocal|raise|try|while|with|yield)\\b"
+                    "match": "\\b(?<!\\.)(as|class|del|except|finally|from|global|import|is|nonlocal|raise|try|with|yield)\\b"
                 }
             ]
         },
@@ -870,7 +872,7 @@
         },
         "illegal-name": {
             "name": "keyword.control.flow.starlark",
-            "match": "\\b(and|as|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|load|nonlocal|not|or|pass|raise|return|try|while|with|yield)\\b"
+            "match": "\\b(and|as|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|load|nonlocal|not|or|pass|raise|return|try|with|while|yield)\\b"
         },
         "illegal-operator": {
             "patterns": [
@@ -911,7 +913,7 @@
                 }
             }
         },
-       "discouraged-semicolon": {
+        "discouraged-semicolon": {
             "patterns": [
                 {
                     "name": "invalid.deprecated.semicolon.starlark",
