@@ -16,25 +16,6 @@
 		"@vscommands": "dist/src/vscommands"
 	},
 	"contributes": {
-		"languages": [
-			{
-				"id": "starlark",
-				"aliases": [
-					"Starlark"
-				],
-				"extensions": [
-					".star"
-				],
-				"configuration": "./src/starlark/syntaxes/starlark.configuration.json"
-			}
-		],
-		"grammars": [
-			{
-				"language": "starlark",
-				"scopeName": "source.starlark",
-				"path": "./src/starlark/syntaxes/starlark.tmLanguage.json"
-			}
-		],
 		"breakpoints": [
 			{
 				"language": "starlark"
@@ -62,37 +43,6 @@
 		],
 		"configuration": {
 			"properties": {
-				"autokitteh.starlarkLSPPath": {
-					"type": "string",
-					"default": "starlark",
-					"description": "The path to the Starlark LSP Server"
-				},
-				"autokitteh.starlarkLSPPreloadDir": {
-					"type": "string",
-					"default": "",
-					"description": "The path to the autokitteh's API definitions for Starlark"
-				},
-				"autokitteh.starlarkLSPArguments": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					},
-					"default": [
-						"start"
-					],
-					"description": "Additional arguments for the starlark.starlarkLSPPath"
-				},
-				"autokitteh.starlarkLSPType": {
-					"type": [
-						"string"
-					],
-					"enum": [
-						"startlark-fb-rust",
-						"starlark-tilt-go"
-					],
-					"description": "Starlark LSP server to implementation",
-					"default": "starlark-tilt-go"
-				},
 				"autokitteh.baseURL": {
 					"default": "http://localhost:9980",
 					"description": "Server URL",
@@ -112,10 +62,60 @@
 					"default": 1,
 					"description": "Refresh interval in seconds for the sidebar panel",
 					"type": "number"
+				},
+				"autokitteh.starlarkLSPArguments": {
+					"default": [
+						"start"
+					],
+					"description": "Additional arguments for the starlark.starlarkLSPPath",
+					"items": {
+						"type": "string"
+					},
+					"type": "array"
+				},
+				"autokitteh.starlarkLSPPath": {
+					"default": "starlark",
+					"description": "The path to the Starlark LSP Server",
+					"type": "string"
+				},
+				"autokitteh.starlarkLSPPreloadDir": {
+					"default": "",
+					"description": "The path to the autokitteh's API definitions for Starlark",
+					"type": "string"
+				},
+				"autokitteh.starlarkLSPType": {
+					"default": "starlark-tilt-go",
+					"description": "Starlark LSP server to implementation",
+					"enum": [
+						"startlark-fb-rust",
+						"starlark-tilt-go"
+					],
+					"type": [
+						"string"
+					]
 				}
 			},
 			"title": "autokitteh"
 		},
+		"grammars": [
+			{
+				"language": "starlark",
+				"path": "./starlark-syntaxes/starlark.tmLanguage.json",
+				"scopeName": "source.starlark"
+			}
+		],
+		"languages": [
+			{
+				"aliases": [
+					"Starlark"
+				],
+				"configuration": "./starlark-syntaxes/starlark.configuration.json",
+				"extensions": [
+					".star"
+				],
+				"id": "starlark"
+			}
+		],
 		"menus": {
 			"explorer/context": [
 				{
@@ -136,7 +136,6 @@
 				}
 			]
 		},
-		"publisher": "autokitteh",
 		"views": {
 			"autokittehSidebarTree": [
 				{
@@ -148,7 +147,7 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"icon": "./resources/sidebar/ak-sidebar-icon.svg",
+					"icon": "./resources/sidebar/ak-sidebar-icon.png",
 					"id": "autokittehSidebarTree",
 					"title": "autokitteh"
 				}
@@ -212,7 +211,7 @@
 		"moment": "^2.30.1",
 		"vscode-languageclient": "^6.1.3"
 	},
-	"description": "autokitteh is an open-source automation framework designed to simplify the process of automating tasks across various environments and tools. Its primary focus is on providing a versatile and user-friendly platform for automating operations, particularly in DevOps and software development contexts.",
+	"description": "Simplify the process of automating tasks",
 	"devDependencies": {
 		"@commitlint/cli": "^18.4.3",
 		"@commitlint/config-conventional": "^18.4.3",
@@ -243,11 +242,28 @@
 	"engines": {
 		"vscode": "^1.85.0"
 	},
+	"homepage": "https://autokitteh.com",
+	"icon": "./resources/extensions-marketplace/ak-extension-icon.png",
+	"license": "SEE LICENSE IN LICENSE.md",
+	"lint-staged": {
+		"*.{ts,tsx}": [
+			"prettier --write",
+			"eslint --fix"
+		]
+	},
 	"main": "./dist/src/extension.js",
 	"name": "autokitteh",
+	"publisher": "autokitteh",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/autokitteh/vscode-v2"
+	},
 	"scripts": {
 		"build:webview": "cd webview-ui && npm run build",
 		"compile": "tsc -p ./",
+		"esbuild": "npm run esbuild-base -- --sourcemap",
+		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
+		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
 		"fetch-protos": "git submodule update --init",
 		"format:check": "npm run prettier -- --check",
 		"format:fix": "npm run prettier -- --write",
@@ -256,24 +272,9 @@
 		"pretest": "npm run compile && npm run lint",
 		"prettier": "prettier . --ignore-path .prettierignore",
 		"start:webview": "cd webview-ui && npm run start",
-		"type:check": "tsc",
-		"validate": "run-p lint type:check format:check",
 		"test": "vitest",
-		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
-		"esbuild": "npm run esbuild-base -- --sourcemap",
-		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch"
+		"type:check": "tsc",
+		"validate": "run-p lint type:check format:check"
 	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/autokitteh/vscode-v2"
-	},
-	"homepage": "https://autokitteh.com",
-	"license": "SEE LICENSE IN LICENSE.md",
-	"lint-staged": {
-		"*.{ts,tsx}": [
-			"prettier --write",
-			"eslint --fix"
-		]
-	},
-	"version": "0.0.8"
+	"version": "0.0.9-beta"
 }
