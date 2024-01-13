@@ -5,8 +5,6 @@ export const vsCommands = {
 	disconnect: "autokitteh.disconnect",
 	applyManifest: "autokitteh.applyManifest",
 	buildFolder: "autokitteh.buildFolder",
-	openUsernameInputDialog: "autokitteh.openUsernameInputDialog",
-	usernameUpdated: "autokitteh.usernameUpdated",
 	openBaseURLInputDialog: "autokitteh.openBaseURLInputDialog",
 	openConfigSetupWalkthrough: "autokitteh.openConfigSetupWalkthrough",
 	openWalkthrough: "workbench.action.openWalkthrough",

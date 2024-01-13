@@ -8,11 +8,7 @@ import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { runStarlarkLSP } from "@starlark";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
-import {
-	openBaseURLInputDialog,
-	openUsernameInputDialog,
-	openWalkthrough,
-} from "@vscommands/walkthrough";
+import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough";
 import { commands, ExtensionContext } from "vscode";
 
 export async function activate(context: ExtensionContext) {
@@ -42,10 +38,6 @@ export async function activate(context: ExtensionContext) {
 
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
 	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));
-	context.subscriptions.push(
-		commands.registerCommand(vsCommands.openUsernameInputDialog, openUsernameInputDialog)
-	);
-	context.subscriptions.push(commands.registerCommand(vsCommands.usernameUpdated, function () {}));
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.showInfoMessage, MessageHandler.infoMessage)
 	);
