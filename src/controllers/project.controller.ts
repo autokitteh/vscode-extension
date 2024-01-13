@@ -63,10 +63,9 @@ export class ProjectController {
 
 	async getProjectDeployments(): Promise<Deployment[] | undefined> {
 		const { data: environments, error: environmentsError } =
-			await RequestHandler.handleServiceResponse(
-				() => EnvironmentsService.listByProjectId(this.projectId),
-				{ onFailureMessage: translate().t("errors.environmentsNotDefinedForProject") }
-			);
+			await RequestHandler.handleServiceResponse(() => EnvironmentsService.list(), {
+				onFailureMessage: translate().t("errors.environmentsNotDefinedForProject"),
+			});
 
 		if (environmentsError || !environments?.length) {
 			return [];

@@ -47,10 +47,10 @@ export class SessionsService {
 		}
 	}
 
-	static async listByProjectId(projectId: string): Promise<ServiceResponse<Session[]>> {
+	static async listByProjectId(): Promise<ServiceResponse<Session[]>> {
 		try {
 			const { data: projectEnvironments, error: environmentsError } =
-				await EnvironmentsService.listByProjectId(projectId);
+				await EnvironmentsService.list();
 
 			if (!environmentsError && projectEnvironments) {
 				const sessionsPromises = projectEnvironments.map(async (environment) => {

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { pageLimits } from "@constants/projectsView.constants";
-import { MessageType, ProjectViewSections } from "@enums";
+import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
 import { AKDeploymentState } from "@react-components";
@@ -13,7 +12,6 @@ import {
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
 import { DeploymentState } from "@react-enums";
-import { usePagination } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import { Deployment } from "@type/models";
 import moment from "moment";
@@ -22,6 +20,7 @@ export const AKDeployments = ({
 	deployments,
 	totalDeployments = 0,
 }: DeploymentSectionViewModel) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedDeployment, setSelectedDeployment] = useState("");
@@ -42,12 +41,6 @@ export const AKDeployments = ({
 	const isDeploymentStateStartable = (deploymentState: number) =>
 		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT ||
 		deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
-
-	const { endIndex, showMore, showLess } = usePagination(
-		pageLimits[ProjectViewSections.DEPLOYMENTS],
-		totalDeployments,
-		ProjectViewSections.DEPLOYMENTS
-	);
 
 	const getSessionsByDeploymentId = (deploymentId: string) => {
 		sendMessage(MessageType.selectDeployment, deploymentId);

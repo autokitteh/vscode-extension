@@ -15,6 +15,7 @@
 		"@views": "dist/src/views",
 		"@vscommands": "dist/src/vscommands"
 	},
+	"icon": "./resources/extensions-marketplace/ak-extension-icon.png",
 	"contributes": {
 		"languages": [
 			{
@@ -25,14 +26,14 @@
 				"extensions": [
 					".star"
 				],
-				"configuration": "./src/starlark/syntaxes/starlark.configuration.json"
+				"configuration": "./starlark-syntaxes/starlark.configuration.json"
 			}
 		],
 		"grammars": [
 			{
 				"language": "starlark",
 				"scopeName": "source.starlark",
-				"path": "./src/starlark/syntaxes/starlark.tmLanguage.json"
+				"path": "./starlark-syntaxes/starlark.tmLanguage.json"
 			}
 		],
 		"breakpoints": [
@@ -148,7 +149,7 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"icon": "./resources/sidebar/ak-sidebar-icon.svg",
+					"icon": "./resources/sidebar/ak-sidebar-icon.png",
 					"id": "autokittehSidebarTree",
 					"title": "autokitteh"
 				}
@@ -287,5 +288,5 @@
 			"eslint --fix"
 		]
 	},
-	"version": "0.0.8"
+	"version": "0.0.9"
 }

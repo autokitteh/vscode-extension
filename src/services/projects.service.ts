@@ -29,9 +29,7 @@ export class ProjectsService {
 
 	static async list(): Promise<ServiceResponse<Project[]>> {
 		try {
-			const projects = (await projectsClient.listForOwner({ ownerId: "" })).projects.map(
-				convertProjectProtoToModel
-			);
+			const projects = (await projectsClient.list({})).projects.map(convertProjectProtoToModel);
 			return { data: projects, error: undefined };
 		} catch (error) {
 			LoggerService.log(namespaces.projectService, (error as Error).message, LoggerLevel.error);
@@ -58,8 +56,7 @@ export class ProjectsService {
 			return { data: undefined, error: buildError };
 		}
 
-		const { data: environments, error: envError } =
-			await EnvironmentsService.listByProjectId(projectId);
+		const { data: environments, error: envError } = await EnvironmentsService.list();
 		if (envError) {
 			LoggerService.log(namespaces.projectService, (envError as Error).message, LoggerLevel.error);
 

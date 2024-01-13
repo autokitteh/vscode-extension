@@ -6,13 +6,9 @@ import { LoggerService } from "@services/logger.service";
 import { ServiceResponse } from "@type/services.types";
 
 export class EnvironmentsService {
-	static async listByProjectId(projectId: string): Promise<ServiceResponse<Env[]>> {
+	static async list(): Promise<ServiceResponse<Env[]>> {
 		try {
-			const environments = (
-				await environmentsClient.list({
-					parentId: projectId,
-				})
-			).envs;
+			const environments = (await environmentsClient.list({})).envs;
 			return { data: environments, error: undefined };
 		} catch (error) {
 			LoggerService.log(
