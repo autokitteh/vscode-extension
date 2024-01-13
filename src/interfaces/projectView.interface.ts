@@ -1,4 +1,4 @@
-import { Callback, CallbackWStringIdParam, SectionRowsRangeCB } from "@type/interfaces";
+import { Callback, CallbackWStringIdParam } from "@type/interfaces";
 
 export interface IProjectViewDelegate {
 	onClose?: Callback;
@@ -6,7 +6,6 @@ export interface IProjectViewDelegate {
 	onFocus?: Callback;
 	build: Callback;
 	run: Callback;
-	setRowsRangePerSection: SectionRowsRangeCB;
 	selectDeployment?: CallbackWStringIdParam;
 	displaySessionLogs?: CallbackWStringIdParam;
 }
