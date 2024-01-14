@@ -1,6 +1,6 @@
 export enum SessionStateType {
-	created,
-	running,
-	error,
-	completed,
+	created = "created",
+	running = "running",
+	error = "error",
+	completed = "completed",
 }
