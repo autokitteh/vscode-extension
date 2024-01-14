@@ -3,4 +3,5 @@ export enum SessionStateType {
 	running = "running",
 	error = "error",
 	completed = "completed",
+	unknown = "unknown",
 }
