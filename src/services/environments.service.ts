@@ -10,7 +10,7 @@ export class EnvironmentsService {
 		try {
 			const environments = (
 				await environmentsClient.list({
-					parentId: projectId,
+					projectId,
 				})
 			).envs;
 			return { data: environments, error: undefined };
