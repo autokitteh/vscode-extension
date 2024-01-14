@@ -8,7 +8,7 @@ import {
 import { StarlarkLSPServerType } from "@enums";
 import { translate } from "@i18n";
 import { StarlarkFileHandler } from "@starlark";
-import { workspace, window, commands, TextEditor, ConfigurationChangeEvent } from "vscode";
+import { workspace, commands, ConfigurationChangeEvent } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient";
 
 export class StarlarkLSPService {
@@ -20,7 +20,6 @@ export class StarlarkLSPService {
 			return;
 		}
 		this.initiateLSPServer();
-		window.onDidChangeActiveTextEditor(this.onChangeActiveTextEditor);
 		workspace.onDidChangeConfiguration(this.onChangeConfiguration);
 	}
 
@@ -29,27 +28,7 @@ export class StarlarkLSPService {
 			starlarkLSPUriScheme,
 			new StarlarkFileHandler(StarlarkLSPService.languageClient!)
 		);
-	}
-
-	private static onChangeConfiguration(event: ConfigurationChangeEvent) {
-		const settingsChanged = event.affectsConfiguration("autokitteh.starlarkLSPType");
-		if (settingsChanged) {
-			const newStarlarkLSPType =
-				workspace.getConfiguration().get("autokitteh.starlarkLSPType") || "";
-
-			if (newStarlarkLSPType === StarlarkLSPServerType.tilt) {
-				workspace.getConfiguration().update("autokitteh.starlarkLSPArguments", ["start"]);
-			} else if (newStarlarkLSPType === StarlarkLSPServerType.rust) {
-				workspace.getConfiguration().update("autokitteh.starlarkLSPArguments", ["--lsp"]);
-			}
-		}
-	}
-	private static onChangeActiveTextEditor(editor: TextEditor | undefined) {
 		if (StarlarkLSPService.languageClient) {
-			return;
-		}
-
-		if (!editor || editor.document.languageId !== "starlark") {
 			return;
 		}
 
@@ -102,5 +81,19 @@ export class StarlarkLSPService {
 		);
 
 		StarlarkLSPService.languageClient.start();
+	}
+
+	private static onChangeConfiguration(event: ConfigurationChangeEvent) {
+		const settingsChanged = event.affectsConfiguration("autokitteh.starlarkLSPType");
+		if (settingsChanged) {
+			const newStarlarkLSPType =
+				workspace.getConfiguration().get("autokitteh.starlarkLSPType") || "";
+
+			if (newStarlarkLSPType === StarlarkLSPServerType.tilt) {
+				workspace.getConfiguration().update("autokitteh.starlarkLSPArguments", ["start"]);
+			} else if (newStarlarkLSPType === StarlarkLSPServerType.rust) {
+				workspace.getConfiguration().update("autokitteh.starlarkLSPArguments", ["--lsp"]);
+			}
+		}
 	}
 }
