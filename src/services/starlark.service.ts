@@ -85,15 +85,22 @@ export class StarlarkLSPService {
 
 	private static onChangeConfiguration(event: ConfigurationChangeEvent) {
 		const settingsChanged = event.affectsConfiguration("autokitteh.starlarkLSPType");
-		if (settingsChanged) {
-			const newStarlarkLSPType =
-				workspace.getConfiguration().get("autokitteh.starlarkLSPType") || "";
-
-			if (newStarlarkLSPType === StarlarkLSPServerType.tilt) {
-				workspace.getConfiguration().update("autokitteh.starlarkLSPArguments", ["start"]);
-			} else if (newStarlarkLSPType === StarlarkLSPServerType.rust) {
-				workspace.getConfiguration().update("autokitteh.starlarkLSPArguments", ["--lsp"]);
-			}
+		if (!settingsChanged) {
+			return;
 		}
+		const newStarlarkLSPType = workspace.getConfiguration().get("autokitteh.starlarkLSPType") || "";
+
+		if (newStarlarkLSPType === StarlarkLSPServerType.tilt) {
+			workspace.getConfiguration().update("autokitteh.starlarkLSPArguments", ["start"]);
+		}
+		if (newStarlarkLSPType === StarlarkLSPServerType.rust) {
+			workspace.getConfiguration().update("autokitteh.starlarkLSPArguments", ["--lsp"]);
+		}
+
+		if (StarlarkLSPService.languageClient) {
+			StarlarkLSPService.languageClient.stop();
+			StarlarkLSPService.languageClient = undefined;
+		}
+		StarlarkLSPService.initiateLSPServer();
 	}
 }
