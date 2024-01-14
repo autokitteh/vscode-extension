@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MessageType } from "@enums";
+import { MessageType, ProjectViewSections, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
 import { AKDeploymentState } from "@react-components";
@@ -47,6 +47,15 @@ export const AKDeployments = ({
 		setSelectedDeployment(deploymentId);
 	};
 
+	const getSessionStateCount = (deployment: Deployment, state: number) => {
+		debugger;
+		if (!deployment.sessionsStats) {
+			return undefined;
+		}
+		const session = deployment.sessionsStats.find((s) => s.state === state);
+		return session ? session.count : 0;
+	};
+
 	return (
 		<div
 			className="mt-4 min-h-48 max-h-48 overflow-y-auto overflow-x-hidden"
@@ -65,7 +74,17 @@ export const AKDeployments = ({
 				<AKTableHeader classes="sticky top-0">
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.time")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.status")}</AKTableHeaderCell>
-					<AKTableHeaderCell>{translate().t("reactApp.deployments.sessions")}</AKTableHeaderCell>
+					<AKTableHeaderCell>
+						{translate().t("reactApp.sessions.statuses.created")}
+					</AKTableHeaderCell>
+					<AKTableHeaderCell>
+						{translate().t("reactApp.sessions.statuses.running")}
+					</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.sessions.statuses.error")}</AKTableHeaderCell>
+					<AKTableHeaderCell>
+						{translate().t("reactApp.sessions.statuses.completed")}
+					</AKTableHeaderCell>
+
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.buildId")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.actions")}</AKTableHeaderCell>
 				</AKTableHeader>
@@ -89,11 +108,15 @@ export const AKDeployments = ({
 									<AKDeploymentState deploymentState={deployment.state} />
 								</div>
 							</AKTableCell>
-							<AKTableCell
-								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
-								classes={["cursor-pointer"]}
-							>
-								0
+							<AKTableCell>
+								{getSessionStateCount(deployment, SessionStateType.created)}
+							</AKTableCell>
+							<AKTableCell>
+								{getSessionStateCount(deployment, SessionStateType.running)}
+							</AKTableCell>
+							<AKTableCell>{getSessionStateCount(deployment, SessionStateType.error)}</AKTableCell>
+							<AKTableCell>
+								{getSessionStateCount(deployment, SessionStateType.completed)}
 							</AKTableCell>
 							<AKTableCell
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}

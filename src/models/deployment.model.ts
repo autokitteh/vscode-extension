@@ -1,4 +1,5 @@
 import { Deployment as ProtoDeployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
+import { sessionStateConverter } from "@models/utils/sessionsStateConverter.utils";
 import { Deployment } from "@type/models";
 import { convertTimestampToDate } from "@utilities";
 
@@ -15,5 +16,9 @@ export const convertDeploymentProtoToModel = (protoDeployment: ProtoDeployment):
 		buildId: protoDeployment.buildId,
 		createdAt: convertTimestampToDate(protoDeployment.createdAt),
 		state: protoDeployment.state,
+		sessionsStats: protoDeployment.sessionsStats.map((sessionStat) => ({
+			state: sessionStateConverter(sessionStat.state),
+			count: sessionStat.count,
+		})),
 	};
 };
