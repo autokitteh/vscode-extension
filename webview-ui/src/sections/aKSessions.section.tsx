@@ -11,9 +11,8 @@ import {
 	AKTableRow,
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
-import { sendMessage } from "@react-utilities";
+import { getTimePassed, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
-import moment from "moment";
 
 export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewModel) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -64,7 +63,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 								onClick={() => displaySessionLogs(session.sessionId)}
 								classes={["cursor-pointer"]}
 							>
-								{moment(session.createdAt).fromNow()}
+								{getTimePassed(session.createdAt)}
 							</AKTableCell>
 							<AKTableCell
 								onClick={() => displaySessionLogs(session.sessionId)}

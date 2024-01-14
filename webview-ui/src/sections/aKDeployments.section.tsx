@@ -12,9 +12,8 @@ import {
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
 import { DeploymentState } from "@react-enums";
-import { sendMessage } from "@react-utilities";
+import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment } from "@type/models";
-import moment from "moment";
 
 export const AKDeployments = ({
 	deployments,
@@ -79,7 +78,7 @@ export const AKDeployments = ({
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
 							>
-								{moment(deployment.createdAt as unknown as string).fromNow()}
+								{getTimePassed(deployment.createdAt)}
 							</AKTableCell>
 							<AKTableCell
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
