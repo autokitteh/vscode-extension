@@ -276,5 +276,5 @@
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check"
 	},
-	"version": "0.0.10"
+	"version": "0.0.9-beta"
 }
