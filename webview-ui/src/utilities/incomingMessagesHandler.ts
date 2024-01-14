@@ -2,6 +2,7 @@ import { MessageType, Theme } from "@enums";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
+import { projectNameSignal } from "src/signals";
 
 export const HandleIncomingMessages = (
 	event: MessageEvent<Message>,
@@ -17,7 +18,7 @@ export const HandleIncomingMessages = (
 			handlers.setDeploymentsSection(payload as DeploymentSectionViewModel);
 			break;
 		case MessageType.setProjectName:
-			handlers.setProjectName(payload as string);
+			projectNameSignal.value = payload as string;
 			break;
 		case MessageType.setSessionsSection:
 			handlers.setSessionsSection(payload as SessionSectionViewModel);
