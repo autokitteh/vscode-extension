@@ -45,12 +45,20 @@ export class StarlarkLSPService {
 		}
 	}
 	private static onChangeActiveTextEditor(editor: TextEditor | undefined) {
+		if (StarlarkLSPService.languageClient) {
+			return;
+		}
+
+		if (!editor || editor.document.languageId !== "starlark") {
+			return;
+		}
+
 		let args: string[] = workspace.getConfiguration().get("autokitteh.starlarkLSPArguments") || [];
 
 		switch (startlarkLSPServerType) {
 			case StarlarkLSPServerType.tilt:
 				if (args.indexOf("start") === -1) {
-					args.unshift("start");
+					args.push("start");
 				}
 				if (starlarkLSPPreloadDirPath !== "") {
 					args.push("--builtin-paths", starlarkLSPPreloadDirPath);
@@ -58,7 +66,7 @@ export class StarlarkLSPService {
 				break;
 			case StarlarkLSPServerType.rust:
 				if (args.indexOf("--lsp") === -1) {
-					args.unshift("--lsp");
+					args.push("--lsp");
 				}
 				if (starlarkLSPPreloadDirPath !== "") {
 					args.push("--prelude", starlarkLSPPreloadDirPath);
@@ -66,37 +74,33 @@ export class StarlarkLSPService {
 				break;
 		}
 
-		if (editor && editor.document.languageId === "starlark") {
-			if (
-				(starlarkLSPPath === "" || starlarkLSPPreloadDirPath === "") &&
-				!this.lspServerErrorDisplayed
-			) {
-				commands.executeCommand(
-					vsCommands.showErrorMessage,
-					namespaces.startlarkLSPServer,
-					translate().t("errors.missingStarlarkLSPPath")
-				);
-				this.lspServerErrorDisplayed = true;
-				return;
-			}
-
-			if (!StarlarkLSPService.languageClient) {
-				let serverOptions: ServerOptions = { command: starlarkLSPPath, args: args };
-
-				let clientOptions: LanguageClientOptions = {
-					documentSelector: [{ scheme: "file", language: "starlark" }],
-					initializationOptions: {},
-				};
-
-				StarlarkLSPService.languageClient = new LanguageClient(
-					"Starlark",
-					"autokitteh: Starlark LSP",
-					serverOptions,
-					clientOptions
-				);
-
-				StarlarkLSPService.languageClient.start();
-			}
+		if (
+			(starlarkLSPPath === "" || starlarkLSPPreloadDirPath === "") &&
+			!this.lspServerErrorDisplayed
+		) {
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				namespaces.startlarkLSPServer,
+				translate().t("errors.missingStarlarkLSPPath")
+			);
+			this.lspServerErrorDisplayed = true;
+			return;
 		}
+
+		let serverOptions: ServerOptions = { command: starlarkLSPPath, args: args };
+
+		let clientOptions: LanguageClientOptions = {
+			documentSelector: [{ scheme: "file", language: "starlark" }],
+			initializationOptions: {},
+		};
+
+		StarlarkLSPService.languageClient = new LanguageClient(
+			"Starlark",
+			"autokitteh: Starlark LSP",
+			serverOptions,
+			clientOptions
+		);
+
+		StarlarkLSPService.languageClient.start();
 	}
 }
