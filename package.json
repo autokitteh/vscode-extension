@@ -175,18 +175,6 @@
 						"completionEvents": [
 							"onSettingChanged:autokitteh.baseURL"
 						],
-						"description": "Set your username to connect the server.\n[Set your username](command:autokitteh.openUsernameInputDialog)",
-						"id": "openUsernameInputDialog",
-						"media": {
-							"altText": "Empty image",
-							"image": "resources/walkthrough/empty.png"
-						},
-						"title": "Set username"
-					},
-					{
-						"completionEvents": [
-							"onSettingChanged:autokitteh.baseURL"
-						],
 						"description": "Set the address of the server.\n[Insert server URL](command:autokitteh.openBaseURLInputDialog)",
 						"id": "openBaseURLInputDialog",
 						"media": {
