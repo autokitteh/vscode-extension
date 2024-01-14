@@ -47,7 +47,7 @@ export const AKDeployments = ({
 		setSelectedDeployment(deploymentId);
 	};
 
-	const getSessionStateCount = (deployment: Deployment, state: number) => {
+	const getSessionStateCount = (deployment: Deployment, state: string) => {
 		debugger;
 		if (!deployment.sessionsStats) {
 			return undefined;
@@ -108,14 +108,28 @@ export const AKDeployments = ({
 									<AKDeploymentState deploymentState={deployment.state} />
 								</div>
 							</AKTableCell>
-							<AKTableCell>
+							<AKTableCell
+								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
 								{getSessionStateCount(deployment, SessionStateType.created)}
 							</AKTableCell>
-							<AKTableCell>
+							<AKTableCell
+								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
 								{getSessionStateCount(deployment, SessionStateType.running)}
 							</AKTableCell>
-							<AKTableCell>{getSessionStateCount(deployment, SessionStateType.error)}</AKTableCell>
-							<AKTableCell>
+							<AKTableCell
+								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
+								{getSessionStateCount(deployment, SessionStateType.error)}
+							</AKTableCell>
+							<AKTableCell
+								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
+								classes={["cursor-pointer"]}
+							>
 								{getSessionStateCount(deployment, SessionStateType.completed)}
 							</AKTableCell>
 							<AKTableCell
