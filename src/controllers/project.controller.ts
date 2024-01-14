@@ -166,7 +166,7 @@ export class ProjectController {
 			const printedError = lastState?.getError() || translate().t("errors.unexpectedError");
 			LoggerService.print(
 				namespaces.sessionLogs,
-				`Error: ${printedError}}`,
+				`Error: ${printedError}`,
 				channels.appOutputSessionsLogName
 			);
 			return;
