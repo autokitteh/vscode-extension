@@ -1,10 +1,6 @@
-import { translate } from "@i18n";
 import moment from "moment";
 
-export const getTimePassed = (startDate: Date | undefined) => {
-	if (!startDate) {
-		return translate().t("errors.unexpectedError");
-	}
+export const getTimePassed = (startDate: Date): string | undefined => {
 	const now = moment();
 	const daysPassed = now.diff(startDate as unknown as string, "days");
 	if (daysPassed >= 1) {

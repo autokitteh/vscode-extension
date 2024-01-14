@@ -38,6 +38,13 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 		setSelectedSession(sessionId);
 	};
 
+	const getSessionCreatedTime = (createdAt?: Date) => {
+		if (!createdAt) {
+			return translate().t("reactApp.general.unknown");
+		}
+		return getTimePassed(createdAt);
+	};
+
 	return (
 		<div className="mt-4 min-h-48 max-h-48 overflow-y-auto overflow-x-hidden">
 			{sessions && !!totalSessions ? (
@@ -63,7 +70,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 								onClick={() => displaySessionLogs(session.sessionId)}
 								classes={["cursor-pointer"]}
 							>
-								{getTimePassed(session.createdAt)}
+								{getSessionCreatedTime(session.createdAt)}
 							</AKTableCell>
 							<AKTableCell
 								onClick={() => displaySessionLogs(session.sessionId)}

@@ -46,6 +46,13 @@ export const AKDeployments = ({
 		setSelectedDeployment(deploymentId);
 	};
 
+	const getDeploymentCreatedTime = (createdAt?: Date) => {
+		if (!createdAt) {
+			return translate().t("reactApp.general.unknown");
+		}
+		return getTimePassed(createdAt);
+	};
+
 	return (
 		<div
 			className="mt-4 min-h-48 max-h-48 overflow-y-auto overflow-x-hidden"
@@ -78,7 +85,7 @@ export const AKDeployments = ({
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
 							>
-								{getTimePassed(deployment.createdAt)}
+								{getDeploymentCreatedTime(deployment.createdAt)}
 							</AKTableCell>
 							<AKTableCell
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
