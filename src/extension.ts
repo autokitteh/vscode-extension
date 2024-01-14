@@ -6,6 +6,7 @@ import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { StarlarkLSPService } from "@services";
+import { SidebarTreeItem } from "@type/views";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
 import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough";

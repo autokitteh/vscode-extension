@@ -12,9 +12,8 @@ import {
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
 import { DeploymentState } from "@react-enums";
-import { sendMessage } from "@react-utilities";
+import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment } from "@type/models";
-import moment from "moment";
 
 export const AKDeployments = ({
 	deployments,
@@ -53,6 +52,13 @@ export const AKDeployments = ({
 		}
 		const session = deployment.sessionStats.find((s) => s.state === state);
 		return session ? session.count : 0;
+	};
+
+	const getDeploymentCreatedTime = (createdAt?: Date) => {
+		if (!createdAt) {
+			return translate().t("reactApp.general.unknown");
+		}
+		return getTimePassed(createdAt);
 	};
 
 	return (
@@ -94,7 +100,7 @@ export const AKDeployments = ({
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
 							>
-								{moment(deployment.createdAt as unknown as string).fromNow()}
+								{getDeploymentCreatedTime(deployment.createdAt)}
 							</AKTableCell>
 							<AKTableCell
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}

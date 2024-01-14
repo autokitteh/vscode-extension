@@ -1,5 +1,6 @@
 import { vsCommands } from "@constants";
 import { translate } from "@i18n";
+import { SidebarTreeItem } from "@type/views";
 import { EventEmitter, TreeDataProvider, TreeItem, Event, TreeItemCollapsibleState } from "vscode";
 
 export class SidebarView implements TreeDataProvider<TreeItem> {
