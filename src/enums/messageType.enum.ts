@@ -5,7 +5,6 @@ export enum MessageType {
 	runProject = "RUN_PROJECT",
 	buildProject = "BUILD_PROJECT",
 	setSessionsSection = "SET_SESSIONS_SECTION",
-	setRowsRangePerSection = "SET_ROWS_RANGE_PER_SECTION",
 	selectDeployment = "SELECT_DEPLOYMENT",
 	displaySessionLogs = "DISPLAY_SESSION_LOGS",
 }

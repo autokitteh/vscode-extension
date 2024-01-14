@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { pageLimits } from "@constants/projectsView.constants";
-import { MessageType, ProjectViewSections } from "@enums";
+import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
 import { AKSessionState } from "@react-components";
@@ -12,12 +11,12 @@ import {
 	AKTableRow,
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
-import { usePagination } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
 import moment from "moment";
 
 export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewModel) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSession, setSelectedSession] = useState("");
@@ -34,12 +33,6 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 
 		return () => clearInterval(interval);
 	}, []);
-
-	const { endIndex, showMore, showLess } = usePagination(
-		pageLimits[ProjectViewSections.SESSIONS],
-		totalSessions,
-		ProjectViewSections.SESSIONS
-	);
 
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogs, sessionId);
