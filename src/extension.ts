@@ -5,14 +5,14 @@ import { sidebarControllerRefreshRate } from "@constants/api.constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
-import { runStarlarkLSP } from "@starlark";
+import { StarlarkLSPService } from "@services";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick } from "@vscommands";
 import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough";
 import { commands, ExtensionContext } from "vscode";
 
 export async function activate(context: ExtensionContext) {
-	runStarlarkLSP();
+	StarlarkLSPService.init();
 
 	const sidebarView = new SidebarView();
 
