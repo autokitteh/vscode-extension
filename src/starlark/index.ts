@@ -1,2 +1,2 @@
-export { runStarlarkLSP } from "@starlark/runStarlarkLsp";
+export { runStarlarkLSP } from "@services/starlark.service";
 export { StarlarkFileHandler } from "@starlark/starlark.handler";
