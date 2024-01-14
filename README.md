@@ -27,7 +27,7 @@ For inquiries, contact: meow@autokitteh.com
 
 ## License 📜
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE.md).
 
 ## How to Contribute 🤝
 
