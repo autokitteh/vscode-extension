@@ -870,7 +870,11 @@
 		},
 		"illegal-name": {
 			"name": "keyword.control.flow.starlark",
+<<<<<<< HEAD
 			"match": "\\b(and|as|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|load|nonlocal|not|or|pass|raise|return|try|with|while|yield)\\b"
+=======
+			"match": "\\b(and|as|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|load|nonlocal|not|or|pass|raise|return|try|while|with|yield)\\b"
+>>>>>>> 00cfda1 (fix: starlark server)
 		},
 		"illegal-operator": {
 			"patterns": [
