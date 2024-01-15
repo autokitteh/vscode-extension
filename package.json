@@ -261,11 +261,6 @@
 	"main": "./dist/src/extension.js",
 	"name": "autokitteh",
 	"publisher": "autokitteh",
-	"release": {
-		"branches": [
-			"main"
-		]
-	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/autokitteh/vscode-v2"
