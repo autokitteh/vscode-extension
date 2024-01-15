@@ -1,0 +1,47 @@
+name: Node.js CI
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+plugins:
+  - "@semantic-release/commit-analyzer"
+  - "@semantic-release/release-notes-generator"
+  - "@semantic-release/changelog"
+  - - "@semantic-release/npm"
+    - npmPublish: false
+  - - "@semantic-release/git"
+    - assets:
+        - dist/
+        - package.json
+        - CHANGELOG.md
+      message: |-
+        chore(release): ${nextRelease.version} [skip ci]
+
+        ${nextRelease.notes}
+  - "@semantic-release/github"
+repositoryUrl: https://github.com/autokitteh/vscode-extension
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [21.2.x]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: npm ci
+      - run: npm test -- --watch=false
+      - run: npm run compile
+      - run: npm run esbuild --if-present
+      - run: cd webview-ui
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: cd ..
+      - run: npx semantic-release
