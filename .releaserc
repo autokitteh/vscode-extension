@@ -4,8 +4,18 @@ branches:
     prerelease: true
 debug: true
 ci: true
-dryRun: false
+dryRun: true
 plugins:
-  - "@semantic-release/commit-analyzer"
-  - "@semantic-release/release-notes-generator"
+  - "@semantic-release/changelog"
+  - - "@semantic-release/npm"
+    - npmPublish: false
+  - - "@semantic-release/git"
+    - assets:
+        - dist/
+        - package.json
+        - CHANGELOG.md
+      message: |-
+        chore(release): ${nextRelease.version} [skip ci]
+
+        ${nextRelease.notes}
   - "@semantic-release/github"
