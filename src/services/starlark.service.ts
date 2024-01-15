@@ -34,24 +34,7 @@ export class StarlarkLSPService {
 
 		let args: string[] = workspace.getConfiguration().get("autokitteh.starlarkLSPArguments") || [];
 
-		switch (startlarkLSPServerType) {
-			case StarlarkLSPServerType.tilt:
-				if (args.indexOf("start") === -1) {
-					args.push("start");
-				}
-				if (starlarkLSPPreloadDirPath !== "") {
-					args.push("--builtin-paths", starlarkLSPPreloadDirPath);
-				}
-				break;
-			case StarlarkLSPServerType.rust:
-				if (args.indexOf("--lsp") === -1) {
-					args.push("--lsp");
-				}
-				if (starlarkLSPPreloadDirPath !== "") {
-					args.push("--prelude", starlarkLSPPreloadDirPath);
-				}
-				break;
-		}
+		this.getStarlarkLSPArguments(startlarkLSPServerType, args);
 
 		if (
 			(starlarkLSPPath === "" || starlarkLSPPreloadDirPath === "") &&
@@ -83,18 +66,33 @@ export class StarlarkLSPService {
 		StarlarkLSPService.languageClient.start();
 	}
 
+	private static getStarlarkLSPArguments(lspServerType: string, args: string[]): void {
+		switch (lspServerType) {
+			case StarlarkLSPServerType.tilt:
+				if (args.indexOf("start") === -1) {
+					args.push("start");
+				}
+				if (starlarkLSPPreloadDirPath !== "") {
+					args.push("--builtin-paths", starlarkLSPPreloadDirPath);
+				}
+				break;
+			case StarlarkLSPServerType.rust:
+				if (args.indexOf("--lsp") === -1) {
+					args.push("--lsp");
+				}
+				if (starlarkLSPPreloadDirPath !== "") {
+					args.push("--prelude", starlarkLSPPreloadDirPath);
+				}
+				break;
+		}
+	}
+
 	private static onChangeConfiguration(event: ConfigurationChangeEvent) {
-		const settingsChanged = event.affectsConfiguration("autokitteh.starlarkLSPType");
+		const settingsChanged =
+			event.affectsConfiguration("autokitteh.starlarkLSPType") ||
+			event.affectsConfiguration("autokitteh.autokitteh.starlarkLSPArguments");
 		if (!settingsChanged) {
 			return;
-		}
-		const newStarlarkLSPType = workspace.getConfiguration().get("autokitteh.starlarkLSPType") || "";
-
-		if (newStarlarkLSPType === StarlarkLSPServerType.tilt) {
-			workspace.getConfiguration().update("autokitteh.starlarkLSPArguments", ["start"]);
-		}
-		if (newStarlarkLSPType === StarlarkLSPServerType.rust) {
-			workspace.getConfiguration().update("autokitteh.starlarkLSPArguments", ["--lsp"]);
 		}
 
 		if (StarlarkLSPService.languageClient) {
