@@ -1,3 +1,4 @@
+import net = require("net");
 import { namespaces, vsCommands } from "@constants";
 import {
 	starlarkLSPPath,
@@ -9,7 +10,12 @@ import { StarlarkLSPServerType } from "@enums";
 import { translate } from "@i18n";
 import { StarlarkFileHandler } from "@starlark";
 import { workspace, commands, ConfigurationChangeEvent } from "vscode";
-import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient";
+import {
+	LanguageClient,
+	LanguageClientOptions,
+	ServerOptions,
+	StreamInfo,
+} from "vscode-languageclient";
 
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;
@@ -23,7 +29,27 @@ export class StarlarkLSPService {
 		workspace.onDidChangeConfiguration(this.onChangeConfiguration);
 	}
 
-	private static initiateLSPServer() {
+	private static async checkForDebugLspServer(): Promise<number | null> {
+		const port = workspace.getConfiguration().get("autokitteh.starlarkLSPPort") as number;
+		if (!port) {
+			return null;
+		}
+		return new Promise((resolve) => {
+			const checkListen = () => {
+				var server = net.createServer();
+				server.on("error", () => resolve(port));
+				server.on("listening", () => {
+					server.close();
+					resolve(null);
+				});
+				server.listen(port, "127.0.0.1");
+			};
+
+			checkListen();
+		});
+	}
+
+	private static async initiateLSPServer() {
 		workspace.registerTextDocumentContentProvider(
 			starlarkLSPUriScheme,
 			new StarlarkFileHandler(StarlarkLSPService.languageClient!)
@@ -56,12 +82,28 @@ export class StarlarkLSPService {
 			initializationOptions: {},
 		};
 
-		StarlarkLSPService.languageClient = new LanguageClient(
-			"Starlark",
-			"autokitteh: Starlark LSP",
-			serverOptions,
-			clientOptions
-		);
+		const port = await this.checkForDebugLspServer();
+		if (port) {
+			const socket = net.connect({ host: "127.0.0.1", port });
+			let test: StreamInfo = { writer: socket, reader: socket } as StreamInfo;
+
+			const serverOptionsNetwork: () => Promise<StreamInfo> = () =>
+				new Promise((resolve) => resolve(test as StreamInfo));
+
+			StarlarkLSPService.languageClient = new LanguageClient(
+				"Starlark",
+				"autokitteh: Starlark LSP",
+				serverOptionsNetwork,
+				clientOptions
+			);
+		} else {
+			StarlarkLSPService.languageClient = new LanguageClient(
+				"Starlark",
+				"autokitteh: Starlark LSP",
+				serverOptions,
+				clientOptions
+			);
+		}
 
 		StarlarkLSPService.languageClient.start();
 	}
