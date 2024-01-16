@@ -1,6 +1,6 @@
 import moment from "moment";
 
-export const getTimePassed = (startDate: Date): string | undefined => {
+export const getTimePassed = (startDate: Date): string => {
 	const now = moment();
 	const daysPassed = now.diff(startDate as unknown as string, "days");
 	if (daysPassed >= 1) {
