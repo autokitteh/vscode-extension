@@ -4,7 +4,7 @@ import { LoggerLevel, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { LoggerService } from "@services";
 
-export const sessionStateConverter = (sessionState: number): SessionStateType | undefined => {
+export const sessionStateConverter = (sessionState: number): SessionStateType => {
 	if (!ProtoSessionStateType[sessionState]) {
 		return SessionStateType.unknown;
 	}
@@ -15,7 +15,7 @@ export const sessionStateConverter = (sessionState: number): SessionStateType | 
 	} catch (error) {
 		LoggerService.log(
 			namespaces.deploymentsService,
-			`${translate().t("errors.sessionStateConverterFailed")}: ${error}`,
+			`${translate().t("errors.unexpectedError")}: ${error}`,
 			LoggerLevel.error
 		);
 		return SessionStateType.unknown;

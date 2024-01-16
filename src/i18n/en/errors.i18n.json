@@ -15,6 +15,5 @@
 	"projectEnvironmentsNotFound": "Project environments not found",
 	"unexpectedSessionStateType": "Unexpected session state type",
 	"missingSessionStateType": "Missing session state type",
-	"missingStarlarkLSPPath": "Starlark LSP path or preload dir path is not set",
-	"sessionStateConverterFailed": "Session state converter failed"
+	"missingStarlarkLSPPath": "Starlark LSP path or preload dir path is not set"
 }
