@@ -78,6 +78,10 @@
 					"description": "The path to the Starlark LSP Server",
 					"type": "string"
 				},
+				"autokitteh.starlarkLSPAddress": {
+					"description": "The address to the Starlark LSP Network Server",
+					"type": "string"
+				},
 				"autokitteh.starlarkLSPPort": {
 					"description": "The port to the Starlark LSP Network Server",
 					"type": "number"
