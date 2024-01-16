@@ -74,9 +74,6 @@ export const AKDeployments = ({
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.time")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.status")}</AKTableHeaderCell>
 					<AKTableHeaderCell>
-						{translate().t("reactApp.sessions.statuses.created")}
-					</AKTableHeaderCell>
-					<AKTableHeaderCell>
 						{translate().t("reactApp.sessions.statuses.running")}
 					</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.sessions.statuses.error")}</AKTableHeaderCell>
@@ -106,12 +103,6 @@ export const AKDeployments = ({
 								<div className="flex justify-center">
 									<AKDeploymentState deploymentState={deployment.state} />
 								</div>
-							</AKTableCell>
-							<AKTableCell
-								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
-								classes={["cursor-pointer"]}
-							>
-								{getSessionStateCount(deployment, SessionStateType.created)}
 							</AKTableCell>
 							<AKTableCell
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
