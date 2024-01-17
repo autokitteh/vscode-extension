@@ -271,35 +271,7 @@
 			[
 				"@semantic-release/commit-analyzer",
 				{
-					"preset": "conventionalcommits",
-					"releaseRules": [
-						{
-							"type": "docs",
-							"release": "patch"
-						},
-						{
-							"type": "feat",
-							"release": "major"
-						},
-						{
-							"type": "refactor",
-							"release": "minor"
-						},
-						{
-							"type": "refactor",
-							"release": "patch"
-						},
-						{
-							"type": "style",
-							"release": "patch"
-						}
-					],
-					"parserOpts": {
-						"noteKeywords": [
-							"BREAKING CHANGE",
-							"BREAKING CHANGES"
-						]
-					}
+					"preset": "conventionalcommits"
 				}
 			],
 			"@semantic-release/release-notes-generator",
