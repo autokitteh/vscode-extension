@@ -84,10 +84,9 @@ export class StarlarkLSPService {
 
 		const port = await this.checkForDebugLspServer();
 		if (port) {
-			const hostAddress =
-				(workspace.getConfiguration().get("autokitteh.starlarkLSPAddress") as string) || "";
+			const host = "127.0.0.1";
 
-			const socket = net.connect({ host: hostAddress, port });
+			const socket = net.connect({ host, port });
 			let streamListener: StreamInfo = { writer: socket, reader: socket } as StreamInfo;
 
 			const serverOptionsNetwork: () => Promise<StreamInfo> = () =>
