@@ -246,7 +246,7 @@
 	"icon": "./resources/extensions-marketplace/ak-extension-icon.png",
 	"license": "SEE LICENSE IN LICENSE.md",
 	"lint-staged": {
-		"*.{ts,tsx, js, md}": [
+		"*.{ts,tsx}": [
 			"prettier --write",
 			"eslint --fix"
 		]
