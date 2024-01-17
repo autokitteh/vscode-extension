@@ -12,6 +12,7 @@ export default defineConfig({
 			"@models": path.resolve(__dirname, "../src/models"),
 			"@constants": path.resolve(__dirname, "../src/constants"),
 			"@utilities": path.resolve(__dirname, "../src/utilities"),
+			"@services": path.resolve(__dirname, "../src/services"),
 			"@react-assets": path.resolve(__dirname, "./assets"),
 			"@react-components": path.resolve(__dirname, "./src/components"),
 			"@react-enums": path.resolve(__dirname, "./src/enums"),
