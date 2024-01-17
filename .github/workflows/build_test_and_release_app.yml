@@ -1,0 +1,38 @@
+name: Node.js CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          submodules: true
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "21.2.0"
+          cache: "npm"
+      - name: Checkout submodule
+        run: git submodule update --remote
+      - run: npm ci
+      - run: npm test -- --watch=false
+      - run: npm run compile
+      - run: npm run esbuild
+      - run: |
+          cd webview-ui
+          npm ci
+          npm run test
+          npm run build
+      - run: npx semantic-release

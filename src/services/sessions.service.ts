@@ -1,3 +1,4 @@
+import { Session as ProtoSession } from "@ak-proto-ts/sessions/v1/session_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { LoggerLevel } from "@enums";
@@ -5,7 +6,7 @@ import { translate } from "@i18n";
 import { SessionState, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
-import { Session } from "@type/models";
+import { ProtoSessionHistoryState, Session } from "@type/models";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
@@ -24,7 +25,9 @@ export class SessionsService {
 	static async listByDeploymentId(deploymentId: string): Promise<ServiceResponse<Session[]>> {
 		try {
 			const response = await sessionsClient.list({ deploymentId });
-			const sessions = response.sessions.map((session) => convertSessionProtoToModel(session));
+			const sessions = response.sessions.map((session: ProtoSession) =>
+				convertSessionProtoToModel(session)
+			);
 			return { data: sessions, error: undefined };
 		} catch (error) {
 			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
@@ -38,7 +41,9 @@ export class SessionsService {
 	): Promise<ServiceResponse<Array<SessionState>>> {
 		try {
 			const response = await sessionsClient.getHistory({ sessionId });
-			const sessionHistory = response.history?.states.map((state) => new SessionState(state));
+			const sessionHistory = response.history?.states.map(
+				(state: ProtoSessionHistoryState) => new SessionState(state)
+			);
 			return { data: sessionHistory, error: undefined };
 		} catch (error) {
 			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);

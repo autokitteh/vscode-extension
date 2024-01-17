@@ -7,11 +7,14 @@ import svgr from "vite-plugin-svgr";
 export default defineConfig({
 	resolve: {
 		alias: {
+			"@api": path.resolve(__dirname, "../src/api"),
 			"@type": path.resolve(__dirname, "../src/types"),
 			"@enums": path.resolve(__dirname, "../src/enums"),
 			"@models": path.resolve(__dirname, "../src/models"),
 			"@constants": path.resolve(__dirname, "../src/constants"),
 			"@utilities": path.resolve(__dirname, "../src/utilities"),
+			"@services": path.resolve(__dirname, "../src/services"),
+			"@starlark": path.resolve(__dirname, "../src/starlark"),
 			"@react-assets": path.resolve(__dirname, "./assets"),
 			"@react-components": path.resolve(__dirname, "./src/components"),
 			"@react-enums": path.resolve(__dirname, "./src/enums"),

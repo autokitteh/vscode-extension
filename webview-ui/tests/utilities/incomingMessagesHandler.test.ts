@@ -45,6 +45,9 @@ describe("HandleIncomingMessages", () => {
 			mockHandler as unknown as IIncomingMessagesHandler
 		);
 
-		expect(mockHandler.setDeploymentsSection).toHaveBeenCalledWith({});
+		expect(mockHandler.setDeploymentsSection).toHaveBeenCalledWith({
+			deployments: [],
+			totalDeployments: 0,
+		});
 	});
 });

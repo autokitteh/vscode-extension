@@ -14,6 +14,8 @@
 		"paths": {
 			"@ak-proto-ts/*": ["../src/autokitteh/proto/gen/ts/autokitteh/*"],
 			"@assets/*": ["assets/*"],
+			"@api/*": ["../src/api/*"],
+			"@api": ["../src/api/index"],
 			"@constants": ["../src/constants/index"],
 			"@constants/*": ["../src/constants/*"],
 			"@enums": ["../src/enums/index"],
@@ -43,6 +45,10 @@
 			"@type/*": ["../src/types/*"],
 			"@utilities": ["../src/utilities/index"],
 			"@utilities/*": ["../src/utilities/*"],
+			"@services": ["../src/services/index"],
+			"@services/*": ["../src/services/*"],
+			"@starlark": ["../src/starlark/index"],
+			"@starlark/*": ["../src/starlark/*"],
 			"@utils": ["../src/utilities/index"],
 			"@utils/*": ["../src/utilities/*"]
 		},
