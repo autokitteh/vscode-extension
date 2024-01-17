@@ -88,10 +88,10 @@ export class StarlarkLSPService {
 				(workspace.getConfiguration().get("autokitteh.starlarkLSPAddress") as string) || "";
 
 			const socket = net.connect({ host: hostAddress, port });
-			let test: StreamInfo = { writer: socket, reader: socket } as StreamInfo;
+			let streamListener: StreamInfo = { writer: socket, reader: socket } as StreamInfo;
 
 			const serverOptionsNetwork: () => Promise<StreamInfo> = () =>
-				new Promise((resolve) => resolve(test as StreamInfo));
+				new Promise((resolve) => resolve(streamListener));
 
 			StarlarkLSPService.languageClient = new LanguageClient(
 				"Starlark",
