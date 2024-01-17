@@ -17,6 +17,8 @@ import {
 	StreamInfo,
 } from "vscode-languageclient";
 
+const host = "127.0.0.1";
+
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;
 	private static lspServerErrorDisplayed: boolean = false;
@@ -29,7 +31,7 @@ export class StarlarkLSPService {
 		workspace.onDidChangeConfiguration(this.onChangeConfiguration);
 	}
 
-	private static async checkForDebugLspServer(): Promise<number | null> {
+	private static async checkIsPortInUse(): Promise<number | null> {
 		const port = workspace.getConfiguration().get("autokitteh.starlarkLSPPort") as number;
 		if (!port) {
 			return null;
@@ -42,7 +44,7 @@ export class StarlarkLSPService {
 					server.close();
 					resolve(null);
 				});
-				server.listen(port, "127.0.0.1");
+				server.listen(port, host);
 			};
 
 			checkListen();
@@ -75,37 +77,39 @@ export class StarlarkLSPService {
 			return;
 		}
 
-		let serverOptions: ServerOptions = { command: starlarkLSPPath, args: args };
+		let serverOptions: ServerOptions | Promise<StreamInfo> = {
+			command: starlarkLSPPath,
+			args: args,
+		};
 
 		let clientOptions: LanguageClientOptions = {
 			documentSelector: [{ scheme: "file", language: "starlark" }],
 			initializationOptions: {},
 		};
 
-		const port = await this.checkForDebugLspServer();
-		if (port) {
-			const host = "127.0.0.1";
+		/* By default, the Starlark LSP operates through a CMD command in stdio mode.
+		 * However, if the 'starlarkLSPSocketMode' is enabled, the LSP won't initiate automatically.
+		 * Instead, VSCode connects to 'localhost:starlarkLSPPort', expecting the Starlark LSP to be running in socket mode. */
+		const isLSPSocketMode = workspace
+			.getConfiguration()
+			.get("autokitteh.starlarkLSPSocketMode") as boolean;
 
-			const socket = connect({ host, port });
-			let streamListener: StreamInfo = { writer: socket, reader: socket } as StreamInfo;
+		if (isLSPSocketMode) {
+			const port = await this.checkIsPortInUse();
+			if (port) {
+				const socket = connect({ host, port });
+				let streamListener: StreamInfo = { writer: socket, reader: socket };
 
-			const serverOptionsNetwork: () => Promise<StreamInfo> = () =>
-				new Promise((resolve) => resolve(streamListener));
-
-			StarlarkLSPService.languageClient = new LanguageClient(
-				"Starlark",
-				"autokitteh: Starlark LSP",
-				serverOptionsNetwork,
-				clientOptions
-			);
-		} else {
-			StarlarkLSPService.languageClient = new LanguageClient(
-				"Starlark",
-				"autokitteh: Starlark LSP",
-				serverOptions,
-				clientOptions
-			);
+				serverOptions = () => new Promise((resolve) => resolve(streamListener));
+			}
 		}
+
+		StarlarkLSPService.languageClient = new LanguageClient(
+			"Starlark",
+			"autokitteh: Starlark LSP",
+			serverOptions,
+			clientOptions
+		);
 
 		StarlarkLSPService.languageClient.start();
 	}
