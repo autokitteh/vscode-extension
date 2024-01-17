@@ -80,11 +80,13 @@
 				},
 				"autokitteh.starlarkLSPAddress": {
 					"description": "The address to the Starlark LSP Network Server",
-					"type": "string"
+					"type": "string",
+					"hidden": true
 				},
 				"autokitteh.starlarkLSPPort": {
 					"description": "The port to the Starlark LSP Network Server",
-					"type": "number"
+					"type": "number",
+					"hidden": true
 				},
 				"autokitteh.starlarkLSPPreloadDir": {
 					"default": "",
