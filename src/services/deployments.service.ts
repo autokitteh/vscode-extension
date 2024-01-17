@@ -18,6 +18,7 @@ export class DeploymentsService {
 				async (envId) =>
 					await deploymentsClient.list({
 						envId,
+						includeSessionStats: true,
 					})
 			);
 

@@ -128,7 +128,7 @@ export class ProjectController {
 		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 
 		if (!lastState.containLogs() && !lastState.isError()) {
-			LoggerService.print(
+			LoggerService.printError(
 				namespaces.sessionLogs,
 				translate().t("sessions.noLogs"),
 				channels.appOutputSessionsLogName
@@ -139,9 +139,9 @@ export class ProjectController {
 
 		if (lastState.isError()) {
 			const printedError = lastState?.getError() || translate().t("errors.unexpectedError");
-			LoggerService.print(
+			LoggerService.printError(
 				namespaces.sessionLogs,
-				`Error: ${printedError}}`,
+				printedError,
 				channels.appOutputSessionsLogName
 			);
 			return;

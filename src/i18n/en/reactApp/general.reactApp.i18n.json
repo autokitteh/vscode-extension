@@ -8,5 +8,6 @@
 	"showLess": "Show less",
 	"showMore": "Show more",
 	"sessions": "sessions",
-	"deployments": "deployments"
+	"deployments": "deployments",
+	"unknown": "Unknown"
 }

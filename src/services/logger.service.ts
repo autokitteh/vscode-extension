@@ -37,4 +37,10 @@ export class LoggerService {
 
 		this.outputChannels[channelName].appendLine(`[${namespace}]: ${message}`);
 	}
+
+	public static printError(namespace: string, message: string, channelName: string): void {
+		this.initializeOutputChannel(channelName);
+
+		this.outputChannels[channelName].appendLine(`Error: [${namespace}]: ${message}`);
+	}
 }
