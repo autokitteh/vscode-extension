@@ -1,11 +1,10 @@
-import { namespaces, vsCommands } from "@constants";
-import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { translate } from "@i18n";
 import { ProjectsService } from "@services";
+import { SidebarTreeItem } from "@type/views";
 import { ISidebarView } from "interfaces";
 import isEqual from "lodash/isEqual";
-import { commands, window } from "vscode";
+import { window } from "vscode";
 
 export class SidebarController {
 	private view: ISidebarView;

@@ -1,5 +1,6 @@
 import { projectControllerRefreshRate } from "@constants/api.constants";
 import { ProjectController } from "@controllers";
+import { SidebarTreeItem } from "@type/views";
 import { ProjectView } from "@views";
 import { ExtensionContext } from "vscode";
 

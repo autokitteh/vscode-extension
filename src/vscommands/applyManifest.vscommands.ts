@@ -1,4 +1,3 @@
-import * as path from "path";
 import { namespaces, vsCommands } from "@constants";
 import { errorHelper } from "@controllers/utilities/errorHelper";
 import { translate } from "@i18n";

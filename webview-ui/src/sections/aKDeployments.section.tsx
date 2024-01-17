@@ -12,9 +12,8 @@ import {
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
 import { DeploymentState } from "@react-enums";
-import { sendMessage } from "@react-utilities";
+import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment } from "@type/models";
-import moment from "moment";
 
 export const AKDeployments = ({
 	deployments,
@@ -55,11 +54,15 @@ export const AKDeployments = ({
 		return session ? session.count : 0;
 	};
 
+	const getDeploymentCreatedTime = (createdAt?: Date) => {
+		if (!createdAt) {
+			return translate().t("reactApp.general.unknown");
+		}
+		return getTimePassed(createdAt);
+	};
+
 	return (
-		<div
-			className="mt-4 min-h-48 max-h-48 overflow-y-auto overflow-x-hidden"
-			onScroll={console.log}
-		>
+		<div className="mt-4 min-h-48 max-h-48 overflow-y-auto overflow-x-hidden">
 			{deployments && !!totalDeployments ? (
 				<div className="flex justify-end mb-2 w-full min-h-[20px] sticky">
 					{`${translate().t("reactApp.general.totalOf")} ${totalDeployments} ${translate().t(
@@ -94,7 +97,7 @@ export const AKDeployments = ({
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
 							>
-								{moment(deployment.createdAt as unknown as string).fromNow()}
+								{getDeploymentCreatedTime(deployment.createdAt)}
 							</AKTableCell>
 							<AKTableCell
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
