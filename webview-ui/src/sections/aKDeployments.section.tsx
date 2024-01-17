@@ -49,7 +49,7 @@ export const AKDeployments = ({
 
 	const getSessionStateCount = (deployment: Deployment, state: string) => {
 		if (!deployment.sessionStats) {
-			return undefined;
+			return translate().t("reactApp.general.unknown");
 		}
 		const session = deployment.sessionStats.find((s) => s.state === state);
 		return session ? session.count : 0;
