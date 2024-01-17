@@ -213,8 +213,8 @@
 	},
 	"description": "Simplify the process of automating tasks",
 	"devDependencies": {
-		"@commitlint/cli": "^18.4.3",
-		"@commitlint/config-conventional": "^18.4.3",
+		"@commitlint/cli": "18.4.4",
+		"@commitlint/config-conventional": "18.4.4",
 		"@githubocto/tailwind-vscode": "^1.0.5",
 		"@types/glob": "^7.1.3",
 		"@types/js-yaml": "^4.0.9",
