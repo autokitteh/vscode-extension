@@ -205,7 +205,6 @@
 		"@vscode/codicons": "^0.0.35",
 		"axios": "^1.6.2",
 		"i18next": "^23.7.11",
-		"js-yaml": "^4.1.0",
 		"lodash": "^4.17.21",
 		"module-alias": "^2.2.3",
 		"moment": "^2.30.1",
