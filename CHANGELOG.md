@@ -1,3 +1,10 @@
+# [0.2.0](https://github.com/autokitteh/vscode-v2/compare/v0.1.0...v0.2.0) (2024-01-17)
+
+
+### Features
+
+* remove unused dependency ([#69](https://github.com/autokitteh/vscode-v2/issues/69)) ([3886364](https://github.com/autokitteh/vscode-v2/commit/388636498a93cd552c7a3c9097787afb08a6fcfe))
+
 # [0.1.0](https://github.com/autokitteh/vscode-v2/compare/v0.0.8...v0.1.0) (2024-01-17)
 
 
