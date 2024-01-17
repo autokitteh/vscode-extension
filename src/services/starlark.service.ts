@@ -1,4 +1,4 @@
-import net = require("net");
+import { createServer, connect } from "net";
 import { namespaces, vsCommands } from "@constants";
 import {
 	starlarkLSPPath,
@@ -36,7 +36,7 @@ export class StarlarkLSPService {
 		}
 		return new Promise((resolve) => {
 			const checkListen = () => {
-				var server = net.createServer();
+				var server = createServer();
 				server.on("error", () => resolve(port));
 				server.on("listening", () => {
 					server.close();
@@ -86,7 +86,7 @@ export class StarlarkLSPService {
 		if (port) {
 			const host = "127.0.0.1";
 
-			const socket = net.connect({ host, port });
+			const socket = connect({ host, port });
 			let streamListener: StreamInfo = { writer: socket, reader: socket } as StreamInfo;
 
 			const serverOptionsNetwork: () => Promise<StreamInfo> = () =>
