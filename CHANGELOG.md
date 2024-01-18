@@ -1,3 +1,10 @@
+## [0.2.4](https://github.com/autokitteh/vscode-extension/compare/v0.2.3...v0.2.4) (2024-01-18)
+
+
+### Bug Fixes
+
+* display proper error message for deployment which failed ([#75](https://github.com/autokitteh/vscode-extension/issues/75)) ([3c79094](https://github.com/autokitteh/vscode-extension/commit/3c79094f87e6ed3120304811e1b3984881e60a45))
+
 ## [0.2.3](https://github.com/autokitteh/vscode-extension/compare/v0.2.2...v0.2.3) (2024-01-18)
 
 

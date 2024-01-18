@@ -327,5 +327,5 @@
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check"
 	},
-	"version": "0.2.3"
+	"version": "0.2.4"
 }
