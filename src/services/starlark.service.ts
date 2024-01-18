@@ -77,18 +77,17 @@ export class StarlarkLSPService {
 
 		if (isLSPSocketMode) {
 			const port = workspace.getConfiguration().get("autokitteh.starlarkLSPPort") as number;
-			if (port) {
-				const socket = connect({ host, port });
-				let streamListener: StreamInfo = { writer: socket, reader: socket };
-
-				serverOptions = () => new Promise((resolve) => resolve(streamListener));
-			} else {
+			if (!port) {
 				LoggerService.log(
 					namespaces.deploymentsService,
 					translate().t("errors.missingStarlarkLSPPort"),
 					LoggerLevel.error
 				);
 			}
+			const socket = connect({ host, port });
+			let streamListener: StreamInfo = { writer: socket, reader: socket };
+
+			serverOptions = () => new Promise((resolve) => resolve(streamListener));
 		}
 
 		StarlarkLSPService.languageClient = new LanguageClient(
@@ -101,7 +100,7 @@ export class StarlarkLSPService {
 		try {
 			StarlarkLSPService.languageClient.start();
 		} catch (error) {
-			console.log(namespaces.deploymentsService, (error as Error).message, LoggerLevel.error);
+			LoggerService.log(namespaces.deploymentsService, (error as Error).message, LoggerLevel.error);
 		}
 	}
 
