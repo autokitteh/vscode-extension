@@ -32,7 +32,7 @@ export class StarlarkLSPService {
 		workspace.onDidChangeConfiguration(this.onChangeConfiguration);
 	}
 
-	private static async initiateLSPServer() {
+	private static initiateLSPServer() {
 		workspace.registerTextDocumentContentProvider(
 			starlarkLSPUriScheme,
 			new StarlarkFileHandler(StarlarkLSPService.languageClient!)
@@ -83,6 +83,7 @@ export class StarlarkLSPService {
 					translate().t("errors.missingStarlarkLSPPort"),
 					LoggerLevel.error
 				);
+				return;
 			}
 			const socket = connect({ host, port });
 			let streamListener: StreamInfo = { writer: socket, reader: socket };
