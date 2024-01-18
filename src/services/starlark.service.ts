@@ -82,6 +82,12 @@ export class StarlarkLSPService {
 				let streamListener: StreamInfo = { writer: socket, reader: socket };
 
 				serverOptions = () => new Promise((resolve) => resolve(streamListener));
+			} else {
+				LoggerService.log(
+					namespaces.deploymentsService,
+					translate().t("errors.missingStarlarkLSPPort"),
+					LoggerLevel.error
+				);
 			}
 		}
 
@@ -95,7 +101,7 @@ export class StarlarkLSPService {
 		try {
 			StarlarkLSPService.languageClient.start();
 		} catch (error) {
-			LoggerService.log(namespaces.deploymentsService, (error as Error).message, LoggerLevel.error);
+			console.log(namespaces.deploymentsService, (error as Error).message, LoggerLevel.error);
 		}
 	}
 
