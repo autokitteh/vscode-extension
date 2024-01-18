@@ -1,4 +1,4 @@
-import { createServer, connect } from "net";
+import { connect } from "net";
 import { namespaces, vsCommands } from "@constants";
 import {
 	starlarkLSPPath,
@@ -6,8 +6,9 @@ import {
 	startlarkLSPServerType,
 	starlarkLSPUriScheme,
 } from "@constants/language";
-import { StarlarkLSPServerType } from "@enums";
+import { LoggerLevel, StarlarkLSPServerType } from "@enums";
 import { translate } from "@i18n";
+import { LoggerService } from "@services/logger.service";
 import { StarlarkFileHandler } from "@starlark";
 import { workspace, commands, ConfigurationChangeEvent } from "vscode";
 import {
@@ -29,26 +30,6 @@ export class StarlarkLSPService {
 		}
 		this.initiateLSPServer();
 		workspace.onDidChangeConfiguration(this.onChangeConfiguration);
-	}
-
-	private static async checkIsPortInUse(): Promise<number | null> {
-		const port = workspace.getConfiguration().get("autokitteh.starlarkLSPPort") as number;
-		if (!port) {
-			return null;
-		}
-		return new Promise((resolve) => {
-			const checkListen = () => {
-				var server = createServer();
-				server.on("error", () => resolve(port));
-				server.on("listening", () => {
-					server.close();
-					resolve(null);
-				});
-				server.listen(port, host);
-			};
-
-			checkListen();
-		});
 	}
 
 	private static async initiateLSPServer() {
@@ -95,7 +76,7 @@ export class StarlarkLSPService {
 			.get("autokitteh.starlarkLSPSocketMode") as boolean;
 
 		if (isLSPSocketMode) {
-			const port = await this.checkIsPortInUse();
+			const port = workspace.getConfiguration().get("autokitteh.starlarkLSPPort") as number;
 			if (port) {
 				const socket = connect({ host, port });
 				let streamListener: StreamInfo = { writer: socket, reader: socket };
@@ -111,7 +92,11 @@ export class StarlarkLSPService {
 			clientOptions
 		);
 
-		StarlarkLSPService.languageClient.start();
+		try {
+			StarlarkLSPService.languageClient.start();
+		} catch (error) {
+			LoggerService.log(namespaces.deploymentsService, (error as Error).message, LoggerLevel.error);
+		}
 	}
 
 	private static getStarlarkLSPArguments(lspServerType: string, args: string[]): void {
