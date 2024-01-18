@@ -1,3 +1,10 @@
+## [0.2.2](https://github.com/autokitteh/vscode-extension/compare/v0.2.1...v0.2.2) (2024-01-18)
+
+
+### Bug Fixes
+
+* rename app and fix the repo url in package.json ([#74](https://github.com/autokitteh/vscode-extension/issues/74)) ([ef151e0](https://github.com/autokitteh/vscode-extension/commit/ef151e011b7714d391d55c2b59ce6a07c9db3355))
+
 ## [0.2.1](https://github.com/autokitteh/vscode-v2/compare/v0.2.0...v0.2.1) (2024-01-18)
 
 
