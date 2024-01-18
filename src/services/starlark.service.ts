@@ -79,10 +79,16 @@ export class StarlarkLSPService {
 			const port = workspace.getConfiguration().get("autokitteh.starlarkLSPPort") as number;
 			if (!port) {
 				LoggerService.log(
-					namespaces.deploymentsService,
+					namespaces.startlarkLSPServer,
 					translate().t("errors.missingStarlarkLSPPort"),
 					LoggerLevel.error
 				);
+				commands.executeCommand(
+					vsCommands.showErrorMessage,
+					namespaces.startlarkLSPServer,
+					translate().t("errors.missingStarlarkLSPPort")
+				);
+
 				return;
 			}
 			const socket = connect({ host, port });
