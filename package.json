@@ -78,18 +78,6 @@
 					"description": "The path to the Starlark LSP Server",
 					"type": "string"
 				},
-				"autokitteh.starlarkLSPPort": {
-					"description": "The port to the Starlark LSP Network Server",
-					"default": 8760,
-					"type": "number",
-					"hidden": true
-				},
-				"autokitteh.starlarkLSPSocketMode": {
-					"description": "Client connects to Starlark LSP Server via socket",
-					"default": false,
-					"type": "boolean",
-					"hidden": true
-				},
 				"autokitteh.starlarkLSPPreloadDir": {
 					"default": "",
 					"description": "The path to the autokitteh's API definitions for Starlark",
