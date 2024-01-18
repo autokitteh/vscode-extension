@@ -318,7 +318,9 @@
 		"start:webview": "cd webview-ui && npm run start",
 		"test": "vitest",
 		"type:check": "tsc",
-		"validate": "run-p lint type:check format:check"
+		"validate": "run-p lint type:check format:check",
+		"local-package": "node preBuildLocalVersion.js && vsce package && node postBuildLocalVersion.js",
+		"package": "vsce package"
 	},
 	"version": "0.0.9"
 }
