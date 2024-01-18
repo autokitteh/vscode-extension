@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: "21.2.0"
           cache: "npm"
-      - name: Get submodule from remote
+      - name: Pull submodule from remote
         run: git submodule update --remote
       - name: Install vscode-dependencies
         run: npm ci
