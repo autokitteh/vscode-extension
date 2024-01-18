@@ -8,6 +8,8 @@ export interface IProjectViewDelegate {
 	run: Callback;
 	selectDeployment?: CallbackWStringIdParam;
 	displaySessionLogs?: CallbackWStringIdParam;
+	activateDeployment?: CallbackWStringIdParam;
+	deactivateDeployment?: CallbackWStringIdParam;
 }
 
 export interface IProjectView {

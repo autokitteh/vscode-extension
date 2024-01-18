@@ -10,6 +10,7 @@ export default defineConfig({
 			"@api": path.resolve(__dirname, "../src/api"),
 			"@type": path.resolve(__dirname, "../src/types"),
 			"@enums": path.resolve(__dirname, "../src/enums"),
+			"@react-styles": path.resolve(__dirname, "./src/styles"),
 			"@models": path.resolve(__dirname, "../src/models"),
 			"@constants": path.resolve(__dirname, "../src/constants"),
 			"@utilities": path.resolve(__dirname, "../src/utilities"),

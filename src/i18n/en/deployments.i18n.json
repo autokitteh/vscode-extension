@@ -1,0 +1,6 @@
+{
+	"activationSucceed": "Deployment activation succeed",
+	"activationFailed": "Deployment activation failed",
+	"deactivationSucceed": "Deployment deactivation succeed",
+	"deactivationFailed": "Deployment deactivation failed"
+}

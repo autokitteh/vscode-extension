@@ -49,6 +49,8 @@
 			"@services/*": ["../src/services/*"],
 			"@starlark": ["../src/starlark/index"],
 			"@starlark/*": ["../src/starlark/*"],
+			"@react-styles": ["src/styles/index"],
+			"@react-styles/*": ["src/styles/*"],
 			"@utils": ["../src/utilities/index"],
 			"@utils/*": ["../src/utilities/*"]
 		},

@@ -189,4 +189,18 @@ export class ProjectController {
 			onFailureMessage: translate().t("projects.projectDeployFailed"),
 		});
 	}
+
+	async activateDeployment(deploymentId: string) {
+		await RequestHandler.handleServiceResponse(() => DeploymentsService.activate(deploymentId), {
+			onSuccessMessage: translate().t("deployments.activationSucceed"),
+			onFailureMessage: translate().t("deployments.activationFailed"),
+		});
+	}
+
+	async deactivateDeployment(deploymentId: string) {
+		await RequestHandler.handleServiceResponse(() => DeploymentsService.deactivate(deploymentId), {
+			onSuccessMessage: translate().t("deployments.deactivationSucceed"),
+			onFailureMessage: translate().t("deployments.deactivationFailed"),
+		});
+	}
 }
