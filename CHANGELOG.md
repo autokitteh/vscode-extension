@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/autokitteh/vscode-v2/compare/v0.2.0...v0.2.1) (2024-01-18)
+
+
+### Bug Fixes
+
+* display proper error message for errored session ([#72](https://github.com/autokitteh/vscode-v2/issues/72)) ([e87505c](https://github.com/autokitteh/vscode-v2/commit/e87505c8db622a5992c7c994ecaa2aa9e8fed064))
+
 # [0.2.0](https://github.com/autokitteh/vscode-v2/compare/v0.1.0...v0.2.0) (2024-01-17)
 
 
