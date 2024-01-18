@@ -86,7 +86,12 @@ export class ProjectsService {
 	}
 
 	static async run(projectId: string): Promise<ServiceResponse<ActivateResponse>> {
-		const { data: deploymentId } = await this.deploy(projectId);
+		const { data: deploymentId, error } = await this.deploy(projectId);
+		if (error) {
+			LoggerService.log(namespaces.projectService, (error as Error).message, LoggerLevel.error);
+
+			return { data: undefined, error: error };
+		}
 		if (deploymentId) {
 			try {
 				const { data: activateResponse, error } = await DeploymentsService.activate(deploymentId);
