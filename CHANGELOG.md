@@ -1,3 +1,10 @@
+## [0.2.3](https://github.com/autokitteh/vscode-extension/compare/v0.2.2...v0.2.3) (2024-01-18)
+
+
+### Bug Fixes
+
+* add semantic-release for vscode extension publish ([#76](https://github.com/autokitteh/vscode-extension/issues/76)) ([4ae9828](https://github.com/autokitteh/vscode-extension/commit/4ae9828f791aaadb5d843ce6abe672a02c206fda))
+
 ## [0.2.2](https://github.com/autokitteh/vscode-extension/compare/v0.2.1...v0.2.2) (2024-01-18)
 
 
