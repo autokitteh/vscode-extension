@@ -1,12 +1,13 @@
 import { ActivateResponse } from "@ak-proto-ts/deployments/v1/svc_pb";
 import { projectsClient } from "@api/grpc/clients.grpc.api";
-import { namespaces } from "@constants";
+import { namespaces, vsCommands } from "@constants";
 import { LoggerLevel } from "@enums";
 import { translate } from "@i18n";
 import { convertProjectProtoToModel } from "@models";
 import { DeploymentsService, EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
 import { Project } from "@type/models";
+import { commands } from "vscode";
 
 export class ProjectsService {
 	static async get(projectId: string): Promise<ServiceResponse<Project>> {
@@ -86,7 +87,13 @@ export class ProjectsService {
 	}
 
 	static async run(projectId: string): Promise<ServiceResponse<ActivateResponse>> {
-		const { data: deploymentId } = await this.deploy(projectId);
+		const { data: deploymentId, error } = await this.deploy(projectId);
+		if (error) {
+			LoggerService.log(namespaces.projectService, (error as Error).message, LoggerLevel.error);
+			commands.executeCommand(vsCommands.showErrorMessage, namespaces.deploymentsService, error);
+
+			return { data: undefined, error: error };
+		}
 		if (deploymentId) {
 			try {
 				const { data: activateResponse, error } = await DeploymentsService.activate(deploymentId);
