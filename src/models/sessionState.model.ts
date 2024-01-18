@@ -55,7 +55,7 @@ export class SessionState {
 				case SessionStateType.error:
 					const errorMessage = get(
 						state,
-						"states.error.message",
+						"states.value.error.message",
 						translate().t("errors.unexpectedError")
 					);
 					this.state = new ErrorState(errorMessage);
