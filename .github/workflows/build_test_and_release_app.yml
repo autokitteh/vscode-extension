@@ -26,9 +26,9 @@ jobs:
           cache: "npm"
       - name: Pull submodule from remote
         run: git submodule update --remote
-      - name: Install vscode-dependencies
+      - name: Install dependencies for both vscode and react app
         run: npm ci
-      - name: Install vscode-tests
+      - name: Run vscode and react app tests
         run: npm test -- --watch=false
       - name: Run vscode TS validation and react app
         run: npm run compile
