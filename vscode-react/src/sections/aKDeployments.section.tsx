@@ -61,11 +61,11 @@ export const AKDeployments = ({
 		return getTimePassed(createdAt);
 	};
 
-	const stopBuild = (deploymentId: string) => {
+	const deactivateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.deactivateDeployment, deploymentId);
 	};
 
-	const startBuild = (deploymentId: string) => {
+	const activateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.activateDeployment, deploymentId);
 	};
 
@@ -143,12 +143,12 @@ export const AKDeployments = ({
 								{isDeploymentStateStartable(deployment.state) ? (
 									<div
 										className="codicon codicon-debug-start cursor-pointer text-green-500"
-										onClick={() => startBuild(deployment.deploymentId)}
+										onClick={() => activateBuild(deployment.deploymentId)}
 									></div>
 								) : (
 									<div
 										className="codicon codicon-debug-stop cursor-pointer text-red-500"
-										onClick={() => stopBuild(deployment.deploymentId)}
+										onClick={() => deactivateBuild(deployment.deploymentId)}
 									></div>
 								)}
 							</AKTableCell>
