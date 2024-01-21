@@ -4,16 +4,9 @@ import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
-import {
-	EnvironmentsService,
-	DeploymentsService,
-	ProjectsService,
-	SessionsService,
-	LoggerService,
-} from "@services";
+import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
 import { ProjectCB } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
-import { getIds } from "@utilities";
 import isEqual from "lodash/isEqual";
 import { commands } from "vscode";
 
@@ -43,32 +36,13 @@ export class ProjectController {
 		this.view.reveal(this.project.name);
 	}
 
-	async getProjectDeployments(): Promise<Deployment[] | undefined> {
-		const { data: environments, error: environmentsError } =
-			await RequestHandler.handleServiceResponse(
-				() => EnvironmentsService.listByProjectId(this.projectId),
-				{ onFailureMessage: translate().t("errors.environmentsNotDefinedForProject") }
-			);
+	async loadDeployments() {
+		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
+		if (error) {
+			commands.executeCommand(vsCommands.showErrorMessage, error as string);
 
-		if (environmentsError || !environments?.length) {
-			return [];
-		}
-
-		const environmentIds = getIds(environments, "envId");
-		const { data: projectDeployments, error: deploymentsError } =
-			await RequestHandler.handleServiceResponse(
-				() => DeploymentsService.listByEnvironmentIds(environmentIds),
-				{ onFailureMessage: translate().t("errors.deploymentsNotDefinedForProject") }
-			);
-
-		if (deploymentsError) {
 			return;
 		}
-		return projectDeployments;
-	}
-
-	async loadDeployments() {
-		const deployments = await this.getProjectDeployments();
 		if (isEqual(this.deployments, deployments)) {
 			return;
 		}

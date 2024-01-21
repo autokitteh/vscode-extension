@@ -3,10 +3,10 @@ import { deploymentsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { LoggerLevel } from "@enums";
 import { convertDeploymentProtoToModel } from "@models";
-import { LoggerService } from "@services";
+import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
 import { Deployment } from "@type/models";
-import { flattenArray } from "@utilities";
+import { flattenArray, getIds } from "@utilities";
 import { get } from "lodash";
 
 export class DeploymentsService {
@@ -46,6 +46,29 @@ export class DeploymentsService {
 			LoggerService.log(namespaces.deploymentsService, (error as Error).message, LoggerLevel.error);
 			return { data: undefined, error };
 		}
+	}
+
+	static async listByProjectId(projectId: string): Promise<ServiceResponse<Deployment[]>> {
+		const { data: environments, error: environmentsError } =
+			await EnvironmentsService.listByProjectId(projectId);
+
+		if (environmentsError) {
+			return { data: undefined, error: environmentsError };
+		}
+
+		const environmentIds = getIds(environments!, "envId");
+		const { data: projectDeployments, error: deploymentsError } =
+			await this.listByEnvironmentIds(environmentIds);
+
+		if (deploymentsError) {
+			LoggerService.log(
+				namespaces.deploymentsService,
+				deploymentsError as string,
+				LoggerLevel.error
+			);
+			return { data: undefined, error: deploymentsError };
+		}
+		return { data: projectDeployments!, error: undefined };
 	}
 	static async create(deployment: {
 		envId: string;
