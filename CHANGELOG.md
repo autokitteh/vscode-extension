@@ -1,3 +1,10 @@
+# [0.3.0](https://github.com/autokitteh/vscode-extension/compare/v0.2.4...v0.3.0) (2024-01-21)
+
+
+### Features
+
+* generate local version with git hash postfix ([#78](https://github.com/autokitteh/vscode-extension/issues/78)) ([2b2e06d](https://github.com/autokitteh/vscode-extension/commit/2b2e06dcf06eddaff5a3daa2285b3bc64538cf85))
+
 ## [0.2.4](https://github.com/autokitteh/vscode-extension/compare/v0.2.3...v0.2.4) (2024-01-18)
 
 
