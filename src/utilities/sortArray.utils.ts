@@ -12,11 +12,11 @@ export const sortArray = <TItem extends WithOptionalProperty<TKey>, TKey extends
 		const bProp: any = b[propName];
 		let comparison = 0;
 
-		if (typeof aProp === "number" && typeof bProp === "number") {
+		if (typeof aProp === "number") {
 			comparison = aProp - bProp;
-		} else if (typeof aProp === "string" && typeof bProp === "string") {
+		} else if (typeof aProp === "string") {
 			comparison = aProp.localeCompare(bProp);
-		} else if (aProp instanceof Date && bProp instanceof Date) {
+		} else if (aProp instanceof Date) {
 			comparison = aProp.getTime() - bProp.getTime();
 		} else {
 			// Handle other types or mixed types here, if needed
