@@ -69,7 +69,7 @@ export class ProjectView implements IProjectView {
 				enableScripts: true,
 				localResourceRoots: [
 					Uri.joinPath(this.context.extensionUri, "dist"),
-					Uri.joinPath(this.context.extensionUri, "webview-ui/build"),
+					Uri.joinPath(this.context.extensionUri, "vscode-react/build"),
 					Uri.joinPath(this.context.extensionUri, "node_modules/@vscode/codicons/dist"),
 				],
 			}
@@ -126,13 +126,13 @@ export class ProjectView implements IProjectView {
 	private getWebviewContent(): string {
 		if (this.panel) {
 			const stylesUri = getUri(this.panel.webview, this.context.extensionUri, [
-				"webview-ui",
+				"vscode-react",
 				"build",
 				"assets",
 				"index.css",
 			]);
 			const scriptUri = getUri(this.panel.webview, this.context.extensionUri, [
-				"webview-ui",
+				"vscode-react",
 				"build",
 				"assets",
 				"index.js",

@@ -45,6 +45,6 @@
 		"strict": true,
 		"target": "es2021"
 	},
-	"exclude": ["node_modules", ".vscode-test", "webview-ui", "./src/autokitteh"],
+	"exclude": ["node_modules", ".vscode-test", "vscode-react", "./src/autokitteh"],
 	"include": ["./src", "./tests/**/*.ts"]
 }

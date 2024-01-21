@@ -3,8 +3,8 @@
 /.pnp
 .pnp.js
 
-webview-ui/build*
-webview-ui/index.html
+vscode-react/build*
+vscode-react/index.html
 src/autokitteh*
 
 package-lock.json

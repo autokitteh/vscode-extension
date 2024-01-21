@@ -30,15 +30,9 @@ jobs:
         run: npm ci
       - name: Install vscode-tests
         run: npm test -- --watch=false
-      - name: Run vscode TS validation
+      - name: Run vscode TS validation and react app
         run: npm run compile
-      - name: Build vscode extension
-        run: npm run esbuild
-      - name: Test and build vscode-webview-ui
-        run: |
-          cd webview-ui
-          npm ci
-          npm run test
-          npm run build
+      - name: Build vscode extension and react app
+        run: npm run build
       - name: Release and tag a new version
         run: npx semantic-release

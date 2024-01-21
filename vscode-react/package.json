@@ -1,10 +1,11 @@
 {
-	"name": "autokitteh-vscode-react",
+	"name": "@autokitteh/vscode-react",
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
 		"start": "vite",
-		"build": "tsc && vite build",
+		"compile": "tsc -p .",
+		"build": "vite build",
 		"preview": "vite preview",
 		"watch": "vite build --watch",
 		"test": "vitest"
