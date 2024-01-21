@@ -1,12 +1,12 @@
 import { ActivateResponse, ListResponse } from "@ak-proto-ts/deployments/v1/svc_pb";
 import { deploymentsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
-import { LoggerLevel } from "@enums";
+import { LoggerLevel, SortOrder } from "@enums";
 import { convertDeploymentProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
 import { Deployment } from "@type/models";
-import { flattenArray, getIds } from "@utilities";
+import { flattenArray, getIds, sortArray } from "@utilities";
 import { get } from "lodash";
 
 export class DeploymentsService {
@@ -68,6 +68,8 @@ export class DeploymentsService {
 			);
 			return { data: undefined, error: deploymentsError };
 		}
+		sortArray(projectDeployments, "createdAt", SortOrder.DESC);
+
 		return { data: projectDeployments!, error: undefined };
 	}
 	static async create(deployment: {
