@@ -241,6 +241,7 @@
 		"prettier": "^3.1.1",
 		"rollup": "^4.9.5",
 		"semantic-release": "^23.0.0",
+		"semantic-release-slack-bot": "^4.0.2",
 		"semantic-release-vsce": "^5.6.4",
 		"sinon": "^17.0.1",
 		"typescript": "^5.3.3",
@@ -263,49 +264,6 @@
 	"name": "autokitteh",
 	"private": true,
 	"publisher": "autokitteh",
-	"release": {
-		"branches": [
-			"main"
-		],
-		"plugins": [
-			[
-				"@semantic-release/commit-analyzer",
-				{
-					"preset": "conventionalcommits"
-				}
-			],
-			"@semantic-release/release-notes-generator",
-			[
-				"semantic-release-vsce",
-				{
-					"packageVsix": true,
-					"publish": false
-				}
-			],
-			"@semantic-release/changelog",
-			[
-				"@semantic-release/git",
-				{
-					"assets": [
-						"CHANGELOG.md",
-						"package.json",
-						"package-lock.json"
-					],
-					"message": "chore(release): ${nextRelease.version} \n\n${nextRelease.notes}"
-				}
-			],
-			[
-				"@semantic-release/github",
-				{
-					"assets": [
-						{
-							"path": "*.vsix"
-						}
-					]
-				}
-			]
-		]
-	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/autokitteh/vscode-extension"
