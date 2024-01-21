@@ -1,3 +1,4 @@
+import { connect } from "net";
 import { namespaces, vsCommands } from "@constants";
 import {
 	starlarkLSPPath,
@@ -5,11 +6,19 @@ import {
 	startlarkLSPServerType,
 	starlarkLSPUriScheme,
 } from "@constants/language";
-import { StarlarkLSPServerType } from "@enums";
+import { LoggerLevel, StarlarkLSPServerType } from "@enums";
 import { translate } from "@i18n";
+import { LoggerService } from "@services/logger.service";
 import { StarlarkFileHandler } from "@starlark";
 import { workspace, commands, ConfigurationChangeEvent } from "vscode";
-import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient";
+import {
+	LanguageClient,
+	LanguageClientOptions,
+	ServerOptions,
+	StreamInfo,
+} from "vscode-languageclient";
+
+const host = "127.0.0.1";
 
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;
@@ -49,12 +58,44 @@ export class StarlarkLSPService {
 			return;
 		}
 
-		let serverOptions: ServerOptions = { command: starlarkLSPPath, args: args };
+		let serverOptions: ServerOptions | Promise<StreamInfo> = {
+			command: starlarkLSPPath,
+			args: args,
+		};
 
 		let clientOptions: LanguageClientOptions = {
 			documentSelector: [{ scheme: "file", language: "starlark" }],
 			initializationOptions: {},
 		};
+
+		/* By default, the Starlark LSP operates through a CMD command in stdio mode.
+		 * However, if the 'starlarkLSPSocketMode' is enabled, the LSP won't initiate automatically.
+		 * Instead, VSCode connects to 'localhost:starlarkLSPPort', expecting the Starlark LSP to be running in socket mode. */
+		const isLSPSocketMode = workspace
+			.getConfiguration()
+			.get("autokitteh.starlarkLSPSocketMode") as boolean;
+
+		if (isLSPSocketMode) {
+			const port = workspace.getConfiguration().get("autokitteh.starlarkLSPPort") as number;
+			if (!port) {
+				LoggerService.log(
+					namespaces.startlarkLSPServer,
+					translate().t("errors.missingStarlarkLSPPort"),
+					LoggerLevel.error
+				);
+				commands.executeCommand(
+					vsCommands.showErrorMessage,
+					namespaces.startlarkLSPServer,
+					translate().t("errors.missingStarlarkLSPPort")
+				);
+
+				return;
+			}
+			const socket = connect({ host, port });
+			let streamListener: StreamInfo = { writer: socket, reader: socket };
+
+			serverOptions = () => new Promise((resolve) => resolve(streamListener));
+		}
 
 		StarlarkLSPService.languageClient = new LanguageClient(
 			"Starlark",
@@ -63,7 +104,11 @@ export class StarlarkLSPService {
 			clientOptions
 		);
 
-		StarlarkLSPService.languageClient.start();
+		try {
+			StarlarkLSPService.languageClient.start();
+		} catch (error) {
+			LoggerService.log(namespaces.deploymentsService, (error as Error).message, LoggerLevel.error);
+		}
 	}
 
 	private static getStarlarkLSPArguments(lspServerType: string, args: string[]): void {
