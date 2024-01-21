@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/autokitteh/vscode-extension/compare/v0.3.0...v0.4.0) (2024-01-21)
+
+
+### Features
+
+* add slack-bot to semantic-releases, extract the config from package.json ([#80](https://github.com/autokitteh/vscode-extension/issues/80)) ([cc379a7](https://github.com/autokitteh/vscode-extension/commit/cc379a720779a7248180f63d61a5c23cfa3b6b72))
+
 # [0.3.0](https://github.com/autokitteh/vscode-extension/compare/v0.2.4...v0.3.0) (2024-01-21)
 
 
