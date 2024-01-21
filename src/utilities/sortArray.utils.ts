@@ -19,7 +19,6 @@ export const sortArray = <TItem extends WithOptionalProperty<TKey>, TKey extends
 		} else if (aProp instanceof Date) {
 			comparison = aProp.getTime() - bProp.getTime();
 		} else {
-			// Handle other types or mixed types here, if needed
 			return 0;
 		}
 
