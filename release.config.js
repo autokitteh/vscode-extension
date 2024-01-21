@@ -17,25 +17,6 @@ module.exports = {
                 "publish": false
             }
         ],
-        [
-            "semantic-release-slack-bot",
-            {
-                "notifyOnSuccess": false,
-                "notifyOnFail": false,
-                "slackWebhook": process.env.SLACK_WEBHOOK_URL,
-                "branchesConfig": [
-                    {
-                        "pattern": "main",
-                        "notifyOnSuccess": true,
-                        "notifyOnFail": true
-                    },
-                    {
-                        "pattern": "dev",
-                        "notifyOnFail": true
-                    }
-                ]
-            }
-        ],
         "@semantic-release/changelog",
         [
             "@semantic-release/git",
@@ -54,6 +35,25 @@ module.exports = {
                 "assets": [
                     {
                         "path": "*.vsix"
+                    }
+                ]
+            }
+        ],
+        [
+            "semantic-release-slack-bot",
+            {
+                "notifyOnSuccess": false,
+                "notifyOnFail": false,
+                "slackWebhook": process.env.SLACK_WEBHOOK_URL,
+                "branchesConfig": [
+                    {
+                        "pattern": "main",
+                        "notifyOnSuccess": true,
+                        "notifyOnFail": true
+                    },
+                    {
+                        "pattern": "dev",
+                        "notifyOnFail": true
                     }
                 ]
             }
