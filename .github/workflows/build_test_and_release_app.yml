@@ -1,4 +1,4 @@
-name: Node.js CI
+name: autokittehVSCode CI
 on:
   push:
     branches: [main]
@@ -24,15 +24,15 @@ jobs:
         with:
           node-version: "21.2.0"
           cache: "npm"
-      - name: Checkout submodule
+      - name: Pull submodule from remote
         run: git submodule update --remote
-      - run: npm ci
-      - run: npm test -- --watch=false
-      - run: npm run compile
-      - run: npm run esbuild
-      - run: |
-          cd webview-ui
-          npm ci
-          npm run test
-          npm run build
-      - run: npx semantic-release
+      - name: Install dependencies for both vscode and react app
+        run: npm ci
+      - name: Run vscode and react app tests
+        run: npm test -- --watch=false
+      - name: Run vscode TS validation and react app
+        run: npm run compile
+      - name: Build vscode extension and react app
+        run: npm run build
+      - name: Release and tag a new version
+        run: npx semantic-release

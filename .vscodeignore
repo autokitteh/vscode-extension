@@ -11,15 +11,15 @@ dist/test/**
 # Ignore source code
 src/**
 
-# Ignore all webview-ui files except the build directory
-webview-ui/src/**
-webview-ui/public/**
-webview-ui/scripts/**
-webview-ui/index.html
-webview-ui/README.md
-webview-ui/package.json
-webview-ui/package-lock.json
-webview-ui/node_modules/**
+# Ignore all vscode-react files except the build directory
+vscode-react/src/**
+vscode-react/public/**
+vscode-react/scripts/**
+vscode-react/index.html
+vscode-react/README.md
+vscode-react/package.json
+vscode-react/package-lock.json
+vscode-react/node_modules/**
 
 # Ignore Misc
 .yarnrc

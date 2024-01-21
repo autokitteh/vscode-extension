@@ -1,7 +1,7 @@
 **/node_modules/*
 dist/*
-webview-ui/dist/*
-webview-ui/node_modules/*
+vscode-react/dist/*
+vscode-react/node_modules/*
 .prettier*
 /src/autokitteh
-/webview-ui/src/vite-env.d.ts
+/vscode-react/src/vite-env.d.ts

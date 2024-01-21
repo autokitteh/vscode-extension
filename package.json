@@ -311,23 +311,27 @@
 		"url": "https://github.com/autokitteh/vscode-extension"
 	},
 	"scripts": {
-		"build:webview": "cd webview-ui && npm run build",
+		"cleanup": "rm -rf dist node_modules ./vscode-react/build ./vscode-react/node_modules",
+		"clean-and-run": "npm run cleanup && npm install && npm run compile && npm run build && cd vscode-react && npm run watch",
+		"build:webview": "cd vscode-react && npm run build",
 		"compile": "tsc -p ./",
-		"esbuild": "npm run esbuild-base -- --sourcemap",
+		"build": "npm run esbuild-base -- --sourcemap",
 		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
 		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
 		"fetch-protos": "git submodule update --init",
 		"format:check": "npm run prettier -- --check",
 		"format:fix": "npm run prettier -- --write",
-		"install:all": "npm install && cd webview-ui && npm install",
 		"lint": "eslint src --ext .ts,.tsx .",
 		"prettier": "prettier . --ignore-path .prettierignore",
-		"start:webview": "cd webview-ui && npm run start",
+		"start:webview": "cd vscode-react && npm run start",
 		"test": "vitest",
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
 		"local-package": "node preBuildLocalVersion.js && vsce package && node postBuildLocalVersion.js",
 		"package": "vsce package"
 	},
-	"version": "0.3.0"
+	"version": "0.3.0",
+	"workspaces": [
+		"vscode-react"
+	]
 }
