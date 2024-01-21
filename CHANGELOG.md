@@ -1,3 +1,10 @@
+# [0.5.0](https://github.com/autokitteh/vscode-extension/compare/v0.4.0...v0.5.0) (2024-01-21)
+
+
+### Features
+
+* allow connecting to lsp by network ([#63](https://github.com/autokitteh/vscode-extension/issues/63)) ([81d3706](https://github.com/autokitteh/vscode-extension/commit/81d3706c65ecb9c13188d299fb7cf78921f21858))
+
 # [0.4.0](https://github.com/autokitteh/vscode-extension/compare/v0.3.0...v0.4.0) (2024-01-21)
 
 
