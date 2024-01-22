@@ -63,9 +63,11 @@ jobs:
         run: npm ci
       - name: Set Slack Webhook URL
         run: |
-          if [ "$CI_BRANCH" == "main" ]; then
+          if [[ "${{github.base_ref}}" == "main" || "${{github.ref}}" == "refs/heads/main" ]]; then
             export SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL
-          elif [ "$CI_BRANCH" == "dev" ]; then
+          fi
+
+          if [[ "${{github.base_ref}}" == "dev" || "${{github.ref}}" == "refs/heads/dev" ]]; then
             export SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL_BETA
           fi
       - name: Release and tag a new version
