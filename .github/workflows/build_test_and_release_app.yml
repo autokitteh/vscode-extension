@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies for both vscode and react app
         run: npm ci
       - name: Run vscode and react app tests
-        run: npm test:all
+        run: npm run test:all
       - name: Run vscode TS validation and react app
         run: npm run compile:all
       - name: Build vscode extension and react app
