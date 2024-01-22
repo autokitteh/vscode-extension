@@ -59,6 +59,8 @@ jobs:
         with:
           node-version: "21.2.0"
           cache: "npm"
+      - name: Install dependencies for both vscode and react app
+        run: npm ci
       - name: Set Slack Webhook URL
         run: |
           if [ "$CI_BRANCH" == "main" ]; then
