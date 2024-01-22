@@ -1,3 +1,11 @@
+# [0.6.0-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.4...v0.6.0-dev.5) (2024-01-22)
+
+
+### Bug Fixes
+
+* github actions - fix env variables ([#96](https://github.com/autokitteh/vscode-extension/issues/96)) ([e63fba8](https://github.com/autokitteh/vscode-extension/commit/e63fba8e96c20d8c8758182a80f3933eabc3957c))
+* github actions - remove the env variable, let the check decide if beta or main ([#95](https://github.com/autokitteh/vscode-extension/issues/95)) ([f32dd7e](https://github.com/autokitteh/vscode-extension/commit/f32dd7e54bbe9c7d3d0755085398945de31a3dc0))
+
 # [0.6.0-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.3...v0.6.0-dev.4) (2024-01-22)
 
 
