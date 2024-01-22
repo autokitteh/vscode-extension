@@ -1,3 +1,10 @@
+# [0.6.0](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.6.0) (2024-01-22)
+
+
+### Features
+
+* slack-bot messages by channels ([#90](https://github.com/autokitteh/vscode-extension/issues/90)) ([b42a868](https://github.com/autokitteh/vscode-extension/commit/b42a868839081a6069c1315027be34c31831298c)), closes [#87](https://github.com/autokitteh/vscode-extension/issues/87)
+
 # [0.6.0-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.4...v0.6.0-dev.5) (2024-01-22)
 
 
