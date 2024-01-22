@@ -1,7 +1,7 @@
 module.exports = {
     "branches": [
         "main",
-        {name: 'dev', prerelease: true}
+        {name: 'development', prerelease: true}
     ],
     "plugins": [
         [
