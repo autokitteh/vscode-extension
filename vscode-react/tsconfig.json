@@ -49,17 +49,15 @@
 			"@services/*": ["../src/services/*"],
 			"@starlark": ["../src/starlark/index"],
 			"@starlark/*": ["../src/starlark/*"],
-			"@react-styles": ["src/styles/index"],
-			"@react-styles/*": ["src/styles/*"],
 			"@utils": ["../src/utilities/index"],
-			"@utils/*": ["../src/utilities/*"]
+			"@utils/*": ["../src/utilities/*"],
 		},
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"strict": true,
 		"target": "esnext",
 		"types": ["vite-plugin-svgr/client"],
-		"useDefineForClassFields": true
+		"useDefineForClassFields": true,
 	},
-	"include": ["./src", "./tests/**/*.test.ts"]
+	"include": ["./src", "./tests/**/*.test.ts"],
 }
