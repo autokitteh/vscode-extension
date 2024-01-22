@@ -16,6 +16,10 @@
 		"@vscommands": "dist/src/vscommands"
 	},
 	"contributes": {
+		"activationEvents": [
+			"onCommand:autokitteh.buildProject",
+			"onCommand:autokitteh.runProject"
+		],
 		"breakpoints": [
 			{
 				"language": "starlark"
