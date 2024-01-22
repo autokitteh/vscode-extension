@@ -1,3 +1,10 @@
+# [0.6.0-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.2...v0.6.0-dev.3) (2024-01-22)
+
+
+### Bug Fixes
+
+* fix releases - refactor ci bariable ([#93](https://github.com/autokitteh/vscode-extension/issues/93)) ([8a6a7c0](https://github.com/autokitteh/vscode-extension/commit/8a6a7c0d8542a86dfd11366e47bec68c97ee8bf1))
+
 # [0.6.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.1...v0.6.0-dev.2) (2024-01-22)
 
 
