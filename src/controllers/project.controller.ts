@@ -192,8 +192,12 @@ export class ProjectController {
 
 	async build() {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(this.projectId), {
-			onSuccessMessage: translate().t("projects.projectBuildSucceed"),
-			onFailureMessage: translate().t("projects.projectBuildFailed"),
+			onSuccessMessage: translate().t("projects.projectBuildSucceed", {
+				projectId: this.projectId,
+			}),
+			onFailureMessage: translate().t("projects.projectBuildFailed", {
+				projectId: this.projectId,
+			}),
 		});
 	}
 
