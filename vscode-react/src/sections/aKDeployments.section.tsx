@@ -61,6 +61,14 @@ export const AKDeployments = ({
 		return getTimePassed(createdAt);
 	};
 
+	const deactivateBuild = (deploymentId: string) => {
+		sendMessage(MessageType.deactivateDeployment, deploymentId);
+	};
+
+	const activateBuild = (deploymentId: string) => {
+		sendMessage(MessageType.activateDeployment, deploymentId);
+	};
+
 	return (
 		<div className="mt-4 min-h-48 max-h-48 overflow-y-auto overflow-x-hidden">
 			{deployments && !!totalDeployments ? (
@@ -133,9 +141,15 @@ export const AKDeployments = ({
 							</AKTableCell>
 							<AKTableCell>
 								{isDeploymentStateStartable(deployment.state) ? (
-									<div className="codicon codicon-debug-start"></div>
+									<div
+										className="codicon codicon-debug-start cursor-pointer text-green-500"
+										onClick={() => activateBuild(deployment.deploymentId)}
+									></div>
 								) : (
-									<div className="codicon codicon-debug-stop"></div>
+									<div
+										className="codicon codicon-debug-stop cursor-pointer text-red-500"
+										onClick={() => deactivateBuild(deployment.deploymentId)}
+									></div>
 								)}
 							</AKTableCell>
 						</AKTableRow>

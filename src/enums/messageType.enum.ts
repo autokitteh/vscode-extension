@@ -7,4 +7,6 @@ export enum MessageType {
 	setSessionsSection = "SET_SESSIONS_SECTION",
 	selectDeployment = "SELECT_DEPLOYMENT",
 	displaySessionLogs = "DISPLAY_SESSION_LOGS",
+	deactivateDeployment = "DEACTIVATE_DEPLOYMENT",
+	activateDeployment = "ACTIVATE_DEPLOYMENT",
 }
