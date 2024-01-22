@@ -16,6 +16,10 @@
 		"@vscommands": "dist/src/vscommands"
 	},
 	"contributes": {
+		"activationEvents": [
+			"onCommand:autokitteh.buildProject",
+			"onCommand:autokitteh.runProject"
+		],
 		"breakpoints": [
 			{
 				"language": "starlark"
@@ -39,6 +43,22 @@
 				"command": "autokitteh.disconnect",
 				"icon": "./resources/sidebar/top-panel-disconnect.svg",
 				"title": "autokitteh: Disconnect from server"
+			},
+			{
+				"command": "autokitteh.buildProject",
+				"title": "autokitteh: Build Project",
+				"icon": {
+					"dark": "./resources/sidebar/icons/dark/build.svg",
+					"light": "./resources/sidebar/icons/light/build.svg"
+				}
+			},
+			{
+				"command": "autokitteh.runProject",
+				"title": "autokitteh: Run Project",
+				"icon": {
+					"dark": "./resources/sidebar/icons/dark/rocket.svg",
+					"light": "./resources/sidebar/icons/light/rocket.svg"
+				}
 			}
 		],
 		"configuration": {
@@ -133,6 +153,18 @@
 					"command": "autokitteh.disconnect",
 					"group": "navigation",
 					"when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "autokitteh.buildProject",
+					"group": "inline",
+					"when": "view == autokittehSidebarTree && viewItem =~ /p:.*/"
+				},
+				{
+					"command": "autokitteh.runProject",
+					"group": "inline",
+					"when": "view == autokittehSidebarTree && viewItem =~ /p:.*/"
 				}
 			]
 		},

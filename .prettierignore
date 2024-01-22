@@ -30,7 +30,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # docs 
-**/.md
+**/*.md
 
 # JSON based assets
-webview-ui/assets/**/*.json
+vscode-react/assets/**/*.json
