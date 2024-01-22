@@ -1,3 +1,10 @@
+# [0.6.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.1...v0.6.0-dev.2) (2024-01-22)
+
+
+### Features
+
+* add quick action to the sidebar ([#83](https://github.com/autokitteh/vscode-extension/issues/83)) ([112e594](https://github.com/autokitteh/vscode-extension/commit/112e594cb0726c9006b85ea30facded24277501b))
+
 # [0.6.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.6.0-dev.1) (2024-01-22)
 
 
