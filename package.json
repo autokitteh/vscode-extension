@@ -273,7 +273,9 @@
 		"clean-and-run": "npm run cleanup && npm install && npm run compile && npm run build && cd vscode-react && npm run watch",
 		"build:webview": "cd vscode-react && npm run build",
 		"compile": "tsc -p ./",
+		"compile:all": "tsc -p ./ && npm run compile --workspace=vscode-react",
 		"build": "npm run esbuild-base -- --sourcemap",
+		"build:all": "npm run esbuild-base -- --sourcemap && npm run build --workspace=vscode-react",
 		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
 		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
 		"fetch-protos": "git submodule update --init",
@@ -282,13 +284,15 @@
 		"lint": "eslint src --ext .ts,.tsx .",
 		"prettier": "prettier . --ignore-path .prettierignore",
 		"start:webview": "cd vscode-react && npm run start",
-		"test": "vitest",
+		"test:run": "vitest run",
+		"test:watch": "vitest watch",
+		"test:all": "vitest run && npm run test:run --workspace=vscode-react",
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
 		"local-package": "node preBuildLocalVersion.js && vsce package && node postBuildLocalVersion.js",
 		"package": "vsce package"
 	},
-	"version": "0.5.0",
+	"version": "0.5.3",
 	"workspaces": [
 		"vscode-react"
 	]
