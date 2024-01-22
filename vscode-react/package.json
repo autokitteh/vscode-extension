@@ -4,11 +4,12 @@
 	"private": true,
 	"scripts": {
 		"start": "vite",
-		"compile": "tsc -p .",
+		"compile": "tsc -p ./",
 		"build": "vite build",
 		"preview": "vite preview",
 		"watch": "vite build --watch",
-		"test": "vitest"
+		"test:run": "vitest run",
+		"test:watch": "vitest"
 	},
 	"dependencies": {
 		"@lottiefiles/react-lottie-player": "^3.5.3",
