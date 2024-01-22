@@ -1,9 +1,6 @@
 name: autokittehVSCode CI
 on:
   push:
-    branches: [main, dev]
-  pull_request:
-    branches: [main]
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -35,6 +32,29 @@ jobs:
         run: npm run compile:all
       - name: Build vscode extension and react app
         run: npm run build:all
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: built-files
+          path: ./build
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: built-files
+          path: ./build
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "21.2.0"
+          cache: "npm"
       - name: Set Slack Webhook URL
         run: |
           if [ "$CI_BRANCH" == "main" ]; then
@@ -42,5 +62,7 @@ jobs:
           elif [ "$CI_BRANCH" == "dev" ]; then
             export SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL_BETA
           fi
+      - name: Change working directory to build
+        run: cd ./build
       - name: Release and tag a new version
         run: npx semantic-release
