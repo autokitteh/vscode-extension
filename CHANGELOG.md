@@ -1,3 +1,40 @@
+# [0.6.0-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.4...v0.6.0-dev.5) (2024-01-22)
+
+
+### Bug Fixes
+
+* github actions - fix env variables ([#96](https://github.com/autokitteh/vscode-extension/issues/96)) ([e63fba8](https://github.com/autokitteh/vscode-extension/commit/e63fba8e96c20d8c8758182a80f3933eabc3957c))
+* github actions - remove the env variable, let the check decide if beta or main ([#95](https://github.com/autokitteh/vscode-extension/issues/95)) ([f32dd7e](https://github.com/autokitteh/vscode-extension/commit/f32dd7e54bbe9c7d3d0755085398945de31a3dc0))
+
+# [0.6.0-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.3...v0.6.0-dev.4) (2024-01-22)
+
+
+### Bug Fixes
+
+* github actions test ([#94](https://github.com/autokitteh/vscode-extension/issues/94)) ([50e13e0](https://github.com/autokitteh/vscode-extension/commit/50e13e0eee4f831952399bf43249901cab4f2c0f))
+
+# [0.6.0-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.2...v0.6.0-dev.3) (2024-01-22)
+
+
+### Bug Fixes
+
+* fix releases - refactor ci bariable ([#93](https://github.com/autokitteh/vscode-extension/issues/93)) ([8a6a7c0](https://github.com/autokitteh/vscode-extension/commit/8a6a7c0d8542a86dfd11366e47bec68c97ee8bf1))
+
+# [0.6.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.1...v0.6.0-dev.2) (2024-01-22)
+
+
+### Bug Fixes
+
+* fix releases - add npm install for vsce ([#92](https://github.com/autokitteh/vscode-extension/issues/92)) ([e70a63e](https://github.com/autokitteh/vscode-extension/commit/e70a63e311a98d7a6f2984f00eb408943a5b9f41))
+* fix releases ([#91](https://github.com/autokitteh/vscode-extension/issues/91)) ([11eb647](https://github.com/autokitteh/vscode-extension/commit/11eb64774956ca054f648fe69478b55fe6f8878b))
+
+# [0.6.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.6.0-dev.1) (2024-01-22)
+
+
+### Features
+
+* slack-bot messages by channels ([#87](https://github.com/autokitteh/vscode-extension/issues/87)) ([1fa1d9d](https://github.com/autokitteh/vscode-extension/commit/1fa1d9da98fae9a262435324ff4d683fd07c918e))
+
 # [0.6.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.1...v0.6.0-dev.2) (2024-01-22)
 
 
