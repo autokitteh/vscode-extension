@@ -5,7 +5,7 @@ import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
-import { ProjectCB } from "@type/interfaces";
+import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
 import { commands } from "vscode";
@@ -13,7 +13,7 @@ import { commands } from "vscode";
 export class ProjectController {
 	private view: IProjectView;
 	private intervalTimerId?: NodeJS.Timeout;
-	private disposeCB?: ProjectCB;
+	private disposeCB?: Callback<string>;
 	public projectId: string;
 	public project?: Project;
 	private sessions?: Session[] = [];
@@ -65,12 +65,23 @@ export class ProjectController {
 		}
 	}
 
-	async selectDeployment(deploymentId: string) {
+	async selectDeployment(deploymentId?: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
+		if (!deploymentId) {
+			return;
+		}
 		const { data: sessions, error } = await RequestHandler.handleServiceResponse(() =>
 			SessionsService.listByDeploymentId(deploymentId)
 		);
 		if (error) {
+			commands.executeCommand(vsCommands.showErrorMessage, error as string);
+
+			LoggerService.print(
+				namespaces.deploymentsService,
+				error as string,
+				channels.appOutputLogName
+			);
+
 			return;
 		}
 
@@ -90,7 +101,10 @@ export class ProjectController {
 		});
 	}
 
-	async displaySessionLogs(sessionId: string) {
+	async displaySessionLogs(sessionId?: string): Promise<void> {
+		if (!sessionId) {
+			return;
+		}
 		const { data: sessionHistoryStates, error } =
 			await SessionsService.getHistoryBySessionId(sessionId);
 		if (error || !sessionHistoryStates?.length) {
@@ -146,7 +160,7 @@ export class ProjectController {
 		}
 	}
 
-	public async openProject(disposeCB: ProjectCB) {
+	public async openProject(disposeCB: Callback<string>) {
 		this.disposeCB = disposeCB;
 		const { data: project } = await RequestHandler.handleServiceResponse(
 			() => ProjectsService.get(this.projectId),
@@ -190,14 +204,20 @@ export class ProjectController {
 		});
 	}
 
-	async activateDeployment(deploymentId: string) {
+	async activateDeployment(deploymentId?: string) {
+		if (!deploymentId) {
+			return;
+		}
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.activate(deploymentId), {
 			onSuccessMessage: translate().t("deployments.activationSucceed"),
 			onFailureMessage: translate().t("deployments.activationFailed"),
 		});
 	}
 
-	async deactivateDeployment(deploymentId: string) {
+	async deactivateDeployment(deploymentId?: string) {
+		if (!deploymentId) {
+			return;
+		}
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.deactivate(deploymentId), {
 			onSuccessMessage: translate().t("deployments.deactivationSucceed"),
 			onFailureMessage: translate().t("deployments.deactivationFailed"),
