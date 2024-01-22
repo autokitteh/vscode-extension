@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: built-files
-          path: ./build
+          path: ./dist
 
   release:
     needs: build
@@ -50,7 +50,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: built-files
-          path: ./build
+          path: ./dist
       - uses: actions/setup-node@v3
         with:
           node-version: "21.2.0"
@@ -63,6 +63,6 @@ jobs:
             export SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL_BETA
           fi
       - name: Change working directory to build
-        run: cd ./build
+        run: cd ./dist
       - name: Release and tag a new version
         run: npx semantic-release
