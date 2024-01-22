@@ -1,6 +1,7 @@
 module.exports = {
     "branches": [
-        "main"
+        "main",
+        {name: 'dev', prerelease: true}
     ],
     "plugins": [
         [
@@ -53,6 +54,7 @@ module.exports = {
                     },
                     {
                         "pattern": "dev",
+                        "notifyOnSuccess": true,
                         "notifyOnFail": true
                     }
                 ]
