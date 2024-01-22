@@ -66,8 +66,5 @@ jobs:
           elif [ "$CI_BRANCH" == "dev" ]; then
             export SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL_BETA
           fi
-
-      - name: Change working directory to build
-        run: cd ./dist
       - name: Release and tag a new version
         run: npx semantic-release
