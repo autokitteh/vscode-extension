@@ -3,6 +3,13 @@
 
 ### Bug Fixes
 
+* display deployments sorted by controller ([#81](https://github.com/autokitteh/vscode-extension/issues/81)) ([7afd267](https://github.com/autokitteh/vscode-extension/commit/7afd267503fbfb1879efdb7a42f37f223fce9d15))
+
+## [0.5.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.5.1-dev.1) (2024-01-22)
+
+
+### Bug Fixes
+
 * display deployments sorted by controller ([#81](https://github.com/autokitteh/vscode-extension/issues/81)) ([7a02372](https://github.com/autokitteh/vscode-extension/commit/7a0237249e43e2a77181a53ef80fa37e46e47b75))
 
 # [0.5.0](https://github.com/autokitteh/vscode-extension/compare/v0.4.0...v0.5.0) (2024-01-21)
