@@ -9,7 +9,7 @@
 		"preview": "vite preview",
 		"watch": "vite build --watch",
 		"test:run": "vitest run",
-		"test:watch": "vitest run"
+		"test:watch": "vitest"
 	},
 	"dependencies": {
 		"@lottiefiles/react-lottie-player": "^3.5.3",
