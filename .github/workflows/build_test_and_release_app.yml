@@ -35,5 +35,12 @@ jobs:
         run: npm run compile:all
       - name: Build vscode extension and react app
         run: npm run build:all
+      - name: Set Slack Webhook URL
+        run: |
+          if [ "$CI_BRANCH" == "main" ]; then
+            export SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL
+          elif [ "$CI_BRANCH" == "dev" ]; then
+            export SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL_BETA
+          fi
       - name: Release and tag a new version
         run: npx semantic-release
