@@ -63,6 +63,8 @@ jobs:
         run: npm ci
       - name: Set Slack Webhook URL
         run: |
+          echo ${{github.base_ref}}
+          echo ${{github.ref}}
           if [[ "${{github.base_ref}}" == "main" || "${{github.ref}}" == "refs/heads/main" ]]; then
             export SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL
           fi
