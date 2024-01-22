@@ -3,7 +3,9 @@ on:
   push:
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-permissions:
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  SLACK_WEBHOOK_URL_BETA: ${{ secrets.SLACK_WEBHOOK_URL_BETA }}
+  permissions:
   contents: read
 jobs:
   build:
@@ -60,14 +62,7 @@ jobs:
           cache: "npm"
       - name: Install dependencies for both vscode and react app
         run: npm ci
-      - name: Set Slack Webhook URL
-        run: |
-          if [[ "${{github.base_ref}}" == "main" || "${{github.ref}}" == "refs/heads/main" ]]; then
-            export SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL
-          fi
-
-          if [[ "${{github.base_ref}}" == "dev" || "${{github.ref}}" == "refs/heads/dev" ]]; then
-            export SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL_BETA
-          fi
       - name: Release and tag a new version
+        env:
+          SLACK_WEBHOOK_URL: ${{ github.ref == 'refs/heads/main' && secrets.SLACK_WEBHOOK_URL || github.ref == 'refs/heads/dev' && secrets.SLACK_WEBHOOK_URL_BETA }}
         run: npx semantic-release
