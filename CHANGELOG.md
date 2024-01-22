@@ -1,3 +1,11 @@
+# [0.6.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.1...v0.6.0-dev.2) (2024-01-22)
+
+
+### Bug Fixes
+
+* fix releases - add npm install for vsce ([#92](https://github.com/autokitteh/vscode-extension/issues/92)) ([e70a63e](https://github.com/autokitteh/vscode-extension/commit/e70a63e311a98d7a6f2984f00eb408943a5b9f41))
+* fix releases ([#91](https://github.com/autokitteh/vscode-extension/issues/91)) ([11eb647](https://github.com/autokitteh/vscode-extension/commit/11eb64774956ca054f648fe69478b55fe6f8878b))
+
 # [0.6.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.6.0-dev.1) (2024-01-22)
 
 
