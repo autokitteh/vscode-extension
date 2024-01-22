@@ -1,3 +1,10 @@
+# [0.6.0-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.3...v0.6.0-dev.4) (2024-01-22)
+
+
+### Bug Fixes
+
+* github actions test ([#94](https://github.com/autokitteh/vscode-extension/issues/94)) ([50e13e0](https://github.com/autokitteh/vscode-extension/commit/50e13e0eee4f831952399bf43249901cab4f2c0f))
+
 # [0.6.0-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.2...v0.6.0-dev.3) (2024-01-22)
 
 
