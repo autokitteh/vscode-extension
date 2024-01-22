@@ -1,3 +1,85 @@
+# [0.6.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.1...v0.6.0-dev.2) (2024-01-22)
+
+
+### Features
+
+* add quick action to the sidebar ([#83](https://github.com/autokitteh/vscode-extension/issues/83)) ([112e594](https://github.com/autokitteh/vscode-extension/commit/112e594cb0726c9006b85ea30facded24277501b))
+
+# [0.6.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.6.0-dev.1) (2024-01-22)
+
+
+### Bug Fixes
+
+* display deployments sorted by controller ([#81](https://github.com/autokitteh/vscode-extension/issues/81)) ([7afd267](https://github.com/autokitteh/vscode-extension/commit/7afd267503fbfb1879efdb7a42f37f223fce9d15))
+
+
+### Features
+
+* **UI-28:** Deployment actions ([#70](https://github.com/autokitteh/vscode-extension/issues/70)) ([eac0132](https://github.com/autokitteh/vscode-extension/commit/eac0132e0f2841092a4d6edbdad3df3182c8618e))
+
+## [0.5.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.5.1-dev.1) (2024-01-22)
+
+
+### Bug Fixes
+
+* display deployments sorted by controller ([#81](https://github.com/autokitteh/vscode-extension/issues/81)) ([7afd267](https://github.com/autokitteh/vscode-extension/commit/7afd267503fbfb1879efdb7a42f37f223fce9d15))
+
+## [0.5.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.5.1-dev.1) (2024-01-22)
+
+
+### Bug Fixes
+
+* display deployments sorted by controller ([#81](https://github.com/autokitteh/vscode-extension/issues/81)) ([7afd267](https://github.com/autokitteh/vscode-extension/commit/7afd267503fbfb1879efdb7a42f37f223fce9d15))
+
+## [0.5.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.5.1-dev.1) (2024-01-22)
+
+
+### Bug Fixes
+
+* display deployments sorted by controller ([#81](https://github.com/autokitteh/vscode-extension/issues/81)) ([7afd267](https://github.com/autokitteh/vscode-extension/commit/7afd267503fbfb1879efdb7a42f37f223fce9d15))
+
+## [0.5.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.5.1-dev.1) (2024-01-22)
+
+
+### Bug Fixes
+
+* display deployments sorted by controller ([#81](https://github.com/autokitteh/vscode-extension/issues/81)) ([7afd267](https://github.com/autokitteh/vscode-extension/commit/7afd267503fbfb1879efdb7a42f37f223fce9d15))
+
+## [0.5.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.5.1-dev.1) (2024-01-22)
+
+
+### Bug Fixes
+
+* display deployments sorted by controller ([#81](https://github.com/autokitteh/vscode-extension/issues/81)) ([7afd267](https://github.com/autokitteh/vscode-extension/commit/7afd267503fbfb1879efdb7a42f37f223fce9d15))
+
+## [0.5.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.5.1-dev.1) (2024-01-22)
+
+
+### Bug Fixes
+
+* display deployments sorted by controller ([#81](https://github.com/autokitteh/vscode-extension/issues/81)) ([7afd267](https://github.com/autokitteh/vscode-extension/commit/7afd267503fbfb1879efdb7a42f37f223fce9d15))
+
+## [0.5.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.5.1-dev.1) (2024-01-22)
+
+
+### Bug Fixes
+
+* display deployments sorted by controller ([#81](https://github.com/autokitteh/vscode-extension/issues/81)) ([7afd267](https://github.com/autokitteh/vscode-extension/commit/7afd267503fbfb1879efdb7a42f37f223fce9d15))
+
+## [0.5.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.5.1-dev.1) (2024-01-22)
+
+
+### Bug Fixes
+
+* display deployments sorted by controller ([#81](https://github.com/autokitteh/vscode-extension/issues/81)) ([7afd267](https://github.com/autokitteh/vscode-extension/commit/7afd267503fbfb1879efdb7a42f37f223fce9d15))
+
+## [0.5.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.5.1-dev.1) (2024-01-22)
+
+
+### Bug Fixes
+
+* display deployments sorted by controller ([#81](https://github.com/autokitteh/vscode-extension/issues/81)) ([7a02372](https://github.com/autokitteh/vscode-extension/commit/7a0237249e43e2a77181a53ef80fa37e46e47b75))
+
 # [0.5.0](https://github.com/autokitteh/vscode-extension/compare/v0.4.0...v0.5.0) (2024-01-21)
 
 

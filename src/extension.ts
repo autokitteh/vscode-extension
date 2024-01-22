@@ -8,7 +8,7 @@ import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { StarlarkLSPService } from "@services";
 import { SidebarTreeItem } from "@type/views";
 import { MessageHandler, SidebarView } from "@views";
-import { applyManifest, buildOnRightClick } from "@vscommands";
+import { applyManifest, buildOnRightClick, buildProject, runProject } from "@vscommands";
 import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough";
 import { commands, ExtensionContext } from "vscode";
 
@@ -50,6 +50,18 @@ export async function activate(context: ExtensionContext) {
 	);
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openConfigSetupWalkthrough, openWalkthrough)
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.buildProject, (focusedItem) =>
+			buildProject(focusedItem, sidebarController)
+		)
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.runProject, (focusedItem) =>
+			runProject(focusedItem, sidebarController)
+		)
 	);
 
 	const isAppOn = await AppStateHandler.get();
