@@ -48,8 +48,8 @@
 				"command": "autokitteh.buildProject",
 				"title": "autokitteh: Build Project",
 				"icon": {
-					"dark": "./resources/sidebar/icons/dark/build.svg",
-					"light": "./resources/sidebar/icons/light/build.svg"
+					"dark": "./resources/sidebar/icons/dark/tools.svg",
+					"light": "./resources/sidebar/icons/light/tools.svg"
 				}
 			},
 			{
