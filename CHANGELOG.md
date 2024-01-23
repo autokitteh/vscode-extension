@@ -1,3 +1,10 @@
+# [0.6.0-dev.6](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.5...v0.6.0-dev.6) (2024-01-23)
+
+
+### Bug Fixes
+
+* build order for the app ([#97](https://github.com/autokitteh/vscode-extension/issues/97)) ([2fe9fe3](https://github.com/autokitteh/vscode-extension/commit/2fe9fe3a54da455e5a21f3c512dd4186e113b008))
+
 # [0.6.0-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.6.0-dev.4...v0.6.0-dev.5) (2024-01-22)
 
 

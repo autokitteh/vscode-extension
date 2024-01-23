@@ -325,7 +325,7 @@
 		"local-package": "node preBuildLocalVersion.js && vsce package && node postBuildLocalVersion.js",
 		"package": "vsce package"
 	},
-	"version": "0.6.0-dev.5",
+	"version": "0.6.0-dev.6",
 	"workspaces": [
 		"vscode-react"
 	]
