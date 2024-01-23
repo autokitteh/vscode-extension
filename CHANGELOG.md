@@ -1,3 +1,10 @@
+## [0.6.1-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.6.1-dev.2...v0.6.1-dev.3) (2024-01-23)
+
+
+### Bug Fixes
+
+* optimize workflow ([#102](https://github.com/autokitteh/vscode-extension/issues/102)) ([cf26b8b](https://github.com/autokitteh/vscode-extension/commit/cf26b8b4b3c3ff94f19bc7cd1b644509f891f650))
+
 ## [0.6.1-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.6.1-dev.1...v0.6.1-dev.2) (2024-01-23)
 
 
