@@ -312,7 +312,7 @@
 		"build:all": "npm run build --workspace=vscode-react && npm run build",
 		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
 		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-		"fetch-protos": "git submodule update --init",
+		"update-ak-submodle": "git submodule update --remote --merge",
 		"format:check": "npm run prettier -- --check",
 		"format:fix": "npm run prettier -- --write",
 		"lint": "eslint src --ext .ts,.tsx .",
