@@ -54,13 +54,6 @@ export const AKDeployments = ({
 		return session ? session.count : 0;
 	};
 
-	const getDeploymentCreatedTime = (createdAt?: Date) => {
-		if (!createdAt) {
-			return translate().t("reactApp.general.unknown");
-		}
-		return getTimePassed(createdAt);
-	};
-
 	const deactivateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.deactivateDeployment, deploymentId);
 	};
@@ -105,7 +98,7 @@ export const AKDeployments = ({
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
 							>
-								{getDeploymentCreatedTime(deployment.createdAt)}
+								{getTimePassed(deployment.createdAt)}
 							</AKTableCell>
 							<AKTableCell
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
