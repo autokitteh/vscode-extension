@@ -14,30 +14,41 @@ export class RequestHandler {
 			onFailureMessage?: string;
 		}
 	): Promise<{ data: T | undefined; error: unknown }> {
-		const { error, data } = await requestPromise();
-		if (!error) {
-			let isDataStringId = false;
-			if (typeof data === "string") {
-				if (data.indexOf("p:") >= 0 || data.indexOf("s:") >= 0 || data.indexOf("d:") >= 0) {
-					isDataStringId = true;
-				}
-			}
+		try {
+			const { data, error } = await requestPromise();
 
-			if (messages?.onSuccessMessage) {
-				let displayedMessage = messages.onSuccessMessage;
-				if (isDataStringId) {
-					displayedMessage = `${displayedMessage}: ${data}`;
-				}
-
-				commands.executeCommand(
-					vsCommands.showInfoMessage,
-					namespaces.serverRequests,
-					displayedMessage
-				);
+			if (error) {
+				this.handleError(error);
+				return Promise.resolve({ data: undefined, error: error });
+			} else {
+				this.handleSuccess(data, messages?.onSuccessMessage);
+				return Promise.resolve({ data: data, error: undefined });
 			}
-			return { data, error };
+		} catch (error) {
+			this.handleError(error);
+			return Promise.resolve({ data: undefined, error });
 		}
+	}
 
+	private static handleSuccess<T>(data: T, successMessage?: string): void {
+		if (successMessage) {
+			let displayedMessage = successMessage;
+			if (typeof data === "string" && this.isDataStringId(data)) {
+				displayedMessage = `${displayedMessage}: ${data}`;
+			}
+			commands.executeCommand(
+				vsCommands.showInfoMessage,
+				namespaces.serverRequests,
+				displayedMessage
+			);
+		}
+	}
+
+	private static isDataStringId(data: string): boolean {
+		return /p:|s:|d:/.test(data);
+	}
+
+	private static handleError(error: unknown): void {
 		if (
 			error instanceof ConnectError &&
 			error.code === gRPCErrors.serverNotRespond &&
@@ -46,7 +57,18 @@ export class RequestHandler {
 			commands.executeCommand(vsCommands.showErrorMessage, namespaces.connection, error.message);
 			commands.executeCommand(vsCommands.disconnect);
 			this.disconnectedErrorDisplayed = true;
+		} else if (this.isErrorWithMessage(error)) {
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				namespaces.connection,
+				`Error: ${error.message}`
+			);
 		}
-		return { data, error };
+	}
+
+	private static isErrorWithMessage(error: unknown): error is { message: string } {
+		return (
+			(typeof error === "object" && error !== null && "message" in error) || error instanceof Error
+		);
 	}
 }
