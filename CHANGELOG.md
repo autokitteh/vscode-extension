@@ -1,3 +1,10 @@
+## [0.6.1](https://github.com/autokitteh/vscode-extension/compare/v0.6.0...v0.6.1) (2024-01-23)
+
+
+### Bug Fixes
+
+* fix github actions workflow ([#97](https://github.com/autokitteh/vscode-extension/issues/97))([#99](https://github.com/autokitteh/vscode-extension/issues/99))([#101](https://github.com/autokitteh/vscode-extension/issues/101))([#102](https://github.com/autokitteh/vscode-extension/issues/102)) ([#103](https://github.com/autokitteh/vscode-extension/issues/103)) ([fedf1a9](https://github.com/autokitteh/vscode-extension/commit/fedf1a95d65ef0812eca91e2afc0d1395fc47620))
+
 ## [0.6.1-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.6.1-dev.2...v0.6.1-dev.3) (2024-01-23)
 
 
