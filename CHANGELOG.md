@@ -1,3 +1,10 @@
+## [0.6.1-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.6.1-dev.1...v0.6.1-dev.2) (2024-01-23)
+
+
+### Bug Fixes
+
+* fix workflow artifact files ([#101](https://github.com/autokitteh/vscode-extension/issues/101)) ([e053d1a](https://github.com/autokitteh/vscode-extension/commit/e053d1aebda5379f25ec7e4adb27dfdcaf747a38))
+
 ## [0.6.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.6.0...v0.6.1-dev.1) (2024-01-23)
 
 
