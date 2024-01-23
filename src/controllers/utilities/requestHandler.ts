@@ -16,11 +16,23 @@ export class RequestHandler {
 	): Promise<{ data: T | undefined; error: unknown }> {
 		const { error, data } = await requestPromise();
 		if (!error) {
+			let isDataStringId = false;
+			if (typeof data === "string") {
+				if (data.indexOf("p:") >= 0 || data.indexOf("s:") >= 0 || data.indexOf("d:") >= 0) {
+					isDataStringId = true;
+				}
+			}
+
 			if (messages?.onSuccessMessage) {
+				let displayedMessage = messages.onSuccessMessage;
+				if (isDataStringId) {
+					displayedMessage = `${displayedMessage}: ${data}`;
+				}
+
 				commands.executeCommand(
 					vsCommands.showInfoMessage,
 					namespaces.serverRequests,
-					messages.onSuccessMessage
+					displayedMessage
 				);
 			}
 			return { data, error };
