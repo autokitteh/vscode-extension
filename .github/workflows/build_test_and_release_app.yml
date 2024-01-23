@@ -27,15 +27,17 @@ jobs:
         run: npm ci
       - name: Run vscode and react app tests
         run: npm run test:all
-      - name: Run vscode TS validation and react app
+      - name: Run vscode TS validation extension and react app
         run: npm run compile:all
-      - name: Build vscode extension and react app
+      - name: Run vscode TS build extension and react app
         run: npm run build:all
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: built-files
-          path: ./dist
+          path: |
+            ./dist
+            ./vscode-react/build
 
   release:
     needs: build
@@ -53,7 +55,6 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: built-files
-          path: ./dist
       - uses: actions/setup-node@v3
         with:
           node-version: "21.2.0"

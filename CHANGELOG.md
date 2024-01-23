@@ -1,3 +1,24 @@
+## [0.6.1-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.6.1-dev.2...v0.6.1-dev.3) (2024-01-23)
+
+
+### Bug Fixes
+
+* optimize workflow ([#102](https://github.com/autokitteh/vscode-extension/issues/102)) ([cf26b8b](https://github.com/autokitteh/vscode-extension/commit/cf26b8b4b3c3ff94f19bc7cd1b644509f891f650))
+
+## [0.6.1-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.6.1-dev.1...v0.6.1-dev.2) (2024-01-23)
+
+
+### Bug Fixes
+
+* fix workflow artifact files ([#101](https://github.com/autokitteh/vscode-extension/issues/101)) ([e053d1a](https://github.com/autokitteh/vscode-extension/commit/e053d1aebda5379f25ec7e4adb27dfdcaf747a38))
+
+## [0.6.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.6.0...v0.6.1-dev.1) (2024-01-23)
+
+
+### Bug Fixes
+
+* build order for the app ([#97](https://github.com/autokitteh/vscode-extension/issues/97)) ([#99](https://github.com/autokitteh/vscode-extension/issues/99)) ([f5d5be3](https://github.com/autokitteh/vscode-extension/commit/f5d5be381ca0d24529134bc6fa3fd383b8a80850))
+
 # [0.6.0](https://github.com/autokitteh/vscode-extension/compare/v0.5.0...v0.6.0) (2024-01-22)
 
 
