@@ -308,7 +308,7 @@
 		"compile:all": "npm run compile --workspace=vscode-react && npm run compile",
 		"build:vscode-react": "npm run build --workspace=vscode-react",
 		"build": "npm run esbuild-base -- --sourcemap",
-		"build:all": "npm run build --workspace=vscode-react && npm run esbuild-base -- --sourcemap",
+		"build:all": "npm run build --workspace=vscode-react && npm run build",
 		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
 		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
 		"fetch-protos": "git submodule update --init",
