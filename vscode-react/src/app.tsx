@@ -54,7 +54,7 @@ function App() {
 								{translate().t("reactApp.general.build")}
 							</AKButton>
 							<AKButton onClick={() => sendMessage(MessageType.runProject)}>
-								<div className="codicon codicon-play mr-2"></div>
+								<div className="codicon codicon-rocket mr-2"></div>
 								{translate().t("reactApp.general.deploy")}
 							</AKButton>
 						</div>
