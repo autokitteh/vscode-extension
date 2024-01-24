@@ -5,10 +5,7 @@ import { ProtoTimestamp } from "@type/utilities";
  * @param timestamp The gRPC Timestamp object which might have 'seconds' and 'nanoseconds'.
  * @returns The JavaScript Date object or undefined.
  */
-export const convertTimestampToDate = (timestamp: ProtoTimestamp): Date | undefined => {
-	if (!timestamp) {
-		return undefined;
-	}
+export const convertTimestampToDate = (timestamp: ProtoTimestamp): Date => {
 	const milliseconds =
 		timestamp.seconds * BigInt(1000) +
 		BigInt(timestamp.nanoseconds ? timestamp.nanoseconds / 1000000 : 0);
