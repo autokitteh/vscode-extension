@@ -32,7 +32,7 @@ export class RequestHandler {
 			let successMessage = translate().t(messages.onSuccessMessageKey);
 
 			if (typeof data === "string") {
-				successMessage = translate().t(messages.onSuccessMessageKey, { data });
+				successMessage = translate().t(messages.onSuccessMessageKey, { id: data });
 			}
 
 			commands.executeCommand(
