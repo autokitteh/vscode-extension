@@ -91,14 +91,6 @@ export class ProjectController {
 			SessionsService.listByDeploymentId(deploymentId)
 		);
 		if (error) {
-			commands.executeCommand(vsCommands.showErrorMessage, error as string);
-
-			LoggerService.print(
-				namespaces.deploymentsService,
-				error as string,
-				channels.appOutputLogName
-			);
-
 			return;
 		}
 

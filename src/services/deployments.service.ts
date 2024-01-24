@@ -44,6 +44,7 @@ export class DeploymentsService {
 			};
 		} catch (error) {
 			LoggerService.error(namespaces.deploymentsService, (error as Error).message);
+
 			return { data: undefined, error };
 		}
 	}
@@ -53,6 +54,8 @@ export class DeploymentsService {
 			await EnvironmentsService.listByProjectId(projectId);
 
 		if (environmentsError) {
+			LoggerService.error(namespaces.deploymentsService, (environmentsError as Error).message);
+
 			return { data: undefined, error: environmentsError };
 		}
 
@@ -61,7 +64,8 @@ export class DeploymentsService {
 			await this.listByEnvironmentIds(environmentIds);
 
 		if (deploymentsError) {
-			LoggerService.error(namespaces.deploymentsService, deploymentsError as string);
+			LoggerService.error(namespaces.deploymentsService, (deploymentsError as Error).message);
+
 			return { data: undefined, error: deploymentsError };
 		}
 		sortArray(projectDeployments, "createdAt", SortOrder.DESC);

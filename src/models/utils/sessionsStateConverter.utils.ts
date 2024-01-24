@@ -14,7 +14,7 @@ export const sessionStateConverter = (sessionState: number): SessionStateType =>
 		return SessionStateType[sessionStateType as keyof typeof SessionStateType];
 	} catch (error) {
 		LoggerService.error(
-			namespaces.deploymentsService,
+			namespaces.sessionsHistory,
 			`${translate().t("errors.unexpectedError")}: ${error}`
 		);
 		return SessionStateType.unknown;

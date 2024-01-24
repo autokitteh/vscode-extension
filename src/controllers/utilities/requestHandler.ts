@@ -16,13 +16,16 @@ export class RequestHandler {
 		const { data, error } = await requestPromise();
 
 		if (error) {
-			if (error instanceof Error) {
-				commands.executeCommand(
-					vsCommands.showErrorMessage,
-					namespaces.connection,
-					`Error: ${translate().t(error.message)}`
-				);
+			let errorMessage = (error as Error).message;
+			if (messages?.onFailureMessage) {
+				errorMessage = `${translate().t(messages.onFailureMessage)}: ${errorMessage}`;
 			}
+
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				namespaces.connection,
+				`Error: ${errorMessage}`
+			);
 			return Promise.resolve({ data: undefined, error: error });
 		}
 		if (messages?.onSuccessMessage) {
