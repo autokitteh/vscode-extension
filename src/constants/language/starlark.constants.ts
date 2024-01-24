@@ -7,3 +7,5 @@ export const startlarkLSPServerType: string =
 	workspace.getConfiguration().get("autokitteh.starlarkLSPType") || "";
 export const starlarkLSPPreloadDirPath: string =
 	workspace.getConfiguration().get("autokitteh.starlarkLSPPreloadDir") || "";
+export const defaultStarlarkLSPPath: string = "ak";
+export const defaultStarlarkLSPArg: string[] = ["lsp"];

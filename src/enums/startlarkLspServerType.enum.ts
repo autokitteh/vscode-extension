@@ -1,4 +1,5 @@
 export enum StarlarkLSPServerType {
-	tilt = "starlark-tilt-go",
-	rust = "startlark-fb-rust",
+	autokitteh = "autokitteh",
+	tilt = "tilt-go",
+	rust = "fb-rust",
 }
