@@ -1,6 +1,5 @@
-import { ConnectError } from "@connectrpc/connect";
 import { namespaces, vsCommands } from "@constants";
-import { gRPCErrors } from "@constants/api.constants";
+import { translate } from "@i18n";
 import { ServiceResponse } from "@type/services.types";
 import { commands } from "vscode";
 
@@ -14,61 +13,32 @@ export class RequestHandler {
 			onFailureMessage?: string;
 		}
 	): Promise<{ data: T | undefined; error: unknown }> {
-		try {
-			const { data, error } = await requestPromise();
+		const { data, error } = await requestPromise();
 
-			if (error) {
-				this.handleError(error);
-				return Promise.resolve({ data: undefined, error: error });
-			} else {
-				this.handleSuccess(data, messages?.onSuccessMessage);
-				return Promise.resolve({ data: data, error: undefined });
+		if (error) {
+			if (error instanceof Error) {
+				commands.executeCommand(
+					vsCommands.showErrorMessage,
+					namespaces.connection,
+					`Error: ${translate().t(error.message)}`
+				);
 			}
-		} catch (error) {
-			this.handleError(error);
-			return Promise.resolve({ data: undefined, error });
+			return Promise.resolve({ data: undefined, error: error });
 		}
-	}
+		if (messages?.onSuccessMessage) {
+			let successMessage = translate().t(messages.onSuccessMessage);
 
-	private static handleSuccess<T>(data: T, successMessage?: string): void {
-		if (successMessage) {
-			let displayedMessage = successMessage;
-			if (typeof data === "string" && this.isDataStringId(data)) {
-				displayedMessage = `${displayedMessage}: ${data}`;
+			if (typeof data === "string") {
+				successMessage = translate().t(messages.onSuccessMessage, { data });
 			}
+
 			commands.executeCommand(
 				vsCommands.showInfoMessage,
 				namespaces.serverRequests,
-				displayedMessage
+				successMessage
 			);
 		}
-	}
 
-	private static isDataStringId(data: string): boolean {
-		return /p:|s:|d:/.test(data);
-	}
-
-	private static handleError(error: unknown): void {
-		if (
-			error instanceof ConnectError &&
-			error.code === gRPCErrors.serverNotRespond &&
-			!this.disconnectedErrorDisplayed
-		) {
-			commands.executeCommand(vsCommands.showErrorMessage, namespaces.connection, error.message);
-			commands.executeCommand(vsCommands.disconnect);
-			this.disconnectedErrorDisplayed = true;
-		} else if (this.isErrorWithMessage(error)) {
-			commands.executeCommand(
-				vsCommands.showErrorMessage,
-				namespaces.connection,
-				`Error: ${error.message}`
-			);
-		}
-	}
-
-	private static isErrorWithMessage(error: unknown): error is { message: string } {
-		return (
-			(typeof error === "object" && error !== null && "message" in error) || error instanceof Error
-		);
+		return Promise.resolve({ data: data, error: undefined });
 	}
 }

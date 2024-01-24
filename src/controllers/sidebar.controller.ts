@@ -60,15 +60,15 @@ export class SidebarController {
 
 	async buildProject(projectId: string) {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(projectId), {
-			onSuccessMessage: translate().t("projects.projectBuildSucceed"),
-			onFailureMessage: translate().t("projects.projectBuildFailed"),
+			onSuccessMessage: "projects.projectBuildSucceed",
+			onFailureMessage: "projects.projectBuildFailed",
 		});
 	}
 
 	async runProject(projectId: string) {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.run(projectId), {
-			onSuccessMessage: translate().t("projects.projectDeploySucceed"),
-			onFailureMessage: translate().t("projects.projectDeployFailed"),
+			onSuccessMessage: "projects.projectDeploySucceed",
+			onFailureMessage: "projects.projectDeployFailed",
 		});
 	}
 

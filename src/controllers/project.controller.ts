@@ -235,12 +235,8 @@ export class ProjectController {
 
 	async build() {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(this.projectId), {
-			onSuccessMessage: translate().t("projects.projectBuildSucceed", {
-				projectId: this.projectId,
-			}),
-			onFailureMessage: translate().t("projects.projectBuildFailed", {
-				projectId: this.projectId,
-			}),
+			onSuccessMessage: "projects.projectBuildSucceed",
+			onFailureMessage: "projects.projectBuildFailed",
 		});
 	}
 
@@ -266,8 +262,8 @@ export class ProjectController {
 			return;
 		}
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.activate(deploymentId), {
-			onSuccessMessage: translate().t("deployments.activationSucceed"),
-			onFailureMessage: translate().t("deployments.activationFailed"),
+			onSuccessMessage: "deployments.activationSucceed",
+			onFailureMessage: "deployments.activationFailed",
 		});
 	}
 
@@ -276,8 +272,8 @@ export class ProjectController {
 			return;
 		}
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.deactivate(deploymentId), {
-			onSuccessMessage: translate().t("deployments.deactivationSucceed"),
-			onFailureMessage: translate().t("deployments.deactivationFailed"),
+			onSuccessMessage: "deployments.deactivationSucceed",
+			onFailureMessage: "deployments.deactivationFailed",
 		});
 	}
 }
