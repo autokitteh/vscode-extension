@@ -9,16 +9,16 @@ export class RequestHandler {
 	static async handleServiceResponse<T>(
 		requestPromise: () => Promise<ServiceResponse<T>>,
 		messages?: {
-			onSuccessMessage?: string;
-			onFailureMessage?: string;
+			onSuccessMessageKey?: string;
+			onFailureMessageKey?: string;
 		}
 	): Promise<{ data: T | undefined; error: unknown }> {
 		const { data, error } = await requestPromise();
 
 		if (error) {
 			let errorMessage = (error as Error).message;
-			if (messages?.onFailureMessage) {
-				errorMessage = `${translate().t(messages.onFailureMessage)}: ${errorMessage}`;
+			if (messages?.onFailureMessageKey) {
+				errorMessage = `${translate().t(messages.onFailureMessageKey)}: ${errorMessage}`;
 			}
 
 			commands.executeCommand(
@@ -28,11 +28,11 @@ export class RequestHandler {
 			);
 			return Promise.resolve({ data: undefined, error: error });
 		}
-		if (messages?.onSuccessMessage) {
-			let successMessage = translate().t(messages.onSuccessMessage);
+		if (messages?.onSuccessMessageKey) {
+			let successMessage = translate().t(messages.onSuccessMessageKey);
 
 			if (typeof data === "string") {
-				successMessage = translate().t(messages.onSuccessMessage, { data });
+				successMessage = translate().t(messages.onSuccessMessageKey, { data });
 			}
 
 			commands.executeCommand(
