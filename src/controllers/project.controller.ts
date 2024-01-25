@@ -1,10 +1,13 @@
 import { vsCommands, namespaces, channels } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType } from "@enums";
+import { ProjectIntervals } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
+import { SessionState } from "@models";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
+import { IntervalKeeper } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
@@ -12,12 +15,12 @@ import { commands } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
-	private intervalTimerId?: NodeJS.Timeout;
-	private sessionsIntervalTimerId?: NodeJS.Timeout;
+	private intervalKeeper: IntervalKeeper = {};
 	private disposeCB?: Callback<string>;
 	public projectId: string;
 	public project?: Project;
 	private sessions?: Session[] = [];
+	private sessionHistoryStates?: SessionState[] = [];
 	private deployments?: Deployment[];
 	private refreshRate: number;
 	private selectedDeploymentId?: string;
@@ -108,7 +111,7 @@ export class ProjectController {
 		});
 	}
 
-	async loadSessionsHistory(sessionId?: string): Promise<void> {
+	async displaySessionsHistory(sessionId?: string): Promise<void> {
 		if (!sessionId) {
 			return;
 		}
@@ -117,6 +120,14 @@ export class ProjectController {
 		if (error || !sessionHistoryStates?.length) {
 			return;
 		}
+
+		if (
+			isEqual(this.sessionHistoryStates, sessionHistoryStates) &&
+			this.sessionHistoryStates?.length
+		) {
+			return;
+		}
+		this.sessionHistoryStates = sessionHistoryStates;
 
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
@@ -148,33 +159,29 @@ export class ProjectController {
 	}
 
 	async displaySessionLogs(sessionId?: string): Promise<void> {
-		this.sessionsIntervalTimerId = setInterval(() => {
-			this.loadSessionsHistory(sessionId);
-		}, this.refreshRate);
+		this.startInterval(
+			ProjectIntervals.sessions,
+			() => this.displaySessionsHistory(sessionId),
+			this.refreshRate
+		);
 	}
 
 	async startInterval(
-		interval?: NodeJS.Timeout,
-		loadFunc?: () => Promise<void>,
-		refreshRate?: number
+		intervalKey: ProjectIntervals,
+		loadFunc: () => Promise<void>,
+		refreshRate: number
 	) {
-		if (!interval && loadFunc && refreshRate) {
-			await loadFunc();
-			return setInterval(() => loadFunc(), refreshRate);
+		if (this.intervalKeeper[intervalKey]) {
+			this.stopInterval(intervalKey);
 		}
+		await loadFunc();
+		this.intervalKeeper[intervalKey] = setInterval(() => loadFunc(), refreshRate);
 	}
 
-	stopInterval() {
-		if (this.intervalTimerId) {
-			clearInterval(this.intervalTimerId);
-			this.intervalTimerId = undefined;
-		}
-	}
-
-	stopSessionsInterval() {
-		if (this.sessionsIntervalTimerId) {
-			clearInterval(this.sessionsIntervalTimerId);
-			this.sessionsIntervalTimerId = undefined;
+	stopInterval(intervalKey: ProjectIntervals) {
+		if (this.intervalKeeper[intervalKey]) {
+			clearInterval(this.intervalKeeper[intervalKey]);
+			delete this.intervalKeeper[intervalKey];
 		}
 	}
 
@@ -189,32 +196,24 @@ export class ProjectController {
 		if (project) {
 			this.project = project;
 			this.view.show(this.project.name);
-			this.intervalTimerId = await this.startInterval(
-				this.intervalTimerId,
-				() => this.refreshView(),
-				this.refreshRate
-			);
+			this.startInterval(ProjectIntervals.deployments, () => this.refreshView(), this.refreshRate);
 		}
 	}
 
 	onBlur() {
-		this.stopInterval();
-		this.stopSessionsInterval();
+		this.stopInterval(ProjectIntervals.deployments);
+		this.stopInterval(ProjectIntervals.sessions);
 		this.deployments = undefined;
 		this.sessions = undefined;
 	}
 
-	async onFocus() {
-		this.intervalTimerId = await this.startInterval(
-			this.intervalTimerId,
-			() => this.refreshView(),
-			this.refreshRate
-		);
+	onFocus() {
+		this.startInterval(ProjectIntervals.deployments, () => this.refreshView(), this.refreshRate);
 	}
 
 	onClose() {
-		this.stopSessionsInterval();
-		this.stopInterval();
+		this.stopInterval(ProjectIntervals.sessions);
+		this.stopInterval(ProjectIntervals.deployments);
 		this.disposeCB?.(this.projectId);
 	}
 
