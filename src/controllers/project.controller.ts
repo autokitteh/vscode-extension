@@ -227,8 +227,10 @@ export class ProjectController {
 
 	async build() {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(this.projectId), {
-			onSuccessMessageKey: "projects.projectBuildSucceed",
-			onFailureMessageKey: "projects.projectBuildFailed",
+			formatSuccessMessage: (data?: string): string =>
+				`${translate().t("projects.projectBuildSucceed", { id: data })}`,
+			formatFailureMessage: (): string =>
+				translate().t("projects.projectBuildFailed", { id: this.projectId }),
 		});
 	}
 
@@ -236,8 +238,10 @@ export class ProjectController {
 		const { data: deploymentId } = await RequestHandler.handleServiceResponse(
 			() => ProjectsService.run(this.projectId),
 			{
-				onSuccessMessageKey: translate().t("projects.projectDeploySucceed"),
-				onFailureMessageKey: translate().t("projects.projectDeployFailed"),
+				formatSuccessMessage: (): string =>
+					`${translate().t("projects.projectDeploySucceed", { id: this.projectId })}`,
+				formatFailureMessage: (): string =>
+					`${translate().t("projects.projectDeployFailed", { id: this.projectId })}`,
 			}
 		);
 

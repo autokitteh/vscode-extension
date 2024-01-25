@@ -1,5 +1,4 @@
 import { namespaces, vsCommands } from "@constants";
-import { translate } from "@i18n";
 import { ServiceResponse } from "@type/services.types";
 import { commands } from "vscode";
 
@@ -7,16 +6,16 @@ export class RequestHandler {
 	static async handleServiceResponse<T>(
 		requestPromise: () => Promise<ServiceResponse<T>>,
 		messages?: {
-			onSuccessMessageKey?: string;
-			onFailureMessageKey?: string;
+			formatSuccessMessage?: (data?: any) => string;
+			formatFailureMessage?: (data?: any) => string;
 		}
 	): Promise<{ data: T | undefined; error: unknown }> {
 		const { data, error } = await requestPromise();
 
 		if (error) {
 			let errorMessage = (error as Error).message;
-			if (messages?.onFailureMessageKey) {
-				errorMessage = `${translate().t(messages.onFailureMessageKey)}: ${errorMessage}`;
+			if (messages?.formatFailureMessage) {
+				errorMessage = messages.formatFailureMessage(errorMessage);
 			}
 
 			commands.executeCommand(
@@ -26,11 +25,11 @@ export class RequestHandler {
 			);
 			return Promise.resolve({ data: undefined, error: error });
 		}
-		if (messages?.onSuccessMessageKey) {
-			let successMessage = translate().t(messages.onSuccessMessageKey);
+		if (messages?.formatSuccessMessage) {
+			let successMessage = messages?.formatSuccessMessage();
 
 			if (typeof data === "string") {
-				successMessage = translate().t(messages.onSuccessMessageKey, { id: data });
+				successMessage = messages.formatSuccessMessage(data);
 			}
 
 			commands.executeCommand(

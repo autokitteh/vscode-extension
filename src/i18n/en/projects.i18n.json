@@ -4,7 +4,7 @@
 	"noProjectsFound": "No projects found",
 	"openProject": "Open project",
 	"projectBuildSucceed": "Project build succeed - id: {{id}}",
-	"projectBuildFailed": "Project build failed",
+	"projectBuildFailed": "Project build failed - id: {{id}}",
 	"projectDeploySucceed": "Project deploy succeed - id: {{id}}",
-	"projectDeployFailed": "Project deploy failed"
+	"projectDeployFailed": "Project deploy failed - id: {{id}}"
 }
