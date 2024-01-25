@@ -19,7 +19,7 @@ export class LoggerService {
 		}
 	}
 
-	public static output(
+	private static output(
 		namespace: string,
 		message: string,
 		channelName: string = LoggerService.defaultChannelName,
