@@ -2,6 +2,7 @@ import {
 	DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL,
 	DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL,
 } from "@constants";
+import { DEFAULT_PROJECT_VIEW_SESSION_LOG_REFRESH_INTERVAL } from "@constants/extensionConfiguration.constants";
 import { ValidateURL } from "@utilities";
 import { workspace } from "vscode";
 
@@ -21,3 +22,6 @@ export const projectControllerRefreshRate =
 	Number(workspace.getConfiguration().get("autokitteh.project.refresh.interval")) >= 0
 		? Number(workspace.getConfiguration().get("autokitteh.project.refresh.interval")) * 1000
 		: DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL;
+
+export const projectControllerSessionsLogRefreshRate =
+	DEFAULT_PROJECT_VIEW_SESSION_LOG_REFRESH_INTERVAL;

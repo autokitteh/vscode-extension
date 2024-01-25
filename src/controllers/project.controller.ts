@@ -22,14 +22,21 @@ export class ProjectController {
 	private sessions?: Session[] = [];
 	private sessionHistoryStates?: SessionState[] = [];
 	private deployments?: Deployment[];
-	private refreshRate: number;
+	private deploymentsRefreshRate: number;
+	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
 
-	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
+	constructor(
+		projectView: IProjectView,
+		projectId: string,
+		deploymentsRefreshRate: number,
+		sessionsLogRefreshRate: number
+	) {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
-		this.refreshRate = refreshRate;
+		this.deploymentsRefreshRate = deploymentsRefreshRate;
+		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
 	}
 
 	reveal(): void {
@@ -162,7 +169,7 @@ export class ProjectController {
 		this.startInterval(
 			ProjectIntervals.sessions,
 			() => this.displaySessionsHistory(sessionId),
-			this.refreshRate
+			this.sessionsLogRefreshRate
 		);
 	}
 
@@ -196,7 +203,11 @@ export class ProjectController {
 		if (project) {
 			this.project = project;
 			this.view.show(this.project.name);
-			this.startInterval(ProjectIntervals.deployments, () => this.refreshView(), this.refreshRate);
+			this.startInterval(
+				ProjectIntervals.deployments,
+				() => this.refreshView(),
+				this.deploymentsRefreshRate
+			);
 		}
 	}
 
@@ -208,7 +219,11 @@ export class ProjectController {
 	}
 
 	onFocus() {
-		this.startInterval(ProjectIntervals.deployments, () => this.refreshView(), this.refreshRate);
+		this.startInterval(
+			ProjectIntervals.deployments,
+			() => this.refreshView(),
+			this.deploymentsRefreshRate
+		);
 	}
 
 	onClose() {
