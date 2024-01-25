@@ -37,7 +37,7 @@ export class LoggerService {
 		message: string,
 		channelName: string = LoggerService.defaultChannelName
 	): void {
-		this.output(namespace, message, channelName, LoggerLevel.info);
+		this.output(namespace, message, channelName);
 	}
 
 	public static error(
