@@ -31,16 +31,16 @@ export class SidebarController {
 		const { data: projects, error } = await RequestHandler.handleServiceResponse(() =>
 			ProjectsService.list()
 		);
-		if (!error && projects) {
-			if (projects.length) {
-				return projects.map((project) => ({
-					label: project.name,
-					key: project.projectId,
-				}));
-			}
-			return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
+		if (error) {
+			return;
 		}
-		return;
+		if (projects!.length) {
+			return projects!.map((project) => ({
+				label: project.name,
+				key: project.projectId,
+			}));
+		}
+		return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
 	};
 
 	private startInterval() {
@@ -60,15 +60,19 @@ export class SidebarController {
 
 	async buildProject(projectId: string) {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(projectId), {
-			onSuccessMessageKey: "projects.projectBuildSucceed",
-			onFailureMessageKey: "projects.projectBuildFailed",
+			formatSuccessMessage: (data?: string): string =>
+				`${translate().t("projects.projectBuildSucceed", { id: data })}`,
+			formatFailureMessage: (): string =>
+				translate().t("projects.projectBuildFailed", { id: projectId }),
 		});
 	}
 
 	async runProject(projectId: string) {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.run(projectId), {
-			onSuccessMessageKey: "projects.projectDeploySucceed",
-			onFailureMessageKey: "projects.projectDeployFailed",
+			formatSuccessMessage: (): string =>
+				`${translate().t("projects.projectDeploySucceed", { id: projectId })}`,
+			formatFailureMessage: (): string =>
+				`${translate().t("projects.projectDeployFailed", { id: projectId })}`,
 		});
 	}
 

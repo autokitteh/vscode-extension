@@ -1,6 +1,6 @@
 {
-	"activationSucceed": "Deployment activation succeed",
-	"activationFailed": "Deployment activation failed",
-	"deactivationSucceed": "Deployment deactivation succeed",
-	"deactivationFailed": "Deployment deactivation failed"
+	"activationSucceed": "Deployment activation succeed - id: {{data}}",
+	"activationFailed": "Deployment activation failed - id: {{data}}",
+	"deactivationSucceed": "Deployment deactivation succeed - id: {{data}}",
+	"deactivationFailed": "Deployment deactivation failed - id: {{data}}"
 }

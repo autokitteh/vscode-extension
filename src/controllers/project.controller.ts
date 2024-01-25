@@ -190,7 +190,7 @@ export class ProjectController {
 		const { data: project } = await RequestHandler.handleServiceResponse(
 			() => ProjectsService.get(this.projectId),
 			{
-				onFailureMessageKey: translate().t("errors.projectNotFound"),
+				formatFailureMessage: (): string => translate().t("projects.projectNotFound"),
 			}
 		);
 		if (project) {
@@ -258,8 +258,10 @@ export class ProjectController {
 			return;
 		}
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.activate(deploymentId), {
-			onSuccessMessageKey: "deployments.activationSucceed",
-			onFailureMessageKey: "deployments.activationFailed",
+			formatSuccessMessage: (): string =>
+				`${translate().t("projects.activationSucceed", { id: deploymentId })}`,
+			formatFailureMessage: (): string =>
+				`${translate().t("projects.activationFailed", { id: deploymentId })}`,
 		});
 	}
 
@@ -268,8 +270,10 @@ export class ProjectController {
 			return;
 		}
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.deactivate(deploymentId), {
-			onSuccessMessageKey: "deployments.deactivationSucceed",
-			onFailureMessageKey: "deployments.deactivationFailed",
+			formatSuccessMessage: (): string =>
+				`${translate().t("projects.deactivationSucceed", { id: deploymentId })}`,
+			formatFailureMessage: (): string =>
+				`${translate().t("projects.deactivationFailed", { id: deploymentId })}`,
 		});
 	}
 }

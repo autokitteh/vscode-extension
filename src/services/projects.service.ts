@@ -1,5 +1,5 @@
 import { projectsClient } from "@api/grpc/clients.grpc.api";
-import { namespaces, vsCommands } from "@constants";
+import { namespaces } from "@constants";
 import { translate } from "@i18n";
 import { convertProjectProtoToModel } from "@models";
 import { DeploymentsService, EnvironmentsService, LoggerService } from "@services";
