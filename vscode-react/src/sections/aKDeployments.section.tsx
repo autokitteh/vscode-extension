@@ -73,6 +73,7 @@ export const AKDeployments = ({
 			) : (
 				<div className="flex mb-2 w-full min-h-[20px]" />
 			)}
+			<h1 className="text-lg text-bold mb-2">{translate().t("reactApp.deployments.tableTitle")}</h1>
 			<AKTable>
 				<AKTableHeader classes="sticky top-0">
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.time")}</AKTableHeaderCell>

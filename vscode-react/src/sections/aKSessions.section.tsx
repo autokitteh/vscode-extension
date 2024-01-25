@@ -49,6 +49,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 			) : (
 				<div className="mb-2 w-full min-h-[20px]" />
 			)}
+			<h1 className="text-lg text-bold mb-2">{translate().t("reactApp.sessions.tableTitle")}</h1>
 			<AKTable>
 				<AKTableHeader classes="sticky top-0">
 					<AKTableHeaderCell>{translate().t("reactApp.sessions.time")}</AKTableHeaderCell>
