@@ -4,8 +4,6 @@ import { ServiceResponse } from "@type/services.types";
 import { commands } from "vscode";
 
 export class RequestHandler {
-	static disconnectedErrorDisplayed: boolean = false;
-
 	static async handleServiceResponse<T>(
 		requestPromise: () => Promise<ServiceResponse<T>>,
 		messages?: {
