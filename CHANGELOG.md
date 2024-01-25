@@ -1,3 +1,10 @@
+# [0.7.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.6.1...v0.7.0-dev.1) (2024-01-25)
+
+
+### Features
+
+* change lsp-server configurations needed to run ([#111](https://github.com/autokitteh/vscode-extension/issues/111)) ([3ad9f98](https://github.com/autokitteh/vscode-extension/commit/3ad9f98c6f53ebfb97155d72df4a6b408bd4dd68))
+
 ## [0.6.1](https://github.com/autokitteh/vscode-extension/compare/v0.6.0...v0.6.1) (2024-01-23)
 
 
