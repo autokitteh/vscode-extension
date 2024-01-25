@@ -2,11 +2,10 @@ import { connect } from "net";
 import { namespaces, vsCommands } from "@constants";
 import {
 	starlarkLSPPath,
-	starlarkLSPPreloadDirPath,
-	startlarkLSPServerType,
+	defaultStarlarkLSPArgs,
 	starlarkLSPUriScheme,
+	defaultStarlarkLSPPath,
 } from "@constants/language";
-import { StarlarkLSPServerType } from "@enums";
 import { translate } from "@i18n";
 import { LoggerService } from "@services/logger.service";
 import { StarlarkFileHandler } from "@starlark";
@@ -42,24 +41,14 @@ export class StarlarkLSPService {
 		}
 
 		let args: string[] = workspace.getConfiguration().get("autokitteh.starlarkLSPArguments") || [];
-
-		this.getStarlarkLSPArguments(startlarkLSPServerType, args);
-
-		if (
-			(starlarkLSPPath === "" || starlarkLSPPreloadDirPath === "") &&
-			!this.lspServerErrorDisplayed
-		) {
-			commands.executeCommand(
-				vsCommands.showErrorMessage,
-				namespaces.startlarkLSPServer,
-				translate().t("errors.missingStarlarkLSPPath")
-			);
-			this.lspServerErrorDisplayed = true;
-			return;
+		if (args.length === 0) {
+			args = defaultStarlarkLSPArgs;
 		}
 
+		let lspPath = starlarkLSPPath || defaultStarlarkLSPPath;
+
 		let serverOptions: ServerOptions | Promise<StreamInfo> = {
-			command: starlarkLSPPath,
+			command: lspPath,
 			args: args,
 		};
 
@@ -96,6 +85,11 @@ export class StarlarkLSPService {
 			serverOptions = () => new Promise((resolve) => resolve(streamListener));
 		}
 
+		LoggerService.info(
+			namespaces.startlarkLSPServer,
+			`Starting LSP Server: ${lspPath} ${args.join(", ")}`
+		);
+
 		StarlarkLSPService.languageClient = new LanguageClient(
 			"Starlark",
 			"autokitteh: Starlark LSP",
@@ -107,27 +101,6 @@ export class StarlarkLSPService {
 			StarlarkLSPService.languageClient.start();
 		} catch (error) {
 			LoggerService.error(namespaces.deploymentsService, (error as Error).message);
-		}
-	}
-
-	private static getStarlarkLSPArguments(lspServerType: string, args: string[]): void {
-		switch (lspServerType) {
-			case StarlarkLSPServerType.tilt:
-				if (args.indexOf("start") === -1) {
-					args.push("start");
-				}
-				if (starlarkLSPPreloadDirPath !== "") {
-					args.push("--builtin-paths", starlarkLSPPreloadDirPath);
-				}
-				break;
-			case StarlarkLSPServerType.rust:
-				if (args.indexOf("--lsp") === -1) {
-					args.push("--lsp");
-				}
-				if (starlarkLSPPreloadDirPath !== "") {
-					args.push("--prelude", starlarkLSPPreloadDirPath);
-				}
-				break;
 		}
 	}
 

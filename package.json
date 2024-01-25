@@ -83,36 +83,10 @@
 					"description": "Refresh interval in seconds for the sidebar panel",
 					"type": "number"
 				},
-				"autokitteh.starlarkLSPArguments": {
-					"default": [
-						"start"
-					],
-					"description": "Additional arguments for the starlark.starlarkLSPPath",
-					"items": {
-						"type": "string"
-					},
-					"type": "array"
-				},
 				"autokitteh.starlarkLSPPath": {
-					"default": "starlark",
+					"default": "ak",
 					"description": "The path to the Starlark LSP Server",
 					"type": "string"
-				},
-				"autokitteh.starlarkLSPPreloadDir": {
-					"default": "",
-					"description": "The path to the autokitteh's API definitions for Starlark",
-					"type": "string"
-				},
-				"autokitteh.starlarkLSPType": {
-					"default": "starlark-tilt-go",
-					"description": "Starlark LSP server to implementation",
-					"enum": [
-						"startlark-fb-rust",
-						"starlark-tilt-go"
-					],
-					"type": [
-						"string"
-					]
 				}
 			},
 			"title": "autokitteh"
