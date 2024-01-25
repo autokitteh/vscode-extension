@@ -6,32 +6,28 @@ export class RequestHandler {
 	static async handleServiceResponse<T>(
 		requestPromise: () => Promise<ServiceResponse<T>>,
 		messages?: {
-			formatSuccessMessage?: (data?: any) => string;
-			formatFailureMessage?: (data?: any) => string;
+			formatSuccessMessage?: (data?: T | string) => string;
+			formatFailureMessage?: (data?: string | unknown) => string;
 		}
 	): Promise<{ data: T | undefined; error: unknown }> {
-		const { data, error } = await requestPromise();
+		const response = await requestPromise();
+		const { data, error } = response;
 
 		if (error) {
-			let errorMessage = (error as Error).message;
-			if (messages?.formatFailureMessage) {
-				errorMessage = messages.formatFailureMessage(errorMessage);
-			}
+			const errorMessage = `${messages?.formatFailureMessage?.(error)}.\n Reason: ${(error as Error).message}`;
 
 			commands.executeCommand(
 				vsCommands.showErrorMessage,
 				namespaces.connection,
 				`Error: ${errorMessage}`
 			);
-			return Promise.resolve({ data: undefined, error: error });
+			return { data: undefined, error };
 		}
-		if (messages?.formatSuccessMessage) {
-			let successMessage = messages?.formatSuccessMessage();
 
-			if (typeof data === "string") {
-				successMessage = messages.formatSuccessMessage(data);
-			}
-
+		const successMessage = messages?.formatSuccessMessage?.(
+			typeof data === "string" ? data : undefined
+		);
+		if (successMessage) {
 			commands.executeCommand(
 				vsCommands.showInfoMessage,
 				namespaces.serverRequests,
@@ -39,6 +35,6 @@ export class RequestHandler {
 			);
 		}
 
-		return Promise.resolve({ data: data, error: undefined });
+		return { data, error: undefined };
 	}
 }

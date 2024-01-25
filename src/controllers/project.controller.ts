@@ -82,11 +82,8 @@ export class ProjectController {
 		}
 	}
 
-	async selectDeployment(deploymentId?: string): Promise<void> {
+	async selectDeployment(deploymentId: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
-		if (!deploymentId) {
-			return;
-		}
 		const { data: sessions, error } = await RequestHandler.handleServiceResponse(() =>
 			SessionsService.listByDeploymentId(deploymentId)
 		);
@@ -110,10 +107,7 @@ export class ProjectController {
 		});
 	}
 
-	async displaySessionsHistory(sessionId?: string): Promise<void> {
-		if (!sessionId) {
-			return;
-		}
+	async displaySessionsHistory(sessionId: string): Promise<void> {
 		const { data: sessionHistoryStates, error } =
 			await SessionsService.getHistoryBySessionId(sessionId);
 		if (error || !sessionHistoryStates?.length) {
@@ -157,7 +151,7 @@ export class ProjectController {
 		});
 	}
 
-	async displaySessionLogs(sessionId?: string): Promise<void> {
+	async displaySessionLogs(sessionId: string): Promise<void> {
 		this.startInterval(
 			ProjectIntervals.sessions,
 			() => this.displaySessionsHistory(sessionId),
@@ -253,10 +247,7 @@ export class ProjectController {
 		});
 	}
 
-	async activateDeployment(deploymentId?: string) {
-		if (!deploymentId) {
-			return;
-		}
+	async activateDeployment(deploymentId: string) {
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.activate(deploymentId), {
 			formatSuccessMessage: (): string =>
 				`${translate().t("projects.activationSucceed", { id: deploymentId })}`,
@@ -265,10 +256,7 @@ export class ProjectController {
 		});
 	}
 
-	async deactivateDeployment(deploymentId?: string) {
-		if (!deploymentId) {
-			return;
-		}
+	async deactivateDeployment(deploymentId: string) {
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.deactivate(deploymentId), {
 			formatSuccessMessage: (): string =>
 				`${translate().t("projects.deactivationSucceed", { id: deploymentId })}`,
