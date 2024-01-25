@@ -7,7 +7,7 @@ interface AKTableHeaderProps {
 }
 
 export const AKTableHeader = ({ children, classes }: AKTableHeaderProps) => {
-	const baseClass = "bg-tab-active-foreground font-bold";
+	const baseClass = "bg-gray-900 font-bold text-white";
 	const headerClass = clsx(baseClass, classes);
 	return <tr className={headerClass}>{children}</tr>;
 };
