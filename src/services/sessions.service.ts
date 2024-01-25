@@ -17,7 +17,7 @@ export class SessionsService {
 			const sessions = response.sessions.map(convertSessionProtoToModel);
 			return { data: sessions, error: undefined };
 		} catch (error) {
-			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 			return { data: undefined, error };
 		}
 	}
@@ -30,7 +30,7 @@ export class SessionsService {
 			);
 			return { data: sessions, error: undefined };
 		} catch (error) {
-			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 
 			return { data: undefined, error };
 		}
@@ -46,7 +46,7 @@ export class SessionsService {
 			);
 			return { data: sessionHistory, error: undefined };
 		} catch (error) {
-			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 
 			return { data: undefined, error };
 		}
@@ -77,7 +77,7 @@ export class SessionsService {
 
 				return { data: sessions, error: undefined };
 			} else {
-				LoggerService.log(
+				LoggerService.error(
 					namespaces.sessionsService,
 					translate().t("errors.projectEnvironmentsNotFound"),
 					LoggerLevel.error
@@ -89,7 +89,7 @@ export class SessionsService {
 				};
 			}
 		} catch (error) {
-			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 
 			return {
 				data: undefined,
