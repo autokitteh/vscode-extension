@@ -6,7 +6,7 @@ import {
 	startlarkLSPServerType,
 	starlarkLSPUriScheme,
 } from "@constants/language";
-import { LoggerLevel, StarlarkLSPServerType } from "@enums";
+import { StarlarkLSPServerType } from "@enums";
 import { translate } from "@i18n";
 import { LoggerService } from "@services/logger.service";
 import { StarlarkFileHandler } from "@starlark";
@@ -78,10 +78,9 @@ export class StarlarkLSPService {
 		if (isLSPSocketMode) {
 			const port = workspace.getConfiguration().get("autokitteh.starlarkLSPPort") as number;
 			if (!port) {
-				LoggerService.log(
+				LoggerService.error(
 					namespaces.startlarkLSPServer,
-					translate().t("errors.missingStarlarkLSPPort"),
-					LoggerLevel.error
+					translate().t("errors.missingStarlarkLSPPort")
 				);
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
@@ -107,7 +106,7 @@ export class StarlarkLSPService {
 		try {
 			StarlarkLSPService.languageClient.start();
 		} catch (error) {
-			LoggerService.log(namespaces.deploymentsService, (error as Error).message, LoggerLevel.error);
+			LoggerService.error(namespaces.deploymentsService, (error as Error).message);
 		}
 	}
 

@@ -13,7 +13,7 @@ export class AppStateHandler {
 		const appState = (await workspace
 			.getConfiguration()
 			.get("autokitteh.serviceEnabled", ConfigurationTarget.Global)) as unknown as boolean;
-		LoggerService.log(
+		LoggerService.info(
 			namespaces.appStateHandler,
 			`App state is ${appState ? "enabled" : "disabled"}`
 		);

@@ -19,17 +19,53 @@ export class LoggerService {
 		}
 	}
 
-	public static log(
+	public static output(
 		namespace: string,
 		message: string,
-		level: string = LoggerLevel.info,
-		channelName: string = LoggerService.defaultChannelName
+		channelName: string = LoggerService.defaultChannelName,
+		level: string = LoggerLevel.info
 	): void {
 		this.initializeOutputChannel(channelName);
 
 		this.outputChannels[channelName].appendLine(
 			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [${level}] ${message}`
 		);
+	}
+
+	public static info(
+		namespace: string,
+		message: string,
+		channelName: string = LoggerService.defaultChannelName
+	): void {
+		this.output(namespace, message, channelName, LoggerLevel.info);
+	}
+
+	public static error(
+		namespace: string,
+		message: string,
+		channelName: string = LoggerService.defaultChannelName
+	): void {
+		this.output(namespace, message, channelName, LoggerLevel.error);
+	}
+
+	public static debug(
+		namespace: string,
+		message: string,
+		channelName: string = LoggerService.defaultChannelName
+	): void {
+		this.initializeOutputChannel(channelName);
+
+		this.output(namespace, message, channelName, LoggerLevel.debug);
+	}
+
+	public static warn(
+		namespace: string,
+		message: string,
+		channelName: string = LoggerService.defaultChannelName
+	): void {
+		this.initializeOutputChannel(channelName);
+
+		this.output(namespace, message, channelName, LoggerLevel.warn);
 	}
 
 	public static print(namespace: string, message: string, channelName: string): void {
