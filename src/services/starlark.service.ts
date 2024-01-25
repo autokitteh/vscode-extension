@@ -2,7 +2,7 @@ import { connect } from "net";
 import { namespaces, vsCommands } from "@constants";
 import {
 	starlarkLSPPath,
-	defaultStarlarkLSPArg,
+	defaultStarlarkLSPArgs,
 	starlarkLSPUriScheme,
 	defaultStarlarkLSPPath,
 } from "@constants/language";
@@ -42,14 +42,10 @@ export class StarlarkLSPService {
 
 		let args: string[] = workspace.getConfiguration().get("autokitteh.starlarkLSPArguments") || [];
 		if (args.length === 0) {
-			args = defaultStarlarkLSPArg;
+			args = defaultStarlarkLSPArgs;
 		}
 
-		let lspPath = starlarkLSPPath;
-
-		if (!starlarkLSPPath || starlarkLSPPath === "") {
-			lspPath = defaultStarlarkLSPPath;
-		}
+		let lspPath = starlarkLSPPath || defaultStarlarkLSPPath;
 
 		let serverOptions: ServerOptions | Promise<StreamInfo> = {
 			command: lspPath,
@@ -91,7 +87,7 @@ export class StarlarkLSPService {
 
 		LoggerService.info(
 			namespaces.startlarkLSPServer,
-			`Starting LSP Server: ${lspPath} ${args.join(",")}`
+			`Starting LSP Server: ${lspPath} ${args.join(", ")}`
 		);
 
 		StarlarkLSPService.languageClient = new LanguageClient(

@@ -4,5 +4,5 @@ export {
 	startlarkLSPServerType,
 	starlarkLSPPreloadDirPath,
 	defaultStarlarkLSPPath,
-	defaultStarlarkLSPArg,
+	defaultStarlarkLSPArgs,
 } from "@constants/language/starlark.constants";

@@ -8,4 +8,4 @@ export const startlarkLSPServerType: string =
 export const starlarkLSPPreloadDirPath: string =
 	workspace.getConfiguration().get("autokitteh.starlarkLSPPreloadDir") || "";
 export const defaultStarlarkLSPPath: string = "ak";
-export const defaultStarlarkLSPArg: string[] = ["lsp"];
+export const defaultStarlarkLSPArgs: string[] = ["lsp"];
