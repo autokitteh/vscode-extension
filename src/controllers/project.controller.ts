@@ -13,6 +13,7 @@ import { commands } from "vscode";
 export class ProjectController {
 	private view: IProjectView;
 	private intervalTimerId?: NodeJS.Timeout;
+	private sessionsIntervalTimerId?: NodeJS.Timeout;
 	private disposeCB?: Callback<string>;
 	public projectId: string;
 	public project?: Project;
@@ -55,6 +56,12 @@ export class ProjectController {
 		this.view.update({
 			type: MessageType.setDeployments,
 			payload: deploymentsViewObject,
+		});
+
+		this.view.update({ type: MessageType.setSessionsSection, payload: undefined });
+		this.view.update({
+			type: MessageType.setProjectName,
+			payload: this.project?.name,
 		});
 	}
 
@@ -101,7 +108,7 @@ export class ProjectController {
 		});
 	}
 
-	async displaySessionLogs(sessionId?: string): Promise<void> {
+	async loadSessionsHistory(sessionId?: string): Promise<void> {
 		if (!sessionId) {
 			return;
 		}
@@ -140,16 +147,20 @@ export class ProjectController {
 		});
 	}
 
-	async startInterval() {
-		if (!this.intervalTimerId) {
-			await this.loadDeployments();
-			this.view.update({ type: MessageType.setSessionsSection, payload: undefined });
-			this.view.update({
-				type: MessageType.setProjectName,
-				payload: this.project?.name,
-			});
+	async displaySessionLogs(sessionId?: string): Promise<void> {
+		this.sessionsIntervalTimerId = setInterval(() => {
+			this.loadSessionsHistory(sessionId);
+		}, this.refreshRate);
+	}
 
-			this.intervalTimerId = setInterval(() => this.refreshView(), this.refreshRate);
+	async startInterval(
+		interval?: NodeJS.Timeout,
+		loadFunc?: () => Promise<void>,
+		refreshRate?: number
+	) {
+		if (!interval && loadFunc && refreshRate) {
+			await loadFunc();
+			return setInterval(() => loadFunc(), refreshRate);
 		}
 	}
 
@@ -157,6 +168,13 @@ export class ProjectController {
 		if (this.intervalTimerId) {
 			clearInterval(this.intervalTimerId);
 			this.intervalTimerId = undefined;
+		}
+	}
+
+	stopSessionsInterval() {
+		if (this.sessionsIntervalTimerId) {
+			clearInterval(this.sessionsIntervalTimerId);
+			this.sessionsIntervalTimerId = undefined;
 		}
 	}
 
@@ -171,21 +189,31 @@ export class ProjectController {
 		if (project) {
 			this.project = project;
 			this.view.show(this.project.name);
-			this.startInterval();
+			this.intervalTimerId = await this.startInterval(
+				this.intervalTimerId,
+				() => this.refreshView(),
+				this.refreshRate
+			);
 		}
 	}
 
 	onBlur() {
 		this.stopInterval();
+		this.stopSessionsInterval();
 		this.deployments = undefined;
 		this.sessions = undefined;
 	}
 
-	onFocus() {
-		this.startInterval();
+	async onFocus() {
+		this.intervalTimerId = await this.startInterval(
+			this.intervalTimerId,
+			() => this.refreshView(),
+			this.refreshRate
+		);
 	}
 
 	onClose() {
+		this.stopSessionsInterval();
 		this.stopInterval();
 		this.disposeCB?.(this.projectId);
 	}
