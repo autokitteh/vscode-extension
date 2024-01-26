@@ -10,8 +10,7 @@ export class RequestHandler {
 			formatFailureMessage?: (data?: string | unknown) => string;
 		}
 	): Promise<{ data: T | undefined; error: unknown }> {
-		const response = await requestPromise();
-		const { data, error } = response;
+		const { data, error } = await requestPromise();
 
 		if (error) {
 			const errorMessage = `${messages?.formatFailureMessage?.(error)}.\n Reason: ${(error as Error).message}`;
