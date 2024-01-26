@@ -250,18 +250,18 @@ export class ProjectController {
 	async activateDeployment(deploymentId: string) {
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.activate(deploymentId), {
 			formatSuccessMessage: (): string =>
-				`${translate().t("projects.activationSucceed", { id: deploymentId })}`,
+				`${translate().t("deployments.activationSucceed", { id: deploymentId })}`,
 			formatFailureMessage: (): string =>
-				`${translate().t("projects.activationFailed", { id: deploymentId })}`,
+				`${translate().t("deployments.activationFailed", { id: deploymentId })}`,
 		});
 	}
 
 	async deactivateDeployment(deploymentId: string) {
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.deactivate(deploymentId), {
 			formatSuccessMessage: (): string =>
-				`${translate().t("projects.deactivationSucceed", { id: deploymentId })}`,
+				`${translate().t("deployments.deactivationSucceed", { id: deploymentId })}`,
 			formatFailureMessage: (): string =>
-				`${translate().t("projects.deactivationFailed", { id: deploymentId })}`,
+				`${translate().t("deployments.deactivationFailed", { id: deploymentId })}`,
 		});
 	}
 }
