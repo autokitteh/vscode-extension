@@ -82,23 +82,12 @@ export class ProjectController {
 		}
 	}
 
-	async selectDeployment(deploymentId?: string): Promise<void> {
+	async selectDeployment(deploymentId: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
-		if (!deploymentId) {
-			return;
-		}
 		const { data: sessions, error } = await RequestHandler.handleServiceResponse(() =>
 			SessionsService.listByDeploymentId(deploymentId)
 		);
 		if (error) {
-			commands.executeCommand(vsCommands.showErrorMessage, error as string);
-
-			LoggerService.print(
-				namespaces.deploymentsService,
-				error as string,
-				channels.appOutputLogName
-			);
-
 			return;
 		}
 
@@ -118,10 +107,7 @@ export class ProjectController {
 		});
 	}
 
-	async displaySessionsHistory(sessionId?: string): Promise<void> {
-		if (!sessionId) {
-			return;
-		}
+	async displaySessionsHistory(sessionId: string): Promise<void> {
 		const { data: sessionHistoryStates, error } =
 			await SessionsService.getHistoryBySessionId(sessionId);
 		if (error || !sessionHistoryStates?.length) {
@@ -165,7 +151,7 @@ export class ProjectController {
 		});
 	}
 
-	async displaySessionLogs(sessionId?: string): Promise<void> {
+	async displaySessionLogs(sessionId: string): Promise<void> {
 		this.startInterval(
 			ProjectIntervals.sessions,
 			() => this.displaySessionsHistory(sessionId),
@@ -198,7 +184,7 @@ export class ProjectController {
 		const { data: project } = await RequestHandler.handleServiceResponse(
 			() => ProjectsService.get(this.projectId),
 			{
-				onFailureMessage: translate().t("errors.projectNotFound"),
+				formatFailureMessage: (): string => translate().t("projects.projectNotFound"),
 			}
 		);
 		if (project) {
@@ -220,6 +206,7 @@ export class ProjectController {
 	}
 
 	onFocus() {
+		this.setProjectNameInView();
 		this.startInterval(
 			ProjectIntervals.deployments,
 			() => this.loadAndDisplayDeployments(),
@@ -235,12 +222,13 @@ export class ProjectController {
 
 	async build() {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(this.projectId), {
-			onSuccessMessage: translate().t("projects.projectBuildSucceed", {
-				projectId: this.projectId,
-			}),
-			onFailureMessage: translate().t("projects.projectBuildFailed", {
-				projectId: this.projectId,
-			}),
+			formatSuccessMessage: (data?: string): string =>
+				`${translate().t("projects.projectBuildSucceed", { id: data })}`,
+			formatFailureMessage: (error): string =>
+				translate().t("projects.projectBuildFailed", {
+					id: this.projectId,
+					error: (error as Error).message,
+				}),
 		});
 	}
 
@@ -248,8 +236,13 @@ export class ProjectController {
 		const { data: deploymentId } = await RequestHandler.handleServiceResponse(
 			() => ProjectsService.run(this.projectId),
 			{
-				onSuccessMessage: translate().t("projects.projectDeploySucceed"),
-				onFailureMessage: translate().t("projects.projectDeployFailed"),
+				formatSuccessMessage: (): string =>
+					`${translate().t("projects.projectDeploySucceed", { id: this.projectId })}`,
+				formatFailureMessage: (error): string =>
+					`${translate().t("projects.projectDeployFailed", {
+						id: this.projectId,
+						error: (error as Error).message,
+					})}`,
 			}
 		);
 
@@ -261,23 +254,27 @@ export class ProjectController {
 		});
 	}
 
-	async activateDeployment(deploymentId?: string) {
-		if (!deploymentId) {
-			return;
-		}
+	async activateDeployment(deploymentId: string) {
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.activate(deploymentId), {
-			onSuccessMessage: translate().t("deployments.activationSucceed"),
-			onFailureMessage: translate().t("deployments.activationFailed"),
+			formatSuccessMessage: (): string =>
+				`${translate().t("deployments.activationSucceed", { id: deploymentId })}`,
+			formatFailureMessage: (error): string =>
+				`${translate().t("deployments.activationFailed", {
+					id: deploymentId,
+					error: (error as Error).message,
+				})}`,
 		});
 	}
 
-	async deactivateDeployment(deploymentId?: string) {
-		if (!deploymentId) {
-			return;
-		}
+	async deactivateDeployment(deploymentId: string) {
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.deactivate(deploymentId), {
-			onSuccessMessage: translate().t("deployments.deactivationSucceed"),
-			onFailureMessage: translate().t("deployments.deactivationFailed"),
+			formatSuccessMessage: (): string =>
+				`${translate().t("deployments.deactivationSucceed", { id: deploymentId })}`,
+			formatFailureMessage: (error): string =>
+				`${translate().t("deployments.deactivationFailed", {
+					id: deploymentId,
+					error: (error as Error).message,
+				})}`,
 		});
 	}
 }

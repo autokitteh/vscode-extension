@@ -3,8 +3,8 @@
 	"projects": "Projects",
 	"noProjectsFound": "No projects found",
 	"openProject": "Open project",
-	"projectBuildSucceed": "Project build succeed - id: {{projectId}}",
-	"projectBuildFailed": "Project build failed -  id:{{projectId}}",
-	"projectDeploySucceed": "Project deploy succeed",
-	"projectDeployFailed": "Project deploy failed"
+	"projectBuildSucceed": "Project build succeed - id: {{id}}",
+	"projectBuildFailed": "Project build failed - id: {{id}} \nReason: {{error}}",
+	"projectDeploySucceed": "Project deploy succeed - id: {{id}}",
+	"projectDeployFailed": "Project deploy failed - id: {{id}} \nReason: {{error}}"
 }

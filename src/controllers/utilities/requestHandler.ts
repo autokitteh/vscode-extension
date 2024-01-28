@@ -1,40 +1,33 @@
-import { ConnectError } from "@connectrpc/connect";
 import { namespaces, vsCommands } from "@constants";
-import { gRPCErrors } from "@constants/api.constants";
 import { ServiceResponse } from "@type/services.types";
 import { commands } from "vscode";
 
 export class RequestHandler {
-	static disconnectedErrorDisplayed: boolean = false;
-
 	static async handleServiceResponse<T>(
 		requestPromise: () => Promise<ServiceResponse<T>>,
 		messages?: {
-			onSuccessMessage?: string;
-			onFailureMessage?: string;
+			formatSuccessMessage?: (data?: T | string) => string;
+			formatFailureMessage?: (data?: string | unknown) => string;
 		}
 	): Promise<{ data: T | undefined; error: unknown }> {
-		const { error, data } = await requestPromise();
-		if (!error) {
-			if (messages?.onSuccessMessage) {
-				commands.executeCommand(
-					vsCommands.showInfoMessage,
-					namespaces.serverRequests,
-					messages.onSuccessMessage
-				);
-			}
-			return { data, error };
+		const { data, error } = await requestPromise();
+
+		if (error) {
+			const errorMessage = messages?.formatFailureMessage?.(error);
+
+			commands.executeCommand(vsCommands.showErrorMessage, namespaces.connection, errorMessage);
+			return { data: undefined, error };
 		}
 
-		if (
-			error instanceof ConnectError &&
-			error.code === gRPCErrors.serverNotRespond &&
-			!this.disconnectedErrorDisplayed
-		) {
-			commands.executeCommand(vsCommands.showErrorMessage, namespaces.connection, error.message);
-			commands.executeCommand(vsCommands.disconnect);
-			this.disconnectedErrorDisplayed = true;
+		const successMessage = messages?.formatSuccessMessage?.(data);
+		if (successMessage) {
+			commands.executeCommand(
+				vsCommands.showInfoMessage,
+				namespaces.serverRequests,
+				successMessage
+			);
 		}
-		return { data, error };
+
+		return { data, error: undefined };
 	}
 }
