@@ -63,7 +63,10 @@ export class SidebarController {
 			formatSuccessMessage: (data?: string): string =>
 				`${translate().t("projects.projectBuildSucceed", { id: data })}`,
 			formatFailureMessage: (error): string =>
-				translate().t("projects.projectBuildFailed", { id: projectId, error }),
+				translate().t("projects.projectBuildFailed", {
+					id: projectId,
+					error: (error as Error).message,
+				}),
 		});
 	}
 
@@ -72,7 +75,10 @@ export class SidebarController {
 			formatSuccessMessage: (): string =>
 				`${translate().t("projects.projectDeploySucceed", { id: projectId })}`,
 			formatFailureMessage: (error): string =>
-				`${translate().t("projects.projectDeployFailed", { id: projectId, error })}`,
+				`${translate().t("projects.projectDeployFailed", {
+					id: projectId,
+					error: (error as Error).message,
+				})}`,
 		});
 	}
 

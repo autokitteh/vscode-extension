@@ -224,7 +224,10 @@ export class ProjectController {
 			formatSuccessMessage: (data?: string): string =>
 				`${translate().t("projects.projectBuildSucceed", { id: data })}`,
 			formatFailureMessage: (error): string =>
-				translate().t("projects.projectBuildFailed", { id: this.projectId, error }),
+				translate().t("projects.projectBuildFailed", {
+					id: this.projectId,
+					error: (error as Error).message,
+				}),
 		});
 	}
 
@@ -235,7 +238,10 @@ export class ProjectController {
 				formatSuccessMessage: (): string =>
 					`${translate().t("projects.projectDeploySucceed", { id: this.projectId })}`,
 				formatFailureMessage: (error): string =>
-					`${translate().t("projects.projectDeployFailed", { id: this.projectId, error })}`,
+					`${translate().t("projects.projectDeployFailed", {
+						id: this.projectId,
+						error: (error as Error).message,
+					})}`,
 			}
 		);
 
@@ -252,7 +258,10 @@ export class ProjectController {
 			formatSuccessMessage: (): string =>
 				`${translate().t("deployments.activationSucceed", { id: deploymentId })}`,
 			formatFailureMessage: (error): string =>
-				`${translate().t("deployments.activationFailed", { id: deploymentId, error })}`,
+				`${translate().t("deployments.activationFailed", {
+					id: deploymentId,
+					error: (error as Error).message,
+				})}`,
 		});
 	}
 
@@ -261,7 +270,10 @@ export class ProjectController {
 			formatSuccessMessage: (): string =>
 				`${translate().t("deployments.deactivationSucceed", { id: deploymentId })}`,
 			formatFailureMessage: (error): string =>
-				`${translate().t("deployments.deactivationFailed", { id: deploymentId, error })}`,
+				`${translate().t("deployments.deactivationFailed", {
+					id: deploymentId,
+					error: (error as Error).message,
+				})}`,
 		});
 	}
 }

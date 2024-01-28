@@ -13,7 +13,7 @@ export class RequestHandler {
 		const { data, error } = await requestPromise();
 
 		if (error) {
-			const errorMessage = messages?.formatFailureMessage?.((error as Error).message);
+			const errorMessage = messages?.formatFailureMessage?.(error);
 
 			commands.executeCommand(vsCommands.showErrorMessage, namespaces.connection, errorMessage);
 			return { data: undefined, error };
