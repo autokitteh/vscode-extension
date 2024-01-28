@@ -206,6 +206,7 @@ export class ProjectController {
 	}
 
 	onFocus() {
+		this.setProjectNameInView();
 		this.startInterval(
 			ProjectIntervals.deployments,
 			() => this.loadAndDisplayDeployments(),
