@@ -1,3 +1,3 @@
 export type IntervalKeeper = {
-	[key: string]: NodeJS.Timeout | undefined;
+	[key: string]: NodeJS.Timeout;
 };
