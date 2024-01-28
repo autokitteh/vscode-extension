@@ -1,11 +1,7 @@
 import { connect } from "net";
 import { namespaces, vsCommands } from "@constants";
-import {
-	starlarkLSPPath,
-	defaultStarlarkLSPArgs,
-	starlarkLSPUriScheme,
-	defaultStarlarkLSPPath,
-} from "@constants/language";
+import { starlarkLSPPath, starlarkLSPUriScheme, starlarkLSPArgs } from "@constants";
+import { getConfig } from "@constants/utilities";
 import { translate } from "@i18n";
 import { LoggerService } from "@services/logger.service";
 import { StarlarkFileHandler } from "@starlark";
@@ -40,16 +36,9 @@ export class StarlarkLSPService {
 			return;
 		}
 
-		let args: string[] = workspace.getConfiguration().get("autokitteh.starlarkLSPArguments") || [];
-		if (args.length === 0) {
-			args = defaultStarlarkLSPArgs;
-		}
-
-		let lspPath = starlarkLSPPath || defaultStarlarkLSPPath;
-
 		let serverOptions: ServerOptions | Promise<StreamInfo> = {
-			command: lspPath,
-			args: args,
+			command: starlarkLSPPath,
+			args: starlarkLSPArgs,
 		};
 
 		let clientOptions: LanguageClientOptions = {
@@ -65,7 +54,7 @@ export class StarlarkLSPService {
 			.get("autokitteh.starlarkLSPSocketMode") as boolean;
 
 		if (isLSPSocketMode) {
-			const port = workspace.getConfiguration().get("autokitteh.starlarkLSPPort") as number;
+			const port = getConfig<number>("autokitteh.starlarkLSPPort", 0);
 			if (!port) {
 				LoggerService.error(
 					namespaces.startlarkLSPServer,
@@ -87,7 +76,7 @@ export class StarlarkLSPService {
 
 		LoggerService.info(
 			namespaces.startlarkLSPServer,
-			`Starting LSP Server: ${lspPath} ${args.join(", ")}`
+			`Starting LSP Server: ${starlarkLSPPath} ${starlarkLSPArgs.join(", ")}`
 		);
 
 		StarlarkLSPService.languageClient = new LanguageClient(
