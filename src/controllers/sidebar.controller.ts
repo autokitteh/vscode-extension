@@ -62,8 +62,8 @@ export class SidebarController {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(projectId), {
 			formatSuccessMessage: (data?: string): string =>
 				`${translate().t("projects.projectBuildSucceed", { id: data })}`,
-			formatFailureMessage: (): string =>
-				translate().t("projects.projectBuildFailed", { id: projectId }),
+			formatFailureMessage: (error): string =>
+				translate().t("projects.projectBuildFailed", { id: projectId, error }),
 		});
 	}
 
@@ -71,8 +71,8 @@ export class SidebarController {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.run(projectId), {
 			formatSuccessMessage: (): string =>
 				`${translate().t("projects.projectDeploySucceed", { id: projectId })}`,
-			formatFailureMessage: (): string =>
-				`${translate().t("projects.projectDeployFailed", { id: projectId })}`,
+			formatFailureMessage: (error): string =>
+				`${translate().t("projects.projectDeployFailed", { id: projectId, error })}`,
 		});
 	}
 

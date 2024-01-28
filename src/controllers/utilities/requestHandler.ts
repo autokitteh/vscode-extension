@@ -13,19 +13,13 @@ export class RequestHandler {
 		const { data, error } = await requestPromise();
 
 		if (error) {
-			const errorMessage = `${messages?.formatFailureMessage?.(error)}.\n Reason: ${(error as Error).message}`;
+			const errorMessage = messages?.formatFailureMessage?.((error as Error).message);
 
-			commands.executeCommand(
-				vsCommands.showErrorMessage,
-				namespaces.connection,
-				`Error: ${errorMessage}`
-			);
+			commands.executeCommand(vsCommands.showErrorMessage, namespaces.connection, errorMessage);
 			return { data: undefined, error };
 		}
 
-		const successMessage = messages?.formatSuccessMessage?.(
-			typeof data === "string" ? data : undefined
-		);
+		const successMessage = messages?.formatSuccessMessage?.(data);
 		if (successMessage) {
 			commands.executeCommand(
 				vsCommands.showInfoMessage,

@@ -223,8 +223,8 @@ export class ProjectController {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(this.projectId), {
 			formatSuccessMessage: (data?: string): string =>
 				`${translate().t("projects.projectBuildSucceed", { id: data })}`,
-			formatFailureMessage: (): string =>
-				translate().t("projects.projectBuildFailed", { id: this.projectId }),
+			formatFailureMessage: (error): string =>
+				translate().t("projects.projectBuildFailed", { id: this.projectId, error }),
 		});
 	}
 
@@ -234,8 +234,8 @@ export class ProjectController {
 			{
 				formatSuccessMessage: (): string =>
 					`${translate().t("projects.projectDeploySucceed", { id: this.projectId })}`,
-				formatFailureMessage: (): string =>
-					`${translate().t("projects.projectDeployFailed", { id: this.projectId })}`,
+				formatFailureMessage: (error): string =>
+					`${translate().t("projects.projectDeployFailed", { id: this.projectId, error })}`,
 			}
 		);
 
@@ -251,8 +251,8 @@ export class ProjectController {
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.activate(deploymentId), {
 			formatSuccessMessage: (): string =>
 				`${translate().t("deployments.activationSucceed", { id: deploymentId })}`,
-			formatFailureMessage: (): string =>
-				`${translate().t("deployments.activationFailed", { id: deploymentId })}`,
+			formatFailureMessage: (error): string =>
+				`${translate().t("deployments.activationFailed", { id: deploymentId, error })}`,
 		});
 	}
 
@@ -260,8 +260,8 @@ export class ProjectController {
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.deactivate(deploymentId), {
 			formatSuccessMessage: (): string =>
 				`${translate().t("deployments.deactivationSucceed", { id: deploymentId })}`,
-			formatFailureMessage: (): string =>
-				`${translate().t("deployments.deactivationFailed", { id: deploymentId })}`,
+			formatFailureMessage: (error): string =>
+				`${translate().t("deployments.deactivationFailed", { id: deploymentId, error })}`,
 		});
 	}
 }
