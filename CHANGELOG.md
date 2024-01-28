@@ -1,3 +1,10 @@
+# [0.7.0-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.7.0-dev.3...v0.7.0-dev.4) (2024-01-28)
+
+
+### Features
+
+* display ids in success notifications or display error with id ([#108](https://github.com/autokitteh/vscode-extension/issues/108)) ([2c6eaf5](https://github.com/autokitteh/vscode-extension/commit/2c6eaf545cce525b49bb867486e0b9eeaeaf1fe3))
+
 # [0.7.0-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.7.0-dev.2...v0.7.0-dev.3) (2024-01-28)
 
 
