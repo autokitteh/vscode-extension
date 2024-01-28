@@ -7,7 +7,6 @@ import { IProjectView } from "@interfaces";
 import { SessionState } from "@models";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
-import { IntervalKeeper } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
@@ -15,7 +14,7 @@ import { commands } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
-	private intervalKeeper: IntervalKeeper = {};
+	private intervalKeeper: Map<ProjectIntervals, NodeJS.Timeout> = new Map();
 	private disposeCB?: Callback<string>;
 	public projectId: string;
 	public project?: Project;
@@ -37,6 +36,7 @@ export class ProjectController {
 		this.view.delegate = this;
 		this.deploymentsRefreshRate = deploymentsRefreshRate;
 		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
+		this.setProjectNameInView();
 	}
 
 	reveal(): void {
@@ -47,7 +47,14 @@ export class ProjectController {
 		this.view.reveal(this.project.name);
 	}
 
-	async loadDeployments() {
+	setProjectNameInView() {
+		this.view.update({
+			type: MessageType.setProjectName,
+			payload: this.project?.name,
+		});
+	}
+
+	async loadAndDisplayDeployments() {
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
 		if (error) {
 			commands.executeCommand(vsCommands.showErrorMessage, error as string);
@@ -69,14 +76,7 @@ export class ProjectController {
 		});
 
 		this.view.update({ type: MessageType.setSessionsSection, payload: undefined });
-		this.view.update({
-			type: MessageType.setProjectName,
-			payload: this.project?.name,
-		});
-	}
 
-	async refreshView() {
-		await this.loadDeployments();
 		if (this.selectedDeploymentId) {
 			await this.selectDeployment(this.selectedDeploymentId);
 		}
@@ -178,18 +178,19 @@ export class ProjectController {
 		loadFunc: () => Promise<void>,
 		refreshRate: number
 	) {
-		if (this.intervalKeeper[intervalKey]) {
+		if (this.intervalKeeper.has(intervalKey)) {
 			this.stopInterval(intervalKey);
 		}
 		await loadFunc();
-		this.intervalKeeper[intervalKey] = setInterval(() => loadFunc(), refreshRate);
+		this.intervalKeeper.set(
+			intervalKey,
+			setInterval(() => loadFunc(), refreshRate)
+		);
 	}
 
 	stopInterval(intervalKey: ProjectIntervals) {
-		if (this.intervalKeeper[intervalKey]) {
-			clearInterval(this.intervalKeeper[intervalKey]);
-			delete this.intervalKeeper[intervalKey];
-		}
+		clearInterval(this.intervalKeeper.get(intervalKey));
+		this.intervalKeeper.delete(intervalKey);
 	}
 
 	public async openProject(disposeCB: Callback<string>) {
@@ -205,7 +206,7 @@ export class ProjectController {
 			this.view.show(this.project.name);
 			this.startInterval(
 				ProjectIntervals.deployments,
-				() => this.refreshView(),
+				() => this.loadAndDisplayDeployments(),
 				this.deploymentsRefreshRate
 			);
 		}
@@ -221,7 +222,7 @@ export class ProjectController {
 	onFocus() {
 		this.startInterval(
 			ProjectIntervals.deployments,
-			() => this.refreshView(),
+			() => this.loadAndDisplayDeployments(),
 			this.deploymentsRefreshRate
 		);
 	}
