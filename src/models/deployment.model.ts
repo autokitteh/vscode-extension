@@ -14,7 +14,7 @@ export const convertDeploymentProtoToModel = (protoDeployment: ProtoDeployment):
 		deploymentId: protoDeployment.deploymentId,
 		envId: protoDeployment.envId,
 		buildId: protoDeployment.buildId,
-		createdAt: convertTimestampToDate(protoDeployment.createdAt),
+		createdAt: convertTimestampToDate(protoDeployment.createdAt!),
 		state: protoDeployment.state,
 		sessionStats: protoDeployment.sessionsStats.map((sessionStat) => ({
 			state: sessionStateConverter(sessionStat.state),

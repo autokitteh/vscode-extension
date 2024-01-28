@@ -48,8 +48,8 @@
 				"command": "autokitteh.buildProject",
 				"title": "autokitteh: Build Project",
 				"icon": {
-					"dark": "./resources/sidebar/icons/dark/build.svg",
-					"light": "./resources/sidebar/icons/light/build.svg"
+					"dark": "./resources/sidebar/icons/dark/tools.svg",
+					"light": "./resources/sidebar/icons/light/tools.svg"
 				}
 			},
 			{
@@ -83,36 +83,10 @@
 					"description": "Refresh interval in seconds for the sidebar panel",
 					"type": "number"
 				},
-				"autokitteh.starlarkLSPArguments": {
-					"default": [
-						"start"
-					],
-					"description": "Additional arguments for the starlark.starlarkLSPPath",
-					"items": {
-						"type": "string"
-					},
-					"type": "array"
-				},
 				"autokitteh.starlarkLSPPath": {
-					"default": "starlark",
+					"default": "ak",
 					"description": "The path to the Starlark LSP Server",
 					"type": "string"
-				},
-				"autokitteh.starlarkLSPPreloadDir": {
-					"default": "",
-					"description": "The path to the autokitteh's API definitions for Starlark",
-					"type": "string"
-				},
-				"autokitteh.starlarkLSPType": {
-					"default": "starlark-tilt-go",
-					"description": "Starlark LSP server to implementation",
-					"enum": [
-						"startlark-fb-rust",
-						"starlark-tilt-go"
-					],
-					"type": [
-						"string"
-					]
 				}
 			},
 			"title": "autokitteh"
@@ -304,6 +278,7 @@
 		"cleanup": "rm -rf dist node_modules ./vscode-react/build ./vscode-react/node_modules",
 		"clean-and-run": "npm run cleanup && npm install && npm run compile && npm run build && cd vscode-react && npm run watch",
 		"build:webview": "cd vscode-react && npm run build",
+		"check-types": "tsc --pretty --noEmit",
 		"compile": "tsc -p ./",
 		"compile:vscode-react": "npm run compile --workspace=vscode-react",
 		"compile:all": "npm run compile --workspace=vscode-react && npm run compile",
@@ -312,10 +287,11 @@
 		"build:all": "npm run build --workspace=vscode-react && npm run build",
 		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
 		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-		"fetch-protos": "git submodule update --init",
+		"update-ak-submodle": "git submodule update --remote --merge",
 		"format:check": "npm run prettier -- --check",
-		"format:fix": "npm run prettier -- --write",
+		"check-format:staged": "prettier . --check",
 		"lint": "eslint src --ext .ts,.tsx .",
+		"fix-eslint:staged": "npm run lint --fix",
 		"prettier": "prettier . --ignore-path .prettierignore",
 		"start:webview": "cd vscode-react && npm run start",
 		"test:run": "vitest run",
@@ -326,7 +302,7 @@
 		"local-package": "node preBuildLocalVersion.js && vsce package && node postBuildLocalVersion.js",
 		"package": "vsce package"
 	},
-	"version": "0.6.1",
+	"version": "0.7.0-dev.4",
 	"workspaces": [
 		"vscode-react"
 	]

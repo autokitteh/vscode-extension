@@ -4,3 +4,4 @@ export { SessionStateType } from "@enums/sessionStates.enum";
 export { LoggerLevel } from "@enums/output.enum";
 export { StarlarkLSPServerType } from "@enums/startlarkLspServerType.enum";
 export { SortOrder } from "@enums/sortOrder.enum";
+export { ProjectIntervals } from "@enums/projectIntervals.enum";

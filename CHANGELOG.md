@@ -1,3 +1,31 @@
+# [0.7.0-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.7.0-dev.3...v0.7.0-dev.4) (2024-01-28)
+
+
+### Features
+
+* display ids in success notifications or display error with id ([#108](https://github.com/autokitteh/vscode-extension/issues/108)) ([2c6eaf5](https://github.com/autokitteh/vscode-extension/commit/2c6eaf545cce525b49bb867486e0b9eeaeaf1fe3))
+
+# [0.7.0-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.7.0-dev.2...v0.7.0-dev.3) (2024-01-28)
+
+
+### Features
+
+* select latest deployment on deploy ([#119](https://github.com/autokitteh/vscode-extension/issues/119)) ([9585373](https://github.com/autokitteh/vscode-extension/commit/9585373b6c8b80c5c5f1766b1982808527bd6fca))
+
+# [0.7.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.7.0-dev.1...v0.7.0-dev.2) (2024-01-28)
+
+
+### Features
+
+* pull session history every second ([#115](https://github.com/autokitteh/vscode-extension/issues/115)) ([5d83129](https://github.com/autokitteh/vscode-extension/commit/5d83129b4ce0beac389f10e03e3aa752075681c4))
+
+# [0.7.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.6.1...v0.7.0-dev.1) (2024-01-25)
+
+
+### Features
+
+* change lsp-server configurations needed to run ([#111](https://github.com/autokitteh/vscode-extension/issues/111)) ([3ad9f98](https://github.com/autokitteh/vscode-extension/commit/3ad9f98c6f53ebfb97155d72df4a6b408bd4dd68))
+
 ## [0.6.1](https://github.com/autokitteh/vscode-extension/compare/v0.6.0...v0.6.1) (2024-01-23)
 
 

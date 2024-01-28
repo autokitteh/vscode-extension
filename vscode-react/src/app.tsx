@@ -18,6 +18,7 @@ function App() {
 	>();
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
+	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 
 	const messageHandlers: IIncomingMessagesHandler = {
@@ -25,6 +26,7 @@ function App() {
 		setProjectName,
 		setThemeVisualType,
 		setSessionsSection,
+		setSelectedDeploymentId,
 	};
 
 	const handleMessagesFromExtension = useCallback(
@@ -54,7 +56,7 @@ function App() {
 								{translate().t("reactApp.general.build")}
 							</AKButton>
 							<AKButton onClick={() => sendMessage(MessageType.runProject)}>
-								<div className="codicon codicon-play mr-2"></div>
+								<div className="codicon codicon-rocket mr-2"></div>
 								{translate().t("reactApp.general.deploy")}
 							</AKButton>
 						</div>
@@ -62,6 +64,7 @@ function App() {
 					<AKDeployments
 						deployments={deploymentsSection?.deployments}
 						totalDeployments={deploymentsSection?.totalDeployments}
+						selectedDeploymentId={selectedDeploymentId}
 					/>
 					<AKSessions
 						sessions={sessionsSection?.sessions}

@@ -1,8 +1,7 @@
+import { error } from "console";
 import { Session as ProtoSession } from "@ak-proto-ts/sessions/v1/session_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
-import { LoggerLevel } from "@enums";
-import { translate } from "@i18n";
 import { SessionState, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
@@ -17,7 +16,7 @@ export class SessionsService {
 			const sessions = response.sessions.map(convertSessionProtoToModel);
 			return { data: sessions, error: undefined };
 		} catch (error) {
-			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 			return { data: undefined, error };
 		}
 	}
@@ -30,7 +29,7 @@ export class SessionsService {
 			);
 			return { data: sessions, error: undefined };
 		} catch (error) {
-			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 
 			return { data: undefined, error };
 		}
@@ -46,7 +45,7 @@ export class SessionsService {
 			);
 			return { data: sessionHistory, error: undefined };
 		} catch (error) {
-			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 
 			return { data: undefined, error };
 		}
@@ -57,39 +56,31 @@ export class SessionsService {
 			const { data: projectEnvironments, error: environmentsError } =
 				await EnvironmentsService.listByProjectId(projectId);
 
-			if (!environmentsError && projectEnvironments) {
-				const sessionsPromises = projectEnvironments.map(async (environment) => {
-					const sessions = await this.listByEnvironmentId(environment.envId);
-					return sessions;
-				});
+			if (environmentsError) {
+				LoggerService.error(namespaces.sessionsService, (environmentsError as Error).message);
 
-				const sessionsResponses = await Promise.allSettled(sessionsPromises);
-
-				const sessions = flattenArray<Session>(
-					sessionsResponses
-						.filter((response) => response.status === "fulfilled")
-						.map((response) =>
-							get(response, "value.sessions", []).map((session) =>
-								convertSessionProtoToModel(session)
-							)
-						)
-				);
-
-				return { data: sessions, error: undefined };
-			} else {
-				LoggerService.log(
-					namespaces.sessionsService,
-					translate().t("errors.projectEnvironmentsNotFound"),
-					LoggerLevel.error
-				);
-
-				return {
-					data: undefined,
-					error: new Error(translate().t("errors.projectEnvironmentsNotFound")),
-				};
+				return { data: undefined, error };
 			}
+			const sessionsPromises = (projectEnvironments || []).map(async (environment) => {
+				const sessions = await this.listByEnvironmentId(environment.envId);
+				return sessions;
+			});
+
+			const sessionsResponses = await Promise.allSettled(sessionsPromises);
+
+			const sessions = flattenArray<Session>(
+				sessionsResponses
+					.filter((response) => response.status === "fulfilled")
+					.map((response) =>
+						get(response, "value.sessions", []).map((session) =>
+							convertSessionProtoToModel(session)
+						)
+					)
+			);
+
+			return { data: sessions, error: undefined };
 		} catch (error) {
-			LoggerService.log(namespaces.sessionsService, (error as Error).message, LoggerLevel.error);
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 
 			return {
 				data: undefined,

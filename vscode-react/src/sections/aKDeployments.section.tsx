@@ -18,6 +18,7 @@ import { Deployment } from "@type/models";
 export const AKDeployments = ({
 	deployments,
 	totalDeployments = 0,
+	selectedDeploymentId,
 }: DeploymentSectionViewModel) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
@@ -25,10 +26,17 @@ export const AKDeployments = ({
 	const [selectedDeployment, setSelectedDeployment] = useState("");
 
 	useEffect(() => {
+		if (typeof selectedDeploymentId === "string") {
+			setSelectedDeployment(selectedDeploymentId);
+		}
+	}, [selectedDeploymentId]);
+
+	useEffect(() => {
 		if (deployments && isLoading) {
 			setIsLoading(false);
 		}
 	}, [deployments]);
+
 	useEffect(() => {
 		const interval = setInterval(() => {
 			setRerender((rerender) => rerender + 1);
@@ -54,13 +62,6 @@ export const AKDeployments = ({
 		return session ? session.count : 0;
 	};
 
-	const getDeploymentCreatedTime = (createdAt?: Date) => {
-		if (!createdAt) {
-			return translate().t("reactApp.general.unknown");
-		}
-		return getTimePassed(createdAt);
-	};
-
 	const deactivateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.deactivateDeployment, deploymentId);
 	};
@@ -80,6 +81,9 @@ export const AKDeployments = ({
 			) : (
 				<div className="flex mb-2 w-full min-h-[20px]" />
 			)}
+			<h1 className="text-lg font-extralight mb-2">
+				{translate().t("reactApp.deployments.tableTitle")}
+			</h1>
 			<AKTable>
 				<AKTableHeader classes="sticky top-0">
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.time")}</AKTableHeaderCell>
@@ -105,7 +109,7 @@ export const AKDeployments = ({
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
 							>
-								{getDeploymentCreatedTime(deployment.createdAt)}
+								{getTimePassed(deployment.createdAt)}
 							</AKTableCell>
 							<AKTableCell
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}

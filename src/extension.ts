@@ -1,7 +1,6 @@
 require("module-alias/register");
 
-import { vsCommands } from "@constants";
-import { sidebarControllerRefreshRate } from "@constants/api.constants";
+import { vsCommands, sidebarControllerRefreshRate } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";

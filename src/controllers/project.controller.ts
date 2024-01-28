@@ -1,8 +1,10 @@
 import { vsCommands, namespaces, channels } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType } from "@enums";
+import { ProjectIntervals } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
+import { SessionState } from "@models";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
 import { Callback } from "@type/interfaces";
@@ -12,20 +14,29 @@ import { commands } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
-	private intervalTimerId?: NodeJS.Timeout;
+	private intervalKeeper: Map<ProjectIntervals, NodeJS.Timeout> = new Map();
 	private disposeCB?: Callback<string>;
 	public projectId: string;
 	public project?: Project;
 	private sessions?: Session[] = [];
+	private sessionHistoryStates?: SessionState[] = [];
 	private deployments?: Deployment[];
-	private refreshRate: number;
+	private deploymentsRefreshRate: number;
+	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
 
-	constructor(projectView: IProjectView, projectId: string, refreshRate: number) {
+	constructor(
+		projectView: IProjectView,
+		projectId: string,
+		deploymentsRefreshRate: number,
+		sessionsLogRefreshRate: number
+	) {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
-		this.refreshRate = refreshRate;
+		this.deploymentsRefreshRate = deploymentsRefreshRate;
+		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
+		this.setProjectNameInView();
 	}
 
 	reveal(): void {
@@ -36,7 +47,14 @@ export class ProjectController {
 		this.view.reveal(this.project.name);
 	}
 
-	async loadDeployments() {
+	setProjectNameInView() {
+		this.view.update({
+			type: MessageType.setProjectName,
+			payload: this.project?.name,
+		});
+	}
+
+	async loadAndDisplayDeployments() {
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
 		if (error) {
 			commands.executeCommand(vsCommands.showErrorMessage, error as string);
@@ -56,32 +74,20 @@ export class ProjectController {
 			type: MessageType.setDeployments,
 			payload: deploymentsViewObject,
 		});
-	}
 
-	async refreshView() {
-		await this.loadDeployments();
+		this.view.update({ type: MessageType.setSessionsSection, payload: undefined });
+
 		if (this.selectedDeploymentId) {
 			await this.selectDeployment(this.selectedDeploymentId);
 		}
 	}
 
-	async selectDeployment(deploymentId?: string): Promise<void> {
+	async selectDeployment(deploymentId: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
-		if (!deploymentId) {
-			return;
-		}
 		const { data: sessions, error } = await RequestHandler.handleServiceResponse(() =>
 			SessionsService.listByDeploymentId(deploymentId)
 		);
 		if (error) {
-			commands.executeCommand(vsCommands.showErrorMessage, error as string);
-
-			LoggerService.print(
-				namespaces.deploymentsService,
-				error as string,
-				channels.appOutputLogName
-			);
-
 			return;
 		}
 
@@ -101,15 +107,20 @@ export class ProjectController {
 		});
 	}
 
-	async displaySessionLogs(sessionId?: string): Promise<void> {
-		if (!sessionId) {
-			return;
-		}
+	async displaySessionsHistory(sessionId: string): Promise<void> {
 		const { data: sessionHistoryStates, error } =
 			await SessionsService.getHistoryBySessionId(sessionId);
 		if (error || !sessionHistoryStates?.length) {
 			return;
 		}
+
+		if (
+			isEqual(this.sessionHistoryStates, sessionHistoryStates) &&
+			this.sessionHistoryStates?.length
+		) {
+			return;
+		}
+		this.sessionHistoryStates = sessionHistoryStates;
 
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
@@ -140,24 +151,32 @@ export class ProjectController {
 		});
 	}
 
-	async startInterval() {
-		if (!this.intervalTimerId) {
-			await this.loadDeployments();
-			this.view.update({ type: MessageType.setSessionsSection, payload: undefined });
-			this.view.update({
-				type: MessageType.setProjectName,
-				payload: this.project?.name,
-			});
-
-			this.intervalTimerId = setInterval(() => this.refreshView(), this.refreshRate);
-		}
+	async displaySessionLogs(sessionId: string): Promise<void> {
+		this.startInterval(
+			ProjectIntervals.sessions,
+			() => this.displaySessionsHistory(sessionId),
+			this.sessionsLogRefreshRate
+		);
 	}
 
-	stopInterval() {
-		if (this.intervalTimerId) {
-			clearInterval(this.intervalTimerId);
-			this.intervalTimerId = undefined;
+	async startInterval(
+		intervalKey: ProjectIntervals,
+		loadFunc: () => Promise<void>,
+		refreshRate: number
+	) {
+		if (this.intervalKeeper.has(intervalKey)) {
+			this.stopInterval(intervalKey);
 		}
+		await loadFunc();
+		this.intervalKeeper.set(
+			intervalKey,
+			setInterval(() => loadFunc(), refreshRate)
+		);
+	}
+
+	stopInterval(intervalKey: ProjectIntervals) {
+		clearInterval(this.intervalKeeper.get(intervalKey));
+		this.intervalKeeper.delete(intervalKey);
 	}
 
 	public async openProject(disposeCB: Callback<string>) {
@@ -165,66 +184,97 @@ export class ProjectController {
 		const { data: project } = await RequestHandler.handleServiceResponse(
 			() => ProjectsService.get(this.projectId),
 			{
-				onFailureMessage: translate().t("errors.projectNotFound"),
+				formatFailureMessage: (): string => translate().t("projects.projectNotFound"),
 			}
 		);
 		if (project) {
 			this.project = project;
 			this.view.show(this.project.name);
-			this.startInterval();
+			this.startInterval(
+				ProjectIntervals.deployments,
+				() => this.loadAndDisplayDeployments(),
+				this.deploymentsRefreshRate
+			);
 		}
 	}
 
 	onBlur() {
-		this.stopInterval();
+		this.stopInterval(ProjectIntervals.deployments);
+		this.stopInterval(ProjectIntervals.sessions);
 		this.deployments = undefined;
 		this.sessions = undefined;
 	}
 
 	onFocus() {
-		this.startInterval();
+		this.setProjectNameInView();
+		this.startInterval(
+			ProjectIntervals.deployments,
+			() => this.loadAndDisplayDeployments(),
+			this.deploymentsRefreshRate
+		);
 	}
 
 	onClose() {
-		this.stopInterval();
+		this.stopInterval(ProjectIntervals.sessions);
+		this.stopInterval(ProjectIntervals.deployments);
 		this.disposeCB?.(this.projectId);
 	}
 
 	async build() {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(this.projectId), {
-			onSuccessMessage: translate().t("projects.projectBuildSucceed", {
-				projectId: this.projectId,
-			}),
-			onFailureMessage: translate().t("projects.projectBuildFailed", {
-				projectId: this.projectId,
-			}),
+			formatSuccessMessage: (data?: string): string =>
+				`${translate().t("projects.projectBuildSucceed", { id: data })}`,
+			formatFailureMessage: (error): string =>
+				translate().t("projects.projectBuildFailed", {
+					id: this.projectId,
+					error: (error as Error).message,
+				}),
 		});
 	}
 
 	async run() {
-		await RequestHandler.handleServiceResponse(() => ProjectsService.run(this.projectId), {
-			onSuccessMessage: translate().t("projects.projectDeploySucceed"),
-			onFailureMessage: translate().t("projects.projectDeployFailed"),
+		const { data: deploymentId } = await RequestHandler.handleServiceResponse(
+			() => ProjectsService.run(this.projectId),
+			{
+				formatSuccessMessage: (): string =>
+					`${translate().t("projects.projectDeploySucceed", { id: this.projectId })}`,
+				formatFailureMessage: (error): string =>
+					`${translate().t("projects.projectDeployFailed", {
+						id: this.projectId,
+						error: (error as Error).message,
+					})}`,
+			}
+		);
+
+		this.selectedDeploymentId = deploymentId;
+
+		this.view.update({
+			type: MessageType.selectDeployment,
+			payload: deploymentId,
 		});
 	}
 
-	async activateDeployment(deploymentId?: string) {
-		if (!deploymentId) {
-			return;
-		}
+	async activateDeployment(deploymentId: string) {
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.activate(deploymentId), {
-			onSuccessMessage: translate().t("deployments.activationSucceed"),
-			onFailureMessage: translate().t("deployments.activationFailed"),
+			formatSuccessMessage: (): string =>
+				`${translate().t("deployments.activationSucceed", { id: deploymentId })}`,
+			formatFailureMessage: (error): string =>
+				`${translate().t("deployments.activationFailed", {
+					id: deploymentId,
+					error: (error as Error).message,
+				})}`,
 		});
 	}
 
-	async deactivateDeployment(deploymentId?: string) {
-		if (!deploymentId) {
-			return;
-		}
+	async deactivateDeployment(deploymentId: string) {
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.deactivate(deploymentId), {
-			onSuccessMessage: translate().t("deployments.deactivationSucceed"),
-			onFailureMessage: translate().t("deployments.deactivationFailed"),
+			formatSuccessMessage: (): string =>
+				`${translate().t("deployments.deactivationSucceed", { id: deploymentId })}`,
+			formatFailureMessage: (error): string =>
+				`${translate().t("deployments.deactivationFailed", {
+					id: deploymentId,
+					error: (error as Error).message,
+				})}`,
 		});
 	}
 }

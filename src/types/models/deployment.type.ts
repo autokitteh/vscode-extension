@@ -4,7 +4,7 @@ export type Deployment = {
 	deploymentId: string;
 	envId: string;
 	buildId: string;
-	createdAt?: Date;
+	createdAt: Date;
 	state: number;
 	sessionStats?: {
 		state?: SessionStateType;

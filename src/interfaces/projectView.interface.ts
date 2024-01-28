@@ -1,11 +1,11 @@
 import { Callback } from "@type/interfaces";
 
 export interface IProjectViewDelegate {
-	onClose?: Callback<void>;
-	onBlur?: Callback<void>;
-	onFocus?: Callback<void>;
-	build: Callback<void>;
-	run: Callback<void>;
+	onClose?: Callback;
+	onBlur?: Callback;
+	onFocus?: Callback;
+	build: Callback;
+	run: Callback;
 	selectDeployment?: Callback<string>;
 	displaySessionLogs?: Callback<string>;
 	activateDeployment?: Callback<string>;

@@ -1,5 +1,9 @@
 /* eslint-disable unicorn/filename-case */
+/* eslint-disable @typescript-eslint/naming-convention */
 module.exports = {
-	// eslint-disable-next-line @typescript-eslint/naming-convention
-	"*.{ts,tsx}": (filenames) => ["npm run format:fix", "npm run validate"],
+	"**/*.{js,jsx,ts,tsx}": () => [
+		"npm run check-types",
+		"npm run fix-eslint:staged",
+		"npm run check-format:staged",
+	],
 };

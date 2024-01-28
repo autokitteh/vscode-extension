@@ -5,7 +5,6 @@ import { LoggerService, ManifestService } from "@services";
 import { commands, window } from "vscode";
 
 export const applyManifest = async () => {
-	const logger = LoggerService;
 	if (!window.activeTextEditor) {
 		return;
 	}
@@ -19,7 +18,7 @@ export const applyManifest = async () => {
 		errorHelper(namespaces.applyManifest, error);
 		return;
 	}
-	(logs || []).forEach((log) => logger.log(namespaces.applyManifest, `${log}`));
+	(logs || []).forEach((log) => LoggerService.info(namespaces.applyManifest, `${log}`));
 	commands.executeCommand(
 		vsCommands.showInfoMessage,
 		namespaces.applyManifest,
