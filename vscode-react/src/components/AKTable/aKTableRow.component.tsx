@@ -7,7 +7,6 @@ interface AKTableRowProps {
 }
 
 export const AKTableRow = ({ children, isSelected }: AKTableRowProps) => {
-	const baseClass = "bg-tab-active-foreground";
-	const rowClass = clsx(baseClass, isSelected && "bg-gray-500");
+	const rowClass = clsx(isSelected && "bg-vscode-editor-selectionBackground");
 	return <tr className={rowClass}>{children}</tr>;
 };
