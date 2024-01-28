@@ -1,3 +1,10 @@
+# [0.7.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.7.0-dev.1...v0.7.0-dev.2) (2024-01-28)
+
+
+### Features
+
+* pull session history every second ([#115](https://github.com/autokitteh/vscode-extension/issues/115)) ([5d83129](https://github.com/autokitteh/vscode-extension/commit/5d83129b4ce0beac389f10e03e3aa752075681c4))
+
 # [0.7.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.6.1...v0.7.0-dev.1) (2024-01-25)
 
 
