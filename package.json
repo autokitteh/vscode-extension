@@ -25,6 +25,24 @@
 				"language": "starlark"
 			}
 		],
+		"yamlValidation": [
+			{
+				"fileMatch": "*.ak.yaml",
+				"url": "./manifest.schema.json"
+			},
+			{
+				"fileMatch": "*.ak.yml",
+				"url": "./manifest.schema.json"
+			},
+			{
+				"fileMatch": "autokitteh.yaml",
+				"url": "./manifest.schema.json"
+			},
+			{
+				"fileMatch": "autokitteh.yml",
+				"url": "./manifest.schema.json"
+			}
+		],
 		"commands": [
 			{
 				"command": "autokitteh.applyManifest",
