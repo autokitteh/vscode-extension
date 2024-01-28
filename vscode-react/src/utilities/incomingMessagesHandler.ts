@@ -21,6 +21,9 @@ export const HandleIncomingMessages = (
 			break;
 		case MessageType.setSessionsSection:
 			handlers.setSessionsSection(payload as SessionSectionViewModel);
+			break;
+		case MessageType.selectDeployment:
+			handlers.setSelectedDeploymentId(payload as string);
 		default:
 	}
 };
