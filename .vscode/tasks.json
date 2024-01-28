@@ -4,9 +4,10 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "npm",
-			"script": "watch",
+			"label": "Clean and Compile",
+			"type": "shell",
 			"problemMatcher": "$tsc-watch",
+			"command": "rm -rf dist && tsc --watch",
 			"isBackground": true,
 			"presentation": {
 				"reveal": "never"
