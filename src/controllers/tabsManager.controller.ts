@@ -1,4 +1,4 @@
-import { projectControllerRefreshRate } from "@constants/api.constants";
+import { projectControllerRefreshRate, projectControllerSessionsLogRefreshRate } from "@constants";
 import { ProjectController } from "@controllers";
 import { SidebarTreeItem } from "@type/views";
 import { ProjectView } from "@views";
@@ -21,7 +21,8 @@ export class TabsManagerController {
 				const newController = new ProjectController(
 					newView,
 					project.key,
-					projectControllerRefreshRate
+					projectControllerRefreshRate,
+					projectControllerSessionsLogRefreshRate
 				);
 				newController.openProject(() => this.disposeWebview(project.key as string));
 				this.openWebviews[project.key] = newController;
