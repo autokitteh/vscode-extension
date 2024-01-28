@@ -14,3 +14,10 @@ export {
 export { vsCommands } from "@constants/vsCommands.constants";
 export { namespaces } from "@constants/namespaces.logger.constants";
 export { channels } from "@constants/output.constants";
+export {
+	starlarkLSPUriScheme,
+	starlarkLSPPath,
+	startlarkLSPServerType,
+	starlarkLSPPreloadDirPath,
+	starlarkLSPArgs,
+} from "@constants/starlark.constants";
