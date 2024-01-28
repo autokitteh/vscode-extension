@@ -1,3 +1,10 @@
+# [0.7.0](https://github.com/autokitteh/vscode-extension/compare/v0.6.1...v0.7.0) (2024-01-28)
+
+
+### Features
+
+* project page design and functionality improvement, better notifications and LSP Server improvements ([1d7fe2f](https://github.com/autokitteh/vscode-extension/commit/1d7fe2fa98b8988f594d5743ce6bbf757912d665))
+
 # [0.7.0-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.7.0-dev.3...v0.7.0-dev.4) (2024-01-28)
 
 
