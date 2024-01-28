@@ -36,7 +36,6 @@ export async function activate(context: ExtensionContext) {
 			}
 		})
 	);
-
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
 	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));
 	context.subscriptions.push(
