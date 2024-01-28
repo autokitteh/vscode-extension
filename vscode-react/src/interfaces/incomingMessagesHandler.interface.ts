@@ -6,4 +6,5 @@ export interface IIncomingMessagesHandler {
 	setThemeVisualType(themeKind: Theme | undefined): void;
 	setProjectName(projectName: string | undefined): void;
 	setSessionsSection(sessions: SessionSectionViewModel | undefined): void;
+	setSelectedDeploymentId(selectDeploymentId: string | undefined): void;
 }

@@ -245,9 +245,19 @@ export class ProjectController {
 	}
 
 	async run() {
-		await RequestHandler.handleServiceResponse(() => ProjectsService.run(this.projectId), {
-			onSuccessMessage: translate().t("projects.projectDeploySucceed"),
-			onFailureMessage: translate().t("projects.projectDeployFailed"),
+		const { data: deploymentId } = await RequestHandler.handleServiceResponse(
+			() => ProjectsService.run(this.projectId),
+			{
+				onSuccessMessage: translate().t("projects.projectDeploySucceed"),
+				onFailureMessage: translate().t("projects.projectDeployFailed"),
+			}
+		);
+
+		this.selectedDeploymentId = deploymentId;
+
+		this.view.update({
+			type: MessageType.selectDeployment,
+			payload: deploymentId,
 		});
 	}
 

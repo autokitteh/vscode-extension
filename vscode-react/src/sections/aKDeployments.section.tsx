@@ -18,6 +18,7 @@ import { Deployment } from "@type/models";
 export const AKDeployments = ({
 	deployments,
 	totalDeployments = 0,
+	selectedDeploymentId,
 }: DeploymentSectionViewModel) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
@@ -25,10 +26,17 @@ export const AKDeployments = ({
 	const [selectedDeployment, setSelectedDeployment] = useState("");
 
 	useEffect(() => {
+		if (typeof selectedDeploymentId === "string") {
+			setSelectedDeployment(selectedDeploymentId);
+		}
+	}, [selectedDeploymentId]);
+
+	useEffect(() => {
 		if (deployments && isLoading) {
 			setIsLoading(false);
 		}
 	}, [deployments]);
+
 	useEffect(() => {
 		const interval = setInterval(() => {
 			setRerender((rerender) => rerender + 1);
