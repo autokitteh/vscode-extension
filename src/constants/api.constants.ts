@@ -10,6 +10,10 @@ export const baseURLFromVSCode: string = getConfig<string>("autokitteh.baseURL",
 
 export const BASE_URL = ValidateURL(baseURLFromVSCode) ? baseURLFromVSCode : "";
 
+export const gRPCErrors = {
+	serverNotRespond: 14, // UNAVAILABLE: Connection Failed
+};
+
 export const sidebarControllerRefreshRate: number =
 	Math.max(
 		0,
