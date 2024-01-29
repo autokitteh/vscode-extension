@@ -1,0 +1,173 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://go.autokitteh.dev/autokitteh/internal/apply/root",
+	"$ref": "#/$defs/Root",
+	"$defs": {
+		"Connection": {
+			"properties": {
+				"project": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"integration": {
+					"type": "string"
+				},
+				"token": {
+					"type": "string"
+				},
+				"token_env_var": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": false,
+			"type": "object",
+			"required": ["name", "integration"]
+		},
+		"Env": {
+			"properties": {
+				"project": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"vars": {
+					"items": {
+						"$ref": "#/$defs/Var"
+					},
+					"type": "array"
+				},
+				"mappings": {
+					"items": {
+						"$ref": "#/$defs/Mapping"
+					},
+					"type": "array"
+				}
+			},
+			"additionalProperties": false,
+			"type": "object",
+			"required": ["name"]
+		},
+		"Mapping": {
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"connection": {
+					"type": "string"
+				},
+				"events": {
+					"items": {
+						"$ref": "#/$defs/MappingEvent"
+					},
+					"type": "array"
+				}
+			},
+			"additionalProperties": false,
+			"type": "object",
+			"required": ["name", "connection"]
+		},
+		"MappingEvent": {
+			"properties": {
+				"type": {
+					"type": "string"
+				},
+				"entrypoint": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": false,
+			"type": "object",
+			"required": ["type"]
+		},
+		"Project": {
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"root_path": {
+					"type": "string"
+				},
+				"paths": {
+					"items": {
+						"type": "string"
+					},
+					"type": "array"
+				},
+				"connections": {
+					"items": {
+						"$ref": "#/$defs/Connection"
+					},
+					"type": "array"
+				},
+				"envs": {
+					"items": {
+						"$ref": "#/$defs/Env"
+					},
+					"type": "array"
+				}
+			},
+			"additionalProperties": false,
+			"type": "object",
+			"required": ["name", "paths"]
+		},
+		"Root": {
+			"properties": {
+				"version": {
+					"type": "string"
+				},
+				"connection": {
+					"$ref": "#/$defs/Connection"
+				},
+				"env": {
+					"$ref": "#/$defs/Env"
+				},
+				"project": {
+					"$ref": "#/$defs/Project"
+				},
+				"connections": {
+					"items": {
+						"$ref": "#/$defs/Connection"
+					},
+					"type": "array"
+				},
+				"envs": {
+					"items": {
+						"$ref": "#/$defs/Env"
+					},
+					"type": "array"
+				},
+				"projects": {
+					"items": {
+						"$ref": "#/$defs/Project"
+					},
+					"type": "array"
+				}
+			},
+			"additionalProperties": false,
+			"type": "object",
+			"required": ["version"]
+		},
+		"Var": {
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"value": {
+					"type": "string"
+				},
+				"is_secret": {
+					"type": "boolean"
+				},
+				"env_var": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": false,
+			"type": "object",
+			"required": ["name"]
+		}
+	}
+}
