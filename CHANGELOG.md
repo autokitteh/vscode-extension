@@ -1,3 +1,10 @@
+# [0.8.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.7.0...v0.8.0-dev.1) (2024-01-29)
+
+
+### Features
+
+* add yaml schema validation ([#121](https://github.com/autokitteh/vscode-extension/issues/121)) ([2731675](https://github.com/autokitteh/vscode-extension/commit/2731675a1b410a9d0fcd94f6b295957a28372ad7))
+
 # [0.7.0](https://github.com/autokitteh/vscode-extension/compare/v0.6.1...v0.7.0) (2024-01-28)
 
 
