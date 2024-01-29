@@ -15,6 +15,9 @@
 		"@views": "dist/src/views",
 		"@vscommands": "dist/src/vscommands"
 	},
+	"extensionDependencies": [
+		"redhat.vscode-yaml"
+	],
 	"contributes": {
 		"activationEvents": [
 			"onCommand:autokitteh.buildProject",
@@ -28,19 +31,19 @@
 		"yamlValidation": [
 			{
 				"fileMatch": "*.ak.yaml",
-				"url": "./manifest.schema.json"
+				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
 			},
 			{
 				"fileMatch": "*.ak.yml",
-				"url": "./manifest.schema.json"
+				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
 			},
 			{
 				"fileMatch": "autokitteh.yaml",
-				"url": "./manifest.schema.json"
+				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
 			},
 			{
 				"fileMatch": "autokitteh.yml",
-				"url": "./manifest.schema.json"
+				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
 			}
 		],
 		"commands": [
