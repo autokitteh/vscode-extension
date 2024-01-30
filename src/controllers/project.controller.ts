@@ -264,6 +264,7 @@ export class ProjectController {
 					error: (error as Error).message,
 				})}`,
 		});
+		this.sessions = undefined;
 	}
 
 	async deactivateDeployment(deploymentId: string) {
@@ -276,5 +277,6 @@ export class ProjectController {
 					error: (error as Error).message,
 				})}`,
 		});
+		this.sessions = undefined;
 	}
 }
