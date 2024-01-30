@@ -57,6 +57,12 @@ export class ProjectsService {
 			return { data: undefined, error: envError };
 		}
 
+		if (!environments?.length) {
+			const errorMessage = translate().t("errors.defaultEnvironmentNotFound");
+			LoggerService.error(namespaces.projectService, errorMessage);
+			return { data: undefined, error: new Error(errorMessage) };
+		}
+
 		let environment;
 		try {
 			environment = environments![0];
