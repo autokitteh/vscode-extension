@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import https from "https";
 import { connect } from "net";
 import * as os from "os";
 import { namespaces, vsCommands } from "@constants";
@@ -14,16 +15,34 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from
 const host = "127.0.0.1";
 
 async function downloadAndSaveFile(url: string, filePath: string): Promise<void> {
-	const response = await axios({
-		method: "GET",
-		url: url,
-		responseType: "stream",
+	const agent = new https.Agent({
+		rejectUnauthorized: false,
 	});
 
-	response.data.pipe(fs.createWriteStream(filePath));
+	try {
+		const response = await axios.get(url, {
+			httpsAgent: agent,
+			responseType: "stream",
+		});
+
+		response.data.on("error", (err: any) => {
+			console.error("Error during HTTP request:", err);
+			throw err;
+		});
+
+		const writer = fs.createWriteStream(filePath);
+		writer.on("error", (err) => {
+			console.error("Error writing file:", err);
+			throw err;
+		});
+
+		await response.data.pipe(writer);
+	} catch (error) {
+		console.error(error);
+	}
 }
 
-const downloadExecutable = async () => {
+const downloadExecutable = async (extensionPath: string) => {
 	const userResponse = await window.showInformationMessage(
 		translate().t("starlark.downloadExecutableDialog"),
 		"Yes",
@@ -31,14 +50,12 @@ const downloadExecutable = async () => {
 	);
 
 	if (userResponse === "Yes") {
-		const saveUri = await window.showSaveDialog({});
-
 		let fileAddress: string;
 		let platform = os.platform();
 
 		switch (platform) {
 			case "darwin":
-				fileAddress = "http://example.com/file.dmg";
+				fileAddress = "https://media.tenor.com/lnbK373D2AkAAAAe/kot-koty.png";
 				break;
 			case "linux":
 				fileAddress = "http://example.com/file.deb";
@@ -54,9 +71,9 @@ const downloadExecutable = async () => {
 				return;
 		}
 
-		if (saveUri) {
-			await downloadAndSaveFile(fileAddress, saveUri.fsPath);
-			workspace.getConfiguration().set("autokitteh.starlarkLSPPath", saveUri.fsPath);
+		if (extensionPath) {
+			await downloadAndSaveFile(fileAddress, `${extensionPath}/kitteh.png`);
+			workspace.getConfiguration().set("autokitteh.starlarkLSPPath", extensionPath);
 
 			commands.executeCommand(
 				vsCommands.showInfoMessage,
@@ -69,12 +86,13 @@ const downloadExecutable = async () => {
 
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;
-	private static lspServerErrorDisplayed: boolean = false;
+	private static extensionPath: string;
 
-	public static init() {
+	public static init(extensionPath: string) {
 		if (StarlarkLSPService.languageClient) {
 			return;
 		}
+		this.extensionPath = extensionPath;
 		this.initiateLSPServer();
 		workspace.onDidChangeConfiguration(this.onChangeConfiguration);
 	}
@@ -88,12 +106,13 @@ export class StarlarkLSPService {
 			return;
 		}
 
-		if (!starlarkLSPPath) {
-			if (!fs.existsSync(starlarkLSPPath)) {
-				downloadExecutable();
-				return;
-			}
+		const localStarlarkFile = `${this.extensionPath}/starlark`;
+
+		if (!fs.existsSync(localStarlarkFile)) {
+			downloadExecutable(this.extensionPath);
+			return;
 		}
+
 		let serverOptions: ServerOptions | Promise<StreamInfo> = {
 			command: starlarkLSPPath,
 			args: starlarkLSPArgs,
