@@ -32,12 +32,10 @@ export class ProjectsService {
 		}
 	}
 
-	static async build(projectId: string, logError: boolean = true): Promise<ServiceResponse<string>> {
+	static async build(projectId: string): Promise<ServiceResponse<string>> {
 		const { buildId, error } = await projectsClient.build({ projectId });
 		if (error) {
-			if (logError) {
-				LoggerService.error(`${namespaces.projectService} - Build`, error.message);
-			}
+			LoggerService.error(`${namespaces.projectService} - Build`, error.message);
 
 			return { data: undefined, error };
 		}
@@ -74,7 +72,6 @@ export class ProjectsService {
 	static async run(projectId: string): Promise<ServiceResponse<string>> {
 		const { data: buildId, error: buildError } = await this.build(projectId);
 		if (buildError) {
-			LoggerService.error(`${namespaces.projectService} - Build`, (buildError as Error).message);
 			return { data: undefined, error: buildError };
 		}
 		const { data: deploymentId, error } = await this.deploy(projectId, buildId!);
