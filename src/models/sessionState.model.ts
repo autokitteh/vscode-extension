@@ -53,11 +53,7 @@ export class SessionState {
 					this.state = new RunningState(prints, call);
 					break;
 				case SessionStateType.error:
-					const errorMessage = get(
-						state,
-						"states.value.error.message",
-						translate().t("errors.unexpectedError")
-					);
+					const errorMessage = get(state, "states.value.error.message", translate().t("errors.unexpectedError"));
 					this.state = new ErrorState(errorMessage);
 					break;
 				case SessionStateType.completed:
@@ -86,10 +82,7 @@ export class SessionState {
 	}
 
 	containLogs(): boolean {
-		return (
-			(this.state instanceof RunningState || this.state instanceof CompletedState) &&
-			this.state.logs.length > 0
-		);
+		return (this.state instanceof RunningState || this.state instanceof CompletedState) && this.state.logs.length > 0;
 	}
 
 	getLogs(): string[] {

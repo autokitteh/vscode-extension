@@ -4,10 +4,7 @@ import { LoggerService } from "@services";
 import { ServiceResponse } from "@type/services.types";
 
 export class ManifestService {
-	static async applyManifest(
-		manifestYaml: string,
-		path: string
-	): Promise<ServiceResponse<string[]>> {
+	static async applyManifest(manifestYaml: string, path: string): Promise<ServiceResponse<string[]>> {
 		try {
 			const { logs } = await manifestApplyClient.apply({ manifest: manifestYaml, path });
 			return { data: logs, error: undefined };

@@ -32,11 +32,7 @@ export class LoggerService {
 		);
 	}
 
-	public static info(
-		namespace: string,
-		message: string,
-		channelName: string = LoggerService.defaultChannelName
-	): void {
+	public static info(namespace: string, message: string, channelName: string = LoggerService.defaultChannelName): void {
 		this.output(namespace, message, channelName);
 	}
 
@@ -58,11 +54,7 @@ export class LoggerService {
 		this.output(namespace, message, channelName, LoggerLevel.debug);
 	}
 
-	public static warn(
-		namespace: string,
-		message: string,
-		channelName: string = LoggerService.defaultChannelName
-	): void {
+	public static warn(namespace: string, message: string, channelName: string = LoggerService.defaultChannelName): void {
 		this.initializeOutputChannel(channelName);
 
 		this.output(namespace, message, channelName, LoggerLevel.warn);

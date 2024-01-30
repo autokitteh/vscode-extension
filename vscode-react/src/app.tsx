@@ -13,9 +13,7 @@ import { Message } from "@type";
 import "./app.css";
 
 function App() {
-	const [deploymentsSection, setDeploymentsSection] = useState<
-		DeploymentSectionViewModel | undefined
-	>();
+	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel | undefined>();
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
@@ -48,9 +46,7 @@ function App() {
 					<div className="flex mr-8">
 						<div className="flex items-center">
 							<AKLogo className="w-12 h-12" themeVisualType={themeVisualType} />
-							<div className="text-vscode-input-foreground font-bold ml-4 text-lg">
-								{projectName}
-							</div>
+							<div className="text-vscode-input-foreground font-bold ml-4 text-lg">{projectName}</div>
 							<AKButton classes="mx-4" onClick={() => sendMessage(MessageType.buildProject)}>
 								<div className="codicon codicon-tools mr-2"></div>
 								{translate().t("reactApp.general.build")}
@@ -66,10 +62,7 @@ function App() {
 						totalDeployments={deploymentsSection?.totalDeployments}
 						selectedDeploymentId={selectedDeploymentId}
 					/>
-					<AKSessions
-						sessions={sessionsSection?.sessions}
-						totalSessions={sessionsSection?.totalSessions}
-					/>
+					<AKSessions sessions={sessionsSection?.sessions} totalSessions={sessionsSection?.totalSessions} />
 				</div>
 			) : (
 				<div className="flex justify-center items-center h-screen w-screen">

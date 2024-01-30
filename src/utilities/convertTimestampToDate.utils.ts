@@ -7,8 +7,7 @@ import { ProtoTimestamp } from "@type/utilities";
  */
 export const convertTimestampToDate = (timestamp: ProtoTimestamp): Date => {
 	const milliseconds =
-		timestamp.seconds * BigInt(1000) +
-		BigInt(timestamp.nanoseconds ? timestamp.nanoseconds / 1000000 : 0);
+		timestamp.seconds * BigInt(1000) + BigInt(timestamp.nanoseconds ? timestamp.nanoseconds / 1000000 : 0);
 
 	return new Date(Number(milliseconds));
 };
