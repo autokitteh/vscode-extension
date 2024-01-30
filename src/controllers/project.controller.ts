@@ -182,7 +182,7 @@ export class ProjectController {
 	public async openProject(disposeCB: Callback<string>) {
 		this.disposeCB = disposeCB;
 		const { data: project } = await RequestHandler.handleServiceResponse(() => ProjectsService.get(this.projectId), {
-			formatFailureMessage: (): string => translate().t("projects.projectNotFound"),
+			formatFailureMessage: (): string => `${translate().t("projects.projectNotFound")}, Project ID: ${this.projectId}`,
 		});
 		if (project) {
 			this.project = project;

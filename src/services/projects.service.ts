@@ -36,25 +36,17 @@ export class ProjectsService {
 		const { buildId, error } = await projectsClient.build({ projectId });
 		if (error) {
 			if (logError) {
-				LoggerService.error(namespaces.projectService, error.message);
+				LoggerService.error(`${namespaces.projectService} - Build`, error.message);
 			}
+
 			return { data: undefined, error };
 		}
 		return { data: buildId, error: undefined };
 	}
 
-	static async deploy(projectId: string, logError: boolean = true): Promise<ServiceResponse<string>> {
-		const { data: buildId, error: buildError } = await this.build(projectId);
-		if (buildError) {
-			if (logError) {
-				LoggerService.error(namespaces.projectService, (buildError as Error).message);
-			}
-			return { data: undefined, error: buildError };
-		}
-
+	static async deploy(projectId: string, buildId: string): Promise<ServiceResponse<string>> {
 		const { data: environments, error: envError } = await EnvironmentsService.listByProjectId(projectId);
 		if (envError) {
-			LoggerService.error(namespaces.projectService, (envError as Error).message);
 			return { data: undefined, error: envError };
 		}
 
@@ -80,9 +72,14 @@ export class ProjectsService {
 	}
 
 	static async run(projectId: string): Promise<ServiceResponse<string>> {
-		const { data: deploymentId, error } = await this.deploy(projectId, false);
+		const { data: buildId, error: buildError } = await this.build(projectId);
+		if (buildError) {
+			LoggerService.error(`${namespaces.projectService} - Build`, (buildError as Error).message);
+			return { data: undefined, error: buildError };
+		}
+		const { data: deploymentId, error } = await this.deploy(projectId, buildId!);
 		if (error) {
-			LoggerService.error(namespaces.projectService, (error as Error).message);
+			LoggerService.error(`${namespaces.projectService} - Deploy`, (error as Error).message);
 
 			return {
 				data: undefined,
@@ -92,7 +89,7 @@ export class ProjectsService {
 
 		const { error: activateError } = await DeploymentsService.activate(deploymentId!);
 		if (activateError) {
-			LoggerService.error(namespaces.projectService, (activateError as Error).message);
+			LoggerService.error(`${namespaces.projectService} - Activate`, (activateError as Error).message);
 			return { data: undefined, error: activateError };
 		}
 		return { data: deploymentId, error: undefined };
