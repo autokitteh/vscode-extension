@@ -8,6 +8,7 @@ import reactAppDeployments from "@i18n/en/reactApp/deployments.reactApp.i18n.jso
 import reactAppGeneral from "@i18n/en/reactApp/general.reactApp.i18n.json";
 import reactAppSessions from "@i18n/en/reactApp/sessions.reactApp.i18n.json";
 import sessions from "@i18n/en/sessions.i18n.json";
+import starlark from "@i18n/en/starlark.i18n.json";
 import walkthrough from "@i18n/en/walkthrough.i18n.json";
 
 export const english = {
@@ -16,6 +17,7 @@ export const english = {
 	messages,
 	general,
 	walkthrough,
+	starlark,
 	manifest,
 	sessions,
 	deployments,

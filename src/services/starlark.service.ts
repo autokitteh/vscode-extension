@@ -1,14 +1,71 @@
+import * as fs from "fs";
 import { connect } from "net";
+import * as os from "os";
 import { namespaces, vsCommands } from "@constants";
 import { starlarkLSPPath, starlarkLSPUriScheme, starlarkLSPArgs } from "@constants";
 import { getConfig } from "@constants/utilities";
 import { translate } from "@i18n";
 import { LoggerService } from "@services/logger.service";
 import { StarlarkFileHandler } from "@starlark";
-import { workspace, commands, ConfigurationChangeEvent } from "vscode";
+import axios from "axios";
+import { workspace, commands, ConfigurationChangeEvent, window } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from "vscode-languageclient";
 
 const host = "127.0.0.1";
+
+async function downloadAndSaveFile(url: string, filePath: string): Promise<void> {
+	const response = await axios({
+		method: "GET",
+		url: url,
+		responseType: "stream",
+	});
+
+	response.data.pipe(fs.createWriteStream(filePath));
+}
+
+const downloadExecutable = async () => {
+	const userResponse = await window.showInformationMessage(
+		translate().t("starlark.downloadExecutableDialog"),
+		"Yes",
+		"No"
+	);
+
+	if (userResponse === "Yes") {
+		const saveUri = await window.showSaveDialog({});
+
+		let fileAddress: string;
+		let platform = os.platform();
+
+		switch (platform) {
+			case "darwin":
+				fileAddress = "http://example.com/file.dmg";
+				break;
+			case "linux":
+				fileAddress = "http://example.com/file.deb";
+				break;
+			case "win32":
+				fileAddress = "http://example.com/file.exe";
+				break;
+			default:
+				let error = `${platform} is not supported.`;
+
+				commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, error);
+				LoggerService.error(namespaces.deploymentsService, error);
+				return;
+		}
+
+		if (saveUri) {
+			await downloadAndSaveFile(fileAddress, saveUri.fsPath);
+			workspace.getConfiguration().set("autokitteh.starlarkLSPPath", saveUri.fsPath);
+
+			commands.executeCommand(
+				vsCommands.showInfoMessage,
+				namespaces.startlarkLSPServer,
+				translate().t("starlark.executableDownloadedSuccefully")
+			);
+		}
+	}
+};
 
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;
@@ -31,6 +88,12 @@ export class StarlarkLSPService {
 			return;
 		}
 
+		if (!starlarkLSPPath) {
+			if (!fs.existsSync(starlarkLSPPath)) {
+				downloadExecutable();
+				return;
+			}
+		}
 		let serverOptions: ServerOptions | Promise<StreamInfo> = {
 			command: starlarkLSPPath,
 			args: starlarkLSPArgs,

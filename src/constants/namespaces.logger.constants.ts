@@ -11,4 +11,5 @@ export const namespaces = {
 	appStateHandler: "Application State",
 	sessionLogs: "Session Logs",
 	startlarkLSPServer: "Starlark LSP",
+	starlarkLSPExecutable: "Starlkar LSP Executable Download",
 };
