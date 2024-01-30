@@ -73,7 +73,7 @@ export class ProjectsService {
 
 		const { data: deploymentId, error } = await DeploymentsService.create({
 			buildId: buildId!,
-			envId: environment!.envId,
+			envId: environment.envId,
 		});
 
 		if (error) {
