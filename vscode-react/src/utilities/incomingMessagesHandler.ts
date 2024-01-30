@@ -3,10 +3,7 @@ import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
 
-export const HandleIncomingMessages = (
-	event: MessageEvent<Message>,
-	handlers: IIncomingMessagesHandler
-) => {
+export const HandleIncomingMessages = (event: MessageEvent<Message>, handlers: IIncomingMessagesHandler) => {
 	const { payload } = event.data as Message;
 
 	switch (event.data.type) {

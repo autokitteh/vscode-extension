@@ -49,9 +49,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 			) : (
 				<div className="mb-2 w-full min-h-[20px]" />
 			)}
-			<h1 className="text-lg font-extralight mb-2">
-				{translate().t("reactApp.sessions.tableTitle")}
-			</h1>
+			<h1 className="text-lg font-extralight mb-2">{translate().t("reactApp.sessions.tableTitle")}</h1>
 			<AKTable>
 				<AKTableHeader classes="sticky top-0">
 					<AKTableHeaderCell>{translate().t("reactApp.sessions.time")}</AKTableHeaderCell>
@@ -62,41 +60,24 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 				{sessions &&
 					sessions.map((session: Session) => (
 						<AKTableRow key={session.sessionId} isSelected={selectedSession === session.sessionId}>
-							<AKTableCell
-								onClick={() => displaySessionLogs(session.sessionId)}
-								classes={["cursor-pointer"]}
-							>
+							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
 								{getTimePassed(session.createdAt)}
 							</AKTableCell>
-							<AKTableCell
-								onClick={() => displaySessionLogs(session.sessionId)}
-								classes={["cursor-pointer"]}
-							>
+							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
 								<AKSessionState sessionState={session.state} />
 							</AKTableCell>
-							<AKTableCell
-								onClick={() => displaySessionLogs(session.sessionId)}
-								classes={["cursor-pointer"]}
-							>
+							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
 								{session.sessionId}
 							</AKTableCell>
-							<AKTableCell
-								onClick={() => displaySessionLogs(session.sessionId)}
-								classes={["cursor-pointer"]}
-							>
-								<div
-									className="codicon codicon-output"
-									onClick={() => displaySessionLogs(session.sessionId)}
-								></div>
+							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
+								<div className="codicon codicon-output" onClick={() => displaySessionLogs(session.sessionId)}></div>
 							</AKTableCell>
 						</AKTableRow>
 					))}
 			</AKTable>
 			{isLoading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
 			{!sessions && !isLoading && (
-				<AKTableMessage>
-					{translate().t("reactApp.sessions.pickDeploymentToShowSessions")}
-				</AKTableMessage>
+				<AKTableMessage>{translate().t("reactApp.sessions.pickDeploymentToShowSessions")}</AKTableMessage>
 			)}
 			{sessions && sessions.length === 0 && (
 				<AKTableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</AKTableMessage>

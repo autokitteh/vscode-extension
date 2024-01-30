@@ -23,11 +23,7 @@ export class ApiClient implements IApiClient {
 		this.client = this.createAxiosClient();
 	}
 
-	async post<TRequest, TResponse>(
-		path: string,
-		payload: TRequest,
-		config?: RequestConfig
-	): Promise<TResponse> {
+	async post<TRequest, TResponse>(path: string, payload: TRequest, config?: RequestConfig): Promise<TResponse> {
 		try {
 			const response = config
 				? await this.client.post<TResponse>(path, payload, config)

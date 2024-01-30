@@ -34,3 +34,5 @@ yarn-error.log*
 
 # JSON based assets
 vscode-react/assets/**/*.json
+
+**/tsconfig.json

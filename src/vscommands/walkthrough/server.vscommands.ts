@@ -21,9 +21,6 @@ export const setBaseURL = async (baseURL: string) => {
 		commands.executeCommand(vsCommands.showInfoMessage, translate().t("messages.baseURLUpdated"));
 		commands.executeCommand(vsCommands.baseURLUpdated);
 	} else {
-		commands.executeCommand(
-			vsCommands.showErrorMessage,
-			translate().t("errors.walkthrough.badBaseURL")
-		);
+		commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.walkthrough.badBaseURL"));
 	}
 };

@@ -7,8 +7,7 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 	private _onDidChangeTreeData: EventEmitter<TreeItem | undefined | void> = new EventEmitter<
 		TreeItem | undefined | void
 	>();
-	readonly onDidChangeTreeData: Event<TreeItem | undefined | void> =
-		this._onDidChangeTreeData.event;
+	readonly onDidChangeTreeData: Event<TreeItem | undefined | void> = this._onDidChangeTreeData.event;
 
 	private rootNode?: TreeItem;
 	private childNodeMap?: Map<TreeItem, TreeItem[]>;
@@ -20,10 +19,7 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 			this.rootNode = undefined;
 			return;
 		}
-		this.rootNode = new TreeItem(
-			translate().t("projects.projects"),
-			TreeItemCollapsibleState.Expanded
-		);
+		this.rootNode = new TreeItem(translate().t("projects.projects"), TreeItemCollapsibleState.Expanded);
 		this.childNodeMap = new Map();
 
 		const childItems = children.map((child: SidebarTreeItem) => {
