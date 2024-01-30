@@ -65,7 +65,7 @@ export class ProjectsService {
 
 		let environment;
 		try {
-			environment = environments![0];
+			environment = environments[0];
 		} catch (error) {
 			LoggerService.error(namespaces.projectService, (error as Error).message);
 			return { data: undefined, error };
