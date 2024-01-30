@@ -57,17 +57,17 @@ export class ProjectsService {
 			return { data: undefined, error: envError };
 		}
 
-		let environment;
-		try {
-			environment = environments![0];
-		} catch (error) {
-			LoggerService.error(namespaces.projectService, (error as Error).message);
-			return { data: undefined, error };
+		if (!environments?.length) {
+			const errorMessage = translate().t("errors.defaultEnvironmentNotFound");
+			LoggerService.error(namespaces.projectService, errorMessage);
+			return { data: undefined, error: new Error(errorMessage) };
 		}
+
+		const environment = environments[0];
 
 		const { data: deploymentId, error } = await DeploymentsService.create({
 			buildId: buildId!,
-			envId: environment!.envId,
+			envId: environment.envId,
 		});
 
 		if (error) {
