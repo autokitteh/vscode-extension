@@ -41,7 +41,7 @@ export class ProjectController {
 
 	reveal(): void {
 		if (!this.project) {
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.unexpectedError"));
+			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.projectNotFound"));
 			return;
 		}
 		this.view.reveal(this.project.name);
@@ -145,7 +145,7 @@ export class ProjectController {
 		}
 
 		if (lastState.isError()) {
-			const printedError = lastState?.getError() || translate().t("errors.unexpectedError");
+			const printedError = lastState.getError();
 			LoggerService.printError(namespaces.sessionLogs, printedError, channels.appOutputSessionsLogName);
 			return;
 		}
@@ -182,7 +182,7 @@ export class ProjectController {
 	public async openProject(disposeCB: Callback<string>) {
 		this.disposeCB = disposeCB;
 		const { data: project } = await RequestHandler.handleServiceResponse(() => ProjectsService.get(this.projectId), {
-			formatFailureMessage: (): string => translate().t("projects.projectNotFound"),
+			formatFailureMessage: (): string => `${translate().t("projects.projectNotFound")}, Project ID: ${this.projectId}`,
 		});
 		if (project) {
 			this.project = project;
@@ -220,10 +220,9 @@ export class ProjectController {
 	async build() {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(this.projectId), {
 			formatSuccessMessage: (data?: string): string => `${translate().t("projects.projectBuildSucceed", { id: data })}`,
-			formatFailureMessage: (error): string =>
+			formatFailureMessage: (): string =>
 				translate().t("projects.projectBuildFailed", {
 					id: this.projectId,
-					error: (error as Error).message,
 				}),
 		});
 	}
@@ -233,10 +232,9 @@ export class ProjectController {
 			() => ProjectsService.run(this.projectId),
 			{
 				formatSuccessMessage: (): string => `${translate().t("projects.projectDeploySucceed", { id: this.projectId })}`,
-				formatFailureMessage: (error): string =>
+				formatFailureMessage: (): string =>
 					`${translate().t("projects.projectDeployFailed", {
 						id: this.projectId,
-						error: (error as Error).message,
 					})}`,
 			}
 		);
@@ -252,10 +250,9 @@ export class ProjectController {
 	async activateDeployment(deploymentId: string) {
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.activate(deploymentId), {
 			formatSuccessMessage: (): string => `${translate().t("deployments.activationSucceed", { id: deploymentId })}`,
-			formatFailureMessage: (error): string =>
+			formatFailureMessage: (): string =>
 				`${translate().t("deployments.activationFailed", {
 					id: deploymentId,
-					error: (error as Error).message,
 				})}`,
 		});
 	}
@@ -263,10 +260,9 @@ export class ProjectController {
 	async deactivateDeployment(deploymentId: string) {
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.deactivate(deploymentId), {
 			formatSuccessMessage: (): string => `${translate().t("deployments.deactivationSucceed", { id: deploymentId })}`,
-			formatFailureMessage: (error): string =>
+			formatFailureMessage: (): string =>
 				`${translate().t("deployments.deactivationFailed", {
 					id: deploymentId,
-					error: (error as Error).message,
 				})}`,
 		});
 	}

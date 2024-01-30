@@ -53,7 +53,11 @@ export class SessionState {
 					this.state = new RunningState(prints, call);
 					break;
 				case SessionStateType.error:
-					const errorMessage = get(state, "states.value.error.message", translate().t("errors.unexpectedError"));
+					const errorMessage = get(
+						state,
+						"states.value.error.message",
+						translate().t("errors.sessionLogMissingOnErrorType")
+					);
 					this.state = new ErrorState(errorMessage);
 					break;
 				case SessionStateType.completed:
@@ -74,7 +78,7 @@ export class SessionState {
 		if (this.state instanceof ErrorState) {
 			return this.state.error;
 		}
-		return translate().t("errors.unexpectedError");
+		return translate().t("errors.sessionLogMissingErrorMessage");
 	}
 
 	isError(): this is { state: ErrorState } {

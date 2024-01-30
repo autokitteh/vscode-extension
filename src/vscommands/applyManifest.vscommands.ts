@@ -1,5 +1,4 @@
 import { namespaces, vsCommands } from "@constants";
-import { errorHelper } from "@controllers/utilities/errorHelper";
 import { translate } from "@i18n";
 import { LoggerService, ManifestService } from "@services";
 import { commands, window } from "vscode";
@@ -15,7 +14,8 @@ export const applyManifest = async () => {
 
 	const { data: logs, error } = await ManifestService.applyManifest(mainfestYaml, filePath);
 	if (error) {
-		errorHelper(namespaces.applyManifest, error);
+		commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (error as Error).message);
+
 		return;
 	}
 	(logs || []).forEach((log) => LoggerService.info(namespaces.applyManifest, `${log}`));

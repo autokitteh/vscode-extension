@@ -71,4 +71,8 @@ export class LoggerService {
 
 		this.outputChannels[channelName].appendLine(`Error: [${namespace}]: ${message}`);
 	}
+
+	public static reveal(channelName: string = LoggerService.defaultChannelName) {
+		this.outputChannels[channelName].show();
+	}
 }
