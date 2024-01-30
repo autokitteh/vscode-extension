@@ -112,6 +112,11 @@ export class ProjectController {
 			type: MessageType.setSessionsSection,
 			payload: sessionsViewObject,
 		});
+
+		this.view.update({
+			type: MessageType.selectDeployment,
+			payload: deploymentId,
+		});
 	}
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
