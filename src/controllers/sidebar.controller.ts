@@ -28,9 +28,7 @@ export class SidebarController {
 	};
 
 	private fetchProjects = async (): Promise<SidebarTreeItem[] | undefined> => {
-		const { data: projects, error } = await RequestHandler.handleServiceResponse(() =>
-			ProjectsService.list()
-		);
+		const { data: projects, error } = await RequestHandler.handleServiceResponse(() => ProjectsService.list());
 		if (error) {
 			return;
 		}
@@ -60,8 +58,7 @@ export class SidebarController {
 
 	async buildProject(projectId: string) {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(projectId), {
-			formatSuccessMessage: (data?: string): string =>
-				`${translate().t("projects.projectBuildSucceed", { id: data })}`,
+			formatSuccessMessage: (data?: string): string => `${translate().t("projects.projectBuildSucceed", { id: data })}`,
 			formatFailureMessage: (error): string =>
 				translate().t("projects.projectBuildFailed", {
 					id: projectId,
@@ -72,8 +69,7 @@ export class SidebarController {
 
 	async runProject(projectId: string) {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.run(projectId), {
-			formatSuccessMessage: (): string =>
-				`${translate().t("projects.projectDeploySucceed", { id: projectId })}`,
+			formatSuccessMessage: (): string => `${translate().t("projects.projectDeploySucceed", { id: projectId })}`,
 			formatFailureMessage: (error): string =>
 				`${translate().t("projects.projectDeployFailed", {
 					id: projectId,

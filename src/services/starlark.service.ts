@@ -6,12 +6,7 @@ import { translate } from "@i18n";
 import { LoggerService } from "@services/logger.service";
 import { StarlarkFileHandler } from "@starlark";
 import { workspace, commands, ConfigurationChangeEvent } from "vscode";
-import {
-	LanguageClient,
-	LanguageClientOptions,
-	ServerOptions,
-	StreamInfo,
-} from "vscode-languageclient";
+import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from "vscode-languageclient";
 
 const host = "127.0.0.1";
 
@@ -49,17 +44,12 @@ export class StarlarkLSPService {
 		/* By default, the Starlark LSP operates through a CMD command in stdio mode.
 		 * However, if the 'starlarkLSPSocketMode' is enabled, the LSP won't initiate automatically.
 		 * Instead, VSCode connects to 'localhost:starlarkLSPPort', expecting the Starlark LSP to be running in socket mode. */
-		const isLSPSocketMode = workspace
-			.getConfiguration()
-			.get("autokitteh.starlarkLSPSocketMode") as boolean;
+		const isLSPSocketMode = workspace.getConfiguration().get("autokitteh.starlarkLSPSocketMode") as boolean;
 
 		if (isLSPSocketMode) {
 			const port = getConfig<number>("autokitteh.starlarkLSPPort", 0);
 			if (!port) {
-				LoggerService.error(
-					namespaces.startlarkLSPServer,
-					translate().t("errors.missingStarlarkLSPPort")
-				);
+				LoggerService.error(namespaces.startlarkLSPServer, translate().t("errors.missingStarlarkLSPPort"));
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
 					namespaces.startlarkLSPServer,

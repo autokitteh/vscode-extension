@@ -1,9 +1,7 @@
 import { english } from "@i18n/en";
 
 type NestedKeyOf<ObjectType extends object> = {
-	[Key in keyof ObjectType & string]: ObjectType[Key] extends object
-		? `${Key}.${NestedKeyOf<ObjectType[Key]>}`
-		: Key;
+	[Key in keyof ObjectType & string]: ObjectType[Key] extends object ? `${Key}.${NestedKeyOf<ObjectType[Key]>}` : Key;
 }[keyof ObjectType & string];
 
 interface CustomTypeOptions {

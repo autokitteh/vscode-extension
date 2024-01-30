@@ -120,16 +120,12 @@ export class ProjectController {
 	}
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
-		const { data: sessionHistoryStates, error } =
-			await SessionsService.getHistoryBySessionId(sessionId);
+		const { data: sessionHistoryStates, error } = await SessionsService.getHistoryBySessionId(sessionId);
 		if (error || !sessionHistoryStates?.length) {
 			return;
 		}
 
-		if (
-			isEqual(this.sessionHistoryStates, sessionHistoryStates) &&
-			this.sessionHistoryStates?.length
-		) {
+		if (isEqual(this.sessionHistoryStates, sessionHistoryStates) && this.sessionHistoryStates?.length) {
 			return;
 		}
 		this.sessionHistoryStates = sessionHistoryStates;
@@ -150,11 +146,7 @@ export class ProjectController {
 
 		if (lastState.isError()) {
 			const printedError = lastState?.getError() || translate().t("errors.unexpectedError");
-			LoggerService.printError(
-				namespaces.sessionLogs,
-				printedError,
-				channels.appOutputSessionsLogName
-			);
+			LoggerService.printError(namespaces.sessionLogs, printedError, channels.appOutputSessionsLogName);
 			return;
 		}
 
@@ -171,11 +163,7 @@ export class ProjectController {
 		);
 	}
 
-	async startInterval(
-		intervalKey: ProjectIntervals,
-		loadFunc: () => Promise<void>,
-		refreshRate: number
-	) {
+	async startInterval(intervalKey: ProjectIntervals, loadFunc: () => Promise<void>, refreshRate: number) {
 		if (this.intervalKeeper.has(intervalKey)) {
 			this.stopInterval(intervalKey);
 		}
@@ -193,12 +181,9 @@ export class ProjectController {
 
 	public async openProject(disposeCB: Callback<string>) {
 		this.disposeCB = disposeCB;
-		const { data: project } = await RequestHandler.handleServiceResponse(
-			() => ProjectsService.get(this.projectId),
-			{
-				formatFailureMessage: (): string => translate().t("projects.projectNotFound"),
-			}
-		);
+		const { data: project } = await RequestHandler.handleServiceResponse(() => ProjectsService.get(this.projectId), {
+			formatFailureMessage: (): string => translate().t("projects.projectNotFound"),
+		});
 		if (project) {
 			this.project = project;
 			this.view.show(this.project.name);
@@ -234,8 +219,7 @@ export class ProjectController {
 
 	async build() {
 		await RequestHandler.handleServiceResponse(() => ProjectsService.build(this.projectId), {
-			formatSuccessMessage: (data?: string): string =>
-				`${translate().t("projects.projectBuildSucceed", { id: data })}`,
+			formatSuccessMessage: (data?: string): string => `${translate().t("projects.projectBuildSucceed", { id: data })}`,
 			formatFailureMessage: (error): string =>
 				translate().t("projects.projectBuildFailed", {
 					id: this.projectId,
@@ -248,8 +232,7 @@ export class ProjectController {
 		const { data: deploymentId } = await RequestHandler.handleServiceResponse(
 			() => ProjectsService.run(this.projectId),
 			{
-				formatSuccessMessage: (): string =>
-					`${translate().t("projects.projectDeploySucceed", { id: this.projectId })}`,
+				formatSuccessMessage: (): string => `${translate().t("projects.projectDeploySucceed", { id: this.projectId })}`,
 				formatFailureMessage: (error): string =>
 					`${translate().t("projects.projectDeployFailed", {
 						id: this.projectId,
@@ -268,8 +251,7 @@ export class ProjectController {
 
 	async activateDeployment(deploymentId: string) {
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.activate(deploymentId), {
-			formatSuccessMessage: (): string =>
-				`${translate().t("deployments.activationSucceed", { id: deploymentId })}`,
+			formatSuccessMessage: (): string => `${translate().t("deployments.activationSucceed", { id: deploymentId })}`,
 			formatFailureMessage: (error): string =>
 				`${translate().t("deployments.activationFailed", {
 					id: deploymentId,
@@ -280,8 +262,7 @@ export class ProjectController {
 
 	async deactivateDeployment(deploymentId: string) {
 		await RequestHandler.handleServiceResponse(() => DeploymentsService.deactivate(deploymentId), {
-			formatSuccessMessage: (): string =>
-				`${translate().t("deployments.deactivationSucceed", { id: deploymentId })}`,
+			formatSuccessMessage: (): string => `${translate().t("deployments.deactivationSucceed", { id: deploymentId })}`,
 			formatFailureMessage: (error): string =>
 				`${translate().t("deployments.deactivationFailed", {
 					id: deploymentId,

@@ -13,10 +13,7 @@ export const sessionStateConverter = (sessionState: number): SessionStateType =>
 		const sessionStateType = ProtoSessionStateType[sessionState].toLowerCase();
 		return SessionStateType[sessionStateType as keyof typeof SessionStateType];
 	} catch (error) {
-		LoggerService.error(
-			namespaces.sessionsHistory,
-			`${translate().t("errors.unexpectedError")}: ${error}`
-		);
+		LoggerService.error(namespaces.sessionsHistory, `${translate().t("errors.unexpectedError")}: ${error}`);
 		return SessionStateType.unknown;
 	}
 };
