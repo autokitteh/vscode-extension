@@ -55,7 +55,9 @@ export class ProjectController {
 	}
 
 	async loadAndDisplayDeployments() {
-		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
+		const { data: deployments, error } = await await RequestHandler.handleServiceResponse(() =>
+			DeploymentsService.listByProjectId(this.projectId)
+		);
 		if (error) {
 			commands.executeCommand(vsCommands.showErrorMessage, error as string);
 
@@ -75,7 +77,12 @@ export class ProjectController {
 			payload: deploymentsViewObject,
 		});
 
-		this.view.update({ type: MessageType.setSessionsSection, payload: undefined });
+		const sessionsViewObject: SessionSectionViewModel = {
+			sessions: this.sessions,
+			totalSessions: this.sessions?.length || 0,
+		};
+
+		this.view.update({ type: MessageType.setSessionsSection, payload: sessionsViewObject });
 
 		if (this.selectedDeploymentId) {
 			await this.selectDeployment(this.selectedDeploymentId);
@@ -104,6 +111,11 @@ export class ProjectController {
 		this.view.update({
 			type: MessageType.setSessionsSection,
 			payload: sessionsViewObject,
+		});
+
+		this.view.update({
+			type: MessageType.selectDeployment,
+			payload: deploymentId,
 		});
 	}
 
