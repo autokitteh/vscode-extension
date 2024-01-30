@@ -63,13 +63,7 @@ export class ProjectsService {
 			return { data: undefined, error: new Error(errorMessage) };
 		}
 
-		let environment;
-		try {
-			environment = environments[0];
-		} catch (error) {
-			LoggerService.error(namespaces.projectService, (error as Error).message);
-			return { data: undefined, error };
-		}
+		let environment = environments[0];
 
 		const { data: deploymentId, error } = await DeploymentsService.create({
 			buildId: buildId!,
