@@ -63,7 +63,7 @@ export class ProjectsService {
 			return { data: undefined, error: new Error(errorMessage) };
 		}
 
-		let environment = environments[0];
+		const environment = environments[0];
 
 		const { data: deploymentId, error } = await DeploymentsService.create({
 			buildId: buildId!,
