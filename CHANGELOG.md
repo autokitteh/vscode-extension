@@ -1,3 +1,10 @@
+# [0.8.0-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.2...v0.8.0-dev.3) (2024-01-30)
+
+
+### Bug Fixes
+
+* display error when no environments found ([#124](https://github.com/autokitteh/vscode-extension/issues/124)) ([d561d9e](https://github.com/autokitteh/vscode-extension/commit/d561d9e4830b3f05aff1e0714503ce55dd6f5c9b))
+
 # [0.8.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.1...v0.8.0-dev.2) (2024-01-30)
 
 
