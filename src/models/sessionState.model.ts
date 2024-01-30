@@ -56,7 +56,7 @@ export class SessionState {
 					const errorMessage = get(
 						state,
 						"states.value.error.message",
-						translate().t("errors.unesessionLogMissingOnErrorTypexpectedError")
+						translate().t("errors.sessionLogMissingOnErrorType")
 					);
 					this.state = new ErrorState(errorMessage);
 					break;
