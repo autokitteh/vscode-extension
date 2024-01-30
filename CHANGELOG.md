@@ -1,3 +1,10 @@
+# [0.8.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.1...v0.8.0-dev.2) (2024-01-30)
+
+
+### Bug Fixes
+
+* display sessions on deployment deactivation/activation ([#125](https://github.com/autokitteh/vscode-extension/issues/125)) ([b61d5a6](https://github.com/autokitteh/vscode-extension/commit/b61d5a646ed869a8f2749df08f7c439e04697eb9))
+
 # [0.8.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.7.0...v0.8.0-dev.1) (2024-01-29)
 
 
