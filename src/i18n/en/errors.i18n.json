@@ -1,5 +1,4 @@
 {
-	"unexpectedError": "We're sorry, but an unexpected error has occurred and the application is currently unavailable. Please try again later.",
 	"projectNotFound": "Couldn't fetch the project details",
 	"showProjectDetails": "Click on a project to show its details",
 	"environmentsNotDefinedForProject": "Environments not defined for this project",
@@ -14,6 +13,8 @@
 	"deploymentFailed": "Deployment failed",
 	"projectEnvironmentsNotFound": "Project environments not found",
 	"unexpectedSessionStateType": "Unexpected session state type",
+	"sessionLogMissingErrorMessage": "Session History - Get error from not error state",
+	"sessionLogMissingOnErrorType": "Session History - Missing error from session state",
 	"missingSessionStateType": "Missing session state type",
 	"missingStarlarkLSPPort": "Starlark LSP port is not set"
 }

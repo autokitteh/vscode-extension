@@ -11,14 +11,11 @@ export class SidebarController {
 	private intervalTimerId?: NodeJS.Timeout;
 	private refreshRate: number;
 	private projects?: SidebarTreeItem[];
-	private noProjectMessageDisplayed = false;
-	private connectionErrorDisplayed = false;
 
 	constructor(sidebarView: ISidebarView, refreshRate: number) {
 		this.view = sidebarView;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
 		this.refreshRate = refreshRate;
-		this.connectionErrorDisplayed = false;
 	}
 
 	public connect = async () => {
@@ -42,7 +39,6 @@ export class SidebarController {
 	};
 
 	private startInterval() {
-		this.noProjectMessageDisplayed = false;
 		this.intervalTimerId = setInterval(() => this.refreshProjects(), this.refreshRate);
 	}
 
