@@ -90,6 +90,8 @@ export class ProjectController {
 	}
 
 	async selectDeployment(deploymentId: string): Promise<void> {
+		this.stopInterval(ProjectIntervals.sessionHistory);
+
 		this.selectedDeploymentId = deploymentId;
 		const { data: sessions, error } = await RequestHandler.handleServiceResponse(() =>
 			SessionsService.listByDeploymentId(deploymentId)
@@ -156,8 +158,10 @@ export class ProjectController {
 	}
 
 	async displaySessionLogs(sessionId: string): Promise<void> {
+		this.stopInterval(ProjectIntervals.sessionHistory);
+
 		this.startInterval(
-			ProjectIntervals.sessions,
+			ProjectIntervals.sessionHistory,
 			() => this.displaySessionsHistory(sessionId),
 			this.sessionsLogRefreshRate
 		);
@@ -197,7 +201,7 @@ export class ProjectController {
 
 	onBlur() {
 		this.stopInterval(ProjectIntervals.deployments);
-		this.stopInterval(ProjectIntervals.sessions);
+		this.stopInterval(ProjectIntervals.sessionHistory);
 		this.deployments = undefined;
 		this.sessions = undefined;
 	}
@@ -212,7 +216,7 @@ export class ProjectController {
 	}
 
 	onClose() {
-		this.stopInterval(ProjectIntervals.sessions);
+		this.stopInterval(ProjectIntervals.sessionHistory);
 		this.stopInterval(ProjectIntervals.deployments);
 		this.disposeCB?.(this.projectId);
 	}
