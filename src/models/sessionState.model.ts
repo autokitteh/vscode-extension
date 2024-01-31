@@ -3,6 +3,15 @@ import { translate } from "@i18n/index";
 import { ProtoSessionHistoryState } from "@type/models";
 import { get } from "lodash";
 
+type Callstack = {
+	location: {
+		col: number;
+		row: number;
+		name: string;
+		path: string;
+	};
+};
+
 class CreatedState {}
 
 class RunningState {
@@ -17,9 +26,11 @@ class RunningState {
 
 class ErrorState {
 	error: string;
+	callstackTrace: Callstack[];
 
-	constructor(error: string) {
+	constructor(error: string, callstackTrace: Callstack[]) {
 		this.error = error;
+		this.callstackTrace = callstackTrace;
 	}
 }
 
@@ -58,7 +69,8 @@ export class SessionState {
 						"states.value.error.message",
 						translate().t("errors.sessionLogMissingOnErrorType")
 					);
-					this.state = new ErrorState(errorMessage);
+					const callstackTrace = get(state, "states.value.error.callstack", []);
+					this.state = new ErrorState(errorMessage, callstackTrace);
 					break;
 				case SessionStateType.completed:
 					prints = get(state, "states.value.prints", []);
@@ -67,11 +79,11 @@ export class SessionState {
 					this.state = new CompletedState(prints, exports, returnValue);
 					break;
 				default:
-					this.state = new ErrorState(translate().t("errors.unexpectedSessionStateType"));
+					this.state = new ErrorState(translate().t("errors.unexpectedSessionStateType"), []);
 			}
 			return;
 		}
-		this.state = new ErrorState(translate().t("errors.missingSessionStateType"));
+		this.state = new ErrorState(translate().t("errors.missingSessionStateType"), []);
 	}
 
 	getError(): string {
@@ -79,6 +91,13 @@ export class SessionState {
 			return this.state.error;
 		}
 		return translate().t("errors.sessionLogMissingErrorMessage");
+	}
+
+	getCallstack(): Callstack[] {
+		if (this.state instanceof ErrorState) {
+			return this.state.callstackTrace;
+		}
+		return [];
 	}
 
 	isError(): this is { state: ErrorState } {

@@ -147,6 +147,15 @@ export class ProjectController {
 		if (lastState.isError()) {
 			const printedError = lastState.getError();
 			LoggerService.printError(namespaces.sessionLogs, printedError, channels.appOutputSessionsLogName);
+
+			if (lastState.getCallstack().length) {
+				LoggerService.printError(namespaces.sessionLogs, "Callstack:", channels.appOutputSessionsLogName);
+				lastState.getCallstack().forEach((callstackObj) => {
+					let { col, name, path, row } = callstackObj.location;
+					const formatCallstackString = `${row}:${col} - ${path}: ${name}`;
+					LoggerService.printError(namespaces.sessionLogs, formatCallstackString, channels.appOutputSessionsLogName);
+				});
+			}
 			return;
 		}
 
