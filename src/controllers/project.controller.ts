@@ -152,7 +152,7 @@ export class ProjectController {
 				LoggerService.printError(namespaces.sessionLogs, "Callstack:", channels.appOutputSessionsLogName);
 				lastState.getCallstack().forEach((callstackObj) => {
 					let { col, name, path, row } = callstackObj.location;
-					const formatCallstackString = `${row}:${col} - ${path}: ${name}`;
+					const formatCallstackString = `${path}: ${row}.${col}: ${name}`;
 					LoggerService.printError(namespaces.sessionLogs, formatCallstackString, channels.appOutputSessionsLogName);
 				});
 			}
