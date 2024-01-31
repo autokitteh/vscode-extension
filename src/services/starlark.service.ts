@@ -12,8 +12,14 @@ import { workspace, commands, ConfigurationChangeEvent, window } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from "vscode-languageclient";
 
 const host = "127.0.0.1";
+const getLatestRelease = async (): Promise<void> => {
+	axios.get("https://api.github.com/repos/autokitteh/vscode-extension/releases").then((data) => {
+		return data.data[data.data.length].assets.browser_download_url;
+	});
+	return;
+};
 
-async function downloadAndSaveFile(url: string, filePath: string): Promise<void> {
+const downloadAndSaveFile = async (url: string, filePath: string): Promise<void> => {
 	try {
 		await axios
 			.get(url, {
@@ -35,7 +41,7 @@ async function downloadAndSaveFile(url: string, filePath: string): Promise<void>
 	} catch (error) {
 		console.error(error);
 	}
-}
+};
 
 const downloadExecutable = async (extensionPath: string) => {
 	const userResponse = await window.showInformationMessage(
@@ -43,6 +49,8 @@ const downloadExecutable = async (extensionPath: string) => {
 		"Yes",
 		"No"
 	);
+
+	getLatestRelease();
 
 	if (userResponse === "Yes") {
 		let fileAddress: string;
