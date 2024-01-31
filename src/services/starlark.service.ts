@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import https from "https";
 import { connect } from "net";
 import * as os from "os";
 import { namespaces, vsCommands } from "@constants";
@@ -15,28 +14,24 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from
 const host = "127.0.0.1";
 
 async function downloadAndSaveFile(url: string, filePath: string): Promise<void> {
-	const agent = new https.Agent({
-		rejectUnauthorized: false,
-	});
-
 	try {
-		const response = await axios.get(url, {
-			httpsAgent: agent,
-			responseType: "stream",
-		});
+		await axios
+			.get(url, {
+				responseType: "stream",
+			})
+			.then(async function (response) {
+				const writer = fs.createWriteStream(filePath);
+				writer.on("error", (err) => {
+					console.error("Error writing file:", err);
+					throw err;
+				});
 
-		response.data.on("error", (err: any) => {
-			console.error("Error during HTTP request:", err);
-			throw err;
-		});
-
-		const writer = fs.createWriteStream(filePath);
-		writer.on("error", (err) => {
-			console.error("Error writing file:", err);
-			throw err;
-		});
-
-		await response.data.pipe(writer);
+				await response.data.pipe(writer);
+			})
+			.catch((error) => {
+				console.error("Error during HTTP request:", error);
+				throw error;
+			});
 	} catch (error) {
 		console.error(error);
 	}
