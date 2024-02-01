@@ -1,6 +1,8 @@
 import * as fs from "fs";
 import { connect } from "net";
 import * as os from "os";
+import * as path from "path";
+import * as zlib from "zlib";
 import { namespaces, vsCommands } from "@constants";
 import { starlarkLSPPath, starlarkLSPUriScheme, starlarkLSPArgs } from "@constants";
 import { getConfig } from "@constants/utilities";
@@ -8,15 +10,35 @@ import { translate } from "@i18n";
 import { LoggerService } from "@services/logger.service";
 import { StarlarkFileHandler } from "@starlark";
 import axios from "axios";
+import * as tar from "tar";
 import { workspace, commands, ConfigurationChangeEvent, window } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from "vscode-languageclient";
 
 const host = "127.0.0.1";
-const getLatestRelease = async (): Promise<void> => {
-	axios.get("https://api.github.com/repos/autokitteh/vscode-extension/releases").then((data) => {
-		return data.data[data.data.length].assets.browser_download_url;
+const getLatestRelease = async (): Promise<void | string> => {
+	return axios
+		.get("https://api.github.com/repos/autokitteh/autokitteh-starlark-lsp/releases")
+		.then((data) => {
+			return data.data[data.data.length - 1].assets[1].browser_download_url as string;
+		})
+		.catch((error) => {
+			commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, error);
+		});
+};
+
+const getFileNameFromUrl = (downloadUrl: string): string => {
+	const url = new URL(downloadUrl);
+	return path.basename(url.pathname);
+};
+
+const extractTarGz = (filePath: string, outputDir: string): Promise<void> => {
+	return new Promise((resolve, reject) => {
+		fs.createReadStream(filePath)
+			.pipe(zlib.createGunzip())
+			.pipe(tar.extract({ cwd: outputDir }))
+			.on("finish", resolve)
+			.on("error", reject);
 	});
-	return;
 };
 
 const downloadAndSaveFile = async (url: string, filePath: string): Promise<void> => {
@@ -50,15 +72,18 @@ const downloadExecutable = async (extensionPath: string) => {
 		"No"
 	);
 
-	getLatestRelease();
+	const releaseURL = await getLatestRelease();
 
 	if (userResponse === "Yes") {
 		let fileAddress: string;
 		let platform = os.platform();
+		if (!releaseURL) {
+			return;
+		}
 
 		switch (platform) {
 			case "darwin":
-				fileAddress = "https://media.tenor.com/lnbK373D2AkAAAAe/kot-koty.png";
+				fileAddress = releaseURL;
 				break;
 			case "linux":
 				fileAddress = "http://example.com/file.deb";
@@ -75,8 +100,10 @@ const downloadExecutable = async (extensionPath: string) => {
 		}
 
 		if (extensionPath) {
-			await downloadAndSaveFile(fileAddress, `${extensionPath}/kitteh.png`);
-			workspace.getConfiguration().set("autokitteh.starlarkLSPPath", extensionPath);
+			const fileName = getFileNameFromUrl(releaseURL);
+			await downloadAndSaveFile(fileAddress, `${extensionPath}/${fileName}`);
+			await extractTarGz(`${extensionPath}/${fileName}`, `${extensionPath}`);
+			workspace.getConfiguration().update("autokitteh.starlarkLSPPath", `${extensionPath}/autokitteh-starlark-lsp`);
 
 			commands.executeCommand(
 				vsCommands.showInfoMessage,
