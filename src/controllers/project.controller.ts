@@ -151,7 +151,7 @@ export class ProjectController {
 			if (lastState.getCallstack().length) {
 				LoggerService.printError(
 					namespaces.sessionLogs,
-					`${translate().t("projects.callstack")}: `,
+					`${translate().t("sessions.callstack")}: `,
 					channels.appOutputSessionsLogName
 				);
 				lastState.getCallstack().forEach((callstackObj) => {

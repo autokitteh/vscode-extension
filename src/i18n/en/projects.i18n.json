@@ -6,6 +6,5 @@
 	"projectBuildSucceed": "Project build succeed - id: {{id}}",
 	"projectBuildFailed": "Project build failed - id: {{id}}",
 	"projectDeploySucceed": "Project deploy succeed - id: {{id}}",
-	"projectDeployFailed": "Project deploy failed - id: {{id}}",
-	"callstack": "Callstack"
+	"projectDeployFailed": "Project deploy failed - id: {{id}}"
 }

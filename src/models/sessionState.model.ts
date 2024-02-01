@@ -12,15 +12,23 @@ type Callstack = {
 	};
 };
 
-class CreatedState {}
+class CreatedState {
+	callstackTrace: Callstack[];
+
+	constructor(callstackTrace: Callstack[] = []) {
+		this.callstackTrace = callstackTrace;
+	}
+}
 
 class RunningState {
 	logs: string[];
 	call?: object;
+	callstackTrace: Callstack[];
 
-	constructor(prints: string[], call?: object) {
+	constructor(prints: string[], call?: object, callstackTrace: Callstack[] = []) {
 		this.logs = prints;
 		this.call = call;
+		this.callstackTrace = callstackTrace;
 	}
 }
 
@@ -28,7 +36,7 @@ class ErrorState {
 	error: string;
 	callstackTrace: Callstack[];
 
-	constructor(error: string, callstackTrace: Callstack[]) {
+	constructor(error: string, callstackTrace: Callstack[] = []) {
 		this.error = error;
 		this.callstackTrace = callstackTrace;
 	}
@@ -38,11 +46,13 @@ class CompletedState {
 	logs: string[];
 	exports: Map<string, object>;
 	returnValue: object;
+	callstackTrace: Callstack[];
 
-	constructor(prints: string[], exports: Map<string, object>, returnValue: object) {
+	constructor(prints: string[], exports: Map<string, object>, returnValue: object, callstackTrace: Callstack[] = []) {
 		this.logs = prints;
 		this.exports = exports;
 		this.returnValue = returnValue;
+		this.callstackTrace = callstackTrace;
 	}
 }
 
@@ -81,9 +91,9 @@ export class SessionState {
 				default:
 					this.state = new ErrorState(translate().t("errors.unexpectedSessionStateType"), []);
 			}
-			return;
 		}
 		this.state = new ErrorState(translate().t("errors.missingSessionStateType"), []);
+		return;
 	}
 
 	getError(): string {
@@ -94,10 +104,7 @@ export class SessionState {
 	}
 
 	getCallstack(): Callstack[] {
-		if (this.state instanceof ErrorState) {
-			return this.state.callstackTrace;
-		}
-		return [];
+		return this.state?.callstackTrace || [];
 	}
 
 	isError(): this is { state: ErrorState } {
