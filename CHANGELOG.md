@@ -1,3 +1,10 @@
+# [0.8.0-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.3...v0.8.0-dev.4) (2024-02-01)
+
+
+### Bug Fixes
+
+* stop session-history intervals on deployment change ([#130](https://github.com/autokitteh/vscode-extension/issues/130)) ([4a7a30b](https://github.com/autokitteh/vscode-extension/commit/4a7a30b735fde670805180bdbe8338baec3f1502))
+
 # [0.8.0-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.2...v0.8.0-dev.3) (2024-01-30)
 
 
