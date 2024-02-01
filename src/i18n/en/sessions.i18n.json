@@ -1,4 +1,5 @@
 {
 	"noLogs": "No logs to display",
-	"callstack": "Callstack"
+	"callstack": "Callstack",
+	"callstackNoPrints": "nothing found here"
 }

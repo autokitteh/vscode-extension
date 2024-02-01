@@ -62,16 +62,17 @@ export class SessionState {
 	constructor(state: ProtoSessionHistoryState) {
 		const stateCase = get(state, "states.case");
 		let prints, call, exports, returnValue;
+		const callstackTrace = get(state, "states.value.error.callstack", []) as Callstack[];
 
 		if (stateCase) {
 			switch (stateCase) {
 				case SessionStateType.created:
-					this.state = new CreatedState();
+					this.state = new CreatedState(callstackTrace);
 					break;
 				case SessionStateType.running:
 					prints = get(state, "states.prints", []);
 					call = get(state, "states.call", {});
-					this.state = new RunningState(prints, call);
+					this.state = new RunningState(prints, call, callstackTrace);
 					break;
 				case SessionStateType.error:
 					const errorMessage = get(
@@ -79,14 +80,13 @@ export class SessionState {
 						"states.value.error.message",
 						translate().t("errors.sessionLogMissingOnErrorType")
 					);
-					const callstackTrace = get(state, "states.value.error.callstack", []);
 					this.state = new ErrorState(errorMessage, callstackTrace);
 					break;
 				case SessionStateType.completed:
 					prints = get(state, "states.value.prints", []);
 					exports = get(state, "states.value.exports", new Map());
 					returnValue = get(state, "states.value.returnValue", {});
-					this.state = new CompletedState(prints, exports, returnValue);
+					this.state = new CompletedState(prints, exports, returnValue, callstackTrace);
 					break;
 				default:
 					this.state = new ErrorState(translate().t("errors.unexpectedSessionStateType"), []);

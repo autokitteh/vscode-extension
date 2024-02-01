@@ -159,7 +159,15 @@ export class ProjectController {
 					const formatCallstackString = `${path}: ${row}.${col}: ${name}`;
 					LoggerService.printError(namespaces.sessionLogs, formatCallstackString, channels.appOutputSessionsLogName);
 				});
+				return;
 			}
+
+			LoggerService.printError(
+				namespaces.sessionLogs,
+				`${translate().t("sessions.callstack")}: ${translate().t("sessions.callstackNoPrints")}`,
+				channels.appOutputSessionsLogName
+			);
+
 			return;
 		}
 
