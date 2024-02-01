@@ -16,5 +16,6 @@
 	"sessionLogMissingErrorMessage": "Session History - Get error from not error state",
 	"sessionLogMissingOnErrorType": "Session History - No error",
 	"missingSessionStateType": "Missing session state type",
-	"missingStarlarkLSPPort": "Starlark LSP port is not set"
+	"missingStarlarkLSPPort": "Starlark LSP port is not set",
+	"issueGettingLSP": "There was an issue installing Starlark LSP"
 }

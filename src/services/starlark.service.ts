@@ -15,11 +15,53 @@ import { workspace, commands, ConfigurationChangeEvent, window } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from "vscode-languageclient";
 
 const host = "127.0.0.1";
-const getLatestRelease = async (): Promise<void | string> => {
+
+interface GitHubRelease {
+	data: {
+		// eslint-disable-next-line @typescript-eslint/naming-convention
+		tag_name: string;
+		assets: Array<{
+			name: string;
+			// eslint-disable-next-line @typescript-eslint/naming-convention
+			browser_download_url: string;
+		}>;
+	}[];
+}
+
+interface AssetInfo {
+	url: string;
+	tag: string;
+}
+
+const getAssetByPlatform = (data: GitHubRelease, platform: string): AssetInfo | undefined => {
+	let enrichedPlatform = "Darwin_arm64";
+
+	if (platform === "darwin") {
+		enrichedPlatform = "Darwin_arm64";
+	}
+
+	const tagVersion = data.data[data.data.length - 1].tag_name;
+
+	const asset =
+		data.data[data.data.length - 1].assets.find((asset) => asset.name.indexOf(enrichedPlatform) !== -1) || undefined;
+
+	if (!asset) {
+		return;
+	}
+
+	return {
+		url: asset.browser_download_url as string,
+		tag: tagVersion as string,
+	};
+};
+
+const getLatestRelease = async (platform: string): Promise<void | { tag: string; url: string }> => {
 	return axios
 		.get("https://api.github.com/repos/autokitteh/autokitteh-starlark-lsp/releases")
 		.then((data) => {
-			return data.data[data.data.length - 1].assets[1].browser_download_url as string;
+			const asset = getAssetByPlatform(data, platform);
+
+			return asset;
 		})
 		.catch((error) => {
 			commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, error);
@@ -35,82 +77,95 @@ const extractTarGz = (filePath: string, outputDir: string): Promise<void> => {
 	return new Promise((resolve, reject) => {
 		fs.createReadStream(filePath)
 			.pipe(zlib.createGunzip())
+			.on("error", reject) // Error handling for gunzip
 			.pipe(tar.extract({ cwd: outputDir }))
-			.on("finish", resolve)
-			.on("error", reject);
+			.on("close", resolve) // Changed from 'finish' to 'close'
+			.on("error", reject); // Error handling for tar extraction
 	});
 };
 
 const downloadAndSaveFile = async (url: string, filePath: string): Promise<void> => {
-	try {
-		await axios
-			.get(url, {
-				responseType: "stream",
-			})
-			.then(async function (response) {
+	return new Promise((resolve, reject) => {
+		axios
+			.get(url, { responseType: "stream" })
+			.then((response) => {
 				const writer = fs.createWriteStream(filePath);
+				response.data.pipe(writer);
+				let error: Error | null = null;
 				writer.on("error", (err) => {
-					console.error("Error writing file:", err);
-					throw err;
+					error = err;
+					writer.close();
+					reject(err);
 				});
-
-				await response.data.pipe(writer);
+				writer.on("close", () => {
+					if (!error) {
+						resolve();
+					}
+				});
 			})
 			.catch((error) => {
-				console.error("Error during HTTP request:", error);
-				throw error;
+				reject(error);
 			});
-	} catch (error) {
-		console.error(error);
+	});
+};
+
+const getNewVersion = async (
+	extensionPath: string,
+	release: void | {
+		url: string;
+		tag: string;
 	}
+) => {
+	if (!release) {
+		return;
+	}
+
+	if (extensionPath) {
+		const fileName = getFileNameFromUrl(release.url);
+		await downloadAndSaveFile(release.url, `${extensionPath}/${fileName}`);
+		try {
+			await extractTarGz(`${extensionPath}/${fileName}`, `${extensionPath}`);
+		} catch (error) {
+			commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, (error as Error).message);
+			LoggerService.error(namespaces.deploymentsService, (error as Error).message);
+			return;
+		}
+		workspace.getConfiguration().update("autokitteh.starlarkLSPPath", `${extensionPath}/autokitteh-starlark-lsp`);
+		workspace.getConfiguration().update("autokitteh.starlarkLSPVersion", release.tag);
+
+		commands.executeCommand(
+			vsCommands.showInfoMessage,
+			namespaces.startlarkLSPServer,
+			translate().t("starlark.executableDownloadedSuccefully")
+		);
+		return;
+	}
+	const error = translate().t("errors.issueGettingLSP");
+	commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, error);
+	LoggerService.error(namespaces.deploymentsService, error);
 };
 
 const downloadExecutable = async (extensionPath: string) => {
+	let platform = os.platform();
+
+	const release = await getLatestRelease(platform);
+
+	const currentLSPVersion = workspace.getConfiguration().get("autokitteh.starlarkLSPVersion");
+	if (currentLSPVersion) {
+		if (release && currentLSPVersion !== release.tag) {
+			await getNewVersion(extensionPath, release);
+		}
+		return;
+	}
+
 	const userResponse = await window.showInformationMessage(
 		translate().t("starlark.downloadExecutableDialog"),
 		"Yes",
 		"No"
 	);
 
-	const releaseURL = await getLatestRelease();
-
 	if (userResponse === "Yes") {
-		let fileAddress: string;
-		let platform = os.platform();
-		if (!releaseURL) {
-			return;
-		}
-
-		switch (platform) {
-			case "darwin":
-				fileAddress = releaseURL;
-				break;
-			case "linux":
-				fileAddress = "http://example.com/file.deb";
-				break;
-			case "win32":
-				fileAddress = "http://example.com/file.exe";
-				break;
-			default:
-				let error = `${platform} is not supported.`;
-
-				commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, error);
-				LoggerService.error(namespaces.deploymentsService, error);
-				return;
-		}
-
-		if (extensionPath) {
-			const fileName = getFileNameFromUrl(releaseURL);
-			await downloadAndSaveFile(fileAddress, `${extensionPath}/${fileName}`);
-			await extractTarGz(`${extensionPath}/${fileName}`, `${extensionPath}`);
-			workspace.getConfiguration().update("autokitteh.starlarkLSPPath", `${extensionPath}/autokitteh-starlark-lsp`);
-
-			commands.executeCommand(
-				vsCommands.showInfoMessage,
-				namespaces.startlarkLSPServer,
-				translate().t("starlark.executableDownloadedSuccefully")
-			);
-		}
+		getNewVersion(extensionPath, release);
 	}
 };
 
