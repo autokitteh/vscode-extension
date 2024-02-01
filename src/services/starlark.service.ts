@@ -77,10 +77,10 @@ const extractTarGz = (filePath: string, outputDir: string): Promise<void> => {
 	return new Promise((resolve, reject) => {
 		fs.createReadStream(filePath)
 			.pipe(zlib.createGunzip())
-			.on("error", reject) // Error handling for gunzip
+			.on("error", reject)
 			.pipe(tar.extract({ cwd: outputDir }))
-			.on("close", resolve) // Changed from 'finish' to 'close'
-			.on("error", reject); // Error handling for tar extraction
+			.on("close", resolve)
+			.on("error", reject);
 	});
 };
 
