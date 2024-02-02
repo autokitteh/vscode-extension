@@ -20,4 +20,5 @@ export {
 	startlarkLSPServerType,
 	starlarkLSPPreloadDirPath,
 	starlarkLSPArgs,
+	starlarkLSPLocalhost,
 } from "@constants/starlark.constants";
