@@ -1,4 +1,4 @@
 {
 	"downloadExecutableDialog": "Do you want to download and save the LSP executable file?",
-	"executableDownloadedSuccefully": "LSP executable file downloaded succefully, please restart the app"
+	"executableDownloadedSuccessfully": "LSP executable file downloaded succefully"
 }

@@ -17,5 +17,7 @@
 	"sessionLogMissingOnErrorType": "Session History - No error",
 	"missingSessionStateType": "Missing session state type",
 	"missingStarlarkLSPPort": "Starlark LSP port is not set",
-	"issueGettingLSP": "There was an issue installing Starlark LSP"
+	"issueGettingLSP": "There was an issue installing Starlark LSP",
+	"fetchingReleaseInfo": "Couldn't fetch LSP executable: {{error}}",
+	"issueExtractLSP": "Extraction error: {{error}}"
 }

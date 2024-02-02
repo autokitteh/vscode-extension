@@ -108,6 +108,11 @@
 					"default": "ak",
 					"description": "The path to the Starlark LSP Server",
 					"type": "string"
+				},
+				"autokitteh.starlarkLSPVersion": {
+					"default": "",
+					"description": "The version of the Starlark LSP Server (for internal use only)",
+					"type": "string"
 				}
 			},
 			"title": "autokitteh"

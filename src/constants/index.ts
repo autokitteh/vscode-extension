@@ -17,8 +17,7 @@ export { channels } from "@constants/output.constants";
 export {
 	starlarkLSPUriScheme,
 	starlarkLSPPath,
-	startlarkLSPServerType,
-	starlarkLSPPreloadDirPath,
 	starlarkLSPArgs,
 	starlarkLSPLocalhost,
+	starlarkExecutableGithubRepository,
 } from "@constants/starlark.constants";

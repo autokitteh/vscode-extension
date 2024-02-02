@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import { connect } from "net";
 import { namespaces, starlarkLSPLocalhost, vsCommands } from "@constants";
 import { starlarkLSPPath, starlarkLSPUriScheme, starlarkLSPArgs } from "@constants";
@@ -23,7 +22,7 @@ export class StarlarkLSPService {
 		workspace.onDidChangeConfiguration(this.onChangeConfiguration);
 	}
 
-	private static initiateLSPServer() {
+	private static async initiateLSPServer() {
 		workspace.registerTextDocumentContentProvider(
 			starlarkLSPUriScheme,
 			new StarlarkFileHandler(StarlarkLSPService.languageClient!)
@@ -32,12 +31,7 @@ export class StarlarkLSPService {
 			return;
 		}
 
-		const localStarlarkFile = `${this.extensionPath}/starlark`;
-
-		if (!fs.existsSync(localStarlarkFile)) {
-			downloadExecutable(this.extensionPath);
-			return;
-		}
+		await downloadExecutable(this.extensionPath);
 
 		let serverOptions: ServerOptions | Promise<StreamInfo> = {
 			command: starlarkLSPPath,
