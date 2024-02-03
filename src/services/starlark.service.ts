@@ -7,15 +7,15 @@ import { translate } from "@i18n";
 import { LoggerService } from "@services/logger.service";
 import { StarlarkFileHandler } from "@starlark";
 import { downloadExecutable } from "@utilities/starlark";
-import { workspace, commands, ConfigurationChangeEvent } from "vscode";
+import { workspace, commands, ConfigurationChangeEvent, ExtensionContext } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from "vscode-languageclient";
 
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;
-	private static extensionPath: string;
+	private static extensionContext: ExtensionContext;
 
-	public static init(extensionPath: string) {
-		this.extensionPath = extensionPath;
+	public static init(extensionContext: ExtensionContext) {
+		this.extensionContext = extensionContext;
 		this.initiateLSPServer();
 		workspace.onDidChangeConfiguration(this.onChangeConfiguration);
 	}
@@ -29,18 +29,20 @@ export class StarlarkLSPService {
 			StarlarkLSPService.languageClient.stop();
 		}
 
-		let starlarkPath = starlarkLSPPath;
+		let starlarkPath: string | undefined = starlarkLSPPath(this.extensionContext);
 		if (!starlarkPath || !fs.existsSync(starlarkPath)) {
-			starlarkPath = await downloadExecutable(this.extensionPath);
+			starlarkPath = await downloadExecutable(this.extensionContext);
 			if (!starlarkPath) {
 				LoggerService.error(namespaces.startlarkLSPServer, translate().t("errors.starlarLSPInit"));
 				return;
 			}
 		}
 
+		const starlarkLSPArgsFromConfig = starlarkLSPArgs(this.extensionContext);
+
 		let serverOptions: ServerOptions | Promise<StreamInfo> = {
 			command: starlarkPath,
-			args: starlarkLSPArgs,
+			args: starlarkLSPArgsFromConfig,
 		};
 
 		let clientOptions: LanguageClientOptions = {
@@ -74,7 +76,7 @@ export class StarlarkLSPService {
 
 		LoggerService.info(
 			namespaces.startlarkLSPServer,
-			`Starting LSP Server: ${starlarkLSPPath} ${starlarkLSPArgs.join(", ")}`
+			`Starting LSP Server: ${starlarkPath} ${starlarkLSPArgsFromConfig.join(", ")}`
 		);
 
 		StarlarkLSPService.languageClient = new LanguageClient(

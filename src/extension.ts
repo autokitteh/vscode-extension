@@ -12,7 +12,7 @@ import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough
 import { commands, ExtensionContext } from "vscode";
 
 export async function activate(context: ExtensionContext) {
-	StarlarkLSPService.init(context.extensionPath);
+	StarlarkLSPService.init(context);
 
 	const sidebarView = new SidebarView();
 

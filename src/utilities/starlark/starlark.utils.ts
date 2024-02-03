@@ -8,7 +8,7 @@ import { AssetInfo, GitHubRelease } from "@interfaces";
 import { LoggerService } from "@services";
 import axios from "axios";
 import * as tar from "tar";
-import { commands, workspace, window } from "vscode";
+import { commands, workspace, window, ExtensionContext } from "vscode";
 const getPlatformIdentifier = (platform: string, arch: string): string => {
 	switch (platform) {
 		case "darwin":
@@ -106,12 +106,16 @@ export const downloadAndSaveFile = async (url: string, filePath: string): Promis
 	}
 };
 
-export const getNewVersion = async (extensionPath: string, release?: AssetInfo): Promise<string | undefined> => {
+export const getNewVersion = async (
+	extensionContext: ExtensionContext,
+	release?: AssetInfo
+): Promise<string | undefined> => {
 	if (!release) {
 		return undefined;
 	}
 
 	const fileName = getFileNameFromUrl(release.url);
+	const extensionPath = extensionContext.extensionPath;
 	await downloadAndSaveFile(release.url, `${extensionPath}/${fileName}`);
 	await extractTarGz(`${extensionPath}/${fileName}`, extensionPath).catch((error) => {
 		const errorMessage = translate().t("errors.issueExtractLSP", { error: (error as Error).message });
@@ -121,8 +125,8 @@ export const getNewVersion = async (extensionPath: string, release?: AssetInfo):
 
 	const lspPath = `${extensionPath}/autokitteh-starlark-lsp`;
 
-	await workspace.getConfiguration().update("autokitteh.starlarkLSPPath", lspPath);
-	await workspace.getConfiguration().update("autokitteh.starlarkLSPVersion", release.tag);
+	extensionContext.workspaceState.update("autokitteh.starlarkLSPPath", lspPath);
+	extensionContext.workspaceState.update("autokitteh.starlarkLSPVersion", release.tag);
 
 	commands.executeCommand(
 		vsCommands.showInfoMessage,
@@ -134,7 +138,7 @@ export const getNewVersion = async (extensionPath: string, release?: AssetInfo):
 	return lspPath;
 };
 
-export const downloadExecutable = async (extensionPath: string): Promise<string | undefined> => {
+export const downloadExecutable = async (extensionContext: ExtensionContext): Promise<string | undefined> => {
 	const platform = os.platform();
 	const arch = os.arch();
 	const release = await getLatestRelease(platform, arch);
@@ -147,7 +151,7 @@ export const downloadExecutable = async (extensionPath: string): Promise<string 
 			"No"
 		);
 		if (userResponse === "Yes") {
-			return await getNewVersion(extensionPath, release);
+			return await getNewVersion(extensionContext, release);
 		}
 	}
 };

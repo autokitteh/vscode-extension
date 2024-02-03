@@ -103,23 +103,6 @@
 					"default": 1,
 					"description": "Refresh interval in seconds for the sidebar panel",
 					"type": "number"
-				},
-				"autokitteh.starlarkLSPPath": {
-					"default": "",
-					"description": "The path to the Starlark LSP Server",
-					"type": "string"
-				},
-				"autokitteh.starlarkLSPArgs": {
-					"default": [
-						"start"
-					],
-					"description": "Arguments to run the Starlark LSP Server with",
-					"type": "array"
-				},
-				"autokitteh.starlarkLSPVersion": {
-					"default": "",
-					"description": "The version of the Starlark LSP Server (for internal use only)",
-					"type": "string"
 				}
 			},
 			"title": "autokitteh"
