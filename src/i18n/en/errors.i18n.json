@@ -19,5 +19,6 @@
 	"missingStarlarkLSPPort": "Starlark LSP port is not set",
 	"issueGettingLSP": "There was an issue installing Starlark LSP",
 	"fetchingReleaseInfo": "Couldn't fetch LSP executable: {{error}}",
+	"starlarLSPInit": "Couldn't initialize LSP executable.",
 	"issueExtractLSP": "Extraction error: {{error}}"
 }

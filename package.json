@@ -105,7 +105,7 @@
 					"type": "number"
 				},
 				"autokitteh.starlarkLSPPath": {
-					"default": "ak",
+					"default": "",
 					"description": "The path to the Starlark LSP Server",
 					"type": "string"
 				},

@@ -14,9 +14,6 @@ export class StarlarkLSPService {
 	private static extensionPath: string;
 
 	public static init(extensionPath: string) {
-		if (StarlarkLSPService.languageClient) {
-			return;
-		}
 		this.extensionPath = extensionPath;
 		this.initiateLSPServer();
 		workspace.onDidChangeConfiguration(this.onChangeConfiguration);
@@ -28,19 +25,27 @@ export class StarlarkLSPService {
 			new StarlarkFileHandler(StarlarkLSPService.languageClient!)
 		);
 		if (StarlarkLSPService.languageClient) {
-			return;
+			StarlarkLSPService.languageClient.stop();
 		}
 
-		await downloadExecutable(this.extensionPath);
+		let starlarkPath = starlarkLSPPath;
+		if (!starlarkPath) {
+			starlarkPath = await downloadExecutable(this.extensionPath);
+			if (!starlarkPath) {
+				LoggerService.error(namespaces.startlarkLSPServer, translate().t("errors.starlarLSPInit"));
+				return;
+			}
+		}
 
 		let serverOptions: ServerOptions | Promise<StreamInfo> = {
-			command: starlarkLSPPath,
-			args: starlarkLSPArgs,
+			command: starlarkPath,
+			args: ["start"],
 		};
 
 		let clientOptions: LanguageClientOptions = {
 			documentSelector: [{ scheme: "file", language: "starlark" }],
 			initializationOptions: {},
+			outputChannelName: "autokitteh: Starlark LSP Server",
 		};
 
 		/* By default, the Starlark LSP operates through a CMD command in stdio mode.

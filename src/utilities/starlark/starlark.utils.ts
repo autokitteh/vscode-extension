@@ -10,7 +10,8 @@ import axios from "axios";
 import * as tar from "tar";
 import { commands, workspace, window } from "vscode";
 
-const getPlatformIdentifier = (platform: string): string => (platform === "darwin" ? "Darwin_arm64" : platform);
+const getPlatformIdentifier = (platform: string): string =>
+	platform === "darwin" ? "autokitteh-starlark-lsp_Darwin_arm64.tar.gz" : platform;
 
 export const getAssetByPlatform = (data: GitHubRelease, platform: string): AssetInfo | undefined => {
 	const enrichedPlatform = getPlatformIdentifier(platform);
@@ -68,9 +69,9 @@ export const downloadAndSaveFile = async (url: string, filePath: string): Promis
 	}
 };
 
-export const getNewVersion = async (extensionPath: string, release?: AssetInfo): Promise<void> => {
+export const getNewVersion = async (extensionPath: string, release?: AssetInfo): Promise<string | undefined> => {
 	if (!release) {
-		return;
+		return undefined;
 	}
 
 	const fileName = getFileNameFromUrl(release.url);
@@ -81,7 +82,9 @@ export const getNewVersion = async (extensionPath: string, release?: AssetInfo):
 		commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, errorMessage);
 	});
 
-	await workspace.getConfiguration().update("autokitteh.starlarkLSPPath", `${extensionPath}/autokitteh-starlark-lsp`);
+	const lspPath = `${extensionPath}/autokitteh-starlark-lsp`;
+
+	await workspace.getConfiguration().update("autokitteh.starlarkLSPPath", lspPath);
 	await workspace.getConfiguration().update("autokitteh.starlarkLSPVersion", release.tag);
 
 	commands.executeCommand(
@@ -90,9 +93,11 @@ export const getNewVersion = async (extensionPath: string, release?: AssetInfo):
 		translate().t("starlark.executableDownloadedSuccessfully")
 	);
 	LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.executableDownloadedSuccessfully"));
+
+	return lspPath;
 };
 
-export const downloadExecutable = async (extensionPath: string) => {
+export const downloadExecutable = async (extensionPath: string): Promise<string | undefined> => {
 	const platform = os.platform();
 	const release = await getLatestRelease(platform);
 
