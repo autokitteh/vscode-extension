@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import { connect } from "net";
 import { namespaces, starlarkLSPLocalhost, vsCommands } from "@constants";
 import { starlarkLSPPath, starlarkLSPUriScheme, starlarkLSPArgs } from "@constants";
@@ -29,7 +30,7 @@ export class StarlarkLSPService {
 		}
 
 		let starlarkPath = starlarkLSPPath;
-		if (!starlarkPath) {
+		if (!starlarkPath || !fs.existsSync(starlarkPath)) {
 			starlarkPath = await downloadExecutable(this.extensionPath);
 			if (!starlarkPath) {
 				LoggerService.error(namespaces.startlarkLSPServer, translate().t("errors.starlarLSPInit"));

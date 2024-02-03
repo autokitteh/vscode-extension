@@ -10,11 +10,11 @@ import axios from "axios";
 import * as tar from "tar";
 import { commands, workspace, window } from "vscode";
 
-const getPlatformIdentifier = (platform: string): string =>
-	platform === "darwin" ? "autokitteh-starlark-lsp_Darwin_arm64.tar.gz" : platform;
+const getPlatformIdentifier = (platform: string, arch: string): string =>
+	platform === "darwin" && arch === "arm64" ? "autokitteh-starlark-lsp_Darwin_arm64.tar.gz" : platform;
 
-export const getAssetByPlatform = (data: GitHubRelease, platform: string): AssetInfo | undefined => {
-	const enrichedPlatform = getPlatformIdentifier(platform);
+export const getAssetByPlatform = (data: GitHubRelease, platform: string, arch: string): AssetInfo | undefined => {
+	const enrichedPlatform = getPlatformIdentifier(platform, arch);
 	const latestRelease = data.data[data.data.length - 1];
 	const asset = latestRelease.assets.find((asset) => asset.name.includes(enrichedPlatform));
 
@@ -26,10 +26,10 @@ export const getAssetByPlatform = (data: GitHubRelease, platform: string): Asset
 		: undefined;
 };
 
-export const getLatestRelease = async (platform: string): Promise<AssetInfo | undefined> => {
+export const getLatestRelease = async (platform: string, arch: string): Promise<AssetInfo | undefined> => {
 	try {
 		const response = await axios.get(starlarkExecutableGithubRepository);
-		return getAssetByPlatform(response, platform);
+		return getAssetByPlatform(response, platform, arch);
 	} catch (error) {
 		const errorMessage = translate().t("errors.fetchingReleaseInfo", { error: (error as Error).message });
 		LoggerService.error(namespaces.startlarkLSPServer, errorMessage);
@@ -99,7 +99,8 @@ export const getNewVersion = async (extensionPath: string, release?: AssetInfo):
 
 export const downloadExecutable = async (extensionPath: string): Promise<string | undefined> => {
 	const platform = os.platform();
-	const release = await getLatestRelease(platform);
+	const arch = os.arch();
+	const release = await getLatestRelease(platform, arch);
 
 	const currentLSPVersion = workspace.getConfiguration().get<string>("autokitteh.starlarkLSPVersion");
 	if (release && currentLSPVersion !== release.tag) {
