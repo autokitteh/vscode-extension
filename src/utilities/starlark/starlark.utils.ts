@@ -33,8 +33,6 @@ const getPlatformIdentifier = (platform: string, arch: string): string => {
 			switch (arch) {
 				case "x64":
 					return "autokitteh-starlark-lsp_Windows_x64.tar.gz";
-				case "ia32":
-					return "autokitteh-starlark-lsp_Windows_ia32.tar.gz";
 				default:
 					return "unsupported";
 			}
