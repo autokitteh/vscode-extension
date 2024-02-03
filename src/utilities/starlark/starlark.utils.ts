@@ -9,56 +9,25 @@ import { LoggerService } from "@services";
 import axios from "axios";
 import * as tar from "tar";
 import { commands, workspace, window, ExtensionContext } from "vscode";
-const getPlatformIdentifier = (platform: string, arch: string): string => {
-	switch (platform) {
-		case "darwin":
-			switch (arch) {
-				case "arm64":
-					return "autokitteh-starlark-lsp_Darwin_arm64.tar.gz";
-				case "x64":
-					return "autokitteh-starlark-lsp_Darwin_x64.tar.gz";
-				default:
-					return "unsupported";
-			}
-		case "linux":
-			switch (arch) {
-				case "arm64":
-					return "autokitteh-starlark-lsp_Linux_arm64.tar.gz";
-				case "x64":
-					return "autokitteh-starlark-lsp_Linux_x64.tar.gz";
-				default:
-					return "unsupported";
-			}
-		case "win32":
-			switch (arch) {
-				case "x64":
-					return "autokitteh-starlark-lsp_Windows_x64.tar.gz";
-				default:
-					return "unsupported";
-			}
-		default:
-			return "unsupported";
-	}
-};
 
 export const getAssetByPlatform = (data: GitHubRelease, platform: string, arch: string): AssetInfo | undefined => {
-	const enrichedPlatform = getPlatformIdentifier(platform, arch);
-	if (enrichedPlatform === "unsupported") {
+	const enrichedPlatform = `autokitteh-starlark-lsp_${platform}_${arch}`;
+	const latestRelease = data.data[data.data.length - 1];
+	const asset = latestRelease.assets.find((asset) => asset.name.includes(enrichedPlatform));
+
+	if (!asset) {
 		commands.executeCommand(
 			vsCommands.showErrorMessage,
 			namespaces.startlarkLSPServer,
 			translate().t("errors.starlarkPlatformNotSupported")
 		);
+		return;
 	}
-	const latestRelease = data.data[data.data.length - 1];
-	const asset = latestRelease.assets.find((asset) => asset.name.includes(enrichedPlatform));
 
-	return asset
-		? {
-				url: asset.browser_download_url,
-				tag: latestRelease.tag_name,
-			}
-		: undefined;
+	return {
+		url: asset.browser_download_url,
+		tag: latestRelease.tag_name,
+	};
 };
 
 export const getLatestRelease = async (platform: string, arch: string): Promise<AssetInfo | undefined> => {
