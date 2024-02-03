@@ -109,10 +109,17 @@
 					"description": "The path to the Starlark LSP Server",
 					"type": "string"
 				},
-				"autokitteh.starlarkLSPVersion": {
+				"autokitteh.starlarkLSPArgs": {
 					"default": "",
-					"description": "The version of the Starlark LSP Server (for internal use only)",
+					"description": "Arguments to run the Starlark LSP Server with",
 					"type": "string"
+				},
+				"autokitteh.starlarkLSPVersion": {
+					"default": [
+						"start"
+					],
+					"description": "The version of the Starlark LSP Server (for internal use only)",
+					"type": "array"
 				}
 			},
 			"title": "autokitteh"

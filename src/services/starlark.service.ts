@@ -39,7 +39,7 @@ export class StarlarkLSPService {
 
 		let serverOptions: ServerOptions | Promise<StreamInfo> = {
 			command: starlarkPath,
-			args: ["start"],
+			args: starlarkLSPArgs,
 		};
 
 		let clientOptions: LanguageClientOptions = {
