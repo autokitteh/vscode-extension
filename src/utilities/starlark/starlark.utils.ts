@@ -9,12 +9,49 @@ import { LoggerService } from "@services";
 import axios from "axios";
 import * as tar from "tar";
 import { commands, workspace, window } from "vscode";
-
-const getPlatformIdentifier = (platform: string, arch: string): string =>
-	platform === "darwin" && arch === "arm64" ? "autokitteh-starlark-lsp_Darwin_arm64.tar.gz" : platform;
+const getPlatformIdentifier = (platform: string, arch: string): string => {
+	switch (platform) {
+		case "darwin":
+			switch (arch) {
+				case "arm64":
+					return "autokitteh-starlark-lsp_Darwin_arm64.tar.gz";
+				case "x64":
+					return "autokitteh-starlark-lsp_Darwin_x64.tar.gz";
+				default:
+					return "unsupported";
+			}
+		case "linux":
+			switch (arch) {
+				case "arm64":
+					return "autokitteh-starlark-lsp_Linux_arm64.tar.gz";
+				case "x64":
+					return "autokitteh-starlark-lsp_Linux_x64.tar.gz";
+				default:
+					return "unsupported";
+			}
+		case "win32":
+			switch (arch) {
+				case "x64":
+					return "autokitteh-starlark-lsp_Windows_x64.tar.gz";
+				case "ia32":
+					return "autokitteh-starlark-lsp_Windows_ia32.tar.gz";
+				default:
+					return "unsupported";
+			}
+		default:
+			return "unsupported";
+	}
+};
 
 export const getAssetByPlatform = (data: GitHubRelease, platform: string, arch: string): AssetInfo | undefined => {
 	const enrichedPlatform = getPlatformIdentifier(platform, arch);
+	if (enrichedPlatform === "unsupported") {
+		commands.executeCommand(
+			vsCommands.showErrorMessage,
+			namespaces.startlarkLSPServer,
+			translate().t("errors.starlarkPlatformNotSupported")
+		);
+	}
 	const latestRelease = data.data[data.data.length - 1];
 	const asset = latestRelease.assets.find((asset) => asset.name.includes(enrichedPlatform));
 

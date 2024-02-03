@@ -20,5 +20,6 @@
 	"issueGettingLSP": "There was an issue installing Starlark LSP",
 	"fetchingReleaseInfo": "Couldn't fetch LSP executable: {{error}}",
 	"starlarLSPInit": "Couldn't initialize LSP executable.",
-	"issueExtractLSP": "Extraction error: {{error}}"
+	"issueExtractLSP": "Extraction error: {{error}}",
+	"starlarkPlatformNotSupported": "Starlark LSP is not supported on this platform"
 }
