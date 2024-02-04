@@ -121,7 +121,7 @@ async function extractArchive(inputPath: string, outputPath: string) {
 export const getAssetByPlatform = (data: GitHubRelease, platform: string, arch: string): AssetInfo | undefined => {
 	const enrichedPlatform = `autokitteh-starlark-lsp_${platform}_${arch}`;
 	const latestRelease = data.data[data.data.length - 1];
-	const asset: Asset | undefined = latestRelease.assets.find((asset) => asset.name.includes(enrichedPlatform));
+	const asset: Asset | undefined = latestRelease.assets.find((asset: Asset) => asset.name.includes(enrichedPlatform));
 
 	if (!asset) {
 		commands.executeCommand(

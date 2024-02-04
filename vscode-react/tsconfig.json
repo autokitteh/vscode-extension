@@ -20,6 +20,8 @@
 			"@constants/*": ["../src/constants/*"],
 			"@enums": ["../src/enums/index"],
 			"@enums/*": ["../src/enums/*"],
+			"@interfaces": ["../src/interfaces/index"],
+			"@interfaces/*": ["../src/interfaces/*"],
 			"@i18n": ["../src/i18n/index"],
 			"@i18n/*": ["../src/i18n/*"],
 			"@models": ["../src/models/index"],
