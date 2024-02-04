@@ -1,5 +1,6 @@
 import { SessionStateType } from "@enums";
 import { translate } from "@i18n/index";
+import { LoggerService } from "@services";
 import { ProtoSessionHistoryState } from "@type/models";
 import { get } from "lodash";
 
@@ -64,36 +65,37 @@ export class SessionState {
 		let prints, call, exports, returnValue;
 		const callstackTrace = get(state, "states.value.error.callstack", []) as Callstack[];
 
-		if (stateCase) {
-			switch (stateCase) {
-				case SessionStateType.created:
-					this.state = new CreatedState(callstackTrace);
-					break;
-				case SessionStateType.running:
-					prints = get(state, "states.prints", []);
-					call = get(state, "states.call", {});
-					this.state = new RunningState(prints, call, callstackTrace);
-					break;
-				case SessionStateType.error:
-					const errorMessage = get(
-						state,
-						"states.value.error.message",
-						translate().t("errors.sessionLogMissingOnErrorType")
-					);
-					this.state = new ErrorState(errorMessage, callstackTrace);
-					break;
-				case SessionStateType.completed:
-					prints = get(state, "states.value.prints", []);
-					exports = get(state, "states.value.exports", new Map());
-					returnValue = get(state, "states.value.returnValue", {});
-					this.state = new CompletedState(prints, exports, returnValue, callstackTrace);
-					break;
-				default:
-					this.state = new ErrorState(translate().t("errors.unexpectedSessionStateType"), []);
-			}
+		if (!stateCase) {
+			this.state = new ErrorState(translate().t("errors.missingSessionStateType"), []);
+
+			return;
 		}
-		this.state = new ErrorState(translate().t("errors.missingSessionStateType"), []);
-		return;
+		switch (stateCase) {
+			case SessionStateType.created:
+				this.state = new CreatedState(callstackTrace);
+				break;
+			case SessionStateType.running:
+				prints = get(state, "states.prints", []);
+				call = get(state, "states.call", {});
+				this.state = new RunningState(prints, call, callstackTrace);
+				break;
+			case SessionStateType.error:
+				const errorMessage = get(
+					state,
+					"states.value.error.message",
+					translate().t("errors.sessionLogMissingOnErrorType")
+				);
+				this.state = new ErrorState(errorMessage, callstackTrace);
+				break;
+			case SessionStateType.completed:
+				prints = get(state, "states.value.prints", []);
+				exports = get(state, "states.value.exports", new Map());
+				returnValue = get(state, "states.value.returnValue", {});
+				this.state = new CompletedState(prints, exports, returnValue, callstackTrace);
+				break;
+			default:
+				LoggerService.error("SessionState", translate().t("errors.unexpectedSessionStateType"));
+		}
 	}
 
 	getError(): string {
