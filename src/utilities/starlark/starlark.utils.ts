@@ -4,7 +4,7 @@ import * as path from "path";
 import * as zlib from "zlib";
 import { namespaces, starlarkExecutableGithubRepository, vsCommands } from "@constants";
 import { translate } from "@i18n";
-import { AssetInfo, GitHubRelease } from "@interfaces";
+import { Asset, AssetInfo, GitHubRelease } from "@interfaces";
 import { LoggerService } from "@services";
 import axios from "axios";
 import * as tar from "tar";
@@ -13,7 +13,7 @@ import { commands, workspace, window, ExtensionContext } from "vscode";
 export const getAssetByPlatform = (data: GitHubRelease, platform: string, arch: string): AssetInfo | undefined => {
 	const enrichedPlatform = `autokitteh-starlark-lsp_${platform}_${arch}`;
 	const latestRelease = data.data[data.data.length - 1];
-	const asset = latestRelease.assets.find((asset) => asset.name.includes(enrichedPlatform));
+	const asset: Asset | undefined = latestRelease.assets.find((asset) => asset.name.includes(enrichedPlatform));
 
 	if (!asset) {
 		commands.executeCommand(
