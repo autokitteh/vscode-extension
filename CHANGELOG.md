@@ -1,3 +1,10 @@
+# [0.8.0-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.4...v0.8.0-dev.5) (2024-02-04)
+
+
+### Features
+
+* add callstack logs on errored states ([#129](https://github.com/autokitteh/vscode-extension/issues/129)) ([6e516e9](https://github.com/autokitteh/vscode-extension/commit/6e516e90323da8d6b34f474e16b34ae8a702cb0d))
+
 # [0.8.0-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.3...v0.8.0-dev.4) (2024-02-01)
 
 
