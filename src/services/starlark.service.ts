@@ -48,12 +48,12 @@ export class StarlarkLSPService {
 			const currentLSPVersion = workspace.getConfiguration().get<string>("autokitteh.starlarkLSPVersion");
 			if (release && currentLSPVersion !== release.tag) {
 				const userResponse = await window.showInformationMessage(
-					translate().t("starlark.downloadExecutableDialog"),
+					translate().t("lsp.downloadExecutableDialog"),
 					"Yes",
 					"No"
 				);
 				if (userResponse === "Yes") {
-					LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.downloadExecutableInProgress"));
+					LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.downloadExecutableInProgress"));
 
 					starlarkPath = await this.getNewVersion(this.extensionContext, release);
 				}
@@ -187,7 +187,7 @@ export class StarlarkLSPService {
 		const extensionPath = extensionContext.extensionPath;
 		try {
 			await this.downloadAndSaveFile(release.url, `${extensionPath}/${fileName}`);
-			LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.executableDownloadedUnpacking"));
+			LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedUnpacking"));
 
 			await new Promise<void>((resolve, reject) => {
 				extractArchive(`${extensionPath}/${fileName}`, extensionPath, (error) => {
@@ -215,9 +215,9 @@ export class StarlarkLSPService {
 			commands.executeCommand(
 				vsCommands.showInfoMessage,
 				namespaces.startlarkLSPServer,
-				translate().t("starlark.executableDownloadedSuccessfully")
+				translate().t("lsp.executableDownloadedSuccessfully")
 			);
-			LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.executableDownloadedSuccessfully"));
+			LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
 
 			return lspPath;
 		} catch (error) {
