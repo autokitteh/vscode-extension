@@ -21,3 +21,4 @@ export {
 	starlarkLSPLocalhost,
 	starlarkExecutableGithubRepository,
 } from "@constants/starlark.constants";
+export { getConfig } from "@constants/utilities";
