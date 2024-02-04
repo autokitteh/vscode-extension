@@ -29,20 +29,12 @@ export class SessionState {
 		this.logs = get(state, "states.prints", []);
 		this.call = get(state, "states.call", {});
 		this.exports = get(state, "states.value.exports", new Map());
-
-		if (stateCase === SessionStateType.error) {
-			this.error = get(state, "states.value.error.message", translate().t("errors.sessionLogMissingOnErrorType"));
-		}
-		if (stateCase === SessionStateType.completed) {
-			this.returnValue = get(state, "states.value.returnValue", {});
-		}
+		this.error = get(state, "states.value.error.message", translate().t("errors.sessionLogMissingOnErrorType"));
+		this.returnValue = get(state, "states.value.returnValue", {});
 	}
 
 	getError(): string {
-		if (this.type === SessionStateType.error && this.error) {
-			return this.error;
-		}
-		return translate().t("errors.sessionLogMissingErrorMessage");
+		return this.error || translate().t("errors.sessionLogMissingErrorMessage");
 	}
 
 	getCallstack(): Callstack[] {
@@ -54,17 +46,10 @@ export class SessionState {
 	}
 
 	containLogs(): boolean {
-		return (
-			(this.type === SessionStateType.running || this.type === SessionStateType.completed) &&
-			!!this.logs &&
-			this.logs.length > 0
-		);
+		return !!(this.logs && this.logs.length);
 	}
 
 	getLogs(): string[] {
-		if (this.containLogs() && this.logs) {
-			return this.logs;
-		}
-		return [];
+		return this.logs || [];
 	}
 }
