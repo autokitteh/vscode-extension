@@ -1,4 +1,5 @@
 import { Session as ProtoSession } from "@ak-proto-ts/sessions/v1/session_pb";
+import { Dict } from "@ak-proto-ts/values/v1/values_pb";
 import { Session } from "@type/models/session.type";
 import { convertTimestampToDate } from "@utilities";
 
@@ -13,5 +14,6 @@ export function convertSessionProtoToModel(protoSession: ProtoSession): Session 
 		deploymentId: protoSession.deploymentId,
 		state: protoSession.state,
 		createdAt: convertTimestampToDate(protoSession.createdAt!),
+		eventData: (protoSession.inputs.event_data.type.value as Dict).items,
 	};
 }

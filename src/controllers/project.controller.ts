@@ -24,6 +24,7 @@ export class ProjectController {
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
+	private selectedSession?: Session;
 
 	constructor(
 		projectView: IProjectView,
@@ -121,65 +122,70 @@ export class ProjectController {
 		});
 	}
 
-	async displaySessionsHistory(sessionId: string): Promise<void> {
-		const { data: sessionHistoryStates, error } = await SessionsService.getHistoryBySessionId(sessionId);
-		if (error || !sessionHistoryStates?.length) {
-			return;
-		}
-
-		if (isEqual(this.sessionHistoryStates, sessionHistoryStates) && this.sessionHistoryStates?.length) {
-			return;
-		}
-
-		this.sessionHistoryStates = sessionHistoryStates;
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
-
-		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
-
-		if (!lastState.containLogs()) {
-			LoggerService.print(namespaces.sessionLogs, translate().t("sessions.noLogs"), channels.appOutputSessionsLogName);
-			return;
-		}
-
-		lastState.getLogs().forEach((logStr) => {
-			LoggerService.print(namespaces.sessionLogs, logStr, channels.appOutputSessionsLogName);
-		});
-
-		if (!lastState.isError()) {
-			return;
-		}
-		const printedError = lastState.getError();
-		LoggerService.printError(namespaces.sessionLogs, printedError, channels.appOutputSessionsLogName);
-
-		if (!lastState.getCallstack().length) {
-			LoggerService.printError(
-				namespaces.sessionLogs,
-				`${translate().t("sessions.callstack")}: ${translate().t("sessions.callstackNoPrints")}`,
-				channels.appOutputSessionsLogName
-			);
-			return;
-		}
-
-		LoggerService.printError(
-			namespaces.sessionLogs,
-			`${translate().t("sessions.callstack")}: `,
-			channels.appOutputSessionsLogName
-		);
-		lastState.getCallstack().forEach((callstackObj) => {
-			const { col, name, path, row } = callstackObj.location;
-			const formatCallstackString = `${path}: ${row}.${col}: ${name}`;
-			LoggerService.printError(namespaces.sessionLogs, formatCallstackString, channels.appOutputSessionsLogName);
-		});
+	async displaySessionsHistory(session: Session): Promise<void> {
+		SessionsService.startSession(session);
 	}
+
+	// async displaySessionsHistory(sessionId: string): Promise<void> {
+	// 	const { data: sessionHistoryStates, error } = await SessionsService.getHistoryBySessionId(sessionId);
+	// 	if (error || !sessionHistoryStates?.length) {
+	// 		return;
+	// 	}
+
+	// 	if (isEqual(this.sessionHistoryStates, sessionHistoryStates) && this.sessionHistoryStates?.length) {
+	// 		return;
+	// 	}
+
+	// 	this.sessionHistoryStates = sessionHistoryStates;
+	// 	LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+
+	// 	const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
+
+	// 	if (!lastState.containLogs()) {
+	// 		LoggerService.print(namespaces.sessionLogs, translate().t("sessions.noLogs"), channels.appOutputSessionsLogName);
+	// 		return;
+	// 	}
+
+	// 	lastState.getLogs().forEach((logStr) => {
+	// 		LoggerService.print(namespaces.sessionLogs, logStr, channels.appOutputSessionsLogName);
+	// 	});
+
+	// 	if (!lastState.isError()) {
+	// 		return;
+	// 	}
+	// 	const printedError = lastState.getError();
+	// 	LoggerService.printError(namespaces.sessionLogs, printedError, channels.appOutputSessionsLogName);
+
+	// 	if (!lastState.getCallstack().length) {
+	// 		LoggerService.printError(
+	// 			namespaces.sessionLogs,
+	// 			`${translate().t("sessions.callstack")}: ${translate().t("sessions.callstackNoPrints")}`,
+	// 			channels.appOutputSessionsLogName
+	// 		);
+	// 		return;
+	// 	}
+
+	// 	LoggerService.printError(
+	// 		namespaces.sessionLogs,
+	// 		`${translate().t("sessions.callstack")}: `,
+	// 		channels.appOutputSessionsLogName
+	// 	);
+	// 	lastState.getCallstack().forEach((callstackObj) => {
+	// 		const { col, name, path, row } = callstackObj.location;
+	// 		const formatCallstackString = `${path}: ${row}.${col}: ${name}`;
+	// 		LoggerService.printError(namespaces.sessionLogs, formatCallstackString, channels.appOutputSessionsLogName);
+	// 	});
+	// }
 
 	async displaySessionLogs(sessionId: string): Promise<void> {
 		this.stopInterval(ProjectIntervals.sessionHistory);
 
-		this.startInterval(
-			ProjectIntervals.sessionHistory,
-			() => this.displaySessionsHistory(sessionId),
-			this.sessionsLogRefreshRate
-		);
+		const session = this.sessions?.find((session) => session.sessionId === sessionId);
+		this.selectedSession = session;
+		if (!session) {
+			return;
+		}
+		this.displaySessionsHistory(session);
 	}
 
 	async startInterval(intervalKey: ProjectIntervals, loadFunc: () => Promise<void>, refreshRate: number) {

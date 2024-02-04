@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { error } from "console";
 import { Session as ProtoSession } from "@ak-proto-ts/sessions/v1/session_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
@@ -38,6 +39,25 @@ export class SessionsService {
 			const response = await sessionsClient.getHistory({ sessionId });
 			const sessionHistory = response.history?.states.map((state: ProtoSessionHistoryState) => new SessionState(state));
 			return { data: sessionHistory, error: undefined };
+		} catch (error) {
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
+
+			return { data: undefined, error };
+		}
+	}
+
+	static async startSession(session: Session): Promise<void> {
+		try {
+			const protoSession = {
+				deploymentId: session.deploymentId,
+				state: session.state,
+				event_data: session.eventData,
+			};
+
+			const response = await sessionsClient.start({ session: protoSession });
+			// const response = await sessionsClient.getHistory({ sessionId });
+			// const sessionHistory = response.history?.states.map((state: ProtoSessionHistoryState) => new SessionState(state));
+			// return { data: sessionHistory, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 
