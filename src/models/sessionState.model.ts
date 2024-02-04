@@ -1,17 +1,8 @@
 import { SessionStateType } from "@enums/sessionStates.enum";
 import { translate } from "@i18n/index";
 import { LoggerService } from "@services";
-import { ProtoSessionHistoryState } from "@type/models";
+import { Callstack, ProtoSessionHistoryState } from "@type/models";
 import { get } from "lodash";
-
-type Callstack = {
-	location: {
-		col: number;
-		row: number;
-		name: string;
-		path: string;
-	};
-};
 
 export class SessionState {
 	type: SessionStateType;
