@@ -14,7 +14,7 @@
 	"projectEnvironmentsNotFound": "Project environments not found",
 	"unexpectedSessionStateType": "Unexpected session state type",
 	"sessionLogMissingErrorMessage": "Session History - Get error from not error state",
-	"sessionLogMissingOnErrorType": "Session History - Missing error from session state",
+	"sessionLogMissingOnErrorType": "Session History - No error",
 	"missingSessionStateType": "Missing session state type",
 	"missingStarlarkLSPPort": "Starlark LSP port is not set"
 }
