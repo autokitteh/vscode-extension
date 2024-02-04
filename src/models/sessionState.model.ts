@@ -15,7 +15,7 @@ export class SessionState {
 
 	constructor(state: ProtoSessionHistoryState) {
 		const stateCase = get(state, "states.case");
-		if (!stateCase) {
+		if (!stateCase || !(stateCase in SessionStateType)) {
 			LoggerService.error("SessionState", translate().t("errors.unexpectedSessionStateType"));
 			this.type = SessionStateType.unknown;
 			return;
@@ -25,27 +25,16 @@ export class SessionState {
 
 		this.callstackTrace = callstackTrace;
 
-		switch (stateCase) {
-			case SessionStateType.created:
-				this.type = SessionStateType.created;
-				break;
-			case SessionStateType.running:
-				this.type = SessionStateType.running;
-				this.logs = get(state, "states.prints", []);
-				this.call = get(state, "states.call", {});
-				break;
-			case SessionStateType.error:
-				this.type = SessionStateType.error;
-				this.error = get(state, "states.value.error.message", translate().t("errors.sessionLogMissingOnErrorType"));
-				break;
-			case SessionStateType.completed:
-				this.type = SessionStateType.completed;
-				this.logs = get(state, "states.value.prints", []);
-				this.exports = get(state, "states.value.exports", new Map());
-				this.returnValue = get(state, "states.value.returnValue", {});
-				break;
-			default:
-				this.type = SessionStateType.unknown;
+		this.type = stateCase;
+		this.logs = get(state, "states.prints", []);
+		this.call = get(state, "states.call", {});
+		this.exports = get(state, "states.value.exports", new Map());
+
+		if (stateCase === SessionStateType.error) {
+			this.error = get(state, "states.value.error.message", translate().t("errors.sessionLogMissingOnErrorType"));
+		}
+		if (stateCase === SessionStateType.completed) {
+			this.returnValue = get(state, "states.value.returnValue", {});
 		}
 	}
 
