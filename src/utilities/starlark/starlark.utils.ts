@@ -15,7 +15,6 @@ import { commands, workspace, window, ExtensionContext } from "vscode";
 
 const execPromise = util.promisify(exec);
 
-// Helper function to determine the archive type
 function getArchiveType(filename: string): string {
 	const ext = path.extname(filename).toLowerCase();
 	if (ext === ".xz") {
@@ -34,8 +33,6 @@ function getArchiveType(filename: string): string {
 }
 
 async function extractXzFile(inputPath: string, outputPath: string): Promise<string | undefined> {
-	// Assuming outputPath is the directory where you want to place the decompressed file
-	// Ensure the outputPath directory exists
 	if (!fs.existsSync(outputPath)) {
 		fs.mkdirSync(outputPath, { recursive: true });
 	}
@@ -46,7 +43,7 @@ async function extractXzFile(inputPath: string, outputPath: string): Promise<str
 	try {
 		await execPromise(command);
 		console.log(`Successfully extracted ${inputPath} to ${outputFilePath}`);
-		return outputFilePath; // Return the path to the decompressed file, which is expected to be a .tar file
+		return outputFilePath;
 	} catch (error) {
 		console.error("Extraction failed:", error);
 		return undefined;
@@ -59,11 +56,7 @@ function extractTarGz(inputPath: string, outputPath: string): Promise<void> {
 		const input = fs.createReadStream(inputPath);
 		const output = tarFs.extract(outputPath);
 
-		input
-			.pipe(decompressor)
-			.pipe(output)
-			.on("finish", resolve) // Resolve the promise when extraction is complete
-			.on("error", reject); // Reject the promise if an error occurs
+		input.pipe(decompressor).pipe(output).on("finish", resolve).on("error", reject);
 	});
 }
 
@@ -73,10 +66,7 @@ function extractTar(inputPath: string, outputPath: string): Promise<void> {
 		const input = fs.createReadStream(inputPath);
 		const output = tarFs.extract(outputPath);
 
-		input
-			.pipe(output)
-			.on("finish", resolve) // Resolve the promise when extraction is complete
-			.on("error", reject); // Reject the promise if an error occurs
+		input.pipe(output).on("finish", resolve).on("error", reject);
 	});
 }
 
@@ -85,11 +75,10 @@ function extractZip(inputPath: string, outputPath: string): Promise<void> {
 	return new Promise((resolve, reject) => {
 		try {
 			const zip = new AdmZip(inputPath);
-			// Synchronously extract the ZIP file
 			zip.extractAllTo(outputPath, true);
-			resolve(); // Resolve after successful extraction
+			resolve();
 		} catch (error) {
-			reject(error); // Reject in case of an error
+			reject(error);
 		}
 	});
 }
