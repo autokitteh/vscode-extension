@@ -128,8 +128,8 @@ export class ProjectController {
 		if (isEqual(this.sessionHistoryStates, sessionHistoryStates) && this.sessionHistoryStates?.length) {
 			return;
 		}
-		this.sessionHistoryStates = sessionHistoryStates;
 
+		this.sessionHistoryStates = sessionHistoryStates;
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
 		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
@@ -140,7 +140,6 @@ export class ProjectController {
 				translate().t("sessions.noLogs"),
 				channels.appOutputSessionsLogName
 			);
-
 			return;
 		}
 
@@ -155,13 +154,12 @@ export class ProjectController {
 					channels.appOutputSessionsLogName
 				);
 				lastState.getCallstack().forEach((callstackObj) => {
-					let { col, name, path, row } = callstackObj.location;
+					const { col, name, path, row } = callstackObj.location;
 					const formatCallstackString = `${path}: ${row}.${col}: ${name}`;
 					LoggerService.printError(namespaces.sessionLogs, formatCallstackString, channels.appOutputSessionsLogName);
 				});
 				return;
 			}
-
 			LoggerService.printError(
 				namespaces.sessionLogs,
 				`${translate().t("sessions.callstack")}: ${translate().t("sessions.callstackNoPrints")}`,
