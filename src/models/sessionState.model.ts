@@ -1,4 +1,4 @@
-import { SessionStateType } from "@enums/sessionStates.enum";
+import { SessionStateType } from "@enums";
 import { translate } from "@i18n/index";
 import { LoggerService } from "@services";
 import { Callstack, ProtoSessionHistoryState } from "@type/models";
