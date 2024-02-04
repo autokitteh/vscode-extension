@@ -1,3 +1,10 @@
+# [0.8.0-dev.6](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.5...v0.8.0-dev.6) (2024-02-04)
+
+
+### Bug Fixes
+
+* fix session history prints ([#131](https://github.com/autokitteh/vscode-extension/issues/131)) ([b05d787](https://github.com/autokitteh/vscode-extension/commit/b05d7875296dccf3435cdcc9f5b647d383f012d6))
+
 # [0.8.0-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.4...v0.8.0-dev.5) (2024-02-04)
 
 
