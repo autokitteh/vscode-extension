@@ -53,7 +53,7 @@ export class StarlarkLSPService {
 		/* By default, the Starlark LSP operates through a CMD command in stdio mode.
 		 * However, if the 'starlarkLSPSocketMode' is enabled, the LSP won't initiate automatically.
 		 * Instead, VSCode connects to 'localhost:starlarkLSPPort', expecting the Starlark LSP to be running in socket mode. */
-		const isLSPSocketMode = !!vscode.workspace.getConfiguration().get("autokitteh.starlarkLSPSocketMode");
+		const isLSPSocketMode = workspace.getConfiguration().get("autokitteh.starlarkLSPSocketMode");
 
 		if (isLSPSocketMode) {
 			const port = getConfig<number>("autokitteh.starlarkLSPPort", 0);
