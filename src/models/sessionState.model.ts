@@ -1,4 +1,4 @@
-import { SessionStateType } from "@enums";
+import { SessionStateType } from "@enums/sessionStates.enum";
 import { translate } from "@i18n/index";
 import { LoggerService } from "@services";
 import { ProtoSessionHistoryState } from "@type/models";
@@ -13,114 +13,77 @@ type Callstack = {
 	};
 };
 
-class CreatedState {
-	callstackTrace: Callstack[];
-
-	constructor(callstackTrace: Callstack[] = []) {
-		this.callstackTrace = callstackTrace;
-	}
-}
-
-class RunningState {
-	logs: string[];
-	call?: object;
-	callstackTrace: Callstack[];
-
-	constructor(prints: string[], call?: object, callstackTrace: Callstack[] = []) {
-		this.logs = prints;
-		this.call = call;
-		this.callstackTrace = callstackTrace;
-	}
-}
-
-class ErrorState {
-	error: string;
-	callstackTrace: Callstack[];
-
-	constructor(error: string, callstackTrace: Callstack[] = []) {
-		this.error = error;
-		this.callstackTrace = callstackTrace;
-	}
-}
-
-class CompletedState {
-	logs: string[];
-	exports: Map<string, object>;
-	returnValue: object;
-	callstackTrace: Callstack[];
-
-	constructor(prints: string[], exports: Map<string, object>, returnValue: object, callstackTrace: Callstack[] = []) {
-		this.logs = prints;
-		this.exports = exports;
-		this.returnValue = returnValue;
-		this.callstackTrace = callstackTrace;
-	}
-}
-
 export class SessionState {
-	state: CreatedState | RunningState | ErrorState | CompletedState | undefined;
+	type: SessionStateType;
+	callstackTrace: Callstack[] = [];
+	logs?: string[];
+	error?: string;
+	call?: object;
+	exports?: Map<string, object>;
+	returnValue?: object;
 
 	constructor(state: ProtoSessionHistoryState) {
 		const stateCase = get(state, "states.case");
-		let prints, call, exports, returnValue;
-		const callstackTrace = get(state, "states.value.error.callstack", []) as Callstack[];
-
 		if (!stateCase) {
-			this.state = new ErrorState(translate().t("errors.missingSessionStateType"), []);
-
+			LoggerService.error("SessionState", translate().t("errors.unexpectedSessionStateType"));
+			this.type = SessionStateType.unknown;
 			return;
 		}
+
+		const callstackTrace = get(state, "states.value.error.callstack", []) as Callstack[];
+
+		this.callstackTrace = callstackTrace;
+
 		switch (stateCase) {
 			case SessionStateType.created:
-				this.state = new CreatedState(callstackTrace);
+				this.type = SessionStateType.created;
 				break;
 			case SessionStateType.running:
-				prints = get(state, "states.prints", []);
-				call = get(state, "states.call", {});
-				this.state = new RunningState(prints, call, callstackTrace);
+				this.type = SessionStateType.running;
+				this.logs = get(state, "states.prints", []);
+				this.call = get(state, "states.call", {});
 				break;
 			case SessionStateType.error:
-				const errorMessage = get(
-					state,
-					"states.value.error.message",
-					translate().t("errors.sessionLogMissingOnErrorType")
-				);
-				this.state = new ErrorState(errorMessage, callstackTrace);
+				this.type = SessionStateType.error;
+				this.error = get(state, "states.value.error.message", translate().t("errors.sessionLogMissingOnErrorType"));
 				break;
 			case SessionStateType.completed:
-				prints = get(state, "states.value.prints", []);
-				exports = get(state, "states.value.exports", new Map());
-				returnValue = get(state, "states.value.returnValue", {});
-				this.state = new CompletedState(prints, exports, returnValue, callstackTrace);
+				this.type = SessionStateType.completed;
+				this.logs = get(state, "states.value.prints", []);
+				this.exports = get(state, "states.value.exports", new Map());
+				this.returnValue = get(state, "states.value.returnValue", {});
 				break;
 			default:
-				LoggerService.error("SessionState", translate().t("errors.unexpectedSessionStateType"));
+				this.type = SessionStateType.unknown;
 		}
 	}
 
 	getError(): string {
-		if (this.state instanceof ErrorState) {
-			return this.state.error;
+		if (this.type === SessionStateType.error && this.error) {
+			return this.error;
 		}
 		return translate().t("errors.sessionLogMissingErrorMessage");
 	}
 
 	getCallstack(): Callstack[] {
-		return this.state?.callstackTrace || [];
+		return this.callstackTrace;
 	}
 
-	isError(): this is { state: ErrorState } {
-		return this.state instanceof ErrorState;
+	isError(): boolean {
+		return this.type === SessionStateType.error;
 	}
 
 	containLogs(): boolean {
-		return (this.state instanceof RunningState || this.state instanceof CompletedState) && this.state.logs.length > 0;
+		return (
+			(this.type === SessionStateType.running || this.type === SessionStateType.completed) &&
+			!!this.logs &&
+			this.logs.length > 0
+		);
 	}
 
 	getLogs(): string[] {
-		if (this.containLogs()) {
-			//@ts-ignore
-			return this.state.logs;
+		if (this.containLogs() && this.logs) {
+			return this.logs;
 		}
 		return [];
 	}
