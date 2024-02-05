@@ -5,7 +5,6 @@ const packageJson = require(packageJsonPath);
 
 function getStringUntilLastHyphen(str) {
 	const lastHyphenIndex = str.lastIndexOf("-");
-	// If there's no hyphen, return the original string
 	if (lastHyphenIndex === -1) {
 		return str;
 	}
