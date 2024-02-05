@@ -45,7 +45,7 @@ export class StarlarkLSPService {
 			const arch = os.arch();
 			const release = await this.getLatestRelease(platform, arch);
 
-			const currentLSPVersion = workspace.getConfiguration().get<string>("autokitteh.starlarkLSPVersion");
+			const currentLSPVersion = this.extensionContext.workspaceState.get<string>("autokitteh.starlarkLSPVersion");
 			if (release && currentLSPVersion !== release.tag) {
 				const userResponse = await window.showInformationMessage(
 					translate().t("lsp.downloadExecutableDialog"),
@@ -61,8 +61,8 @@ export class StarlarkLSPService {
 			}
 			if (!starlarkPath) {
 				LoggerService.error(namespaces.startlarkLSPServer, translate().t("errors.starlarLSPInit"));
-				return;
 			}
+			return;
 		}
 
 		const starlarkLSPArgsFromConfig = starlarkLSPArgs(this.extensionContext);
