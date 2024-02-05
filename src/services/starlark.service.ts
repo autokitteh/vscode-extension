@@ -120,11 +120,6 @@ export class StarlarkLSPService {
 
 					const lspPath = filesInLSPDirectory[0];
 
-					if (!fs.existsSync(lspPath)) {
-						LoggerService.info(namespaces.startlarkLSPServer, translate().t("errors.errorInstallingLSP"));
-						return;
-					}
-
 					this.extensionContext.workspaceState.update("autokitteh.starlarkLSPPath", lspPath);
 					this.extensionContext.workspaceState.update("autokitteh.starlarkLSPVersion", release.tag);
 

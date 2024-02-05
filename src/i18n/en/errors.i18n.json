@@ -24,6 +24,5 @@
 	"corruptedLSPArchive": "LSP archive is corrupted, installation failed",
 	"starlarkPlatformNotSupported": "Starlark LSP is not supported on this platform",
 	"unsupportedArchiveType": "Unsupported archive type: {{type}}",
-	"errorExtractingArchive": "Error extracting archive: {{error}}",
-	"errorInstallingLSP": "Error extracting LSP archive."
+	"errorExtractingArchive": "Error extracting archive: {{error}}"
 }
