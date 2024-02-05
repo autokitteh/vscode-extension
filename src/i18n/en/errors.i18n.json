@@ -21,6 +21,7 @@
 	"fetchingReleaseInfo": "Couldn't fetch LSP executable: {{error}}",
 	"starlarLSPInit": "Couldn't initialize LSP executable.",
 	"issueExtractLSP": "Extraction error: {{error}}",
+	"corruptedLSPArchive": "LSP archive is corrupted, installation failed",
 	"starlarkPlatformNotSupported": "Starlark LSP is not supported on this platform",
 	"unsupportedArchiveType": "Unsupported archive type: {{type}}",
 	"errorExtractingArchive": "Error extracting archive: {{error}}",

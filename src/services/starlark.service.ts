@@ -12,11 +12,12 @@ import {
 	starlarkExecutableGithubRepository,
 	getConfig,
 } from "@constants";
+import { starlarkLSPExtractedDirectory } from "@constants/starlark.constants";
 import { translate } from "@i18n";
 import { Asset, AssetInfo, GitHubRelease } from "@interfaces";
 import { LoggerService } from "@services";
 import { StarlarkFileHandler } from "@starlark";
-import { extractArchive } from "@utilities";
+import { extractArchive, isTypeOrInterface, listFilesInDirectory } from "@utilities";
 import axios from "axios";
 import { workspace, commands, ExtensionContext, window } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from "vscode-languageclient";
@@ -40,29 +41,103 @@ export class StarlarkLSPService {
 		}
 
 		let starlarkPath: string | undefined = starlarkLSPPath(this.extensionContext);
-		if (!starlarkPath || !fs.existsSync(starlarkPath)) {
-			const platform = os.platform();
-			const arch = os.arch();
-			const release = await this.getLatestRelease(platform, arch);
 
+		const platform = os.platform();
+		const arch = os.arch();
+
+		let release;
+		try {
+			release = await this.getLatestRelease(platform, arch);
+		} catch (error) {
+			LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
+			commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
+		}
+
+		if (release && isTypeOrInterface<AssetInfo>(release, "url")) {
+			let userResponse: string | undefined;
 			const currentLSPVersion = this.extensionContext.workspaceState.get<string>("autokitteh.starlarkLSPVersion");
-			if (release && currentLSPVersion !== release.tag) {
-				const userResponse = await window.showInformationMessage(
-					translate().t("lsp.downloadExecutableDialog"),
-					"Yes",
-					"No"
-				);
-				if (userResponse === "Yes") {
+			const localStarlarkFileExist = starlarkPath && fs.existsSync(starlarkPath);
+			if (currentLSPVersion !== release.tag || !localStarlarkFileExist) {
+				if (!localStarlarkFileExist) {
+					userResponse = await window.showInformationMessage(
+						translate().t("lsp.downloadExecutableDialog"),
+						translate().t("lsp.downloadExecutableDialogApprove"),
+						translate().t("lsp.downloadExecutableDialogDismiss")
+					);
+				} else {
+					userResponse = await window.showInformationMessage(
+						translate().t("lsp.updateExecutableDialog"),
+						translate().t("lsp.downloadExecutableDialogApprove"),
+						translate().t("lsp.downloadExecutableDialogDismiss")
+					);
+				}
+				if (userResponse === translate().t("lsp.downloadExecutableDialogApprove")) {
 					LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.downloadExecutableInProgress"));
 
-					starlarkPath = await this.getNewVersion(this.extensionContext, release);
+					const fileName = this.getFileNameFromUrl(release.url);
+					const extensionPath = this.extensionContext.extensionPath;
+					try {
+						await this.downloadAndSaveFile(release.url, `${extensionPath}/${fileName}`);
+					} catch (downloadError) {
+						const errorMessage = translate().t("errors.fetchingReleaseInfo", {
+							error: (downloadError as Error).message,
+						});
+
+						LoggerService.error(namespaces.startlarkLSPServer, errorMessage);
+						commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+						return;
+					}
+
+					LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedUnpacking"));
+
+					try {
+						await new Promise<string | undefined>((resolve, reject) => {
+							extractArchive(`${extensionPath}/${fileName}`, extensionPath, (error) => {
+								if (error) {
+									const errorMessage = translate().t("errors.issueExtractLSP", { error: error.message });
+
+									reject(errorMessage);
+								} else {
+									resolve(undefined);
+								}
+							});
+						});
+					} catch (extractError) {
+						const errorMessage = translate().t("errors.errors.issueExtractLSP", { type: extractError });
+						LoggerService.error(namespaces.starlarkLSPExecutable, errorMessage);
+						commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, errorMessage);
+						return;
+					}
+
+					const filesInLSPDirectory = await listFilesInDirectory(`${extensionPath}/${starlarkLSPExtractedDirectory}`);
+
+					if (filesInLSPDirectory.length !== 1) {
+						const errorMessage = translate().t("errors.errors.corruptedLSPArchive");
+						LoggerService.error(namespaces.starlarkLSPExecutable, errorMessage);
+						commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, errorMessage);
+						return;
+					}
+
+					const lspPath = filesInLSPDirectory[0];
+
+					if (!fs.existsSync(lspPath)) {
+						LoggerService.info(namespaces.startlarkLSPServer, translate().t("errors.errorInstallingLSP"));
+						return;
+					}
+
+					this.extensionContext.workspaceState.update("autokitteh.starlarkLSPPath", lspPath);
+					this.extensionContext.workspaceState.update("autokitteh.starlarkLSPVersion", release.tag);
+
+					commands.executeCommand(
+						vsCommands.showInfoMessage,
+						namespaces.startlarkLSPServer,
+						translate().t("lsp.executableDownloadedSuccessfully")
+					);
+					LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
+
+					starlarkPath = lspPath;
 				}
-				return;
 			}
-			if (!starlarkPath) {
-				LoggerService.error(namespaces.startlarkLSPServer, translate().t("errors.starlarLSPInit"));
-			}
-			return;
 		}
 
 		const starlarkLSPArgsFromConfig = starlarkLSPArgs(this.extensionContext);
@@ -120,18 +195,13 @@ export class StarlarkLSPService {
 		}
 	}
 
-	private static getAssetByPlatform = (data: GitHubRelease, platform: string, arch: string): AssetInfo | undefined => {
+	private static getAssetByPlatform = (data: GitHubRelease, platform: string, arch: string): AssetInfo => {
 		const enrichedPlatform = `autokitteh-starlark-lsp_${platform}_${arch}`;
 		const latestRelease = data.data[data.data.length - 1];
 		const asset: Asset | undefined = latestRelease.assets.find((asset: Asset) => asset.name.includes(enrichedPlatform));
 
 		if (!asset) {
-			commands.executeCommand(
-				vsCommands.showErrorMessage,
-				namespaces.startlarkLSPServer,
-				translate().t("errors.starlarkPlatformNotSupported")
-			);
-			return;
+			throw new Error(translate().t("errors.starlarkPlatformNotSupported"));
 		}
 
 		return {
@@ -140,15 +210,13 @@ export class StarlarkLSPService {
 		};
 	};
 
-	private static async getLatestRelease(platform: string, arch: string): Promise<AssetInfo | undefined> {
+	private static async getLatestRelease(platform: string, arch: string): Promise<AssetInfo> {
 		try {
 			const response = await axios.get(starlarkExecutableGithubRepository);
 			return this.getAssetByPlatform(response, platform, arch);
 		} catch (error) {
 			const errorMessage = translate().t("errors.fetchingReleaseInfo", { error: (error as Error).message });
-			LoggerService.error(namespaces.startlarkLSPServer, errorMessage);
-			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
-			return undefined;
+			throw new Error(errorMessage);
 		}
 	}
 
@@ -161,71 +229,16 @@ export class StarlarkLSPService {
 			const response = await axios.get(url, { responseType: "stream" });
 			const writer = fs.createWriteStream(filePath);
 			response.data.pipe(writer);
-			return new Promise((resolve, reject) => {
+			await new Promise((resolve, reject) => {
 				writer.on("close", resolve);
 				writer.on("error", (err) => {
 					writer.close();
 					reject(err);
 				});
 			});
-		} catch (error) {
-			const errorMessage = translate().t("errors.fetchingReleaseInfo", { error: (error as Error).message });
-			LoggerService.error(namespaces.startlarkLSPServer, errorMessage);
-			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
-		}
-	}
-
-	private static async getNewVersion(
-		extensionContext: ExtensionContext,
-		release?: AssetInfo
-	): Promise<string | undefined> {
-		if (!release) {
 			return undefined;
-		}
-
-		const fileName = this.getFileNameFromUrl(release.url);
-		const extensionPath = extensionContext.extensionPath;
-		try {
-			await this.downloadAndSaveFile(release.url, `${extensionPath}/${fileName}`);
-			LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedUnpacking"));
-
-			await new Promise<void>((resolve, reject) => {
-				extractArchive(`${extensionPath}/${fileName}`, extensionPath, (error) => {
-					if (error) {
-						const errorMessage = translate().t("errors.issueExtractLSP", { error: error.message });
-						LoggerService.error(namespaces.starlarkLSPExecutable, errorMessage);
-						commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, errorMessage);
-						reject(error);
-					} else {
-						resolve();
-					}
-				});
-			});
-
-			const lspPath = `${extensionPath}/autokitteh-starlark-lsp`;
-
-			if (!fs.existsSync(lspPath)) {
-				LoggerService.info(namespaces.startlarkLSPServer, translate().t("errors.errorInstallingLSP"));
-				return;
-			}
-
-			extensionContext.workspaceState.update("autokitteh.starlarkLSPPath", lspPath);
-			extensionContext.workspaceState.update("autokitteh.starlarkLSPVersion", release.tag);
-
-			commands.executeCommand(
-				vsCommands.showInfoMessage,
-				namespaces.startlarkLSPServer,
-				translate().t("lsp.executableDownloadedSuccessfully")
-			);
-			LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
-
-			return lspPath;
 		} catch (error) {
-			const errorMessage = translate().t("errors.issueExtractLSP", { error: (error as Error).message });
-			LoggerService.error(namespaces.startlarkLSPServer, errorMessage);
-			commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, errorMessage);
-
-			return undefined;
+			throw new Error((error as Error).message);
 		}
 	}
 }

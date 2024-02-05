@@ -1,7 +1,9 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as zlib from "zlib";
+import { starlarkLSPExtractedDirectory } from "@constants/starlark.constants";
 import { ArchiveCallback } from "@type/utilities";
+import { ensureDirectoryExists } from "@utilities";
 import AdmZip from "adm-zip";
 import tarFs from "tar-fs";
 
@@ -62,17 +64,25 @@ const extractZip = (inputPath: string, outputPath: string, callback: ArchiveCall
 export const extractArchive = (inputPath: string, outputPath: string, callback: ArchiveCallback): void => {
 	const type = getArchiveType(inputPath);
 
+	const extractPath = `${outputPath}/${starlarkLSPExtractedDirectory}`;
+
+	try {
+		ensureDirectoryExists(extractPath);
+	} catch (error) {
+		callback(new Error((error as Error).message));
+	}
+
 	switch (type) {
 		case "tar.gz":
-			extractTarGz(inputPath, outputPath, callback);
+			extractTarGz(inputPath, extractPath, callback);
 			break;
 		case "tar":
-			extractTar(inputPath, outputPath, callback);
+			extractTar(inputPath, extractPath, callback);
 			break;
 		case "zip":
-			extractZip(inputPath, outputPath, callback);
+			extractZip(inputPath, extractPath, callback);
 			break;
 		default:
-			callback(new Error(`Unsupported archive type: ${type}`));
+			callback(new Error(type as string));
 	}
 };
