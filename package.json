@@ -322,7 +322,6 @@
 		"test:all": "vitest run && npm run test:run --workspace=vscode-react",
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
-		"local-package": "node prePackageLocalVersion.js && vsce package && node postPackageLocalVersion.js",
 		"package": "vsce package"
 	},
 	"version": "0.8.0-dev.7",
