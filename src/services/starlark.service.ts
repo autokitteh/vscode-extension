@@ -215,20 +215,16 @@ export class StarlarkLSPService {
 	}
 
 	private static async downloadAndSaveFile(url: string, filePath: string): Promise<void> {
-		try {
-			const response = await axios.get(url, { responseType: "stream" });
-			const writer = fs.createWriteStream(filePath);
-			response.data.pipe(writer);
-			await new Promise((resolve, reject) => {
-				writer.on("close", resolve);
-				writer.on("error", (err) => {
-					writer.close();
-					reject(err);
-				});
+		const response = await axios.get(url, { responseType: "stream" });
+		const writer = fs.createWriteStream(filePath);
+		response.data.pipe(writer);
+		await new Promise((resolve, reject) => {
+			writer.on("close", resolve);
+			writer.on("error", (err) => {
+				writer.close();
+				reject(err);
 			});
-			return undefined;
-		} catch (error) {
-			throw new Error((error as Error).message);
-		}
+		});
+		return undefined;
 	}
 }
