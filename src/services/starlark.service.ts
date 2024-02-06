@@ -6,9 +6,7 @@ import {
 	namespaces,
 	starlarkLSPLocalhost,
 	vsCommands,
-	starlarkLSPPath,
 	starlarkLSPUriScheme,
-	starlarkLSPArgs,
 	starlarkExecutableGithubRepository,
 	getConfig,
 } from "@constants";
@@ -19,15 +17,29 @@ import { LoggerService } from "@services";
 import { StarlarkFileHandler } from "@starlark";
 import { extractArchive, isTypeOrInterface, listFilesInDirectory } from "@utilities";
 import axios from "axios";
-import { workspace, commands, ExtensionContext, window } from "vscode";
+import { workspace, commands, window } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from "vscode-languageclient";
 
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;
-	private static extensionContext: ExtensionContext;
+	private static starlarkPath: string = "";
+	private static starlarkLSPArgs: string[] = [];
+	private static starlarkLSPVersion: string = "";
+	private static extensionPath: string = "";
+	private static updateWorkspace: (key: string, value: any) => Thenable<void>;
 
-	public static init(extensionContext: ExtensionContext) {
-		this.extensionContext = extensionContext;
+	public static async init(
+		starlarkPath: string,
+		starlarkLSPArgs: string[],
+		starlarkLSPVersion: string,
+		extensionPath: string,
+		updateWorkspaceState: (key: string, value: any) => Thenable<void>
+	) {
+		this.starlarkPath = starlarkPath;
+		this.starlarkLSPArgs = starlarkLSPArgs;
+		this.starlarkLSPVersion = starlarkLSPVersion;
+		this.extensionPath = extensionPath;
+		this.updateWorkspace = updateWorkspaceState;
 		this.initiateLSPServer();
 	}
 
@@ -36,100 +48,24 @@ export class StarlarkLSPService {
 			StarlarkLSPService.languageClient.stop();
 		}
 
-		let starlarkPath: string | undefined = starlarkLSPPath(this.extensionContext);
+		const executableLSP = await this.checkAndUpdateStarlarkLSPVersion();
 
-		const platform = os.platform();
-		const arch = os.arch();
-
-		let release;
-		try {
-			release = await this.getLatestRelease(platform, arch);
-		} catch (error) {
-			LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
-			commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
+		if (!executableLSP) {
+			const errorMessage = translate().t("errors.issueGettingLSP");
+			LoggerService.error(namespaces.startlarkLSPServer, errorMessage);
+			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+			return;
 		}
 
-		if (release && isTypeOrInterface<AssetInfo>(release, "url")) {
-			let userResponse: string | undefined;
-			const currentLSPVersion = this.extensionContext.workspaceState.get<string>("autokitteh.starlarkLSPVersion");
-			const localStarlarkFileExist = starlarkPath && fs.existsSync(starlarkPath);
-			if (currentLSPVersion !== release.tag || !localStarlarkFileExist) {
-				if (!localStarlarkFileExist) {
-					userResponse = await window.showInformationMessage(
-						translate().t("lsp.downloadExecutableDialog"),
-						translate().t("lsp.downloadExecutableDialogApprove"),
-						translate().t("lsp.downloadExecutableDialogDismiss")
-					);
-				} else {
-					userResponse = await window.showInformationMessage(
-						translate().t("lsp.updateExecutableDialog"),
-						translate().t("lsp.downloadExecutableDialogApprove"),
-						translate().t("lsp.downloadExecutableDialogDismiss")
-					);
-				}
-				if (userResponse === translate().t("lsp.downloadExecutableDialogApprove")) {
-					LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.downloadExecutableInProgress"));
-
-					const fileName = this.getFileNameFromUrl(release.url);
-					const extensionPath = this.extensionContext.extensionPath;
-					try {
-						await this.downloadAndSaveFile(release.url, `${extensionPath}/${fileName}`);
-					} catch (downloadError) {
-						const errorMessage = translate().t("errors.fetchingReleaseInfo", {
-							error: (downloadError as Error).message,
-						});
-
-						LoggerService.error(namespaces.startlarkLSPServer, errorMessage);
-						commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
-						return;
-					}
-
-					try {
-						LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedUnpacking"));
-
-						// Use the async/await pattern to call extractArchive
-						await extractArchive(`${extensionPath}/${fileName}`, extensionPath);
-
-						// If the function completes without throwing an error, extraction was successful
-					} catch (extractError) {
-						// Handle errors thrown by extractArchive
-						const errorMessage = translate().t("errors.issueExtractLSP", { error: (extractError as Error).message });
-						LoggerService.error(namespaces.starlarkLSPExecutable, errorMessage);
-						commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
-						return;
-					}
-
-					const filesInLSPDirectory = await listFilesInDirectory(`${extensionPath}/${starlarkLSPExtractedDirectory}`);
-
-					if (filesInLSPDirectory.length !== 1) {
-						const errorMessage = translate().t("errors.errors.corruptedLSPArchive");
-						LoggerService.error(namespaces.starlarkLSPExecutable, errorMessage);
-						commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, errorMessage);
-						return;
-					}
-
-					const lspPath = filesInLSPDirectory[0];
-
-					this.extensionContext.workspaceState.update("autokitteh.starlarkLSPPath", lspPath);
-					this.extensionContext.workspaceState.update("autokitteh.starlarkLSPVersion", release.tag);
-
-					commands.executeCommand(
-						vsCommands.showInfoMessage,
-						namespaces.startlarkLSPServer,
-						translate().t("lsp.executableDownloadedSuccessfully")
-					);
-					LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
-
-					starlarkPath = lspPath;
-				}
-			}
+		const { path: newStarlarkPath, version: newStarlarkVersion } = executableLSP;
+		if (this.starlarkLSPVersion !== newStarlarkVersion || this.starlarkPath !== newStarlarkPath) {
+			this.updateWorkspace("autokitteh.starlarkLSPPath", newStarlarkPath);
+			this.updateWorkspace("autokitteh.starlarkLSPVersion", newStarlarkVersion);
 		}
-
-		const starlarkLSPArgsFromConfig = starlarkLSPArgs(this.extensionContext);
 
 		let serverOptions: ServerOptions | Promise<StreamInfo> = {
-			command: starlarkPath,
-			args: starlarkLSPArgsFromConfig,
+			command: newStarlarkPath,
+			args: this.starlarkLSPArgs,
 		};
 
 		let clientOptions: LanguageClientOptions = {
@@ -163,7 +99,7 @@ export class StarlarkLSPService {
 
 		LoggerService.info(
 			namespaces.startlarkLSPServer,
-			`Starting LSP Server: ${starlarkPath} ${starlarkLSPArgsFromConfig.join(", ")}`
+			`Starting LSP Server: ${this.starlarkPath} ${this.starlarkLSPArgs.join(", ")}`
 		);
 
 		StarlarkLSPService.languageClient = new LanguageClient(
@@ -183,6 +119,7 @@ export class StarlarkLSPService {
 		} catch (error) {
 			LoggerService.error(namespaces.deploymentsService, (error as Error).message);
 		}
+		return;
 	}
 
 	private static getAssetByPlatform = (data: GitHubRelease, platform: string, arch: string): AssetInfo => {
@@ -226,5 +163,95 @@ export class StarlarkLSPService {
 			});
 		});
 		return;
+	}
+
+	private static async checkAndUpdateStarlarkLSPVersion(): Promise<{ path: string; version?: string } | undefined> {
+		const platform = os.platform();
+		const arch = os.arch();
+		let resultStarlarkPath = this.starlarkPath;
+
+		let release;
+		try {
+			release = await this.getLatestRelease(platform, arch);
+		} catch (error) {
+			LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
+			commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
+			return;
+		}
+
+		if (isTypeOrInterface<AssetInfo>(release, "url")) {
+			let userResponse: string | undefined;
+			const localStarlarkFileExist = fs.existsSync(this.starlarkPath);
+			if (this.starlarkLSPVersion !== release.tag || !localStarlarkFileExist) {
+				if (!localStarlarkFileExist) {
+					userResponse = await window.showInformationMessage(
+						translate().t("lsp.downloadExecutableDialog"),
+						translate().t("lsp.downloadExecutableDialogApprove"),
+						translate().t("lsp.downloadExecutableDialogDismiss")
+					);
+				} else {
+					userResponse = await window.showInformationMessage(
+						translate().t("lsp.updateExecutableDialog"),
+						translate().t("lsp.downloadExecutableDialogApprove"),
+						translate().t("lsp.downloadExecutableDialogDismiss")
+					);
+				}
+				if (userResponse === translate().t("lsp.downloadExecutableDialogApprove")) {
+					LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.downloadExecutableInProgress"));
+
+					const fileName = this.getFileNameFromUrl(release.url);
+					const extensionPath = this.extensionPath;
+					try {
+						await this.downloadAndSaveFile(release.url, `${extensionPath}/${fileName}`);
+					} catch (downloadError) {
+						const errorMessage = translate().t("errors.fetchingReleaseInfo", {
+							error: (downloadError as Error).message,
+						});
+
+						LoggerService.error(namespaces.startlarkLSPServer, errorMessage);
+						commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+						return;
+					}
+
+					try {
+						LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedUnpacking"));
+
+						await extractArchive(`${extensionPath}/${fileName}`, extensionPath);
+					} catch (extractError) {
+						const errorMessage = translate().t("errors.issueExtractLSP", { error: (extractError as Error).message });
+						LoggerService.error(namespaces.starlarkLSPExecutable, errorMessage);
+						commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+						return;
+					}
+
+					const filesInLSPDirectory = await listFilesInDirectory(`${extensionPath}/${starlarkLSPExtractedDirectory}`);
+
+					if (filesInLSPDirectory.length !== 1) {
+						const errorMessage = translate().t("errors.errors.corruptedLSPArchive");
+						LoggerService.error(namespaces.starlarkLSPExecutable, errorMessage);
+						commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, errorMessage);
+						return;
+					}
+
+					resultStarlarkPath = filesInLSPDirectory[0];
+
+					commands.executeCommand(
+						vsCommands.showInfoMessage,
+						namespaces.startlarkLSPServer,
+						translate().t("lsp.executableDownloadedSuccessfully")
+					);
+					LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
+
+					return { path: resultStarlarkPath, version: undefined };
+				}
+				return { path: resultStarlarkPath, version: undefined };
+			}
+			return { path: resultStarlarkPath, version: undefined };
+		} else {
+			const errorMessage = translate().t("errors.couldNotFetchLSP");
+			LoggerService.error(namespaces.startlarkLSPServer, errorMessage);
+			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+			return;
+		}
 	}
 }

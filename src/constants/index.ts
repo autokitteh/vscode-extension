@@ -16,8 +16,6 @@ export { namespaces } from "@constants/namespaces.logger.constants";
 export { channels } from "@constants/output.constants";
 export {
 	starlarkLSPUriScheme,
-	starlarkLSPPath,
-	starlarkLSPArgs,
 	starlarkLSPLocalhost,
 	starlarkExecutableGithubRepository,
 } from "@constants/starlark.constants";

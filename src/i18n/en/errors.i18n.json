@@ -27,5 +27,6 @@
 	"errorExtractingArchive": "Error extracting archive: {{error}}",
 	"creatingDirectoryAlreadyExist": "Cannot create directory, a file with the same name exists: {{outputPath}}",
 	"creatingDirectoryPermission": "Permission denied to create or access directory: {{outputPath}}",
-	"creatingDirectoryAccess": "Failed to create or access directory: {{outputPath}}, Error: {{error}}"
+	"creatingDirectoryAccess": "Failed to create or access directory: {{outputPath}}, Error: {{error}}",
+	"couldNotFetchLSP": "Couldn't fetch latest LSP executable release"
 }
