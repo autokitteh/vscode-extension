@@ -1,9 +1,9 @@
-import * as fs from "fs";
+import { createReadStream } from "fs"; // Note: Adjusted to use fs/promises for async operations
 import * as path from "path";
+import { pipeline } from "stream/promises"; // Import pipeline from stream/promises to handle streams with async/await
 import * as zlib from "zlib";
 import { starlarkLSPExtractedDirectory } from "@constants/starlark.constants";
-import { ArchiveCallback } from "@type/utilities";
-import { createDirectory } from "@utilities";
+import { createDirectory } from "@utilities"; // Assuming createDirectory is now an async function
 import AdmZip from "adm-zip";
 import tarFs from "tar-fs";
 
@@ -21,68 +21,45 @@ const getArchiveType = (filename: string): string => {
 	return "unknown";
 };
 
-const extractTarGz = (inputPath: string, outputPath: string, callback: ArchiveCallback): void => {
+const extractTarGz = async (inputPath: string, outputPath: string): Promise<void> => {
 	const decompressor = zlib.createGunzip();
-	const input = fs.createReadStream(inputPath);
+	const input = createReadStream(inputPath);
 	const output = tarFs.extract(outputPath);
-
-	input
-		.pipe(decompressor)
-		.pipe(output)
-		.on("finish", () => {
-			callback(undefined);
-		})
-		.on("error", (error: Error) => {
-			callback(error);
-		});
+	await pipeline(input, decompressor, output);
 };
 
-const extractTar = (inputPath: string, outputPath: string, callback: ArchiveCallback): void => {
-	const input = fs.createReadStream(inputPath);
+const extractTar = async (inputPath: string, outputPath: string): Promise<void> => {
+	const input = createReadStream(inputPath);
 	const output = tarFs.extract(outputPath);
-
-	input
-		.pipe(output)
-		.on("finish", () => {
-			callback(undefined);
-		})
-		.on("error", (error: Error) => {
-			callback(error);
-		});
+	await pipeline(input, output);
 };
 
-const extractZip = (inputPath: string, outputPath: string, callback: ArchiveCallback): void => {
-	try {
-		const zip = new AdmZip(inputPath);
-		zip.extractAllTo(outputPath, true);
-		callback(undefined);
-	} catch (error) {
-		callback(error as Error);
-	}
+const extractZip = async (inputPath: string, outputPath: string): Promise<void> => {
+	const zip = new AdmZip(inputPath);
+	zip.extractAllTo(outputPath, true);
 };
 
-export const extractArchive = (inputPath: string, outputPath: string, callback: ArchiveCallback): void => {
+export const extractArchive = async (inputPath: string, outputPath: string): Promise<void> => {
 	const type = getArchiveType(inputPath);
-
 	const extractPath = `${outputPath}/${starlarkLSPExtractedDirectory}`;
 
 	try {
-		createDirectory(extractPath);
-	} catch (error) {
-		callback(new Error((error as Error).message));
-	}
+		await createDirectory(extractPath); // Assuming createDirectory is an async function
 
-	switch (type) {
-		case "tar.gz":
-			extractTarGz(inputPath, extractPath, callback);
-			break;
-		case "tar":
-			extractTar(inputPath, extractPath, callback);
-			break;
-		case "zip":
-			extractZip(inputPath, extractPath, callback);
-			break;
-		default:
-			callback(new Error(type as string));
+		switch (type) {
+			case "tar.gz":
+				await extractTarGz(inputPath, extractPath);
+				break;
+			case "tar":
+				await extractTar(inputPath, extractPath);
+				break;
+			case "zip":
+				await extractZip(inputPath, extractPath);
+				break;
+			default:
+				throw new Error(`Unsupported archive type: ${type}`);
+		}
+	} catch (error) {
+		throw new Error(`Extraction failed: ${(error as Error).message}`);
 	}
 };

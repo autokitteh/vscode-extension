@@ -32,10 +32,6 @@ export class StarlarkLSPService {
 	}
 
 	private static async initiateLSPServer() {
-		workspace.registerTextDocumentContentProvider(
-			starlarkLSPUriScheme,
-			new StarlarkFileHandler(StarlarkLSPService.languageClient!)
-		);
 		if (StarlarkLSPService.languageClient) {
 			StarlarkLSPService.languageClient.stop();
 		}
@@ -88,24 +84,18 @@ export class StarlarkLSPService {
 						return;
 					}
 
-					LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedUnpacking"));
-
 					try {
-						await new Promise<string | undefined>((resolve, reject) => {
-							extractArchive(`${extensionPath}/${fileName}`, extensionPath, (error) => {
-								if (error) {
-									const errorMessage = translate().t("errors.issueExtractLSP", { error: error.message });
+						LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedUnpacking"));
 
-									reject(errorMessage);
-								} else {
-									resolve(undefined);
-								}
-							});
-						});
+						// Use the async/await pattern to call extractArchive
+						await extractArchive(`${extensionPath}/${fileName}`, extensionPath);
+
+						// If the function completes without throwing an error, extraction was successful
 					} catch (extractError) {
-						const errorMessage = translate().t("errors.errors.issueExtractLSP", { type: extractError });
+						// Handle errors thrown by extractArchive
+						const errorMessage = translate().t("errors.issueExtractLSP", { error: (extractError as Error).message });
 						LoggerService.error(namespaces.starlarkLSPExecutable, errorMessage);
-						commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, errorMessage);
+						commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
 						return;
 					}
 
@@ -185,6 +175,11 @@ export class StarlarkLSPService {
 
 		try {
 			StarlarkLSPService.languageClient.start();
+
+			workspace.registerTextDocumentContentProvider(
+				starlarkLSPUriScheme,
+				new StarlarkFileHandler(StarlarkLSPService.languageClient)
+			);
 		} catch (error) {
 			LoggerService.error(namespaces.deploymentsService, (error as Error).message);
 		}
