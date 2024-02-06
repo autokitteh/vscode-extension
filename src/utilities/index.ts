@@ -8,4 +8,4 @@ export { convertTimestampToDate } from "@utilities/convertTimestampToDate.utils"
 export { sortArray } from "@utilities/sortArray.utils";
 export { extractArchive } from "@utilities/archive.utils";
 export { isTypeOrInterface } from "@utilities/checkTypeOrInterface.utils";
-export { ensureDirectoryExists, listFilesInDirectory } from "@utilities/fileSystem.utils";
+export { createDirectory, listFilesInDirectory } from "@utilities/fileSystem.utils";

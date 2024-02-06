@@ -3,7 +3,7 @@ import * as path from "path";
 import * as zlib from "zlib";
 import { starlarkLSPExtractedDirectory } from "@constants/starlark.constants";
 import { ArchiveCallback } from "@type/utilities";
-import { ensureDirectoryExists } from "@utilities";
+import { createDirectory } from "@utilities";
 import AdmZip from "adm-zip";
 import tarFs from "tar-fs";
 
@@ -67,7 +67,7 @@ export const extractArchive = (inputPath: string, outputPath: string, callback: 
 	const extractPath = `${outputPath}/${starlarkLSPExtractedDirectory}`;
 
 	try {
-		ensureDirectoryExists(extractPath);
+		createDirectory(extractPath);
 	} catch (error) {
 		callback(new Error((error as Error).message));
 	}

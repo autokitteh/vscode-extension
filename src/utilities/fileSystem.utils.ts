@@ -1,27 +1,25 @@
-import * as fsSync from "fs";
-import * as fsPromises from "fs/promises"; // Correct import for promise-based operations
+import * as fs from "fs/promises";
 import * as path from "path";
+import { translate } from "@i18n";
 
-export const ensureDirectoryExists = (outputPath: string): Promise<void> => {
-	return new Promise((resolve, reject) => {
-		fsSync.access(outputPath, fsSync.constants.F_OK, (err) => {
-			if (err) {
-				fsSync.mkdir(outputPath, { recursive: true }, (err) => {
-					if (err) {
-						reject(err);
-					} else {
-						resolve();
-					}
-				});
-			} else {
-				resolve();
-			}
-		});
-	});
+export const createDirectory = async (outputPath: string): Promise<void> => {
+	try {
+		await fs.mkdir(outputPath, { recursive: true });
+	} catch (error) {
+		const nodeError = error as NodeJS.ErrnoException;
+
+		if (nodeError.code === "EEXIST") {
+			throw new Error(translate().t("errors.creatingDirectoryAlreadyExist", { outputPath }));
+		} else if (nodeError.code === "EPERM" || nodeError.code === "EACCES") {
+			throw new Error(translate().t("errors.creatingDirectoryPermission", { outputPath }));
+		} else {
+			throw new Error(translate().t("errors.creatingDirectoryPermission", { outputPath, error: nodeError.message }));
+		}
+	}
 };
 
 export const listFilesInDirectory = async (dirPath: string, includeDirectories: boolean = false): Promise<string[]> => {
-	const entries = await fsPromises.readdir(dirPath, { withFileTypes: true });
+	const entries = await fs.readdir(dirPath, { withFileTypes: true });
 	const files: string[] = [];
 
 	for (const entry of entries) {
