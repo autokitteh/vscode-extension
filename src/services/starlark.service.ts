@@ -160,7 +160,7 @@ export class StarlarkLSPService {
 		return path.basename(new URL(downloadUrl).pathname);
 	}
 
-	private static async downloadAndSaveFile(url: string, filePath: string): Promise<void> {
+	private static async downloadLSP(url: string, filePath: string): Promise<void> {
 		const response = await axios.get(url, { responseType: "stream" });
 		const writer = fs.createWriteStream(filePath);
 		response.data.pipe(writer);
@@ -172,6 +172,46 @@ export class StarlarkLSPService {
 			});
 		});
 		return;
+	}
+
+	private static async downloadAndExtractLSP(
+		release: AssetInfo,
+		extensionPath: string,
+		fileName: string
+	): Promise<string | undefined> {
+		try {
+			await this.downloadLSP(release.url, `${extensionPath}/${fileName}`);
+		} catch (downloadError) {
+			const errorMessage = translate().t("errors.fetchingReleaseInfo", {
+				error: (downloadError as Error).message,
+			});
+
+			LoggerService.error(namespaces.startlarkLSPServer, errorMessage);
+			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+			return;
+		}
+
+		try {
+			LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedUnpacking"));
+
+			await extractArchive(`${extensionPath}/${fileName}`, extensionPath);
+		} catch (extractError) {
+			const errorMessage = translate().t("errors.issueExtractLSP", { error: (extractError as Error).message });
+			LoggerService.error(namespaces.starlarkLSPExecutable, errorMessage);
+			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+			return;
+		}
+
+		const filesInLSPDirectory = await listFilesInDirectory(`${extensionPath}/${starlarkLSPExtractedDirectory}`);
+
+		if (filesInLSPDirectory.length !== 1) {
+			const errorMessage = translate().t("errors.errors.corruptedLSPArchive");
+			LoggerService.error(namespaces.starlarkLSPExecutable, errorMessage);
+			commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, errorMessage);
+			return;
+		}
+
+		return filesInLSPDirectory[0];
 	}
 
 	private static async checkAndUpdateStarlarkLSPVersion(): Promise<{ path: string; version?: string } | undefined> {
@@ -210,39 +250,12 @@ export class StarlarkLSPService {
 
 					const fileName = this.getFileNameFromUrl(release.url);
 					const extensionPath = this.extensionPath;
-					try {
-						await this.downloadAndSaveFile(release.url, `${extensionPath}/${fileName}`);
-					} catch (downloadError) {
-						const errorMessage = translate().t("errors.fetchingReleaseInfo", {
-							error: (downloadError as Error).message,
-						});
 
-						LoggerService.error(namespaces.startlarkLSPServer, errorMessage);
-						commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+					const resultStarlarkPath = await this.downloadAndExtractLSP(release, extensionPath, fileName);
+
+					if (!resultStarlarkPath) {
 						return;
 					}
-
-					try {
-						LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedUnpacking"));
-
-						await extractArchive(`${extensionPath}/${fileName}`, extensionPath);
-					} catch (extractError) {
-						const errorMessage = translate().t("errors.issueExtractLSP", { error: (extractError as Error).message });
-						LoggerService.error(namespaces.starlarkLSPExecutable, errorMessage);
-						commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
-						return;
-					}
-
-					const filesInLSPDirectory = await listFilesInDirectory(`${extensionPath}/${starlarkLSPExtractedDirectory}`);
-
-					if (filesInLSPDirectory.length !== 1) {
-						const errorMessage = translate().t("errors.errors.corruptedLSPArchive");
-						LoggerService.error(namespaces.starlarkLSPExecutable, errorMessage);
-						commands.executeCommand(vsCommands.showErrorMessage, namespaces.starlarkLSPExecutable, errorMessage);
-						return;
-					}
-
-					resultStarlarkPath = filesInLSPDirectory[0];
 
 					commands.executeCommand(
 						vsCommands.showInfoMessage,
