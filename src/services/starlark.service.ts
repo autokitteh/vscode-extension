@@ -225,6 +225,6 @@ export class StarlarkLSPService {
 				reject(err);
 			});
 		});
-		return undefined;
+		return;
 	}
 }
