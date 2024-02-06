@@ -1,6 +1,6 @@
 require("module-alias/register");
 
-import { vsCommands, sidebarControllerRefreshRate } from "@constants";
+import { vsCommands, sidebarControllerRefreshRate, getConfig } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
@@ -12,8 +12,8 @@ import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough
 import { commands, ExtensionContext } from "vscode";
 
 export async function activate(context: ExtensionContext) {
-	const starlarkLSPPath = context.workspaceState.get<string>("autokitteh.starlarkLSPPath", "");
-	const starlarkLSPArgs = context.workspaceState.get<string[]>("autokitteh.starlarkLSPArguments", ["start"]);
+	const starlarkLSPPath = getConfig("autokitteh.LSPPath", "");
+	const starlarkLSPArgs = ["start"];
 	const starlarkLSPVersion = context.workspaceState.get<string>("autokitteh.starlarkLSPVersion", "");
 	const extensionPath = context.extensionPath;
 	StarlarkLSPService.init(

@@ -103,6 +103,11 @@
 					"default": 1,
 					"description": "Refresh interval in seconds for the sidebar panel",
 					"type": "number"
+				},
+				"autokitteh.LSPPath": {
+					"default": "",
+					"description": "The path to the LSP Server",
+					"type": "string"
 				}
 			},
 			"title": "autokitteh"

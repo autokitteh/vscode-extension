@@ -1,1 +1,1 @@
-export { getConfig } from "@constants/utilities/configurationGetter.constants.utils";
+export { getConfig, setConfig } from "@constants/utilities/configurationGetter.constants.utils";
