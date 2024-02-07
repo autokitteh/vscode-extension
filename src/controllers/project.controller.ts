@@ -62,7 +62,7 @@ export class ProjectController {
 		);
 		if (error) {
 			LoggerService.error(namespaces.projectController, (error as Error).message);
-
+			commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
 			return;
 		}
 		if (isEqual(this.deployments, deployments)) {
