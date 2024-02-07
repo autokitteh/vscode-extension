@@ -8,7 +8,7 @@ import { translate } from "@i18n";
 import { Asset, AssetInfo, GitHubRelease } from "@interfaces";
 import { LoggerService } from "@services";
 import { StarlarkFileHandler } from "@starlark";
-import { ValidateURL, extractArchive, isTypeOrInterface, listFilesInDirectory, setConfig } from "@utilities";
+import { ValidateURL, extractArchive, listFilesInDirectory, setConfig } from "@utilities";
 import axios from "axios";
 import { workspace, commands, window } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from "vscode-languageclient";
@@ -63,11 +63,11 @@ export class StarlarkLSPService {
 		}
 
 		const { path: newStarlarkPath, version: newStarlarkVersion } = executableLSP!;
-		if (starlarkPath !== newStarlarkPath) {
+
+		if (newStarlarkVersion !== starlarkLSPVersion) {
 			setConfig("autokitteh.LSPPath", newStarlarkPath);
-		}
-		if (newStarlarkVersion !== undefined) {
 			this.updateWorkspace("autokitteh.starlarkLSPVersion", newStarlarkVersion);
+			commands.executeCommand(vsCommands.showInfoMessage, translate().t("lsp.executableDownloadedSuccessfully"));
 		}
 
 		let serverOptions = {
@@ -177,11 +177,11 @@ export class StarlarkLSPService {
 		return;
 	}
 
-	private static async downloadAndExtractFile(
+	private static async downloadNewVersion(
 		release: AssetInfo,
 		extensionPath: string,
 		fileName: string
-	): Promise<string | undefined> {
+	): Promise<string> {
 		try {
 			await this.downloadFile(release.url, `${extensionPath}/${fileName}`);
 		} catch (downloadError) {
@@ -217,60 +217,41 @@ export class StarlarkLSPService {
 	): Promise<{ path: string; version?: string } | undefined> {
 		const platform = os.platform();
 		const arch = os.arch();
-		let resultStarlarkPath = starlarkPath;
 
-		let release;
-		try {
-			release = await this.getLatestRelease(platform, arch);
-		} catch (error) {
-			throw new Error((error as Error).message);
+		const release = await this.getLatestRelease(platform, arch);
+
+		let userResponse: string | undefined;
+		const localStarlarkFileExist = fs.existsSync(starlarkPath);
+
+		if (starlarkLSPVersion === release.tag && localStarlarkFileExist) {
+			return { path: starlarkPath, version: starlarkLSPVersion };
 		}
 
-		if (isTypeOrInterface<AssetInfo>(release, "url")) {
-			let userResponse: string | undefined;
-			const localStarlarkFileExist = fs.existsSync(starlarkPath);
-			if (starlarkLSPVersion !== release.tag || !localStarlarkFileExist) {
-				if (!localStarlarkFileExist) {
-					userResponse = await window.showInformationMessage(
-						translate().t("lsp.downloadExecutableDialog"),
-						translate().t("lsp.downloadExecutableDialogApprove"),
-						translate().t("lsp.downloadExecutableDialogDismiss")
-					);
-				} else {
-					userResponse = await window.showInformationMessage(
-						translate().t("lsp.updateExecutableDialog"),
-						translate().t("lsp.downloadExecutableDialogApprove"),
-						translate().t("lsp.downloadExecutableDialogDismiss")
-					);
-				}
-				if (userResponse === translate().t("lsp.downloadExecutableDialogApprove")) {
-					LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.downloadExecutableInProgress"));
-
-					const fileName = this.getFileNameFromUrl(release.url);
-
-					let resultStarlarkPath;
-
-					try {
-						resultStarlarkPath = await this.downloadAndExtractFile(release, extensionPath, fileName);
-					} catch (error) {
-						throw new Error((error as Error).message);
-					}
-
-					commands.executeCommand(
-						vsCommands.showInfoMessage,
-						namespaces.startlarkLSPServer,
-						translate().t("lsp.executableDownloadedSuccessfully")
-					);
-					LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
-
-					return { path: resultStarlarkPath!, version: release.tag };
-				}
-				return { path: resultStarlarkPath, version: undefined };
-			}
-			return { path: resultStarlarkPath, version: undefined };
+		if (!localStarlarkFileExist) {
+			userResponse = await window.showInformationMessage(
+				translate().t("lsp.downloadExecutableDialog"),
+				translate().t("lsp.downloadExecutableDialogApprove"),
+				translate().t("lsp.downloadExecutableDialogDismiss")
+			);
 		} else {
-			const errorMessage = translate().t("errors.couldNotFetchLSP");
-			throw new Error(errorMessage);
+			userResponse = await window.showInformationMessage(
+				translate().t("lsp.updateExecutableDialog"),
+				translate().t("lsp.downloadExecutableDialogApprove"),
+				translate().t("lsp.downloadExecutableDialogDismiss")
+			);
 		}
+		if (userResponse !== translate().t("lsp.downloadExecutableDialogApprove")) {
+			return { path: starlarkPath, version: starlarkLSPVersion };
+		}
+
+		LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.downloadExecutableInProgress"));
+
+		const fileName = this.getFileNameFromUrl(release.url);
+
+		const resultStarlarkPath = await this.downloadNewVersion(release, extensionPath, fileName);
+
+		LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
+
+		return { path: resultStarlarkPath, version: release.tag };
 	}
 }
