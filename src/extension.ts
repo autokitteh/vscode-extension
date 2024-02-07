@@ -6,13 +6,24 @@ import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { StarlarkLSPService } from "@services";
 import { SidebarTreeItem } from "@type/views";
+import { getConfig } from "@utilities";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject } from "@vscommands";
 import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough";
 import { commands, ExtensionContext } from "vscode";
 
 export async function activate(context: ExtensionContext) {
-	StarlarkLSPService.init();
+	const starlarkLSPPath = getConfig("autokitteh.LSPPath", "");
+	const starlarkLSPArgs = ["start"];
+	const starlarkLSPVersion = context.workspaceState.get<string>("autokitteh.starlarkLSPVersion", "");
+	const extensionPath = context.extensionPath;
+	StarlarkLSPService.initiateLSPServer(
+		starlarkLSPPath,
+		starlarkLSPArgs,
+		starlarkLSPVersion,
+		extensionPath,
+		context.workspaceState.update
+	);
 
 	const sidebarView = new SidebarView();
 

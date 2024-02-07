@@ -16,5 +16,17 @@
 	"sessionLogMissingErrorMessage": "Session History - Get error from not error state",
 	"sessionLogMissingOnErrorType": "Session History - No error",
 	"missingSessionStateType": "Missing session state type",
-	"missingStarlarkLSPPort": "Starlark LSP port is not set"
+	"missingStarlarkLSPPort": "Starlark LSP port is not set",
+	"issueGettingLSP": "There was an issue installing Starlark LSP",
+	"fetchingReleaseInfo": "Couldn't fetch LSP executable: {{error}}",
+	"starlarLSPInit": "Couldn't initialize LSP executable.",
+	"issueExtractLSP": "Extraction error: {{error}}",
+	"corruptedLSPArchive": "LSP archive is corrupted, installation failed",
+	"starlarkPlatformNotSupported": "Starlark LSP is not supported on this platform",
+	"unsupportedArchiveType": "Unsupported archive type: {{type}}",
+	"errorExtractingArchive": "Error extracting archive: {{error}}",
+	"creatingDirectoryAlreadyExist": "Cannot create directory, a file with the same name exists: {{outputPath}}",
+	"creatingDirectoryPermission": "Permission denied to create or access directory: {{outputPath}}",
+	"creatingDirectoryAccess": "Failed to create or access directory: {{outputPath}}, Error: {{error}}",
+	"couldNotFetchLSP": "Couldn't fetch latest LSP executable release"
 }

@@ -1,7 +1,6 @@
 import { DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL, DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL } from "@constants";
 import { DEFAULT_PROJECT_VIEW_SESSION_LOG_REFRESH_INTERVAL } from "@constants/extensionConfiguration.constants";
-import { getConfig } from "@constants/utilities";
-import { ValidateURL } from "@utilities";
+import { ValidateURL, getConfig } from "@utilities";
 
 export const baseURLFromVSCode: string = getConfig<string>("autokitteh.baseURL", "");
 
