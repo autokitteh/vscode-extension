@@ -1,9 +1,9 @@
-import { createReadStream } from "fs"; // Note: Adjusted to use fs/promises for async operations
+import { createReadStream } from "fs";
 import * as path from "path";
-import { pipeline } from "stream/promises"; // Import pipeline from stream/promises to handle streams with async/await
+import { pipeline } from "stream/promises";
 import * as zlib from "zlib";
 import { starlarkLSPExtractedDirectory } from "@constants/starlark.constants";
-import { createDirectory } from "@utilities"; // Assuming createDirectory is now an async function
+import { createDirectory } from "@utilities";
 import AdmZip from "adm-zip";
 import tarFs from "tar-fs";
 
@@ -44,7 +44,7 @@ export const extractArchive = async (inputPath: string, outputPath: string): Pro
 	const extractPath = `${outputPath}/${starlarkLSPExtractedDirectory}`;
 
 	try {
-		await createDirectory(extractPath); // Assuming createDirectory is an async function
+		await createDirectory(extractPath);
 
 		switch (type) {
 			case "tar.gz":
