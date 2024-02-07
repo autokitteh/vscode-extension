@@ -15,4 +15,3 @@ export { vsCommands } from "@constants/vsCommands.constants";
 export { namespaces } from "@constants/namespaces.logger.constants";
 export { channels } from "@constants/output.constants";
 export { starlarkLSPUriScheme, starlarkExecutableGithubRepository } from "@constants/starlark.constants";
-export { getConfig, setConfig } from "@constants/utilities";
