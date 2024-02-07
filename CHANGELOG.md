@@ -1,3 +1,10 @@
+# [0.8.0-dev.7](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.6...v0.8.0-dev.7) (2024-02-07)
+
+
+### Bug Fixes
+
+* don't pull submodule on github workflow ([#137](https://github.com/autokitteh/vscode-extension/issues/137)) ([4bc5938](https://github.com/autokitteh/vscode-extension/commit/4bc5938d7bf812996b447cf997ba735c5c9b8286))
+
 # [0.8.0-dev.6](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.5...v0.8.0-dev.6) (2024-02-04)
 
 
