@@ -104,9 +104,9 @@
 					"description": "Refresh interval in seconds for the sidebar panel",
 					"type": "number"
 				},
-				"autokitteh.starlarkLSPPath": {
-					"default": "ak",
-					"description": "The path to the Starlark LSP Server",
+				"autokitteh.LSPPath": {
+					"default": "",
+					"description": "The path to the LSP Server",
 					"type": "string"
 				}
 			},
@@ -230,12 +230,16 @@
 		"@connectrpc/connect": "^1.1.4",
 		"@connectrpc/connect-node": "^1.1.4",
 		"@vscode/codicons": "^0.0.35",
+		"adm-zip": "^0.5.10",
 		"axios": "^1.6.2",
 		"i18next": "^23.7.11",
 		"lodash": "^4.17.21",
 		"module-alias": "^2.2.3",
 		"moment": "^2.30.1",
-		"vscode-languageclient": "^6.1.3"
+		"tar": "^6.2.0",
+		"tar-fs": "^3.0.4",
+		"vscode-languageclient": "^6.1.3",
+		"zlib": "^1.0.5"
 	},
 	"description": "Simplify the process of automating tasks",
 	"devDependencies": {
@@ -248,11 +252,14 @@
 		"@semantic-release/github": "^9.2.6",
 		"@semantic-release/npm": "^11.0.2",
 		"@semantic-release/release-notes-generator": "^12.1.0",
+		"@types/adm-zip": "^0.5.5",
 		"@types/glob": "^7.1.3",
 		"@types/js-yaml": "^4.0.9",
 		"@types/lodash": "^4.14.202",
-		"@types/node": "^20.10.6",
+		"@types/node": "^20.11.16",
 		"@types/sinon": "^17.0.2",
+		"@types/tar": "^6.1.11",
+		"@types/tar-fs": "^2.0.4",
 		"@types/vscode": "^1.85.0",
 		"@typescript-eslint/eslint-plugin": "^6.14.0",
 		"@typescript-eslint/parser": "^6.14.0",
@@ -320,7 +327,6 @@
 		"test:all": "vitest run && npm run test:run --workspace=vscode-react",
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
-		"local-package": "node preBuildLocalVersion.js && vsce package && node postBuildLocalVersion.js",
 		"package": "vsce package"
 	},
 	"version": "0.8.0-dev.7",
