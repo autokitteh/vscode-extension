@@ -61,7 +61,6 @@ export class ProjectController {
 			DeploymentsService.listByProjectId(this.projectId)
 		);
 		if (error) {
-			commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
 			LoggerService.error(namespaces.projectController, (error as Error).message);
 
 			return;
@@ -96,11 +95,13 @@ export class ProjectController {
 		this.stopInterval(ProjectIntervals.sessionHistory);
 
 		this.selectedDeploymentId = deploymentId;
-		const { data: sessions, error } = await RequestHandler.handleServiceResponse(() =>
-			SessionsService.listByDeploymentId(deploymentId)
+		const { data: sessions, error } = await RequestHandler.handleServiceResponse(
+			() => SessionsService.listByDeploymentId(deploymentId),
+			{
+				formatFailureMessage: (): string => translate().t("deployments.deploymentSelectionFailed"),
+			}
 		);
 		if (error) {
-			commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
 			LoggerService.error(namespaces.projectController, (error as Error).message);
 			return;
 		}
@@ -127,10 +128,11 @@ export class ProjectController {
 	}
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
-		const { data: sessionHistoryStates, error } = await SessionsService.getHistoryBySessionId(sessionId);
+		const { data: sessionHistoryStates, error } = await await RequestHandler.handleServiceResponse(() =>
+			SessionsService.getHistoryBySessionId(sessionId)
+		);
 		if (error || !sessionHistoryStates?.length) {
 			if (error) {
-				commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
 				LoggerService.error(namespaces.projectController, (error as Error).message);
 			}
 			return;
