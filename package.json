@@ -61,6 +61,14 @@
 				"title": "autokitteh: Connect to server"
 			},
 			{
+				"command": "autokitteh.addConnections",
+				"icon": {
+					"dark": "./resources/sidebar/icons/dark/cloud-upload.svg",
+					"light": "./resources/sidebar/icons/light/cloud-upload.svg"
+				},
+				"title": "autokitteh: Add connection"
+			},
+			{
 				"command": "autokitteh.disconnect",
 				"icon": "./resources/sidebar/top-panel-disconnect.svg",
 				"title": "autokitteh: Disconnect from server"
@@ -143,6 +151,10 @@
 					"command": "autokitteh.connect",
 					"group": "navigation",
 					"when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
+				},
+				{
+					"command": "autokitteh.addConnections",
+					"group": "navigation"
 				},
 				{
 					"command": "autokitteh.disconnect",
