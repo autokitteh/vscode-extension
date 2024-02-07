@@ -1,3 +1,10 @@
+# [0.8.0-dev.8](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.7...v0.8.0-dev.8) (2024-02-07)
+
+
+### Features
+
+* download lsp executable ([#128](https://github.com/autokitteh/vscode-extension/issues/128)) ([58eba08](https://github.com/autokitteh/vscode-extension/commit/58eba08b4e6b4c8be019b48be0e998c52e3e8779))
+
 # [0.8.0-dev.7](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.6...v0.8.0-dev.7) (2024-02-07)
 
 
