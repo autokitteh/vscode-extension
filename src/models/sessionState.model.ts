@@ -30,15 +30,15 @@ export class SessionState {
 		this.callstackTrace = get(record, "data.value.states.value.error.callstack", []) as Callstack[];
 
 		this.type = stateCase;
-		this.logs = get(record, "data.value.states.value.prints", this.logs || []);
-		this.call = get(record, "data.value.states.call", this.call || {});
-		this.exports = get(record, "data.value.states.value.exports", this.exports || new Map());
+		this.logs = get(record, "data.value.states.value.prints", []);
+		this.call = get(record, "data.value.states.call", {});
+		this.exports = get(record, "data.value.states.value.exports", new Map());
 		this.error = get(
 			record,
 			"data.value.states.value.error.message",
 			this.error || translate().t("errors.sessionLogMissingOnErrorType")
 		);
-		this.returnValue = get(record, "data.value.states.value.returnValue", this.returnValue || {});
+		this.returnValue = get(record, "data.value.states.value.returnValue", {});
 	}
 
 	getError(): string {
