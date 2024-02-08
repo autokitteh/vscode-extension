@@ -58,7 +58,7 @@ export class SidebarController {
 	}
 
 	async buildProject(projectId: string) {
-		const { error } = await RequestHandler.handleServiceResponse(() => ProjectsService.build(projectId), {
+		const { error, data } = await RequestHandler.handleServiceResponse(() => ProjectsService.build(projectId), {
 			formatSuccessMessage: (data?: string): string => `${translate().t("projects.projectBuildSucceed", { id: data })}`,
 			formatFailureMessage: (): string =>
 				translate().t("projects.projectBuildFailed", {
@@ -73,17 +73,21 @@ export class SidebarController {
 			LoggerService.error(namespaces.projectSidebarController, errorMessage);
 			return;
 		}
+		LoggerService.info(namespaces.projectController, translate().t("projects.projectBuildSucceed", { id: data }));
 	}
 
 	async runProject(projectId: string) {
-		const { error } = await RequestHandler.handleServiceResponse(() => ProjectsService.run(projectId), {
-			formatSuccessMessage: (): string => `${translate().t("projects.projectDeploySucceed", { id: projectId })}`,
-			formatFailureMessage: (error): string =>
-				`${translate().t("projects.projectDeployFailed", {
-					id: projectId,
-					error: (error as Error).message,
-				})}`,
-		});
+		const { error, data: deploymentId } = await RequestHandler.handleServiceResponse(
+			() => ProjectsService.run(projectId),
+			{
+				formatSuccessMessage: (): string => `${translate().t("projects.projectDeploySucceed", { id: projectId })}`,
+				formatFailureMessage: (error): string =>
+					`${translate().t("projects.projectDeployFailed", {
+						id: projectId,
+						error: (error as Error).message,
+					})}`,
+			}
+		);
 
 		if (error) {
 			const errorMessage = `${translate().t("projects.projectDeployFailed", {
@@ -92,6 +96,11 @@ export class SidebarController {
 			LoggerService.error(namespaces.projectSidebarController, errorMessage);
 			return;
 		}
+
+		LoggerService.info(
+			namespaces.projectController,
+			translate().t("projects.projectDeploySucceed", { id: deploymentId })
+		);
 	}
 
 	public resetSidebar = () => {
