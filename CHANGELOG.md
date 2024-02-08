@@ -1,3 +1,10 @@
+# [0.8.0-dev.9](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.8...v0.8.0-dev.9) (2024-02-08)
+
+
+### Bug Fixes
+
+* fix message handler function code ([#141](https://github.com/autokitteh/vscode-extension/issues/141)) ([374f6ff](https://github.com/autokitteh/vscode-extension/commit/374f6ff23fb5efbfb461d641a91719fafaf17e97))
+
 # [0.8.0-dev.8](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.7...v0.8.0-dev.8) (2024-02-07)
 
 
