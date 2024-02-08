@@ -19,7 +19,7 @@ export class ProjectController {
 	public projectId: string;
 	public project?: Project;
 	private sessions?: Session[] = [];
-	private sessionHistoryStates?: SessionState[] = [];
+	private sessionHistoryStates: SessionState[] = [];
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
@@ -138,7 +138,7 @@ export class ProjectController {
 			return;
 		}
 
-		if (isEqual(this.sessionHistoryStates, sessionHistoryStates) && this.sessionHistoryStates?.length) {
+		if (isEqual(this.sessionHistoryStates, sessionHistoryStates)) {
 			return;
 		}
 
@@ -147,39 +147,33 @@ export class ProjectController {
 
 		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 
-		if (!lastState.containLogs()) {
-			LoggerService.print(namespaces.sessionLogs, translate().t("sessions.noLogs"), channels.appOutputSessionsLogName);
-			return;
+		LoggerService.outputSessionLogs(`[${lastState.dateTime?.toISOString()}] ${lastState.type}`);
+		LoggerService.outputSessionLogs(`${translate().t("sessions.logs")}:`);
+		if (lastState.containLogs()) {
+			lastState.getLogs().forEach((logStr) => {
+				LoggerService.outputSessionLogs(`	${logStr}`);
+			});
+		} else {
+			LoggerService.outputSessionLogs(`	${translate().t("sessions.noLogs")}`);
 		}
 
-		lastState.getLogs().forEach((logStr) => {
-			LoggerService.print(namespaces.sessionLogs, logStr, channels.appOutputSessionsLogName);
-		});
-
-		if (!lastState.isError()) {
-			return;
+		LoggerService.outputSessionLogs(`${translate().t("sessions.errors")}:`);
+		if (lastState.isError()) {
+			const printedError = lastState.getError();
+			LoggerService.outputSessionLogs(`	${printedError}`);
+		} else {
+			LoggerService.outputSessionLogs(`	${translate().t("sessions.errors")}:`);
 		}
-		const printedError = lastState.getError();
-		LoggerService.printError(namespaces.sessionLogs, printedError, channels.appOutputSessionsLogName);
 
+		LoggerService.outputSessionLogs(`${translate().t("sessions.callstack")}:`);
 		if (!lastState.getCallstack().length) {
-			LoggerService.printError(
-				namespaces.sessionLogs,
-				`${translate().t("sessions.callstack")}: ${translate().t("sessions.callstackNoPrints")}`,
-				channels.appOutputSessionsLogName
-			);
+			LoggerService.outputSessionLogs(`	${translate().t("sessions.callstackNoPrints")}`);
 			return;
 		}
-
-		LoggerService.printError(
-			namespaces.sessionLogs,
-			`${translate().t("sessions.callstack")}: `,
-			channels.appOutputSessionsLogName
-		);
 		lastState.getCallstack().forEach((callstackObj) => {
 			const { col, name, path, row } = callstackObj.location;
 			const formatCallstackString = `${path}: ${row}.${col}: ${name}`;
-			LoggerService.printError(namespaces.sessionLogs, formatCallstackString, channels.appOutputSessionsLogName);
+			LoggerService.outputSessionLogs(`	${formatCallstackString}`);
 		});
 	}
 
