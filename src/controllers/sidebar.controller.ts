@@ -1,6 +1,7 @@
+import { namespaces } from "@constants";
 import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { translate } from "@i18n";
-import { ProjectsService } from "@services";
+import { LoggerService, ProjectsService } from "@services";
 import { SidebarTreeItem } from "@type/views";
 import { ISidebarView } from "interfaces";
 import isEqual from "lodash/isEqual";
@@ -27,6 +28,10 @@ export class SidebarController {
 	private fetchProjects = async (): Promise<SidebarTreeItem[] | undefined> => {
 		const { data: projects, error } = await RequestHandler.handleServiceResponse(() => ProjectsService.list());
 		if (error) {
+			LoggerService.error(
+				namespaces.projectSidebarController,
+				translate().t("projects.fetchProjectsFailed", { error: (error as Error).message })
+			);
 			return;
 		}
 		if (projects!.length) {
@@ -53,25 +58,49 @@ export class SidebarController {
 	}
 
 	async buildProject(projectId: string) {
-		await RequestHandler.handleServiceResponse(() => ProjectsService.build(projectId), {
+		const { error, data } = await RequestHandler.handleServiceResponse(() => ProjectsService.build(projectId), {
 			formatSuccessMessage: (data?: string): string => `${translate().t("projects.projectBuildSucceed", { id: data })}`,
-			formatFailureMessage: (error): string =>
+			formatFailureMessage: (): string =>
 				translate().t("projects.projectBuildFailed", {
 					id: projectId,
-					error: (error as Error).message,
 				}),
 		});
+
+		if (error) {
+			const errorMessage = `${translate().t("projects.projectBuildFailed", {
+				id: projectId,
+			})} - ${(error as Error).message}`;
+			LoggerService.error(namespaces.projectSidebarController, errorMessage);
+			return;
+		}
+		LoggerService.info(namespaces.projectController, translate().t("projects.projectBuildSucceed", { id: data }));
 	}
 
 	async runProject(projectId: string) {
-		await RequestHandler.handleServiceResponse(() => ProjectsService.run(projectId), {
-			formatSuccessMessage: (): string => `${translate().t("projects.projectDeploySucceed", { id: projectId })}`,
-			formatFailureMessage: (error): string =>
-				`${translate().t("projects.projectDeployFailed", {
-					id: projectId,
-					error: (error as Error).message,
-				})}`,
-		});
+		const { error, data: deploymentId } = await RequestHandler.handleServiceResponse(
+			() => ProjectsService.run(projectId),
+			{
+				formatSuccessMessage: (): string => `${translate().t("projects.projectDeploySucceed", { id: projectId })}`,
+				formatFailureMessage: (error): string =>
+					`${translate().t("projects.projectDeployFailed", {
+						id: projectId,
+						error: (error as Error).message,
+					})}`,
+			}
+		);
+
+		if (error) {
+			const errorMessage = `${translate().t("projects.projectDeployFailed", {
+				id: projectId,
+			})} - ${(error as Error).message}`;
+			LoggerService.error(namespaces.projectSidebarController, errorMessage);
+			return;
+		}
+
+		LoggerService.info(
+			namespaces.projectController,
+			translate().t("projects.projectDeploySucceed", { id: deploymentId })
+		);
 	}
 
 	public resetSidebar = () => {
