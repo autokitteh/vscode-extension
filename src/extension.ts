@@ -14,17 +14,25 @@ import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough
 import { commands, ExtensionContext } from "vscode";
 
 export async function activate(context: ExtensionContext) {
+	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
+	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));
+	context.subscriptions.push(commands.registerCommand(vsCommands.showInfoMessage, MessageHandler.infoMessage));
+	context.subscriptions.push(commands.registerCommand(vsCommands.showErrorMessage, MessageHandler.errorMessage));
+	context.subscriptions.push(commands.registerCommand(vsCommands.openBaseURLInputDialog, openBaseURLInputDialog));
+	context.subscriptions.push(commands.registerCommand(vsCommands.openConfigSetupWalkthrough, openWalkthrough));
+	context.subscriptions.push(commands.registerCommand(vsCommands.addConnections, openAddConnectionsPage));
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.buildProject, (focusedItem) => buildProject(focusedItem, sidebarController))
+	);
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.runProject, (focusedItem) => runProject(focusedItem, sidebarController))
+	);
+
 	const starlarkLSPPath = getConfig("autokitteh.LSPPath", "");
 	const starlarkLSPArgs = ["start"];
 	const starlarkLSPVersion = context.workspaceState.get<string>("autokitteh.starlarkLSPVersion", "");
 	const extensionPath = context.extensionPath;
-	StarlarkLSPService.initiateLSPServer(
-		starlarkLSPPath,
-		starlarkLSPArgs,
-		starlarkLSPVersion,
-		extensionPath,
-		context.workspaceState.update
-	);
+	StarlarkLSPService.initiateLSPServer(starlarkLSPPath, starlarkLSPArgs, starlarkLSPVersion, extensionPath, context);
 
 	const sidebarView = new SidebarView();
 
@@ -46,22 +54,6 @@ export async function activate(context: ExtensionContext) {
 				tabsManager.openWebview(project);
 			}
 		})
-	);
-
-	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
-	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));
-	context.subscriptions.push(commands.registerCommand(vsCommands.showInfoMessage, MessageHandler.infoMessage));
-	context.subscriptions.push(commands.registerCommand(vsCommands.showErrorMessage, MessageHandler.errorMessage));
-	context.subscriptions.push(commands.registerCommand(vsCommands.openBaseURLInputDialog, openBaseURLInputDialog));
-	context.subscriptions.push(commands.registerCommand(vsCommands.openConfigSetupWalkthrough, openWalkthrough));
-	context.subscriptions.push(commands.registerCommand(vsCommands.addConnections, openAddConnectionsPage));
-
-	context.subscriptions.push(
-		commands.registerCommand(vsCommands.buildProject, (focusedItem) => buildProject(focusedItem, sidebarController))
-	);
-
-	context.subscriptions.push(
-		commands.registerCommand(vsCommands.runProject, (focusedItem) => runProject(focusedItem, sidebarController))
 	);
 
 	const isAppOn = await AppStateHandler.get();
