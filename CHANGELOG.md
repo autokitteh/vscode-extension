@@ -1,3 +1,10 @@
+# [0.8.0-dev.12](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.11...v0.8.0-dev.12) (2024-02-08)
+
+
+### Reverts
+
+* Revert "fix: don't pull submodule on github workflow (#137)" (#139) ([961e5fd](https://github.com/autokitteh/vscode-extension/commit/961e5fd8e7060eb9ff6656685147cc044e21fb1b)), closes [#137](https://github.com/autokitteh/vscode-extension/issues/137) [#139](https://github.com/autokitteh/vscode-extension/issues/139)
+
 # [0.8.0-dev.11](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.10...v0.8.0-dev.11) (2024-02-08)
 
 
