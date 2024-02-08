@@ -147,33 +147,33 @@ export class ProjectController {
 
 		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 
-		LoggerService.outputSessionLogs(`[${lastState.dateTime?.toISOString()}] ${lastState.type}`);
-		LoggerService.outputSessionLogs(`${translate().t("sessions.logs")}:`);
+		LoggerService.sessionLog(`[${lastState.dateTime!.toISOString()}] ${lastState.type}`);
+		LoggerService.sessionLog(`${translate().t("sessions.logs")}:`);
 		if (lastState.containLogs()) {
 			lastState.getLogs().forEach((logStr) => {
-				LoggerService.outputSessionLogs(`	${logStr}`);
+				LoggerService.sessionLog(`	${logStr}`);
 			});
 		} else {
-			LoggerService.outputSessionLogs(`	${translate().t("sessions.noLogs")}`);
+			LoggerService.sessionLog(`	${translate().t("sessions.noLogs")}`);
 		}
 
-		LoggerService.outputSessionLogs(`${translate().t("sessions.errors")}:`);
+		LoggerService.sessionLog(`${translate().t("sessions.errors")}:`);
 		if (lastState.isError()) {
 			const printedError = lastState.getError();
-			LoggerService.outputSessionLogs(`	${printedError}`);
+			LoggerService.sessionLog(`	${printedError}`);
 		} else {
-			LoggerService.outputSessionLogs(`	${translate().t("sessions.errors")}:`);
+			LoggerService.sessionLog(`	${translate().t("sessions.errors")}:`);
 		}
 
-		LoggerService.outputSessionLogs(`${translate().t("sessions.callstack")}:`);
+		LoggerService.sessionLog(`${translate().t("sessions.callstack")}:`);
 		if (!lastState.getCallstack().length) {
-			LoggerService.outputSessionLogs(`	${translate().t("sessions.callstackNoPrints")}`);
+			LoggerService.sessionLog(`	${translate().t("sessions.callstackNoPrints")}`);
 			return;
 		}
 		lastState.getCallstack().forEach((callstackObj) => {
 			const { col, name, path, row } = callstackObj.location;
 			const formatCallstackString = `${path}: ${row}.${col}: ${name}`;
-			LoggerService.outputSessionLogs(`	${formatCallstackString}`);
+			LoggerService.sessionLog(`	${formatCallstackString}`);
 		});
 	}
 
