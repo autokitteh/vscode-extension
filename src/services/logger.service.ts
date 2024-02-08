@@ -54,22 +54,10 @@ export class LoggerService {
 		this.output(namespace, message, channelName, LoggerLevel.debug);
 	}
 
-	public static warn(namespace: string, message: string, channelName: string = LoggerService.defaultChannelName): void {
-		this.initializeOutputChannel(channelName);
+	public static outputSessionLogs(message: string): void {
+		this.initializeOutputChannel(channels.appOutputSessionsLogName);
 
-		this.output(namespace, message, channelName, LoggerLevel.warn);
-	}
-
-	public static print(namespace: string, message: string, channelName: string): void {
-		this.initializeOutputChannel(channelName);
-
-		this.outputChannels[channelName].appendLine(`[${namespace}]: ${message}`);
-	}
-
-	public static printError(namespace: string, message: string, channelName: string): void {
-		this.initializeOutputChannel(channelName);
-
-		this.outputChannels[channelName].appendLine(`Error: [${namespace}]: ${message}`);
+		this.outputChannels[channels.appOutputSessionsLogName].appendLine(message);
 	}
 
 	public static reveal(channelName: string = LoggerService.defaultChannelName) {
