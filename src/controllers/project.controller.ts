@@ -147,7 +147,7 @@ export class ProjectController {
 
 		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 
-		LoggerService.outputSessionLogs(`[${lastState.dateTime?.toISOString()}] ${lastState.type}`);
+		LoggerService.outputSessionLogs(`[${lastState.dateTime!.toISOString()}] ${lastState.type}`);
 		LoggerService.outputSessionLogs(`${translate().t("sessions.logs")}:`);
 		if (lastState.containLogs()) {
 			lastState.getLogs().forEach((logStr) => {
