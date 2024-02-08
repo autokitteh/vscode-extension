@@ -15,17 +15,14 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from
 
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;
-	private static updateWorkspace: (key: string, value: any) => Thenable<void>;
 
 	public static async initiateLSPServer(
 		starlarkPath: string,
 		starlarkLSPArgs: string[],
 		starlarkLSPVersion: string,
 		extensionPath: string,
-		updateWorkspaceState: (key: string, value: any) => Thenable<void>
+		updateWorkspaceContext: (key: string, value: any) => Thenable<void>
 	) {
-		this.updateWorkspace = updateWorkspaceState;
-
 		if (StarlarkLSPService.languageClient) {
 			StarlarkLSPService.languageClient.stop();
 		}
@@ -36,14 +33,27 @@ export class StarlarkLSPService {
 			outputChannelName: "autokitteh: Starlark LSP Server",
 		};
 
-		/* By default, the Starlark LSP operates through a CMD command in stdio mode.
-		 * However, if the 'starlarkLSPSocketMode' is enabled, the LSP won't initiate automatically.
-		 * Instead, VSCode connects to 'localhost:starlarkLSPPort', expecting the Starlark LSP to be running in socket mode. */
-		if (ValidateURL(starlarkPath)) {
-			this.initNetworkLSP(starlarkPath, starlarkLSPArgs, clientOptions);
-			return;
+		try {
+			/* By default, the Starlark LSP operates through a CMD command in stdio mode.
+			 * However, if the 'starlarkLSPSocketMode' is enabled, the LSP won't initiate automatically.
+			 * Instead, VSCode connects to 'localhost:starlarkLSPPort', expecting the Starlark LSP to be running in socket mode. */
+			if (ValidateURL(starlarkPath)) {
+				this.initNetworkLSP(starlarkPath, starlarkLSPArgs, clientOptions);
+				return;
+			}
+
+			this.initLocalLSP(
+				starlarkPath,
+				starlarkLSPArgs,
+				clientOptions,
+				starlarkLSPVersion,
+				extensionPath,
+				updateWorkspaceContext
+			);
+		} catch (error) {
+			LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
+			commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
 		}
-		this.initLocalLSP(starlarkPath, starlarkLSPArgs, clientOptions, starlarkLSPVersion, extensionPath);
 	}
 
 	private static async initLocalLSP(
@@ -51,23 +61,22 @@ export class StarlarkLSPService {
 		starlarkLSPArgs: string[],
 		clientOptions: LanguageClientOptions,
 		starlarkLSPVersion: string,
-		extensionPath: string
+		extensionPath: string,
+		updateWorkspaceContext: (key: string, value: any) => Thenable<void>
 	) {
 		let executableLSP;
-		try {
-			executableLSP = await this.checkAndUpdateStarlarkLSPVersion(starlarkPath, starlarkLSPVersion, extensionPath);
-		} catch (error) {
-			LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
-			commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
-			return;
-		}
+		executableLSP = await this.checkAndUpdateStarlarkLSPVersion(starlarkPath, starlarkLSPVersion, extensionPath);
 
 		const { path: newStarlarkPath, version: newStarlarkVersion } = executableLSP!;
 
 		if (newStarlarkVersion !== starlarkLSPVersion) {
 			setConfig("autokitteh.LSPPath", newStarlarkPath);
-			this.updateWorkspace("autokitteh.starlarkLSPVersion", newStarlarkVersion);
-			commands.executeCommand(vsCommands.showInfoMessage, translate().t("lsp.executableDownloadedSuccessfully"));
+			updateWorkspaceContext("autokitteh.starlarkLSPVersion", newStarlarkVersion);
+			LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
+			commands.executeCommand(
+				vsCommands.showInfoMessage,
+				translate().t("lsp.executableDownloadedSuccessfully", { version: newStarlarkVersion })
+			);
 		}
 
 		let serverOptions = {
@@ -75,18 +84,19 @@ export class StarlarkLSPService {
 			args: starlarkLSPArgs,
 		};
 
-		this.startLSPServer(serverOptions, clientOptions, starlarkPath, starlarkLSPArgs);
+		this.startLSPServer(serverOptions, clientOptions, starlarkPath, starlarkLSPArgs, newStarlarkVersion);
 	}
 
 	private static startLSPServer(
 		serverOptions: ServerOptions,
 		clientOptions: LanguageClientOptions,
 		starlarkPath: string,
-		starlarkLSPArgs: string[]
+		starlarkLSPArgs: string[],
+		version: string
 	) {
 		LoggerService.info(
 			namespaces.startlarkLSPServer,
-			`Starting LSP Server: ${starlarkPath} ${starlarkLSPArgs.join(", ")}`
+			`Starting LSP Server (${version}): ${starlarkPath} ${starlarkLSPArgs.join(", ")}`
 		);
 
 		StarlarkLSPService.languageClient = new LanguageClient(
@@ -96,21 +106,17 @@ export class StarlarkLSPService {
 			clientOptions
 		);
 
-		try {
-			StarlarkLSPService.languageClient.start();
+		StarlarkLSPService.languageClient.start();
 
-			workspace.registerTextDocumentContentProvider(
-				starlarkLSPUriScheme,
-				new StarlarkFileHandler(StarlarkLSPService.languageClient)
-			);
-		} catch (error) {
-			LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
-		}
+		workspace.registerTextDocumentContentProvider(
+			starlarkLSPUriScheme,
+			new StarlarkFileHandler(StarlarkLSPService.languageClient)
+		);
 	}
 
 	private static getAssetByPlatform = (data: GitHubRelease, platform: string, arch: string): AssetInfo => {
 		const enrichedPlatform = `autokitteh-starlark-lsp_${platform}_${arch}`;
-		const latestRelease = data.data[data.data.length - 1];
+		const latestRelease = data.data[0];
 		const asset: Asset | undefined = latestRelease.assets.find((asset: Asset) => asset.name.includes(enrichedPlatform));
 
 		if (!asset) {
@@ -133,30 +139,18 @@ export class StarlarkLSPService {
 		const port = serverMode.port && Number(serverMode.port);
 		const host = serverMode.hostname;
 		if (!port) {
-			LoggerService.error(namespaces.startlarkLSPServer, translate().t("errors.missingStarlarkLSPPort"));
-			commands.executeCommand(
-				vsCommands.showErrorMessage,
-				namespaces.startlarkLSPServer,
-				translate().t("errors.missingStarlarkLSPPort")
-			);
-
-			return;
+			throw new Error(translate().t("errors.missingStarlarkLSPPort"));
 		}
 		const socket = connect({ host, port });
 		let streamListener: StreamInfo = { writer: socket, reader: socket };
 
 		let serverOptions = () => new Promise((resolve) => resolve(streamListener)) as Promise<StreamInfo>;
-		this.startLSPServer(serverOptions, clientOptions, starlarkPath, starlarkLSPArgs);
+		this.startLSPServer(serverOptions, clientOptions, starlarkPath, starlarkLSPArgs, "socket");
 	}
 
 	private static async getLatestRelease(platform: string, arch: string): Promise<AssetInfo> {
-		try {
-			const response = await axios.get(starlarkExecutableGithubRepository);
-			return this.getAssetByPlatform(response, platform, arch);
-		} catch (error) {
-			const errorMessage = translate().t("errors.fetchingReleaseInfo", { error: (error as Error).message });
-			throw new Error(errorMessage);
-		}
+		const response = await axios.get(starlarkExecutableGithubRepository);
+		return this.getAssetByPlatform(response, platform, arch);
 	}
 
 	private static getFileNameFromUrl(downloadUrl: string): string {
@@ -210,13 +204,23 @@ export class StarlarkLSPService {
 		return filesInLSPDirectory[0];
 	}
 
+	private static getCommonArchName(): string {
+		const nodeArch = os.arch();
+		const archMapping: Record<string, string> = {
+			x64: "x86_64",
+			arm64: "x86_64",
+		};
+
+		return archMapping[nodeArch] || nodeArch;
+	}
+
 	private static async checkAndUpdateStarlarkLSPVersion(
 		starlarkPath: string,
 		starlarkLSPVersion: string,
 		extensionPath: string
-	): Promise<{ path: string; version?: string } | undefined> {
+	): Promise<{ path: string; version: string } | undefined> {
 		const platform = os.platform();
-		const arch = os.arch();
+		const arch = this.getCommonArchName();
 
 		const release = await this.getLatestRelease(platform, arch);
 
@@ -244,14 +248,14 @@ export class StarlarkLSPService {
 			return { path: starlarkPath, version: starlarkLSPVersion };
 		}
 
-		LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.downloadExecutableInProgress"));
+		LoggerService.info(
+			namespaces.startlarkLSPServer,
+			translate().t("lsp.downloadExecutableInProgress", { version: release.tag })
+		);
 
 		const fileName = this.getFileNameFromUrl(release.url);
 
 		const resultStarlarkPath = await this.downloadNewVersion(release, extensionPath, fileName);
-
-		LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
-
 		return { path: resultStarlarkPath, version: release.tag };
 	}
 }
