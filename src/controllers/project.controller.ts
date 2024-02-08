@@ -128,7 +128,7 @@ export class ProjectController {
 	}
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
-		const { data: sessionHistoryStates, error } = await await RequestHandler.handleServiceResponse(() =>
+		const { data: sessionHistoryStates, error } = await RequestHandler.handleServiceResponse(() =>
 			SessionsService.getHistoryBySessionId(sessionId)
 		);
 		if (error || !sessionHistoryStates?.length) {
