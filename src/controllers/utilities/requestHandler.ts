@@ -21,7 +21,7 @@ export class RequestHandler {
 
 		const successMessage = messages?.formatSuccessMessage?.(data);
 		if (successMessage) {
-			commands.executeCommand(vsCommands.showInfoMessage, successMessage);
+			commands.executeCommand(vsCommands.showInfoMessage, namespaces.serverRequests, successMessage);
 		}
 
 		return { data, error: undefined };

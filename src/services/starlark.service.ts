@@ -9,7 +9,6 @@ import { Asset, AssetInfo, GitHubRelease } from "@interfaces";
 import { LoggerService } from "@services";
 import { StarlarkFileHandler } from "@starlark";
 import { ValidateURL, extractArchive, listFilesInDirectory, setConfig } from "@utilities";
-import { MessageHandler } from "@utilities/vsCodeMessageHandler.utils";
 import axios from "axios";
 import { workspace, commands, window } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from "vscode-languageclient";
@@ -74,7 +73,7 @@ export class StarlarkLSPService {
 			try {
 				setConfig("autokitteh.LSPPath", newStarlarkPath);
 				updateWorkspaceContext("autokitteh.starlarkLSPVersion", newStarlarkVersion);
-				MessageHandler.infoMessage(translate().t("lsp.executableDownloadedSuccessfully"));
+				LoggerService.info(namespaces.starlarkLSPExecutable, translate().t("lsp.executableDownloadedSuccessfully"));
 				commands.executeCommand(vsCommands.showInfoMessage, translate().t("lsp.executableDownloadedSuccessfully"));
 			} catch (error) {
 				LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);

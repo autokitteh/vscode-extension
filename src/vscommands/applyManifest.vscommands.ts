@@ -19,5 +19,9 @@ export const applyManifest = async () => {
 		return;
 	}
 	(logs || []).forEach((log) => LoggerService.info(namespaces.applyManifest, `${log}`));
-	commands.executeCommand(vsCommands.showInfoMessage, translate().t("manifest.appliedSuccessfully"));
+	commands.executeCommand(
+		vsCommands.showInfoMessage,
+		namespaces.applyManifest,
+		translate().t("manifest.appliedSuccessfully")
+	);
 };
