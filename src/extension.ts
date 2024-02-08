@@ -32,7 +32,13 @@ export async function activate(context: ExtensionContext) {
 	const starlarkLSPArgs = ["start"];
 	const starlarkLSPVersion = context.workspaceState.get<string>("autokitteh.starlarkLSPVersion", "");
 	const extensionPath = context.extensionPath;
-	StarlarkLSPService.initiateLSPServer(starlarkLSPPath, starlarkLSPArgs, starlarkLSPVersion, extensionPath, context);
+	StarlarkLSPService.initiateLSPServer(
+		starlarkLSPPath,
+		starlarkLSPArgs,
+		starlarkLSPVersion,
+		extensionPath,
+		context.workspaceState.update.bind(context.workspaceState)
+	);
 
 	const sidebarView = new SidebarView();
 

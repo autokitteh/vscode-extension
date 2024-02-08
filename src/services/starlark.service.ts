@@ -11,19 +11,18 @@ import { StarlarkFileHandler } from "@starlark";
 import { ValidateURL, extractArchive, listFilesInDirectory, setConfig } from "@utilities";
 import { MessageHandler } from "@utilities/vsCodeMessageHandler.utils";
 import axios from "axios";
-import { workspace, commands, window, ExtensionContext } from "vscode";
+import { workspace, commands, window } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from "vscode-languageclient";
 
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;
-	private static updateWorkspace: (key: string, value: any) => Thenable<void>;
 
 	public static async initiateLSPServer(
 		starlarkPath: string,
 		starlarkLSPArgs: string[],
 		starlarkLSPVersion: string,
 		extensionPath: string,
-		extensionContext: ExtensionContext
+		updateWorkspaceContext: (key: string, value: any) => Thenable<void>
 	) {
 		if (StarlarkLSPService.languageClient) {
 			StarlarkLSPService.languageClient.stop();
@@ -48,7 +47,7 @@ export class StarlarkLSPService {
 			clientOptions,
 			starlarkLSPVersion,
 			extensionPath,
-			extensionContext
+			updateWorkspaceContext
 		);
 	}
 
@@ -58,7 +57,7 @@ export class StarlarkLSPService {
 		clientOptions: LanguageClientOptions,
 		starlarkLSPVersion: string,
 		extensionPath: string,
-		extensionContext: ExtensionContext
+		updateWorkspaceContext: (key: string, value: any) => Thenable<void>
 	) {
 		let executableLSP;
 		try {
@@ -72,10 +71,15 @@ export class StarlarkLSPService {
 		const { path: newStarlarkPath, version: newStarlarkVersion } = executableLSP!;
 
 		if (newStarlarkVersion !== starlarkLSPVersion) {
-			setConfig("autokitteh.LSPPath", newStarlarkPath);
-			extensionContext.workspaceState.update("autokitteh.starlarkLSPVersion", newStarlarkVersion);
-			MessageHandler.infoMessage(translate().t("lsp.executableDownloadedSuccessfully"));
-			commands.executeCommand(vsCommands.showInfoMessage, translate().t("lsp.executableDownloadedSuccessfully"));
+			try {
+				setConfig("autokitteh.LSPPath", newStarlarkPath);
+				updateWorkspaceContext("autokitteh.starlarkLSPVersion", newStarlarkVersion);
+				MessageHandler.infoMessage(translate().t("lsp.executableDownloadedSuccessfully"));
+				commands.executeCommand(vsCommands.showInfoMessage, translate().t("lsp.executableDownloadedSuccessfully"));
+			} catch (error) {
+				LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
+				commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
+			}
 		}
 
 		let serverOptions = {
