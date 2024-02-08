@@ -70,15 +70,10 @@ export class StarlarkLSPService {
 		const { path: newStarlarkPath, version: newStarlarkVersion } = executableLSP!;
 
 		if (newStarlarkVersion !== starlarkLSPVersion) {
-			try {
-				setConfig("autokitteh.LSPPath", newStarlarkPath);
-				updateWorkspaceContext("autokitteh.starlarkLSPVersion", newStarlarkVersion);
-				LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
-				commands.executeCommand(vsCommands.showInfoMessage, translate().t("lsp.executableDownloadedSuccessfully"));
-			} catch (error) {
-				LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
-				commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
-			}
+			setConfig("autokitteh.LSPPath", newStarlarkPath);
+			updateWorkspaceContext("autokitteh.starlarkLSPVersion", newStarlarkVersion);
+			LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
+			commands.executeCommand(vsCommands.showInfoMessage, translate().t("lsp.executableDownloadedSuccessfully"));
 		}
 
 		let serverOptions = {
