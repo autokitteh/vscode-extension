@@ -3,7 +3,7 @@
 	"updateExecutableDialog": "Would you like to update the Starlark LSP. Without it, latest LSP features won't work.",
 	"downloadExecutableDialogApprove": "Download & Install",
 	"downloadExecutableDialogDismiss": "Dismiss",
-	"downloadExecutableInProgress": "Downloading LSP executable file...",
+	"downloadExecutableInProgress": "Downloading LSP executable file - {{version}}",
 	"executableDownloadedUnpacking": "Unpacking LSP executable file...",
 	"executableDownloadedSuccessfully": "LSP executable file downloaded succefully"
 }

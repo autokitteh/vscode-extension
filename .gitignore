@@ -34,3 +34,4 @@ dist
 src/.vscode/
 
 autokitteh-starlark-lsp*
+autokitteh-lsp/*
