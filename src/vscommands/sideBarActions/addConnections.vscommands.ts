@@ -1,6 +1,7 @@
-import { ADD_CONNECTIONS_URL } from "@constants";
+import { AK_FRONTEND_URL } from "@constants";
 import * as vscode from "vscode";
 
 export const openAddConnectionsPage = () => {
-	vscode.env.openExternal(vscode.Uri.parse(ADD_CONNECTIONS_URL));
+	const integrationsURL = `${AK_FRONTEND_URL}/i/`;
+	vscode.env.openExternal(vscode.Uri.parse(integrationsURL));
 };
