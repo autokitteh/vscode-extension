@@ -1,3 +1,10 @@
+# [0.8.0-dev.10](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.9...v0.8.0-dev.10) (2024-02-08)
+
+
+### Bug Fixes
+
+* log actions made from sidebar and project controllers ([#138](https://github.com/autokitteh/vscode-extension/issues/138)) ([bbae286](https://github.com/autokitteh/vscode-extension/commit/bbae286d11e8f5b8e08c403654c1fe89c4218689))
+
 # [0.8.0-dev.9](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.8...v0.8.0-dev.9) (2024-02-08)
 
 
