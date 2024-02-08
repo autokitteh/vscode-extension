@@ -54,7 +54,7 @@ export class LoggerService {
 		this.output(namespace, message, channelName, LoggerLevel.debug);
 	}
 
-	public static outputSessionLogs(message: string): void {
+	public static sessionLog(message: string): void {
 		this.initializeOutputChannel(channels.appOutputSessionsLogName);
 
 		this.outputChannels[channels.appOutputSessionsLogName].appendLine(message);
