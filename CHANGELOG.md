@@ -1,3 +1,10 @@
+# [0.8.0-dev.11](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.10...v0.8.0-dev.11) (2024-02-08)
+
+
+### Features
+
+* add connection button in the sidebar ([#136](https://github.com/autokitteh/vscode-extension/issues/136)) ([ff84a0c](https://github.com/autokitteh/vscode-extension/commit/ff84a0cbff41aed618a5d01bff358415ee87e91d))
+
 # [0.8.0-dev.10](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.9...v0.8.0-dev.10) (2024-02-08)
 
 
