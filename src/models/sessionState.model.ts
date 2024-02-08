@@ -14,12 +14,10 @@ export class SessionState {
 	call?: object;
 	exports?: Map<string, object>;
 	returnValue?: object;
-	dateTime: Date;
+	dateTime?: Date;
 
 	constructor(record: ProtoSessionHistoryState) {
 		const stateCase = get(record, "data.value.states.case");
-		const dateTimeStamp = get(record, "data.value.t") as unknown as ProtoTimestamp;
-		this.dateTime = convertTimestampToDate(dateTimeStamp);
 
 		if (!stateCase || !(stateCase in SessionStateType)) {
 			LoggerService.error("SessionState", translate().t("errors.unexpectedSessionStateType"));
@@ -27,22 +25,26 @@ export class SessionState {
 			return;
 		}
 
+		const dateTimeStamp = get(record, "data.value.t") as unknown as ProtoTimestamp;
+		this.dateTime = convertTimestampToDate(dateTimeStamp);
+		this.error = get(
+			record,
+			"data.value.states.value.error.message",
+			translate().t("errors.sessionLogMissingOnErrorType")
+		);
+
 		this.callstackTrace = get(record, "data.value.states.value.error.callstack", []) as Callstack[];
 
 		this.type = stateCase;
 		this.logs = get(record, "data.value.states.value.prints", []);
 		this.call = get(record, "data.value.states.call", {});
 		this.exports = get(record, "data.value.states.value.exports", new Map());
-		this.error = get(
-			record,
-			"data.value.states.value.error.message",
-			this.error || translate().t("errors.sessionLogMissingOnErrorType")
-		);
+
 		this.returnValue = get(record, "data.value.states.value.returnValue", {});
 	}
 
 	getError(): string {
-		return this.error || translate().t("errors.sessionLogMissingErrorMessage");
+		return this.error!;
 	}
 
 	getCallstack(): Callstack[] {
@@ -58,6 +60,6 @@ export class SessionState {
 	}
 
 	getLogs(): string[] {
-		return this.logs || [];
+		return this.logs!;
 	}
 }
