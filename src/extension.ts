@@ -28,7 +28,7 @@ export async function activate(context: ExtensionContext) {
 		commands.registerCommand(vsCommands.runProject, (focusedItem) => runProject(focusedItem, sidebarController))
 	);
 
-	const starlarkLSPPath = getConfig("autokitteh.LSPPath", "");
+	const starlarkLSPPath = getConfig("autokitteh.starlarkLSP", "");
 	const starlarkLSPArgs = ["start"];
 	const starlarkLSPVersion = context.workspaceState.get<string>("autokitteh.starlarkLSPVersion", "");
 	const extensionPath = context.extensionPath;

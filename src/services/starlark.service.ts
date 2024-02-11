@@ -70,7 +70,7 @@ export class StarlarkLSPService {
 		const { path: newStarlarkPath, version: newStarlarkVersion } = executableLSP!;
 
 		if (newStarlarkVersion !== starlarkLSPVersion) {
-			setConfig("autokitteh.LSPPath", newStarlarkPath);
+			setConfig("autokitteh.starlarkLSP", newStarlarkPath);
 			updateWorkspaceContext("autokitteh.starlarkLSPVersion", newStarlarkVersion);
 			LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
 			commands.executeCommand(

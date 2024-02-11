@@ -112,9 +112,9 @@
 					"description": "Refresh interval in seconds for the sidebar panel",
 					"type": "number"
 				},
-				"autokitteh.LSPPath": {
+				"autokitteh.starlarkLSP": {
 					"default": "",
-					"description": "The path to the LSP Server",
+					"description": "The path to the starlark LSP Server",
 					"type": "string"
 				}
 			},
