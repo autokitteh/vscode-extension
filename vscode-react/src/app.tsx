@@ -5,13 +5,15 @@ import { Player } from "@lottiefiles/react-lottie-player";
 import { DeploymentSectionViewModel } from "@models";
 import { SessionSectionViewModel } from "@models/views";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
-import { AKButton, AKLogo } from "@react-components";
+import { AKButton, AKLogo, AKModal } from "@react-components";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { HandleIncomingMessages, sendMessage } from "@react-utilities";
 import { cn } from "@react-utilities/cnClasses.utils";
 import { Message } from "@type";
 import "./app.css";
+import * as monaco from "monaco-editor";
+import MonacoEditor from "react-monaco-editor";
 
 function App() {
 	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel | undefined>();
@@ -20,6 +22,8 @@ function App() {
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
+	const [code, setCode] = useState("// type your code...");
+	const [modal, setModal] = useState(false);
 
 	const messageHandlers: IIncomingMessagesHandler = {
 		setDeploymentsSection,
@@ -42,6 +46,15 @@ function App() {
 		};
 	}, [handleMessagesFromExtension]);
 
+	const editorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
+		console.log("editorDidMount", editor);
+		editor.focus();
+	};
+	const onChange = (newValue: string, e: monaco.editor.IModelContentChangedEvent) => {
+		console.log("onChange", newValue, e);
+		setCode(newValue);
+	};
+
 	return (
 		<main>
 			{!!projectName ? (
@@ -61,6 +74,11 @@ function App() {
 							<div className="codicon codicon-rocket mr-2"></div>
 							{translate().t("reactApp.general.deploy")}
 						</AKButton>
+
+						<AKButton onClick={() => sendMessage(MessageType.runProject)} classes="mt-2 mr-4">
+							<div className="codicon codicon-send mr-2"></div>
+							{translate().t("reactApp.general.singleShot")}
+						</AKButton>
 						<div className="flex-grow"></div>
 						{!resourcesDirState && (
 							<div className="mr-2">
@@ -74,6 +92,42 @@ function App() {
 						>
 							<div className="codicon codicon-folder-opened w-4"></div>
 						</AKButton>
+					</div>
+					{modal && (
+						<AKModal>
+							<div className="text-black text-xl">Session parameters</div>
+							<div className="m-auto">
+								<div className="flex w-fulljustify-end mt-2">
+									<MonacoEditor
+										language="json"
+										height="50vh"
+										width="100vw"
+										theme="vs-dark"
+										value={code}
+										onChange={onChange}
+										editorDidMount={editorDidMount}
+									/>
+								</div>
+								<div className="flex w-full justify-end mt-2">
+									<AKButton classes="bg-gray-500">Dismiss</AKButton>
+									<AKButton classes="ml-2" onClick={() => setModal(false)}>
+										Update
+									</AKButton>
+								</div>
+							</div>
+						</AKModal>
+					)}
+
+					<div className="flex mt-4">
+						<div>
+							<AKButton onClick={() => sendMessage(MessageType.runProject)} classes="mt-2 mr-4">
+								<div className="codicon codicon-send mr-2"></div>
+								{translate().t("reactApp.general.singleShot")}
+							</AKButton>
+						</div>
+						<div className="mt-1 w-32 text-ellipsis	overflow-hidden cursor-pointer" onClick={() => setModal(true)}>
+							asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd
+						</div>
 					</div>
 
 					<AKDeployments

@@ -3,5 +3,6 @@
 	"logs": "Logs",
 	"errors": "Errors",
 	"callstack": "Callstack",
-	"callstackNoPrints": "nothing found here"
+	"callstackNoPrints": "nothing found here",
+	"sessionDataCopiedSuccessfully": "Session data copied successfully"
 }

@@ -48,6 +48,8 @@ export class ProjectView implements IProjectView {
 						break;
 					case MessageType.onClickSetResourcesDirectory:
 						this.delegate?.onClickSetResourcesDirectory?.();
+					case MessageType.copyToClipboard:
+						this.delegate?.copyToClipboard?.(message.payload as string);
 						break;
 				}
 			},

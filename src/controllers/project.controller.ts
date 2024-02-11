@@ -10,7 +10,7 @@ import { DeploymentsService, ProjectsService, SessionsService, LoggerService } f
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
-import { commands, OpenDialogOptions, window } from "vscode";
+import { commands, OpenDialogOptions, window, env } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
@@ -359,13 +359,14 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
-		const successMessage = translate().t("deployments.activationSucceed");
-		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
-		LoggerService.info(
-			namespaces.projectController,
-			translate().t("deployments.activationSucceedId", { id: deploymentId })
-		);
+		LoggerService.info(namespaces.projectController, translate().t("projects.activationSucceed", { id: deploymentId }));
+	}
+
+	async copyToClipboard(data: string) {
+		env.clipboard.writeText(data).then(() => {
+			commands.executeCommand(vsCommands.showInfoMessage, translate().t("sessions.sessionDataCopiedSuccessfully"));
+		});
 	}
 
 	async deactivateDeployment(deploymentId: string) {

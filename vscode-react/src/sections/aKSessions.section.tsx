@@ -38,6 +38,10 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 		setSelectedSession(sessionId);
 	};
 
+	const copyToClipboard = (data: string) => {
+		sendMessage(MessageType.copyToClipboard, data);
+	};
+
 	return (
 		<div className="mt-4  h-[43vh] overflow-y-auto overflow-x-hidden">
 			{sessions && !!totalSessions ? (
@@ -70,7 +74,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 								{session.sessionId}
 							</AKTableCell>
 							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
-								<div className="codicon codicon-output" onClick={() => displaySessionLogs(session.sessionId)}></div>
+								<div className="codicon codicon-output" onClick={() => copyToClipboard(session.sessionId)}></div>
 							</AKTableCell>
 						</AKTableRow>
 					))}

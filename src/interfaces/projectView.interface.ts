@@ -10,6 +10,7 @@ export interface IProjectViewDelegate {
 	selectDeployment?: Callback<string>;
 	displaySessionLogs?: Callback<string>;
 	activateDeployment?: Callback<string>;
+	copyToClipboard?: Callback<string>;
 	deactivateDeployment?: Callback<string>;
 }
 
