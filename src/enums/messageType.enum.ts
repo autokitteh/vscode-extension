@@ -11,4 +11,5 @@ export enum MessageType {
 	displaySessionLogs = "DISPLAY_SESSION_LOGS",
 	deactivateDeployment = "DEACTIVATE_DEPLOYMENT",
 	activateDeployment = "ACTIVATE_DEPLOYMENT",
+	copyToClipboard = "COPY_TO_CLIPBOARD",
 }

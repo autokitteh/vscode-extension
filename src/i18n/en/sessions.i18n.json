@@ -9,7 +9,8 @@
 	"historyResult": "Result",
 	"historyFunction": "Function",
 	"historyInitFunction": "Init function",
-	"historyPrint": "Print",
 	"historyTime": "Time",
-	"historyNoOutput": "No output"
+	"historyNoOutput": "No output",
+	"historyPrint": "Print",
+	"sessionDataCopiedSuccessfully": "Session data copied successfully"
 }
