@@ -1,11 +1,10 @@
-import { namespaces } from "@constants";
-import { RequestHandler } from "@controllers/utilities/requestHandler";
+import { namespaces, vsCommands } from "@constants";
 import { translate } from "@i18n";
 import { LoggerService, ProjectsService } from "@services";
 import { SidebarTreeItem } from "@type/views";
 import { ISidebarView } from "interfaces";
 import isEqual from "lodash/isEqual";
-import { window } from "vscode";
+import { commands, window } from "vscode";
 
 export class SidebarController {
 	private view: ISidebarView;
@@ -26,7 +25,8 @@ export class SidebarController {
 	};
 
 	private fetchProjects = async (): Promise<SidebarTreeItem[] | undefined> => {
-		const { data: projects, error } = await RequestHandler.handleServiceResponse(() => ProjectsService.list());
+		const { data: projects, error } = await ProjectsService.list();
+
 		if (error) {
 			LoggerService.error(
 				namespaces.projectSidebarController,
@@ -58,45 +58,35 @@ export class SidebarController {
 	}
 
 	async buildProject(projectId: string) {
-		const { error, data } = await RequestHandler.handleServiceResponse(() => ProjectsService.build(projectId), {
-			formatSuccessMessage: (data?: string): string => `${translate().t("projects.projectBuildSucceed", { id: data })}`,
-			formatFailureMessage: (): string =>
-				translate().t("projects.projectBuildFailed", {
-					id: projectId,
-				}),
-		});
+		const { error, data } = await ProjectsService.build(projectId);
 
 		if (error) {
-			const errorMessage = `${translate().t("projects.projectBuildFailed", {
+			const userErrorMessage = translate().t("projects.projectBuildFailed", {
 				id: projectId,
-			})} - ${(error as Error).message}`;
+			});
+			const errorMessage = `${userErrorMessage} - ${(error as Error).message}`;
 			LoggerService.error(namespaces.projectSidebarController, errorMessage);
 			return;
 		}
-		LoggerService.info(namespaces.projectController, translate().t("projects.projectBuildSucceed", { id: data }));
+		const successMessage = translate().t("projects.projectBuildSucceed", { id: data });
+		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
+		LoggerService.info(namespaces.projectController, successMessage);
 	}
 
 	async runProject(projectId: string) {
-		const { error, data: deploymentId } = await RequestHandler.handleServiceResponse(
-			() => ProjectsService.run(projectId),
-			{
-				formatSuccessMessage: (): string => `${translate().t("projects.projectDeploySucceed", { id: projectId })}`,
-				formatFailureMessage: (error): string =>
-					`${translate().t("projects.projectDeployFailed", {
-						id: projectId,
-						error: (error as Error).message,
-					})}`,
-			}
-		);
+		const { error, data: deploymentId } = await ProjectsService.run(projectId);
 
 		if (error) {
-			const errorMessage = `${translate().t("projects.projectDeployFailed", {
-				id: projectId,
-			})} - ${(error as Error).message}`;
+			const userErrorMessage = translate().t("projects.projectDeployFailed", { id: projectId });
+			const errorMessage = `${userErrorMessage} - ${(error as Error).message}`;
+			commands.executeCommand(vsCommands.showErrorMessage, userErrorMessage);
 			LoggerService.error(namespaces.projectSidebarController, errorMessage);
 			return;
 		}
-
+		commands.executeCommand(
+			vsCommands.showInfoMessage,
+			translate().t("projects.projectDeploySucceed", { id: deploymentId })
+		);
 		LoggerService.info(
 			namespaces.projectController,
 			translate().t("projects.projectDeploySucceed", { id: deploymentId })

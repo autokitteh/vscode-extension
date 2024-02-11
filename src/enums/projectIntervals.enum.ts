@@ -1,4 +1,5 @@
-export enum ProjectIntervals {
+export enum ProjectIntervalTypes {
 	sessionHistory,
 	deployments,
+	sessions,
 }
