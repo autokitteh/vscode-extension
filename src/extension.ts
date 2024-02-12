@@ -29,7 +29,7 @@ export async function activate(context: ExtensionContext) {
 	);
 
 	const starlarkLSPPath =
-		getConfig("autokitteh.starlarkLSP", "") || context.workspaceState.get<string>("autokitteh.starlarkLSP", "");
+		getConfig("starlarkLSP", "") || context.workspaceState.get<string>("autokitteh.starlarkLSP", "");
 	const starlarkLSPArgs = ["start"];
 	const starlarkLSPVersion = context.workspaceState.get<string>("autokitteh.starlarkLSPVersion", "");
 	const extensionPath = context.extensionPath;

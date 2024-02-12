@@ -9,14 +9,7 @@ import { translate } from "@i18n";
 import { Asset, AssetInfo, GitHubRelease } from "@interfaces";
 import { LoggerService } from "@services";
 import { StarlarkFileHandler } from "@starlark";
-import {
-	ValidateURL,
-	extractArchive,
-	getConfig,
-	listFilesInDirectory,
-	setConfig,
-	setConfigWorkspace,
-} from "@utilities";
+import { ValidateURL, extractArchive, getConfig, listFilesInDirectory, setConfig } from "@utilities";
 import axios from "axios";
 import { workspace, commands, window } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from "vscode-languageclient";
@@ -118,7 +111,6 @@ export class StarlarkLSPService {
 
 		if (newStarlarkVersion !== starlarkLSPVersion) {
 			setConfig("autokitteh.starlarkLSP", newStarlarkPath);
-			setConfigWorkspace("autokitteh.starlarkLSP", newStarlarkPath);
 			updateWorkspaceContext("autokitteh.starlarkLSP", newStarlarkPath);
 			LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
 			commands.executeCommand(
@@ -138,7 +130,7 @@ export class StarlarkLSPService {
 	private static lspServerPathSettingsListener() {
 		workspace.onDidChangeConfiguration((event) => {
 			if (event.affectsConfiguration("autokitteh.starlarkLSP")) {
-				const newStarlarkPath = getConfig("autokitteh.starlarkLSP", "");
+				const newStarlarkPath = getConfig("starlarkLSP", "");
 
 				this.initiateLSPServer(
 					newStarlarkPath,
