@@ -118,15 +118,26 @@ function App() {
 						</AKModal>
 					)}
 
-					<div className="flex mt-4">
-						<div>
-							<AKButton onClick={() => sendMessage(MessageType.runProject)} classes="mt-2 mr-4">
+					<div className="flex mr-8">
+						<div className="flex items-center">
+							<AKLogo className="w-12 h-12" themeVisualType={themeVisualType} />
+							<div className="text-vscode-input-foreground font-bold ml-4 text-lg">{projectName}</div>
+							<AKButton classes="mx-4" onClick={() => sendMessage(MessageType.buildProject)}>
+								<div className="codicon codicon-tools mr-2"></div>
+								{translate().t("reactApp.general.build")}
+							</AKButton>
+							<AKButton onClick={() => sendMessage(MessageType.runProject)}>
+								<div className="codicon codicon-rocket mr-2"></div>
+								{translate().t("reactApp.general.deploy")}
+							</AKButton>
+							<div className="mx-4">|</div>
+							<AKButton onClick={() => setModal(true)} classes="w-10 mr-2">
+								<div className="codicon codicon-edit mr-2"></div>
+							</AKButton>
+							<AKButton onClick={() => sendMessage(MessageType.runProject)} classes="mr-4">
 								<div className="codicon codicon-send mr-2"></div>
 								{translate().t("reactApp.general.singleShot")}
 							</AKButton>
-						</div>
-						<div className="mt-1 w-32 text-ellipsis	overflow-hidden cursor-pointer" onClick={() => setModal(true)}>
-							asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd
 						</div>
 					</div>
 
