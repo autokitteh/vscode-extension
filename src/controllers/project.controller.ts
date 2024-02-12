@@ -364,7 +364,8 @@ export class ProjectController {
 	}
 
 	async copyToClipboard(data: string) {
-		env.clipboard.writeText(data).then(() => {
+		const sessionInputs = this.sessions?.find((session) => session.sessionId === data)?.inputs;
+		env.clipboard.writeText(JSON.stringify(sessionInputs)).then(() => {
 			commands.executeCommand(vsCommands.showInfoMessage, translate().t("sessions.sessionDataCopiedSuccessfully"));
 		});
 	}
