@@ -1,0 +1,4 @@
+{
+	"initFailed": "Starlark LSP initialization has failed, trying again in 5 seconds",
+	"initSuccess": "Starlark LSP initiated successfuly"
+}
