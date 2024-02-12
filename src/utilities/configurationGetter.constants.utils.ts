@@ -10,3 +10,8 @@ export const setConfig = <T>(section: string, defaultValue: T): void => {
 	configuration.update(section, defaultValue, ConfigurationTarget.Global);
 	return;
 };
+export const setConfigWorkspace = <T>(section: string, defaultValue: T): void => {
+	const configuration: WorkspaceConfiguration = workspace.getConfiguration();
+	configuration.update(section, defaultValue);
+	return;
+};
