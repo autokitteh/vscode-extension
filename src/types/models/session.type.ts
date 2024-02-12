@@ -3,6 +3,7 @@ export type Session = {
 	deploymentId: string;
 	state: number;
 	createdAt: Date;
+	inputs: object;
 };
 
 export type Callstack = {

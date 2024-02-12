@@ -13,5 +13,6 @@ export function convertSessionProtoToModel(protoSession: ProtoSession): Session 
 		deploymentId: protoSession.deploymentId,
 		state: protoSession.state,
 		createdAt: convertTimestampToDate(protoSession.createdAt!),
+		inputs: protoSession.inputs,
 	};
 }
