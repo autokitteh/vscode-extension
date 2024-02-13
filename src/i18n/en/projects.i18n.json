@@ -6,5 +6,7 @@
 	"projectBuildSucceed": "Project build succeed - id: {{id}}",
 	"projectBuildFailed": "Project build failed - id: {{id}}",
 	"projectDeploySucceed": "Project deploy succeed - id: {{id}}",
-	"projectDeployFailed": "Project deploy failed - id: {{id}}"
+	"projectDeployFailed": "Project deploy failed - id: {{id}}",
+	"fetchProjectsFailed": "Projects fetch failed",
+	"fetchProjectsFailedError": "Projects fetch failed - error: {{error}}"
 }

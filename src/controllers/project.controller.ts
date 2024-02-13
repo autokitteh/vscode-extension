@@ -1,7 +1,6 @@
 import { vsCommands, namespaces, channels } from "@constants";
-import { RequestHandler } from "@controllers/utilities/requestHandler";
 import { MessageType } from "@enums";
-import { ProjectIntervals } from "@enums";
+import { ProjectIntervalTypes } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { SessionState } from "@models";
@@ -14,7 +13,7 @@ import { commands } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
-	private intervalKeeper: Map<ProjectIntervals, NodeJS.Timeout> = new Map();
+	private intervalKeeper: Map<ProjectIntervalTypes, NodeJS.Timeout> = new Map();
 	private disposeCB?: Callback<string>;
 	public projectId: string;
 	public project?: Project;
@@ -24,6 +23,7 @@ export class ProjectController {
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
+	private hasDisplayedError: Map<ProjectIntervalTypes, boolean> = new Map();
 
 	constructor(
 		projectView: IProjectView,
@@ -57,14 +57,19 @@ export class ProjectController {
 	}
 
 	async loadAndDisplayDeployments() {
-		const { data: deployments, error } = await await RequestHandler.handleServiceResponse(() =>
-			DeploymentsService.listByProjectId(this.projectId)
-		);
+		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
 		if (error) {
-			LoggerService.error(namespaces.projectController, (error as Error).message);
-			commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
+			const notification = translate().t("errors.noResponse");
+			if (!this.hasDisplayedError.get(ProjectIntervalTypes.deployments)) {
+				commands.executeCommand(vsCommands.showErrorMessage, notification);
+				this.hasDisplayedError.set(ProjectIntervalTypes.deployments, true);
+			}
+
+			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
+			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
+
 		if (isEqual(this.deployments, deployments)) {
 			return;
 		}
@@ -92,17 +97,14 @@ export class ProjectController {
 	}
 
 	async selectDeployment(deploymentId: string): Promise<void> {
-		this.stopInterval(ProjectIntervals.sessionHistory);
+		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 
 		this.selectedDeploymentId = deploymentId;
-		const { data: sessions, error } = await RequestHandler.handleServiceResponse(
-			() => SessionsService.listByDeploymentId(deploymentId),
-			{
-				formatFailureMessage: (): string => translate().t("deployments.deploymentSelectionFailed"),
-			}
-		);
+		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
+
 		if (error) {
-			LoggerService.error(namespaces.projectController, (error as Error).message);
+			const log = `${translate().t("errors.sessionFetchFailed")} - ${(error as Error).message}`;
+			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
 
@@ -128,12 +130,19 @@ export class ProjectController {
 	}
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
-		const { data: sessionHistoryStates, error } = await RequestHandler.handleServiceResponse(() =>
-			SessionsService.getHistoryBySessionId(sessionId)
-		);
+		const { data: sessionHistoryStates, error } = await SessionsService.getHistoryBySessionId(sessionId);
 		if (error || !sessionHistoryStates?.length) {
 			if (error) {
-				LoggerService.error(namespaces.projectController, (error as Error).message);
+				if (!this.hasDisplayedError.get(ProjectIntervalTypes.sessionHistory)) {
+					const notification = translate().t("errors.noResponse");
+					commands.executeCommand(vsCommands.showErrorMessage, notification);
+					this.hasDisplayedError.set(ProjectIntervalTypes.sessionHistory, true);
+				}
+
+				LoggerService.error(
+					namespaces.projectController,
+					`${translate().t("errors.sessionLogFetchFailed")} - ${(error as Error).message}`
+				);
 			}
 			return;
 		}
@@ -182,16 +191,16 @@ export class ProjectController {
 	}
 
 	async displaySessionLogs(sessionId: string): Promise<void> {
-		this.stopInterval(ProjectIntervals.sessionHistory);
+		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 
 		this.startInterval(
-			ProjectIntervals.sessionHistory,
+			ProjectIntervalTypes.sessionHistory,
 			() => this.displaySessionsHistory(sessionId),
 			this.sessionsLogRefreshRate
 		);
 	}
 
-	async startInterval(intervalKey: ProjectIntervals, loadFunc: () => Promise<void>, refreshRate: number) {
+	async startInterval(intervalKey: ProjectIntervalTypes, loadFunc: () => Promise<void>, refreshRate: number) {
 		if (this.intervalKeeper.has(intervalKey)) {
 			this.stopInterval(intervalKey);
 		}
@@ -202,94 +211,92 @@ export class ProjectController {
 		);
 	}
 
-	stopInterval(intervalKey: ProjectIntervals) {
+	stopInterval(intervalKey: ProjectIntervalTypes) {
 		clearInterval(this.intervalKeeper.get(intervalKey));
 		this.intervalKeeper.delete(intervalKey);
 	}
 
 	public async openProject(disposeCB: Callback<string>) {
 		this.disposeCB = disposeCB;
-		const projectNotFoundMessage = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
-		const { data: project } = await RequestHandler.handleServiceResponse(() => ProjectsService.get(this.projectId), {
-			formatFailureMessage: (): string => projectNotFoundMessage,
-		});
+		const { data: project, error } = await ProjectsService.get(this.projectId);
+		const log = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
+		if (error) {
+			LoggerService.error(namespaces.projectController, (error as Error).message);
+			commands.executeCommand(vsCommands.showErrorMessage, log);
+			return;
+		}
 		if (project) {
 			this.project = project;
 			this.view.show(this.project.name);
 			this.startInterval(
-				ProjectIntervals.deployments,
+				ProjectIntervalTypes.deployments,
 				() => this.loadAndDisplayDeployments(),
 				this.deploymentsRefreshRate
 			);
 			return;
 		}
-		LoggerService.error(namespaces.projectController, projectNotFoundMessage);
+		LoggerService.error(namespaces.projectController, log);
 	}
 
 	onBlur() {
-		this.stopInterval(ProjectIntervals.deployments);
-		this.stopInterval(ProjectIntervals.sessionHistory);
+		this.stopInterval(ProjectIntervalTypes.deployments);
+		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		this.deployments = undefined;
 		this.sessions = undefined;
+		this.hasDisplayedError = new Map();
 	}
 
 	onFocus() {
 		this.setProjectNameInView();
 		this.startInterval(
-			ProjectIntervals.deployments,
+			ProjectIntervalTypes.deployments,
 			() => this.loadAndDisplayDeployments(),
 			this.deploymentsRefreshRate
 		);
 	}
 
 	onClose() {
-		this.stopInterval(ProjectIntervals.sessionHistory);
-		this.stopInterval(ProjectIntervals.deployments);
+		this.stopInterval(ProjectIntervalTypes.sessionHistory);
+		this.stopInterval(ProjectIntervalTypes.deployments);
 		this.disposeCB?.(this.projectId);
+		this.hasDisplayedError = new Map();
 	}
 
 	async build() {
-		const { data, error } = await RequestHandler.handleServiceResponse(() => ProjectsService.build(this.projectId), {
-			formatSuccessMessage: (data?: string): string => translate().t("projects.projectBuildSucceed", { id: data }),
-			formatFailureMessage: (): string =>
-				translate().t("projects.projectBuildFailed", {
-					id: this.projectId,
-				}),
-		});
+		const { data: buildId, error } = await ProjectsService.build(this.projectId);
 		if (error) {
-			const errorMessage = `${translate().t("projects.projectBuildFailed", {
+			const notification = translate().t("projects.projectBuildFailed", {
 				id: this.projectId,
-			})} - ${(error as Error).message}`;
-			LoggerService.error(namespaces.projectController, errorMessage);
+			});
+			const log = `${notification} - ${(error as Error).message}`;
+
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
-		LoggerService.info(namespaces.projectController, translate().t("projects.projectBuildSucceed", { id: data }));
+		const successMessage = translate().t("projects.projectBuildSucceed", { id: buildId });
+		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
+
+		LoggerService.info(namespaces.projectController, successMessage);
 	}
 
 	async run() {
-		const { data: deploymentId, error } = await RequestHandler.handleServiceResponse(
-			() => ProjectsService.run(this.projectId),
-			{
-				formatSuccessMessage: (): string => translate().t("projects.projectDeploySucceed", { id: this.projectId }),
-				formatFailureMessage: (): string =>
-					translate().t("projects.projectDeployFailed", {
-						id: this.projectId,
-					}),
-			}
-		);
+		const { data: deploymentId, error } = await ProjectsService.run(this.projectId);
 
 		if (error) {
-			const errorMessage = `${translate().t("projects.projectDeployFailed", {
+			const notification = translate().t("projects.projectDeployFailed", {
 				id: this.projectId,
-			})} - ${(error as Error).message}`;
-			LoggerService.error(namespaces.projectController, errorMessage);
+			});
+			const log = `${notification} - ${(error as Error).message}`;
+			LoggerService.error(namespaces.projectController, log);
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+
 			return;
 		}
 
-		LoggerService.info(
-			namespaces.projectController,
-			translate().t("projects.projectDeploySucceed", { id: deploymentId })
-		);
+		const successMessage = translate().t("projects.projectDeploySucceed", { id: this.projectId });
+		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
+		LoggerService.info(namespaces.projectController, successMessage);
 
 		this.selectedDeploymentId = deploymentId;
 
@@ -300,41 +307,37 @@ export class ProjectController {
 	}
 
 	async activateDeployment(deploymentId: string) {
-		const { error } = await RequestHandler.handleServiceResponse(() => DeploymentsService.activate(deploymentId), {
-			formatSuccessMessage: (): string => translate().t("deployments.activationSucceed", { id: deploymentId }),
-			formatFailureMessage: (): string =>
-				translate().t("deployments.activationFailed", {
-					id: deploymentId,
-				}),
-		});
+		const { error } = await DeploymentsService.activate(deploymentId);
 
 		if (error) {
-			const errorMessage = `${translate().t("projects.activationFailed", {
-				id: deploymentId,
-			})} - ${(error as Error).message}`;
-			LoggerService.error(namespaces.projectController, errorMessage);
+			const notification = translate().t("projects.activationFailed", { id: deploymentId });
+			const log = `${notification} - ${(error as Error).message}`;
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
+		const successMessage = translate().t("deployments.activationSucceed", { id: deploymentId });
+		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
 		LoggerService.info(namespaces.projectController, translate().t("projects.activationSucceed", { id: deploymentId }));
 	}
 
 	async deactivateDeployment(deploymentId: string) {
-		const { error } = await RequestHandler.handleServiceResponse(() => DeploymentsService.deactivate(deploymentId), {
-			formatSuccessMessage: (): string => translate().t("deployments.deactivationSucceed", { id: deploymentId }),
-			formatFailureMessage: (): string =>
-				translate().t("deployments.deactivationFailed", {
-					id: deploymentId,
-				}),
-		});
+		const { error } = await DeploymentsService.deactivate(deploymentId);
 
 		if (error) {
-			const errorMessage = `${translate().t("projects.activationFailed", {
+			const notification = translate().t("deployments.deactivationFailed", {
 				id: deploymentId,
-			})} - ${(error as Error).message}`;
-			LoggerService.error(namespaces.projectController, errorMessage);
+			});
+			const log = `${notification} - ${(error as Error).message}`;
+
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
+
+		const successMessage = translate().t("deployments.deactivationSucceed", { id: deploymentId });
+		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
 		LoggerService.info(
 			namespaces.projectController,
