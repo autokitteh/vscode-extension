@@ -38,7 +38,8 @@ export async function activate(context: ExtensionContext) {
 		starlarkLSPArgs,
 		starlarkLSPVersion,
 		extensionPath,
-		context.workspaceState.update.bind(context.workspaceState)
+		context.workspaceState.update.bind(context.workspaceState),
+		context.workspaceState.get.bind(context.workspaceState)
 	);
 
 	const sidebarView = new SidebarView();

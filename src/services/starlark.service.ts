@@ -16,27 +16,19 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;
 
-	private static starlarkLSPArgs: string[];
-	private static starlarkLSPVersion: string;
-	private static extensionPath: string;
-	private static updateWorkspaceContext: (key: string, value: any) => Thenable<void>;
 	private static connecting: boolean = false;
-	private static isLocalConnected: boolean = false;
 	private static isListenerActivated: boolean = false;
 	private static retryTimer: NodeJS.Timeout | undefined;
+	private static localLSPConnected: boolean = false;
 
 	public static async initiateLSPServer(
 		starlarkPath: string,
 		starlarkLSPArgs: string[],
 		starlarkLSPVersion: string,
 		extensionPath: string,
-		updateWorkspaceContext: (key: string, value: any) => Thenable<void>
+		updateWorkspaceContext: (key: string, value: any) => Thenable<void>,
+		getWorkspaceContext: <T>(key: string, defaultValue: T) => T
 	) {
-		this.starlarkLSPArgs = starlarkLSPArgs;
-		this.starlarkLSPVersion = starlarkLSPVersion;
-		this.extensionPath = extensionPath;
-		this.updateWorkspaceContext = updateWorkspaceContext;
-
 		if (StarlarkLSPService.languageClient) {
 			StarlarkLSPService.languageClient.stop();
 		}
@@ -49,8 +41,15 @@ export class StarlarkLSPService {
 
 		try {
 			if (!this.isListenerActivated) {
-				this.lspServerPathSettingsListener();
+				this.lspServerPathSettingsListener(
+					starlarkLSPArgs,
+					starlarkLSPVersion,
+					extensionPath,
+					updateWorkspaceContext,
+					getWorkspaceContext
+				);
 			}
+
 			/* By default, the Starlark LSP operates through a CMD command in stdio mode.
 			 * However, if the 'starlarkLSPSocketMode' is enabled, the LSP won't initiate automatically.
 			 * Instead, VSCode connects to 'localhost:starlarkLSPPort', expecting the Starlark LSP to be running in socket mode. */
@@ -62,7 +61,7 @@ export class StarlarkLSPService {
 				if (!port || !host || this.connecting) {
 					return;
 				}
-				this.startLanguageServerViaNetwork(host, port, clientOptions, starlarkPath);
+				this.startLanguageServerViaNetwork(host, port, clientOptions, starlarkPath, starlarkLSPArgs);
 				return;
 			}
 
@@ -84,20 +83,20 @@ export class StarlarkLSPService {
 		host: string,
 		port: number,
 		clientOptions: LanguageClientOptions,
-		starlarkPath: string
+		starlarkPath: string,
+		starlarkLSPArgs: string[]
 	): Promise<void> {
 		const serverOptions = () =>
 			new Promise<StreamInfo>((resolve) => {
 				const connectToServer = () => {
-					// Prevent multiple simultaneous connection attempts
-					if (StarlarkLSPService.connecting) {
+					if (StarlarkLSPService.connecting || StarlarkLSPService.localLSPConnected) {
 						return;
 					}
 					StarlarkLSPService.connecting = true;
 
 					const socket = connect({ port, host }, () => {
 						LoggerService.info(namespaces.startlarkLSPServer, "Connected to LSP server");
-						StarlarkLSPService.connecting = false; // Reset the flag upon successful connection
+						StarlarkLSPService.connecting = false;
 						resolve({
 							reader: socket,
 							writer: socket,
@@ -106,29 +105,34 @@ export class StarlarkLSPService {
 
 					socket.on("error", (error) => {
 						LoggerService.error(namespaces.startlarkLSPServer, "Connection error:" + error);
-						StarlarkLSPService.connecting = false; // Reset the flag upon error
-						clearTimeout(this.retryTimer);
-						this.retryTimer = setTimeout(connectToServer, 1000); // Retry connection after 1 second
+						StarlarkLSPService.connecting = false;
+						if (!StarlarkLSPService.localLSPConnected) {
+							clearTimeout(this.retryTimer);
+							this.retryTimer = setTimeout(connectToServer, 1000);
+						}
 					});
 
 					socket.on("end", () => {
 						LoggerService.info(namespaces.startlarkLSPServer, "Disconnected from LSP server");
-						StarlarkLSPService.connecting = false; // Ensure the flag is reset upon disconnection
-						clearTimeout(this.retryTimer);
-						this.retryTimer = setTimeout(connectToServer, 1000); // Reconnect automatically
+						StarlarkLSPService.connecting = false;
+						if (!StarlarkLSPService.localLSPConnected) {
+							clearTimeout(this.retryTimer);
+							this.retryTimer = setTimeout(connectToServer, 1000);
+						}
 					});
 
-					// Optionally, handle the 'close' event to cover all disconnection scenarios
 					socket.on("close", () => {
 						LoggerService.info(namespaces.startlarkLSPServer, "Connection closed");
-						StarlarkLSPService.connecting = false; // Reset the flag upon closing
-						clearTimeout(this.retryTimer);
-						this.retryTimer = setTimeout(connectToServer, 1000); // Ensures reconnection logic is triggered
+						StarlarkLSPService.connecting = false;
+						if (!StarlarkLSPService.localLSPConnected) {
+							clearTimeout(this.retryTimer);
+							this.retryTimer = setTimeout(connectToServer, 1000);
+						}
 					});
 				};
 				connectToServer();
 			});
-		this.startLSPServer(serverOptions as ServerOptions, clientOptions, starlarkPath, this.starlarkLSPArgs, "socket");
+		this.startLSPServer(serverOptions as ServerOptions, clientOptions, starlarkPath, starlarkLSPArgs, "socket");
 	}
 
 	private static async initLocalLSP(
@@ -163,27 +167,31 @@ export class StarlarkLSPService {
 			command: newStarlarkPath,
 			args: starlarkLSPArgs,
 		};
-		this.isLocalConnected = true;
 		this.startLSPServer(serverOptions, clientOptions, newStarlarkPath, starlarkLSPArgs, newStarlarkVersion);
 	}
 
-	private static lspServerPathSettingsListener() {
+	private static lspServerPathSettingsListener(
+		starlarkLSPArgs: string[],
+		starlarkLSPVersion: string,
+		extensionPath: string,
+		updateWorkspaceContext: (key: string, value: any) => Thenable<void>,
+		getWorkspaceContext: <T>(key: string, defaultValue: T) => T
+	) {
 		workspace.onDidChangeConfiguration((event) => {
 			if (event.affectsConfiguration("autokitteh.starlarkLSP")) {
 				clearTimeout(this.retryTimer);
+				StarlarkLSPService.languageClient?.stop();
 
-				if (this.isLocalConnected || this.connecting) {
-					return;
-				}
-				const newStarlarkPath = getConfig("starlarkLSP", "");
-				this.isLocalConnected = false;
+				const newStarlarkPath =
+					getConfig("starlarkLSP", "") || getWorkspaceContext<string>("autokitteh.starlarkLSP", "");
 				this.connecting = false;
 				this.initiateLSPServer(
 					newStarlarkPath,
-					this.starlarkLSPArgs,
-					this.starlarkLSPVersion,
-					this.extensionPath,
-					this.updateWorkspaceContext
+					starlarkLSPArgs,
+					starlarkLSPVersion,
+					extensionPath,
+					updateWorkspaceContext,
+					getWorkspaceContext
 				);
 			}
 		});
