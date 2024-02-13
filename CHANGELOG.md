@@ -1,3 +1,11 @@
+# [0.8.0-dev.15](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.14...v0.8.0-dev.15) (2024-02-13)
+
+
+### Bug Fixes
+
+* fix typo ([#148](https://github.com/autokitteh/vscode-extension/issues/148)) ([48f9c19](https://github.com/autokitteh/vscode-extension/commit/48f9c19704b40f9be1ddedb77c6160c0de25e846))
+* remove request handler - avoid multiple notifications on disconnect ([#145](https://github.com/autokitteh/vscode-extension/issues/145)) ([87956db](https://github.com/autokitteh/vscode-extension/commit/87956db55a8af4d0c7ca9cac56d576ce41942695))
+
 # [0.8.0-dev.14](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.13...v0.8.0-dev.14) (2024-02-13)
 
 
