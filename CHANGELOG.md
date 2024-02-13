@@ -1,3 +1,10 @@
+# [0.8.0-dev.14](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.13...v0.8.0-dev.14) (2024-02-13)
+
+
+### Bug Fixes
+
+* session logs refresh fix ([#147](https://github.com/autokitteh/vscode-extension/issues/147)) ([0d2aae9](https://github.com/autokitteh/vscode-extension/commit/0d2aae97bae3561c9b6aa1fffac10b1b21fc7522))
+
 # [0.8.0-dev.13](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.12...v0.8.0-dev.13) (2024-02-08)
 
 
