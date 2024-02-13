@@ -134,7 +134,7 @@ export class ProjectController {
 		if (error || !sessionHistoryStates?.length) {
 			if (error) {
 				if (!this.hasDisplayedError.get(ProjectIntervalTypes.sessionHistory)) {
-					const notification = translate().t("errors.sessionLogFetchFailed");
+					const notification = translate().t("errors.noResponse");
 					commands.executeCommand(vsCommands.showErrorMessage, notification);
 					this.hasDisplayedError.set(ProjectIntervalTypes.sessionHistory, true);
 				}
