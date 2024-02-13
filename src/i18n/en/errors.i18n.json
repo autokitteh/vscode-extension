@@ -29,5 +29,9 @@
 	"creatingDirectoryAlreadyExist": "Cannot create directory, a file with the same name exists: {{outputPath}}",
 	"creatingDirectoryPermission": "Permission denied to create or access directory: {{outputPath}}",
 	"creatingDirectoryAccess": "Failed to create or access directory: {{outputPath}}, Error: {{error}}",
-	"couldNotFetchLSP": "Couldn't fetch latest LSP executable release"
+	"couldNotFetchLSP": "Couldn't fetch latest LSP executable release",
+	"sessionLogFetchFailed": "Couldn't fetch session log",
+	"deploymentsFetchFailed": "Couldn't fetch deployments",
+	"sessionFetchFailed": "Couldn't fetch sessions for deployment",
+	"noResponse": "Connectivity issue, no response from server"
 }

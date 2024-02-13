@@ -1,5 +1,4 @@
 {
-	"fetchProjectsFailed": "Projects fetch failed - error: {{error}}",
 	"activationSucceed": "Deployment activation succeed - id: {{id}}",
 	"activationFailed": "Deployment activation failed - id: {{id}}",
 	"deactivationSucceed": "Deployment deactivation succeed - id: {{id}}",
