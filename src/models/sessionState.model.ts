@@ -55,6 +55,10 @@ export class SessionState {
 		return this.type === SessionStateType.error;
 	}
 
+	isFinished(): boolean {
+		return this.type === SessionStateType.error || this.type === SessionStateType.completed;
+	}
+
 	containLogs(): boolean {
 		return !!(this.logs && this.logs.length);
 	}

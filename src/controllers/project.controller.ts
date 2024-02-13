@@ -175,6 +175,10 @@ export class ProjectController {
 			const formatCallstackString = `${path}: ${row}.${col}: ${name}`;
 			LoggerService.sessionLog(`	${formatCallstackString}`);
 		});
+
+		if (lastState.isFinished()) {
+			this.stopInterval(ProjectIntervals.sessionHistory);
+		}
 	}
 
 	async displaySessionLogs(sessionId: string): Promise<void> {
