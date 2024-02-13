@@ -4,7 +4,6 @@ import * as os from "os";
 import * as path from "path";
 import { namespaces, vsCommands, starlarkLSPUriScheme, starlarkExecutableGithubRepository } from "@constants";
 import { starlarkLSPExtractedDirectory } from "@constants/starlark.constants";
-import { StarlarkClientModes } from "@enums";
 import { translate } from "@i18n";
 import { Asset, AssetInfo, GitHubRelease } from "@interfaces";
 import { LoggerService } from "@services";
@@ -16,14 +15,12 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from
 
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;
-	private static serverOptions: ServerOptions | StreamInfo;
-	private static isInitErrorDisplayed: boolean = false;
 
-	private static networkLSPRetryTimer: NodeJS.Timeout;
 	private static starlarkLSPArgs: string[];
 	private static starlarkLSPVersion: string;
 	private static extensionPath: string;
 	private static updateWorkspaceContext: (key: string, value: any) => Thenable<void>;
+	private static connecting: boolean = false;
 
 	public static async initiateLSPServer(
 		starlarkPath: string,
@@ -32,7 +29,6 @@ export class StarlarkLSPService {
 		extensionPath: string,
 		updateWorkspaceContext: (key: string, value: any) => Thenable<void>
 	) {
-		clearTimeout(this.networkLSPRetryTimer);
 		this.starlarkLSPArgs = starlarkLSPArgs;
 		this.starlarkLSPVersion = starlarkLSPVersion;
 		this.extensionPath = extensionPath;
@@ -49,13 +45,15 @@ export class StarlarkLSPService {
 		};
 
 		try {
-			this.lspServerPathSettingsListener();
-
 			/* By default, the Starlark LSP operates through a CMD command in stdio mode.
 			 * However, if the 'starlarkLSPSocketMode' is enabled, the LSP won't initiate automatically.
 			 * Instead, VSCode connects to 'localhost:starlarkLSPPort', expecting the Starlark LSP to be running in socket mode. */
 			if (ValidateURL(starlarkPath)) {
-				this.initNetworkLSP(starlarkPath, starlarkLSPArgs, clientOptions);
+				let serverMode = new URL(starlarkPath);
+
+				const port = (serverMode.port && Number(serverMode.port)) as number;
+				const host = serverMode.hostname;
+				this.startLanguageServerViaNetwork(host, port, clientOptions, starlarkPath);
 				return;
 			}
 
@@ -73,25 +71,52 @@ export class StarlarkLSPService {
 		}
 	}
 
-	private static async initNetworkLSP(
-		starlarkPath: string,
-		starlarkLSPArgs: string[],
-		clientOptions: LanguageClientOptions
+	private static async startLanguageServerViaNetwork(
+		host: string,
+		port: number,
+		clientOptions: LanguageClientOptions,
+		starlarkPath: string
 	): Promise<void> {
-		let serverMode = new URL(starlarkPath);
+		const serverOptions = () =>
+			new Promise<StreamInfo>((resolve) => {
+				const connectToServer = () => {
+					// Prevent multiple simultaneous connection attempts
+					if (StarlarkLSPService.connecting) {
+						return;
+					}
+					StarlarkLSPService.connecting = true;
 
-		const port = serverMode.port && Number(serverMode.port);
-		const host = serverMode.hostname;
-		if (!port) {
-			throw new Error(translate().t("errors.missingStarlarkLSPPort"));
-		}
-		const socket = connect({ host, port });
-		let streamListener: StreamInfo = { writer: socket, reader: socket };
+					const socket = connect({ port, host }, () => {
+						LoggerService.info(namespaces.startlarkLSPServer, "Connected to LSP server");
+						StarlarkLSPService.connecting = false; // Reset the flag upon successful connection
+						resolve({
+							reader: socket,
+							writer: socket,
+						});
+					});
 
-		if (!this.serverOptions) {
-			this.serverOptions = () => new Promise((resolve) => resolve(streamListener)) as Promise<StreamInfo>;
-		}
-		this.startLSPServer(this.serverOptions as ServerOptions, clientOptions, starlarkPath, starlarkLSPArgs, "socket");
+					socket.on("error", (error) => {
+						LoggerService.error(namespaces.startlarkLSPServer, "Connection error:" + error);
+						StarlarkLSPService.connecting = false; // Reset the flag upon error
+						setTimeout(connectToServer, 1000); // Retry connection after 1 second
+					});
+
+					socket.on("end", () => {
+						LoggerService.info(namespaces.startlarkLSPServer, "Disconnected from LSP server");
+						StarlarkLSPService.connecting = false; // Ensure the flag is reset upon disconnection
+						setTimeout(connectToServer, 1000); // Reconnect automatically
+					});
+
+					// Optionally, handle the 'close' event to cover all disconnection scenarios
+					socket.on("close", () => {
+						LoggerService.info(namespaces.startlarkLSPServer, "Connection closed");
+						StarlarkLSPService.connecting = false; // Reset the flag upon closing
+						setTimeout(connectToServer, 1000); // Ensures reconnection logic is triggered
+					});
+				};
+				connectToServer();
+			});
+		this.startLSPServer(serverOptions as ServerOptions, clientOptions, starlarkPath, this.starlarkLSPArgs, "socket");
 	}
 
 	private static async initLocalLSP(
@@ -102,8 +127,6 @@ export class StarlarkLSPService {
 		extensionPath: string,
 		updateWorkspaceContext: (key: string, value: any) => Thenable<void>
 	) {
-		clearTimeout(this.networkLSPRetryTimer);
-
 		let executableLSP;
 		executableLSP = await this.checkAndUpdateStarlarkLSPVersion(starlarkPath, starlarkLSPVersion, extensionPath);
 
@@ -165,30 +188,7 @@ export class StarlarkLSPService {
 				clientOptions
 			);
 
-			StarlarkLSPService.languageClient.onDidChangeState((e) => {
-				if (!this.isInitErrorDisplayed && !ValidateURL(starlarkPath)) {
-					this.isInitErrorDisplayed = true;
-					return;
-				}
-				if (Number(e.newState) === StarlarkClientModes.error) {
-					StarlarkLSPService.languageClient!.stop();
-					if (ValidateURL(starlarkPath)) {
-						LoggerService.error(namespaces.startlarkLSPServer, translate().t("starlark.initFailed"));
-						this.networkLSPRetryTimer = setTimeout(() => {
-							if (ValidateURL(starlarkPath)) {
-								this.initNetworkLSP(starlarkPath, starlarkLSPArgs, clientOptions);
-							} else {
-							}
-						}, 5000);
-					}
-				}
-			});
-
 			StarlarkLSPService.languageClient.start();
-
-			StarlarkLSPService.languageClient.onReady().then(() => {
-				LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.initSuccess"));
-			});
 
 			workspace.registerTextDocumentContentProvider(
 				starlarkLSPUriScheme,
