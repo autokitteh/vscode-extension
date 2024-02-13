@@ -1,9 +1,7 @@
 export interface GitHubRelease {
-	data: {
-		// eslint-disable-next-line @typescript-eslint/naming-convention
-		tag_name: string;
-		assets: Array<Asset>;
-	}[];
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	tag_name: string;
+	assets: Array<Asset>;
 }
 
 export interface Asset {
