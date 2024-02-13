@@ -10,6 +10,7 @@ export class SidebarController {
 	private view: ISidebarView;
 	private intervalTimerId?: NodeJS.Timeout;
 	private refreshRate: number;
+	private projectsFetchErrorDisplayed: boolean = false;
 	private projects?: SidebarTreeItem[];
 
 	constructor(sidebarView: ISidebarView, refreshRate: number) {
@@ -28,6 +29,12 @@ export class SidebarController {
 		const { data: projects, error } = await ProjectsService.list();
 
 		if (error) {
+			if (!this.projectsFetchErrorDisplayed) {
+				const notification = translate().t("projects.fetchProjectsFailed");
+				commands.executeCommand(vsCommands.showErrorMessage, notification);
+				this.projectsFetchErrorDisplayed = true;
+			}
+
 			LoggerService.error(
 				namespaces.projectSidebarController,
 				translate().t("projects.fetchProjectsFailed", { error: (error as Error).message })
@@ -61,11 +68,11 @@ export class SidebarController {
 		const { error, data } = await ProjectsService.build(projectId);
 
 		if (error) {
-			const userErrorMessage = translate().t("projects.projectBuildFailed", {
+			const notification = translate().t("projects.projectBuildFailed", {
 				id: projectId,
 			});
-			const errorMessage = `${userErrorMessage} - ${(error as Error).message}`;
-			LoggerService.error(namespaces.projectSidebarController, errorMessage);
+			const log = `${notification} - ${(error as Error).message}`;
+			LoggerService.error(namespaces.projectSidebarController, log);
 			return;
 		}
 		const successMessage = translate().t("projects.projectBuildSucceed", { id: data });
@@ -77,10 +84,10 @@ export class SidebarController {
 		const { error, data: deploymentId } = await ProjectsService.run(projectId);
 
 		if (error) {
-			const userErrorMessage = translate().t("projects.projectDeployFailed", { id: projectId });
-			const errorMessage = `${userErrorMessage} - ${(error as Error).message}`;
-			commands.executeCommand(vsCommands.showErrorMessage, userErrorMessage);
-			LoggerService.error(namespaces.projectSidebarController, errorMessage);
+			const notification = translate().t("projects.projectDeployFailed", { id: projectId });
+			const log = `${notification} - ${(error as Error).message}`;
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.projectSidebarController, log);
 			return;
 		}
 		commands.executeCommand(
