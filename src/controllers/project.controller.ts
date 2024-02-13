@@ -59,14 +59,14 @@ export class ProjectController {
 	async loadAndDisplayDeployments() {
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
 		if (error) {
-			const userErrorMessage = translate().t("errors.deploymentsFetchFailed");
+			const notification = translate().t("errors.noResponse");
 			if (!this.hasDisplayedError.get(ProjectIntervalTypes.deployments)) {
-				commands.executeCommand(vsCommands.showErrorMessage, userErrorMessage);
+				commands.executeCommand(vsCommands.showErrorMessage, notification);
 				this.hasDisplayedError.set(ProjectIntervalTypes.deployments, true);
 			}
 
-			const errorMessage = `${userErrorMessage} - ${(error as Error).message}`;
-			LoggerService.error(namespaces.projectController, errorMessage);
+			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
+			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
 
@@ -103,13 +103,8 @@ export class ProjectController {
 		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
 
 		if (error) {
-			const userErrorMessage = translate().t("errors.sessionFetchFailed");
-			const errorMessage = `${userErrorMessage} - ${(error as Error).message}`;
-			if (!this.hasDisplayedError.get(ProjectIntervalTypes.sessions)) {
-				commands.executeCommand(vsCommands.showErrorMessage, userErrorMessage);
-				this.hasDisplayedError.set(ProjectIntervalTypes.sessions, true);
-			}
-			LoggerService.error(namespaces.projectController, errorMessage);
+			const log = `${translate().t("errors.sessionFetchFailed")} - ${(error as Error).message}`;
+			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
 
@@ -138,14 +133,16 @@ export class ProjectController {
 		const { data: sessionHistoryStates, error } = await SessionsService.getHistoryBySessionId(sessionId);
 		if (error || !sessionHistoryStates?.length) {
 			if (error) {
-				const userErrorMessage = translate().t("errors.sessionLogFetchFailed");
-
 				if (!this.hasDisplayedError.get(ProjectIntervalTypes.sessionHistory)) {
-					commands.executeCommand(vsCommands.showErrorMessage, userErrorMessage);
+					const notification = translate().t("errors.sessionLogFetchFailed");
+					commands.executeCommand(vsCommands.showErrorMessage, notification);
 					this.hasDisplayedError.set(ProjectIntervalTypes.sessionHistory, true);
 				}
 
-				LoggerService.error(namespaces.projectController, (error as Error).message);
+				LoggerService.error(
+					namespaces.projectController,
+					`${translate().t("errors.sessionLogFetchFailed")} - ${(error as Error).message}`
+				);
 			}
 			return;
 		}
@@ -218,10 +215,10 @@ export class ProjectController {
 	public async openProject(disposeCB: Callback<string>) {
 		this.disposeCB = disposeCB;
 		const { data: project, error } = await ProjectsService.get(this.projectId);
-		const errorMessage = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
+		const log = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
 		if (error) {
 			LoggerService.error(namespaces.projectController, (error as Error).message);
-			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+			commands.executeCommand(vsCommands.showErrorMessage, log);
 			return;
 		}
 		if (project) {
@@ -234,7 +231,7 @@ export class ProjectController {
 			);
 			return;
 		}
-		LoggerService.error(namespaces.projectController, errorMessage);
+		LoggerService.error(namespaces.projectController, log);
 	}
 
 	onBlur() {
@@ -264,13 +261,13 @@ export class ProjectController {
 	async build() {
 		const { data: buildId, error } = await ProjectsService.build(this.projectId);
 		if (error) {
-			const userErrorMessage = translate().t("projects.projectBuildFailed", {
+			const notification = translate().t("projects.projectBuildFailed", {
 				id: this.projectId,
 			});
-			const errorMessage = `${userErrorMessage} - ${(error as Error).message}`;
+			const log = `${notification} - ${(error as Error).message}`;
 
-			commands.executeCommand(vsCommands.showErrorMessage, userErrorMessage);
-			LoggerService.error(namespaces.projectController, errorMessage);
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
 		const successMessage = translate().t("projects.projectBuildSucceed", { id: buildId });
@@ -283,12 +280,12 @@ export class ProjectController {
 		const { data: deploymentId, error } = await ProjectsService.run(this.projectId);
 
 		if (error) {
-			const userErrorMessage = translate().t("projects.projectDeployFailed", {
+			const notification = translate().t("projects.projectDeployFailed", {
 				id: this.projectId,
 			});
-			const errorMessage = `${userErrorMessage} - ${(error as Error).message}`;
-			LoggerService.error(namespaces.projectController, errorMessage);
-			commands.executeCommand(vsCommands.showErrorMessage, userErrorMessage);
+			const log = `${notification} - ${(error as Error).message}`;
+			LoggerService.error(namespaces.projectController, log);
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
 
 			return;
 		}
@@ -309,10 +306,10 @@ export class ProjectController {
 		const { error } = await DeploymentsService.activate(deploymentId);
 
 		if (error) {
-			const userErrorMessage = translate().t("projects.activationFailed", { id: deploymentId });
-			const errorMessage = `${userErrorMessage} - ${(error as Error).message}`;
-			commands.executeCommand(vsCommands.showErrorMessage, userErrorMessage);
-			LoggerService.error(namespaces.projectController, errorMessage);
+			const notification = translate().t("projects.activationFailed", { id: deploymentId });
+			const log = `${notification} - ${(error as Error).message}`;
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
 		const successMessage = translate().t("deployments.activationSucceed", { id: deploymentId });
@@ -325,13 +322,13 @@ export class ProjectController {
 		const { error } = await DeploymentsService.deactivate(deploymentId);
 
 		if (error) {
-			const userErrorMessage = translate().t("deployments.deactivationFailed", {
+			const notification = translate().t("deployments.deactivationFailed", {
 				id: deploymentId,
 			});
-			const errorMessage = `${userErrorMessage} - ${(error as Error).message}`;
+			const log = `${notification} - ${(error as Error).message}`;
 
-			commands.executeCommand(vsCommands.showErrorMessage, userErrorMessage);
-			LoggerService.error(namespaces.projectController, errorMessage);
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
 

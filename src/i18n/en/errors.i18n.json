@@ -32,5 +32,6 @@
 	"couldNotFetchLSP": "Couldn't fetch latest LSP executable release",
 	"sessionLogFetchFailed": "Couldn't fetch session log",
 	"deploymentsFetchFailed": "Couldn't fetch deployments",
-	"sessionFetchFailed": "Couldn't fetch sessions for deployment"
+	"sessionFetchFailed": "Couldn't fetch sessions for deployment",
+	"noResponse": "Connectivity issue, no response from server"
 }
