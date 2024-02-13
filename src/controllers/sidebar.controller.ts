@@ -37,7 +37,7 @@ export class SidebarController {
 
 			LoggerService.error(
 				namespaces.projectSidebarController,
-				translate().t("projects.fetchProjectsFailed", { error: (error as Error).message })
+				translate().t("projects.fetchProjectsFailedError", { error: (error as Error).message })
 			);
 			return;
 		}
