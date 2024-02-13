@@ -9,7 +9,7 @@ import { Asset, AssetInfo, GitHubRelease } from "@interfaces";
 import { LoggerService } from "@services";
 import { StarlarkFileHandler } from "@starlark";
 import { ValidateURL, extractArchive, getConfig, listFilesInDirectory, setConfig } from "@utilities";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { workspace, commands, window } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo } from "vscode-languageclient";
 
@@ -21,6 +21,9 @@ export class StarlarkLSPService {
 	private static extensionPath: string;
 	private static updateWorkspaceContext: (key: string, value: any) => Thenable<void>;
 	private static connecting: boolean = false;
+	private static isLocalConnected: boolean = false;
+	private static isListenerActivated: boolean = false;
+	private static retryTimer: NodeJS.Timeout | undefined;
 
 	public static async initiateLSPServer(
 		starlarkPath: string,
@@ -45,6 +48,9 @@ export class StarlarkLSPService {
 		};
 
 		try {
+			if (!this.isListenerActivated) {
+				this.lspServerPathSettingsListener();
+			}
 			/* By default, the Starlark LSP operates through a CMD command in stdio mode.
 			 * However, if the 'starlarkLSPSocketMode' is enabled, the LSP won't initiate automatically.
 			 * Instead, VSCode connects to 'localhost:starlarkLSPPort', expecting the Starlark LSP to be running in socket mode. */
@@ -53,6 +59,9 @@ export class StarlarkLSPService {
 
 				const port = (serverMode.port && Number(serverMode.port)) as number;
 				const host = serverMode.hostname;
+				if (!port || !host || this.connecting) {
+					return;
+				}
 				this.startLanguageServerViaNetwork(host, port, clientOptions, starlarkPath);
 				return;
 			}
@@ -98,20 +107,23 @@ export class StarlarkLSPService {
 					socket.on("error", (error) => {
 						LoggerService.error(namespaces.startlarkLSPServer, "Connection error:" + error);
 						StarlarkLSPService.connecting = false; // Reset the flag upon error
-						setTimeout(connectToServer, 1000); // Retry connection after 1 second
+						clearTimeout(this.retryTimer);
+						this.retryTimer = setTimeout(connectToServer, 1000); // Retry connection after 1 second
 					});
 
 					socket.on("end", () => {
 						LoggerService.info(namespaces.startlarkLSPServer, "Disconnected from LSP server");
 						StarlarkLSPService.connecting = false; // Ensure the flag is reset upon disconnection
-						setTimeout(connectToServer, 1000); // Reconnect automatically
+						clearTimeout(this.retryTimer);
+						this.retryTimer = setTimeout(connectToServer, 1000); // Reconnect automatically
 					});
 
 					// Optionally, handle the 'close' event to cover all disconnection scenarios
 					socket.on("close", () => {
 						LoggerService.info(namespaces.startlarkLSPServer, "Connection closed");
 						StarlarkLSPService.connecting = false; // Reset the flag upon closing
-						setTimeout(connectToServer, 1000); // Ensures reconnection logic is triggered
+						clearTimeout(this.retryTimer);
+						this.retryTimer = setTimeout(connectToServer, 1000); // Ensures reconnection logic is triggered
 					});
 				};
 				connectToServer();
@@ -127,8 +139,13 @@ export class StarlarkLSPService {
 		extensionPath: string,
 		updateWorkspaceContext: (key: string, value: any) => Thenable<void>
 	) {
+		clearTimeout(this.retryTimer);
+
 		let executableLSP;
 		executableLSP = await this.checkAndUpdateStarlarkLSPVersion(starlarkPath, starlarkLSPVersion, extensionPath);
+		if (!executableLSP) {
+			return;
+		}
 
 		const { path: newStarlarkPath, version: newStarlarkVersion } = executableLSP!;
 
@@ -146,15 +163,21 @@ export class StarlarkLSPService {
 			command: newStarlarkPath,
 			args: starlarkLSPArgs,
 		};
-
+		this.isLocalConnected = true;
 		this.startLSPServer(serverOptions, clientOptions, newStarlarkPath, starlarkLSPArgs, newStarlarkVersion);
 	}
 
 	private static lspServerPathSettingsListener() {
 		workspace.onDidChangeConfiguration((event) => {
 			if (event.affectsConfiguration("autokitteh.starlarkLSP")) {
-				const newStarlarkPath = getConfig("starlarkLSP", "");
+				clearTimeout(this.retryTimer);
 
+				if (this.isLocalConnected || this.connecting) {
+					return;
+				}
+				const newStarlarkPath = getConfig("starlarkLSP", "");
+				this.isLocalConnected = false;
+				this.connecting = false;
 				this.initiateLSPServer(
 					newStarlarkPath,
 					this.starlarkLSPArgs,
@@ -164,6 +187,7 @@ export class StarlarkLSPService {
 				);
 			}
 		});
+		this.isListenerActivated = true;
 	}
 
 	private static startLSPServer(
@@ -212,9 +236,13 @@ export class StarlarkLSPService {
 		};
 	};
 
-	private static async getLatestRelease(platform: string, arch: string): Promise<AssetInfo> {
-		const response = await axios.get(starlarkExecutableGithubRepository);
-		return this.getAssetByPlatform(response, platform, arch);
+	private static async getLatestRelease(platform: string, arch: string): Promise<AssetInfo | unknown> {
+		try {
+			const response = await axios.get(starlarkExecutableGithubRepository);
+			return this.getAssetByPlatform(response, platform, arch);
+		} catch (error) {
+			return new Error((error as AxiosError).message);
+		}
 	}
 
 	private static getFileNameFromUrl(downloadUrl: string): string {
@@ -288,10 +316,20 @@ export class StarlarkLSPService {
 
 		const release = await this.getLatestRelease(platform, arch);
 
+		if ((release as Error).message) {
+			LoggerService.info(
+				namespaces.startlarkLSPServer,
+				translate().t("lsp.executableDownloadedFailedError", { error: (release as Error).message })
+			);
+			commands.executeCommand(vsCommands.showErrorMessage, translate().t("lsp.executableDownloadedFailed"));
+			return;
+		}
+
+		const latestRelease = release as AssetInfo;
 		let userResponse: string | undefined;
 		const localStarlarkFileExist = fs.existsSync(starlarkPath);
 
-		if (starlarkLSPVersion === release.tag && localStarlarkFileExist) {
+		if (starlarkLSPVersion === latestRelease.tag && localStarlarkFileExist) {
 			return { path: starlarkPath, version: starlarkLSPVersion };
 		}
 
@@ -314,12 +352,12 @@ export class StarlarkLSPService {
 
 		LoggerService.info(
 			namespaces.startlarkLSPServer,
-			translate().t("lsp.downloadExecutableInProgress", { version: release.tag })
+			translate().t("lsp.downloadExecutableInProgress", { version: latestRelease.tag })
 		);
 
-		const fileName = this.getFileNameFromUrl(release.url);
+		const fileName = this.getFileNameFromUrl(latestRelease.url);
 
-		const resultStarlarkPath = await this.downloadNewVersion(release, extensionPath, fileName);
-		return { path: resultStarlarkPath, version: release.tag };
+		const resultStarlarkPath = await this.downloadNewVersion(latestRelease, extensionPath, fileName);
+		return { path: resultStarlarkPath, version: latestRelease.tag };
 	}
 }

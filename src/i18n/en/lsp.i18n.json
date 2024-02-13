@@ -5,5 +5,7 @@
 	"downloadExecutableDialogDismiss": "Dismiss",
 	"downloadExecutableInProgress": "Downloading LSP executable file - {{version}}",
 	"executableDownloadedUnpacking": "Unpacking LSP executable file...",
-	"executableDownloadedSuccessfully": "LSP executable file downloaded succefully"
+	"executableDownloadedSuccessfully": "LSP executable file downloaded succefully",
+	"executableDownloadedFailedError": "LSP executable file download failed - {{error}}",
+	"executableDownloadedFailed": "LSP executable file download failed"
 }
