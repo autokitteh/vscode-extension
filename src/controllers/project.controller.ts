@@ -186,7 +186,7 @@ export class ProjectController {
 		});
 
 		if (lastState.isFinished()) {
-			this.stopInterval(ProjectIntervals.sessionHistory);
+			this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		}
 	}
 
