@@ -1,32 +1,34 @@
 import * as fs from "fs";
 import { namespaces, vsCommands, starlarkLSPUriScheme } from "@constants";
 import { translate } from "@i18n";
-import { LoggerService } from "@services";
-import { NetworkClient } from "@services/starlark/starlarkNetworkClient.service";
-import { VersionManager } from "@services/starlark/starlarkVersionManager.service";
+import { ConfigurationManagerService, LoggerService, NetworkClientService, VersionManagerService } from "@services";
 import { StarlarkFileHandler } from "@starlark";
-import { ValidateURL, getConfig, setConfig } from "@utilities";
+import { ValidateURL } from "@utilities";
 import { workspace, commands } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient";
 
 export class StarlarkLSPService {
-	private static languageClient: LanguageClient | undefined = undefined;
+	private languageClient: LanguageClient | undefined = undefined;
+	private networkManager: NetworkClientService;
+	private versionManager: VersionManagerService;
+	private configurationManager: ConfigurationManagerService;
 
-	private static connecting: boolean = false;
-	private static isListenerActivated: boolean = false;
-	private static lspNetwork = new NetworkClient();
-	private static versionManager = new VersionManager();
+	private connecting: boolean = false;
+	private isListenerActivated: boolean = false;
 
-	public static async initiateLSPServer(
-		starlarkPath: string,
-		starlarkLSPArgs: string[],
-		starlarkLSPVersion: string,
-		extensionPath: string,
-		updateWorkspaceContext: (key: string, value: any) => Thenable<void>,
-		getWorkspaceContext: <T>(key: string, defaultValue: T) => T
+	public constructor(
+		configurationManager: ConfigurationManagerService,
+		networkManager: NetworkClientService,
+		versionManager: VersionManagerService
 	) {
-		if (StarlarkLSPService.languageClient) {
-			StarlarkLSPService.languageClient.stop();
+		this.configurationManager = configurationManager;
+		this.networkManager = networkManager;
+		this.versionManager = versionManager;
+	}
+
+	public async initiateLSPServer(starlarkPath: string) {
+		if (this.languageClient) {
+			this.languageClient.stop();
 		}
 
 		let clientOptions: LanguageClientOptions = {
@@ -37,13 +39,7 @@ export class StarlarkLSPService {
 
 		try {
 			if (!this.isListenerActivated) {
-				this.lspServerPathSettingsListener(
-					starlarkLSPArgs,
-					starlarkLSPVersion,
-					extensionPath,
-					updateWorkspaceContext,
-					getWorkspaceContext
-				);
+				this.lspServerPathSettingsListener();
 			}
 
 			/* By default, the Starlark LSP operates through a CMD command in stdio mode.
@@ -58,35 +54,24 @@ export class StarlarkLSPService {
 					return;
 				}
 
-				const serverOptions = () => this.lspNetwork.startServer(host, port);
-				this.startLSPServer(serverOptions as ServerOptions, clientOptions, starlarkPath, starlarkLSPArgs, "socket");
+				const serverOptions = () => this.networkManager.startServer(host, port);
+				this.startLSPServer(serverOptions as ServerOptions, clientOptions, "socket", starlarkPath);
 				return;
 			}
 
-			this.lspNetwork.closeConnection();
-			this.initLocalLSP(
-				starlarkPath,
-				starlarkLSPArgs,
-				clientOptions,
-				starlarkLSPVersion,
-				extensionPath,
-				updateWorkspaceContext
-			);
+			this.networkManager.closeConnection();
+			this.initLocalLSP(clientOptions);
 		} catch (error) {
 			LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
 			commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
 		}
 	}
 
-	private static async initLocalLSP(
-		starlarkPath: string,
-		starlarkLSPArgs: string[],
-		clientOptions: LanguageClientOptions,
-		starlarkLSPVersion: string,
-		extensionPath: string,
-		updateWorkspaceContext: (key: string, value: any) => Thenable<void>
-	) {
+	private async initLocalLSP(clientOptions: LanguageClientOptions) {
 		let executableLSP;
+		const { starlarkPath, starlarkLSPArgs, starlarkLSPVersion, extensionPath } =
+			this.configurationManager.getLSPConfigurations();
+
 		executableLSP = await this.versionManager.updateLSPVersionIfNeeded(starlarkPath, starlarkLSPVersion, extensionPath);
 		if (!executableLSP) {
 			return;
@@ -95,8 +80,9 @@ export class StarlarkLSPService {
 		const { path: newStarlarkPath, version: newStarlarkVersion } = executableLSP!;
 
 		if (newStarlarkVersion !== starlarkLSPVersion) {
-			setConfig("autokitteh.starlarkLSP", newStarlarkPath);
-			updateWorkspaceContext("autokitteh.starlarkLSP", newStarlarkPath);
+			this.configurationManager.setToWorkspace("starlarkLSP", newStarlarkPath);
+			this.configurationManager.setToWorkspaceContext("autokitteh.starlarkLSP", newStarlarkPath);
+			this.configurationManager.setToWorkspaceContext("autokitteh.starlarkVersion", newStarlarkVersion);
 			LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
 			commands.executeCommand(
 				vsCommands.showInfoMessage,
@@ -108,63 +94,43 @@ export class StarlarkLSPService {
 			command: newStarlarkPath,
 			args: starlarkLSPArgs,
 		};
-		this.startLSPServer(serverOptions, clientOptions, newStarlarkPath, starlarkLSPArgs, newStarlarkVersion);
+		this.startLSPServer(serverOptions, clientOptions, newStarlarkVersion, newStarlarkPath);
 	}
 
-	private static lspServerPathSettingsListener(
-		starlarkLSPArgs: string[],
-		starlarkLSPVersion: string,
-		extensionPath: string,
-		updateWorkspaceContext: (key: string, value: any) => Thenable<void>,
-		getWorkspaceContext: <T>(key: string, defaultValue: T) => T
-	) {
+	private lspServerPathSettingsListener() {
 		workspace.onDidChangeConfiguration((event) => {
 			if (event.affectsConfiguration("autokitteh.starlarkLSP")) {
-				StarlarkLSPService.languageClient?.stop();
-
-				const newStarlarkPath =
-					getConfig("starlarkLSP", "") || getWorkspaceContext<string>("autokitteh.starlarkLSP", "");
+				this.languageClient?.stop();
+				const { starlarkPath } = this.configurationManager.getLSPConfigurations();
 				this.connecting = false;
-				this.initiateLSPServer(
-					newStarlarkPath,
-					starlarkLSPArgs,
-					starlarkLSPVersion,
-					extensionPath,
-					updateWorkspaceContext,
-					getWorkspaceContext
-				);
+				this.initiateLSPServer(starlarkPath);
 			}
 		});
 		this.isListenerActivated = true;
 	}
 
-	private static startLSPServer(
+	private startLSPServer(
 		serverOptions: ServerOptions,
 		clientOptions: LanguageClientOptions,
-		starlarkPath: string,
-		starlarkLSPArgs: string[],
-		version: string
+		starlarkLSPVersion: string = "socket",
+		starlarkPath: string
 	) {
+		const { starlarkLSPArgs } = this.configurationManager.getLSPConfigurations();
 		const localStarlarkFileExist = fs.existsSync(starlarkPath);
 
 		if (localStarlarkFileExist || ValidateURL(starlarkPath)) {
 			LoggerService.info(
 				namespaces.startlarkLSPServer,
-				`Starting LSP Server (${version}): ${starlarkPath} ${starlarkLSPArgs.join(", ")}`
+				`Starting LSP Server (${starlarkLSPVersion}): ${starlarkPath} ${starlarkLSPArgs.join(", ")}`
 			);
 
-			StarlarkLSPService.languageClient = new LanguageClient(
-				"Starlark",
-				"autokitteh: Starlark LSP",
-				serverOptions,
-				clientOptions
-			);
+			this.languageClient = new LanguageClient("Starlark", "autokitteh: Starlark LSP", serverOptions, clientOptions);
 
-			StarlarkLSPService.languageClient.start();
+			this.languageClient.start();
 
 			workspace.registerTextDocumentContentProvider(
 				starlarkLSPUriScheme,
-				new StarlarkFileHandler(StarlarkLSPService.languageClient)
+				new StarlarkFileHandler(this.languageClient!)
 			);
 		}
 	}

@@ -9,7 +9,7 @@ import { extractArchive, listFilesInDirectory } from "@utilities";
 import axios from "axios";
 import { commands, window } from "vscode";
 
-export class VersionManager {
+export class VersionManagerService {
 	public async updateLSPVersionIfNeeded(
 		currentPath: string,
 		currentVersion: string,

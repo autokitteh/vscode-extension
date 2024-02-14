@@ -5,3 +5,6 @@ export { SessionsService } from "@services/sessions.service";
 export { ManifestService } from "@services/manifest.service";
 export { LoggerService } from "@services/logger.service";
 export { StarlarkLSPService } from "@services/starlark.service";
+export { ConfigurationManagerService } from "@services/configurationManager.service";
+export { VersionManagerService } from "@services/starlark/starlarkVersionManager.service";
+export { NetworkClientService } from "@services/starlark/starlarkNetworkClient.service";

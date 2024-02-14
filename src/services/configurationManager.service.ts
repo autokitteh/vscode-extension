@@ -1,20 +1,49 @@
-import { workspace } from "vscode";
+import { ConfigurationTarget, workspace, WorkspaceConfiguration } from "vscode";
 
-export class ConfigurationManager {
+export class ConfigurationManagerService {
 	private updateWorkspaceContext: (key: string, value: any) => Thenable<void>;
-	private getWorkspaceContext: <T>(key: string, defaultValue: T) => T;
+	private getFromWorkspaceContext: <T>(key: string, defaultValue: T) => T;
+	private extensionPath: string;
 
 	constructor(
 		updateWorkspaceContext: (key: string, value: any) => Thenable<void>,
-		getWorkspaceContext: <T>(key: string, defaultValue: T) => T
+		getWorkspaceContext: <T>(key: string, defaultValue: T) => T,
+		extensionPath: string
 	) {
 		this.updateWorkspaceContext = updateWorkspaceContext;
-		this.getWorkspaceContext = getWorkspaceContext;
+		this.getFromWorkspaceContext = getWorkspaceContext;
+		this.extensionPath = extensionPath;
 	}
-	getLSPConfigurations() {
-		const starlarkPath = workspace.getConfiguration().get<string>("starlarkLSP.path");
-		const starlarkLSPArgs = workspace.getConfiguration().get<string[]>("starlarkLSP.args", []);
-		const starlarkLSPVersion = workspace.getConfiguration().get<string>("starlarkLSP.version");
-		return { starlarkPath, starlarkLSPArgs, starlarkLSPVersion };
+
+	public getFromWorkspace<T>(section: string, defaultValue: T): T {
+		const configuration: WorkspaceConfiguration = workspace.getConfiguration("autokitteh", null);
+		const value: T | undefined = <T>configuration[section];
+		return value !== undefined ? value : defaultValue;
+	}
+
+	public setToWorkspace<T>(section: string, value: T): void {
+		const configuration: WorkspaceConfiguration = workspace.getConfiguration();
+		configuration.update(section, value, ConfigurationTarget.Global);
+		configuration.update(section, value);
+		return;
+	}
+
+	public getWorkspaceContext<T>(key: string, defaultValue: T): T {
+		return this.getWorkspaceContext(key, defaultValue);
+	}
+
+	public setToWorkspaceContext<T>(key: string, value: T): void {
+		this.updateWorkspaceContext(key, value);
+	}
+
+	public getLSPConfigurations() {
+		const starlarkPath = this.getFromWorkspace<string>("starlarkLSP", "");
+		const starlarkLSPArgs = this.getFromWorkspace<string[]>("starlarkLSP.args", ["start"]);
+		const starlarkLSPVersion = this.getFromWorkspaceContext<string>("autokitteh.starlarkVersion", "");
+		return { starlarkPath, starlarkLSPArgs, starlarkLSPVersion, extensionPath: this.extensionPath };
+	}
+
+	public getExtensionPath() {
+		return this.extensionPath;
 	}
 }

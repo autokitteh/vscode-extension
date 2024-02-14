@@ -4,9 +4,13 @@ import { vsCommands, sidebarControllerRefreshRate } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
-import { StarlarkLSPService } from "@services";
+import {
+	ConfigurationManagerService,
+	NetworkClientService,
+	StarlarkLSPService,
+	VersionManagerService,
+} from "@services";
 import { SidebarTreeItem } from "@type/views";
-import { getConfig } from "@utilities";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject } from "@vscommands";
 import { openAddConnectionsPage } from "@vscommands/sideBarActions";
@@ -28,19 +32,16 @@ export async function activate(context: ExtensionContext) {
 		commands.registerCommand(vsCommands.runProject, (focusedItem) => runProject(focusedItem, sidebarController))
 	);
 
-	const starlarkLSPPath =
-		getConfig("starlarkLSP", "") || context.workspaceState.get<string>("autokitteh.starlarkLSP", "");
-	const starlarkLSPArgs = ["start"];
-	const starlarkLSPVersion = context.workspaceState.get<string>("autokitteh.starlarkLSPVersion", "");
-	const extensionPath = context.extensionPath;
-	StarlarkLSPService.initiateLSPServer(
-		starlarkLSPPath,
-		starlarkLSPArgs,
-		starlarkLSPVersion,
-		extensionPath,
+	const configurationManager = new ConfigurationManagerService(
 		context.workspaceState.update.bind(context.workspaceState),
-		context.workspaceState.get.bind(context.workspaceState)
+		context.workspaceState.get.bind(context.workspaceState),
+		context.extensionPath
 	);
+	const { starlarkPath } = configurationManager.getLSPConfigurations();
+	const versionManager = new VersionManagerService();
+	const networkClient = new NetworkClientService();
+	const starlarkLSPServer = new StarlarkLSPService(configurationManager, networkClient, versionManager);
+	starlarkLSPServer.initiateLSPServer(starlarkPath);
 
 	const sidebarView = new SidebarView();
 
