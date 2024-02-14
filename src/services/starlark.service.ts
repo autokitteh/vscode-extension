@@ -26,7 +26,7 @@ export class StarlarkLSPService {
 		this.versionManager = versionManager;
 	}
 
-	public async initiateLSPServer(starlarkPath: string) {
+	public async initiateLSPServer(starlarkPath: string, isOnTypeChange: boolean = false) {
 		if (this.languageClient) {
 			this.languageClient.stop();
 		}
@@ -60,14 +60,14 @@ export class StarlarkLSPService {
 			}
 
 			this.networkManager.closeConnection();
-			this.initLocalLSP(clientOptions);
+			this.initLocalLSP(clientOptions, isOnTypeChange);
 		} catch (error) {
 			LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
 			commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
 		}
 	}
 
-	private async initLocalLSP(clientOptions: LanguageClientOptions) {
+	private async initLocalLSP(clientOptions: LanguageClientOptions, isOnTypeChange: boolean) {
 		let executableLSP;
 		const { starlarkPath, starlarkLSPArgs, starlarkLSPVersion, extensionPath } =
 			this.configurationManager.getLSPConfigurations();
@@ -79,7 +79,7 @@ export class StarlarkLSPService {
 
 		const { path: newStarlarkPath, version: newStarlarkVersion } = executableLSP!;
 
-		if (newStarlarkVersion !== starlarkLSPVersion) {
+		if (newStarlarkVersion !== starlarkLSPVersion || isOnTypeChange) {
 			this.configurationManager.setToWorkspace("starlarkLSP", newStarlarkPath);
 			this.configurationManager.setToWorkspaceContext("autokitteh.starlarkLSP", newStarlarkPath);
 			this.configurationManager.setToWorkspaceContext("autokitteh.starlarkVersion", newStarlarkVersion);
@@ -103,7 +103,7 @@ export class StarlarkLSPService {
 				this.languageClient?.stop();
 				const { starlarkPath } = this.configurationManager.getLSPConfigurations();
 				this.connecting = false;
-				this.initiateLSPServer(starlarkPath);
+				this.initiateLSPServer(starlarkPath, true);
 			}
 		});
 		this.isListenerActivated = true;
