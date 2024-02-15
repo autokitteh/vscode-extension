@@ -37,7 +37,9 @@ export class ConfigurationManagerService {
 	}
 
 	public getLSPConfigurations() {
-		const starlarkPath = this.getFromWorkspace<string>("starlarkLSP", "");
+		const starlarkPath =
+			this.getFromWorkspace<string>("starlarkLSP", "") ||
+			this.getFromWorkspaceContext<string>("autokitteh.starlarkLSP", "");
 		const starlarkLSPArgs = this.getFromWorkspace<string[]>("starlarkLSP.args", ["start"]);
 		const starlarkLSPVersion = this.getFromWorkspaceContext<string>("autokitteh.starlarkVersion", "");
 		return { starlarkPath, starlarkLSPArgs, starlarkLSPVersion, extensionPath: this.extensionPath };
