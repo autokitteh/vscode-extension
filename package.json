@@ -276,6 +276,8 @@
 		"@types/vscode": "^1.86.0",
 		"@typescript-eslint/eslint-plugin": "^7.0.1",
 		"@typescript-eslint/parser": "^7.0.1",
+		"@vscode/test-cli": "^0.0.6",
+		"@vscode/test-electron": "^2.3.9",
 		"@vscode/vsce": "^2.23.0",
 		"esbuild": "0.20.0",
 		"eslint": "^8.56.0",
@@ -292,8 +294,9 @@
 		"semantic-release-slack-bot": "^4.0.2",
 		"semantic-release-vsce": "^5.6.4",
 		"sinon": "^17.0.1",
+		"ts-patch": "^3.1.2",
 		"typescript": "^5.3.3",
-		"vitest": "^1.2.2",
+		"typescript-transform-paths": "^3.4.6",
 		"vscode-test": "^1.5.0"
 	},
 	"engines": {
@@ -322,6 +325,7 @@
 		"build:webview": "cd vscode-react && npm run build",
 		"check-types": "tsc --pretty --noEmit",
 		"compile": "tsc -p ./",
+		"compile-patch": "tspc",
 		"compile:vscode-react": "npm run compile --workspace=vscode-react",
 		"compile:all": "npm run compile --workspace=vscode-react && npm run compile",
 		"build:vscode-react": "npm run build --workspace=vscode-react",
@@ -341,7 +345,9 @@
 		"test:all": "vitest run && npm run test:run --workspace=vscode-react",
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
-		"package": "vsce package"
+		"package": "vsce package",
+		"test": "vscode-test",
+		"test-vscode": "npm run compile-patch && npm run test"
 	},
 	"version": "0.8.0-dev.15",
 	"workspaces": [
