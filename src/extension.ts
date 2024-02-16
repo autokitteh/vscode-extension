@@ -4,12 +4,7 @@ import { vsCommands, sidebarControllerRefreshRate } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
-import {
-	ConfigurationManagerService,
-	NetworkClientService,
-	StarlarkLSPService,
-	VersionManagerService,
-} from "@services";
+import { ExtensionContextService, NetworkClientService, StarlarkLSPService, VersionManagerService } from "@services";
 import { SidebarTreeItem } from "@type/views";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject } from "@vscommands";
@@ -32,7 +27,7 @@ export async function activate(context: ExtensionContext) {
 		commands.registerCommand(vsCommands.runProject, (focusedItem) => runProject(focusedItem, sidebarController))
 	);
 
-	const configurationManager = new ConfigurationManagerService(
+	const configurationManager = new ExtensionContextService(
 		context.workspaceState.update.bind(context.workspaceState),
 		context.workspaceState.get.bind(context.workspaceState),
 		context.extensionPath

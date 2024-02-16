@@ -1,51 +1,38 @@
-import { ConfigurationTarget, workspace, WorkspaceConfiguration } from "vscode";
+import { WorkspaceConfig } from "@utilities";
 
-export class ConfigurationManagerService {
-	private updateWorkspaceContext: (key: string, value: any) => Thenable<void>;
-	private getFromWorkspaceContext: <T>(key: string, defaultValue: T) => T;
+export class ExtensionContextService {
+	private updateContext: (key: string, value: any) => Thenable<void>;
+	private getContext: <T>(key: string, defaultValue: T) => T;
 	private extensionPath: string;
 
 	constructor(
-		updateWorkspaceContext: (key: string, value: any) => Thenable<void>,
-		getWorkspaceContext: <T>(key: string, defaultValue: T) => T,
+		updateContext: (key: string, value: any) => Thenable<void>,
+		getContext: <T>(key: string, defaultValue: T) => T,
 		extensionPath: string
 	) {
-		this.updateWorkspaceContext = updateWorkspaceContext;
-		this.getFromWorkspaceContext = getWorkspaceContext;
+		this.updateContext = updateContext;
+		this.getContext = getContext;
 		this.extensionPath = extensionPath;
 	}
 
-	public getFromWorkspace<T>(section: string, defaultValue: T): T {
-		const configuration: WorkspaceConfiguration = workspace.getConfiguration("autokitteh", null);
-		const value: T | undefined = <T>configuration[section];
-		return value !== undefined ? value : defaultValue;
+	public setToContext<T>(key: string, value: T): void {
+		this.updateContext(key, value);
 	}
 
-	public setToWorkspace<T>(section: string, value: T): void {
-		const configuration: WorkspaceConfiguration = workspace.getConfiguration();
-		configuration.update(section, value, ConfigurationTarget.Global);
-		configuration.update(section, value);
-		return;
-	}
-
-	public getWorkspaceContext<T>(key: string, defaultValue: T): T {
-		return this.getWorkspaceContext(key, defaultValue);
-	}
-
-	public setToWorkspaceContext<T>(key: string, value: T): void {
-		this.updateWorkspaceContext(key, value);
+	public getFromContext<T>(key: string, defaultValue: T): T {
+		return this.getContext(key, defaultValue);
 	}
 
 	public getLSPConfigurations() {
 		const starlarkPath =
-			this.getFromWorkspace<string>("starlarkLSP", "") ||
-			this.getFromWorkspaceContext<string>("autokitteh.starlarkLSP", "");
-		const starlarkLSPArgs = this.getFromWorkspace<string[]>("starlarkLSP.args", ["start"]);
-		const starlarkLSPVersion = this.getFromWorkspaceContext<string>("autokitteh.starlarkVersion", "");
-		return { starlarkPath, starlarkLSPArgs, starlarkLSPVersion, extensionPath: this.extensionPath };
+			WorkspaceConfig.getFromWorkspace<string>("starlarkLSP", "") ||
+			this.getFromContext<string>("autokitteh.starlarkLSP", "");
+		const starlarkLSPVersion = this.getFromContext<string>("autokitteh.starlarkVersion", "");
+
+		return { starlarkPath, starlarkLSPVersion, extensionPath: this.extensionPath };
 	}
 
-	public getExtensionPath() {
+	public getExtensionPath(): string | undefined {
 		return this.extensionPath;
 	}
 }

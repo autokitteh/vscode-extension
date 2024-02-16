@@ -19,4 +19,5 @@ export {
 	starlarkLSPUriScheme,
 	starlarkExecutableGithubRepository,
 	starlarkLSPExtractedDirectory,
+	starlarkLocalLSPDefaultArgs,
 } from "@constants/starlark.constants";

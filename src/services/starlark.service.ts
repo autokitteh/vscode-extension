@@ -1,9 +1,9 @@
 import * as fs from "fs";
-import { namespaces, vsCommands, starlarkLSPUriScheme } from "@constants";
+import { namespaces, vsCommands, starlarkLSPUriScheme, starlarkLocalLSPDefaultArgs } from "@constants";
 import { translate } from "@i18n";
-import { ConfigurationManagerService, LoggerService, NetworkClientService, VersionManagerService } from "@services";
+import { ExtensionContextService, NetworkClientService, VersionManagerService, LoggerService } from "@services";
 import { StarlarkFileHandler } from "@starlark";
-import { ValidateURL } from "@utilities";
+import { ValidateURL, WorkspaceConfig } from "@utilities";
 import { workspace, commands } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient";
 
@@ -11,17 +11,17 @@ export class StarlarkLSPService {
 	private languageClient: LanguageClient | undefined = undefined;
 	private networkManager: NetworkClientService;
 	private versionManager: VersionManagerService;
-	private configurationManager: ConfigurationManagerService;
+	private extensionContext: ExtensionContextService;
 
 	private connecting: boolean = false;
 	private isListenerActivated: boolean = false;
 
 	public constructor(
-		configurationManager: ConfigurationManagerService,
+		extensionContext: ExtensionContextService,
 		networkManager: NetworkClientService,
 		versionManager: VersionManagerService
 	) {
-		this.configurationManager = configurationManager;
+		this.extensionContext = extensionContext;
 		this.networkManager = networkManager;
 		this.versionManager = versionManager;
 	}
@@ -69,8 +69,7 @@ export class StarlarkLSPService {
 
 	private async initLocalLSP(clientOptions: LanguageClientOptions, isOnTypeChange: boolean) {
 		let executableLSP;
-		const { starlarkPath, starlarkLSPArgs, starlarkLSPVersion, extensionPath } =
-			this.configurationManager.getLSPConfigurations();
+		const { starlarkPath, starlarkLSPVersion, extensionPath } = this.extensionContext.getLSPConfigurations();
 
 		executableLSP = await this.versionManager.updateLSPVersionIfNeeded(starlarkPath, starlarkLSPVersion, extensionPath);
 		if (!executableLSP) {
@@ -80,9 +79,9 @@ export class StarlarkLSPService {
 		const { path: newStarlarkPath, version: newStarlarkVersion } = executableLSP!;
 
 		if (newStarlarkVersion !== starlarkLSPVersion || isOnTypeChange) {
-			this.configurationManager.setToWorkspace("starlarkLSP", newStarlarkPath);
-			this.configurationManager.setToWorkspaceContext("autokitteh.starlarkLSP", newStarlarkPath);
-			this.configurationManager.setToWorkspaceContext("autokitteh.starlarkVersion", newStarlarkVersion);
+			WorkspaceConfig.setToWorkspace("starlarkLSP", newStarlarkPath);
+			this.extensionContext.setToContext("autokitteh.starlarkLSP", newStarlarkPath);
+			this.extensionContext.setToContext("autokitteh.starlarkVersion", newStarlarkVersion);
 			LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
 			commands.executeCommand(
 				vsCommands.showInfoMessage,
@@ -92,7 +91,7 @@ export class StarlarkLSPService {
 
 		let serverOptions = {
 			command: newStarlarkPath,
-			args: starlarkLSPArgs,
+			args: starlarkLocalLSPDefaultArgs,
 		};
 		this.startLSPServer(serverOptions, clientOptions, newStarlarkVersion, newStarlarkPath);
 	}
@@ -101,7 +100,7 @@ export class StarlarkLSPService {
 		workspace.onDidChangeConfiguration((event) => {
 			if (event.affectsConfiguration("autokitteh.starlarkLSP")) {
 				this.languageClient?.stop();
-				const { starlarkPath } = this.configurationManager.getLSPConfigurations();
+				const { starlarkPath } = this.extensionContext.getLSPConfigurations();
 				this.connecting = false;
 				this.initiateLSPServer(starlarkPath, true);
 			}
@@ -115,13 +114,12 @@ export class StarlarkLSPService {
 		starlarkLSPVersion: string = "socket",
 		starlarkPath: string
 	) {
-		const { starlarkLSPArgs } = this.configurationManager.getLSPConfigurations();
 		const localStarlarkFileExist = fs.existsSync(starlarkPath);
 
 		if (localStarlarkFileExist || ValidateURL(starlarkPath)) {
 			LoggerService.info(
 				namespaces.startlarkLSPServer,
-				`Starting LSP Server (${starlarkLSPVersion}): ${starlarkPath} ${starlarkLSPArgs.join(", ")}`
+				`Starting LSP Server (${starlarkLSPVersion}): ${starlarkPath} ${starlarkLocalLSPDefaultArgs.join(", ")}`
 			);
 
 			this.languageClient = new LanguageClient("Starlark", "autokitteh: Starlark LSP", serverOptions, clientOptions);
