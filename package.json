@@ -325,7 +325,7 @@
 		"build:webview": "cd vscode-react && npm run build",
 		"check-types": "tsc --pretty --noEmit",
 		"compile": "tsc -p ./",
-		"compile-patch": "tspc",
+		"compile-patch": "tspc -p tsconfig.tests.json",
 		"compile:vscode-react": "npm run compile --workspace=vscode-react",
 		"compile:all": "npm run compile --workspace=vscode-react && npm run compile",
 		"build:vscode-react": "npm run build --workspace=vscode-react",
