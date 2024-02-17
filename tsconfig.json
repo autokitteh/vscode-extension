@@ -48,5 +48,5 @@
 		"target": "es2021"
 	},
 	"exclude": ["node_modules", ".vscode-test", "vscode-react", "./src/autokitteh"],
-	"include": ["./src", "./tests/**/*.ts"]
+	"include": ["./src", "test/**/*.ts"]
 }

@@ -346,8 +346,8 @@
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
 		"package": "vsce package",
-		"test": "vscode-test",
-		"test-vscode": "npm run compile-patch && npm run test"
+		"test-vscode-extension": "vscode-test",
+		"test": "npm run compile-patch && npm run test-vscode-extension"
 	},
 	"version": "0.8.0-dev.15",
 	"workspaces": [
