@@ -1,7 +1,12 @@
 import * as fs from "fs";
 import { namespaces, vsCommands, starlarkLSPUriScheme, starlarkLocalLSPDefaultArgs } from "@constants";
 import { translate } from "@i18n";
-import { ExtensionContextService, NetworkClientService, VersionManagerService, LoggerService } from "@services";
+import {
+	ExtensionContextService,
+	StarlarkStreamingConnectionService,
+	LoggerService,
+	StarlarkVersionManagerService,
+} from "@services";
 import { StarlarkFileHandler } from "@starlark";
 import { ValidateURL, WorkspaceConfig } from "@utilities";
 import { workspace, commands } from "vscode";
@@ -9,24 +14,18 @@ import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-lan
 
 export class StarlarkLSPService {
 	private languageClient: LanguageClient | undefined = undefined;
-	private networkManager: NetworkClientService;
-	private versionManager: VersionManagerService;
+	private streamingConnectionManager: StarlarkStreamingConnectionService;
 	private extensionContext: ExtensionContextService;
-
-	private connecting: boolean = false;
-	private isListenerActivated: boolean = false;
 
 	public constructor(
 		extensionContext: ExtensionContextService,
-		networkManager: NetworkClientService,
-		versionManager: VersionManagerService
+		streamingConnection: StarlarkStreamingConnectionService
 	) {
 		this.extensionContext = extensionContext;
-		this.networkManager = networkManager;
-		this.versionManager = versionManager;
+		this.streamingConnectionManager = streamingConnection;
 	}
 
-	public async initiateLSPServer(starlarkPath: string, isOnTypeChange: boolean = false) {
+	public async initiateLSPServer(starlarkPath: string) {
 		if (this.languageClient) {
 			this.languageClient.stop();
 		}
@@ -38,47 +37,47 @@ export class StarlarkLSPService {
 		};
 
 		try {
-			if (!this.isListenerActivated) {
-				this.lspServerPathSettingsListener();
-			}
-
 			/* By default, the Starlark LSP operates through a CMD command in stdio mode.
 			 * However, if the 'starlarkLSPSocketMode' is enabled, the LSP won't initiate automatically.
 			 * Instead, VSCode connects to 'localhost:starlarkLSPPort', expecting the Starlark LSP to be running in socket mode. */
 			if (ValidateURL(starlarkPath)) {
-				let serverMode = new URL(starlarkPath);
+				let serverURL = new URL(starlarkPath);
 
-				const port = (serverMode.port && Number(serverMode.port)) as number;
-				const host = serverMode.hostname;
-				if (!port || !host || this.connecting) {
+				const port = (serverURL.port && Number(serverURL.port)) as number;
+				const host = serverURL.hostname;
+				if (!port || !host) {
 					return;
 				}
 
-				const serverOptions = () => this.networkManager.startServer(host, port);
+				const serverOptions = () => this.streamingConnectionManager.getServerOptionsStreamInfo(host, port);
 				this.startLSPServer(serverOptions as ServerOptions, clientOptions, "socket", starlarkPath);
 				return;
 			}
 
-			this.networkManager.closeConnection();
-			this.initLocalLSP(clientOptions, isOnTypeChange);
+			this.streamingConnectionManager.closeConnection();
+			this.initLocalLSP(clientOptions);
 		} catch (error) {
 			LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
 			commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
 		}
 	}
 
-	private async initLocalLSP(clientOptions: LanguageClientOptions, isOnTypeChange: boolean) {
+	private async initLocalLSP(clientOptions: LanguageClientOptions) {
 		let executableLSP;
 		const { starlarkPath, starlarkLSPVersion, extensionPath } = this.extensionContext.getLSPConfigurations();
 
-		executableLSP = await this.versionManager.updateLSPVersionIfNeeded(starlarkPath, starlarkLSPVersion, extensionPath);
+		executableLSP = await StarlarkVersionManagerService.updateLSPVersionIfNeeded(
+			starlarkPath,
+			starlarkLSPVersion,
+			extensionPath
+		);
 		if (!executableLSP) {
 			return;
 		}
 
 		const { path: newStarlarkPath, version: newStarlarkVersion } = executableLSP!;
 
-		if (newStarlarkVersion !== starlarkLSPVersion || isOnTypeChange) {
+		if (newStarlarkVersion !== starlarkLSPVersion) {
 			WorkspaceConfig.setToWorkspace("starlarkLSP", newStarlarkPath);
 			this.extensionContext.setToContext("autokitteh.starlarkLSP", newStarlarkPath);
 			this.extensionContext.setToContext("autokitteh.starlarkVersion", newStarlarkVersion);
@@ -94,18 +93,6 @@ export class StarlarkLSPService {
 			args: starlarkLocalLSPDefaultArgs,
 		};
 		this.startLSPServer(serverOptions, clientOptions, newStarlarkVersion, newStarlarkPath);
-	}
-
-	private lspServerPathSettingsListener() {
-		workspace.onDidChangeConfiguration((event) => {
-			if (event.affectsConfiguration("autokitteh.starlarkLSP")) {
-				this.languageClient?.stop();
-				const { starlarkPath } = this.extensionContext.getLSPConfigurations();
-				this.connecting = false;
-				this.initiateLSPServer(starlarkPath, true);
-			}
-		});
-		this.isListenerActivated = true;
 	}
 
 	private startLSPServer(

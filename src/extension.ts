@@ -4,7 +4,7 @@ import { vsCommands, sidebarControllerRefreshRate } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
-import { ExtensionContextService, NetworkClientService, StarlarkLSPService, VersionManagerService } from "@services";
+import { ExtensionContextService, StarlarkStreamingConnectionService, StarlarkLSPService } from "@services";
 import { SidebarTreeItem } from "@type/views";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject } from "@vscommands";
@@ -27,15 +27,16 @@ export async function activate(context: ExtensionContext) {
 		commands.registerCommand(vsCommands.runProject, (focusedItem) => runProject(focusedItem, sidebarController))
 	);
 
-	const configurationManager = new ExtensionContextService(
+	const extensionContext = new ExtensionContextService(
 		context.workspaceState.update.bind(context.workspaceState),
 		context.workspaceState.get.bind(context.workspaceState),
 		context.extensionPath
 	);
-	const { starlarkPath } = configurationManager.getLSPConfigurations();
-	const versionManager = new VersionManagerService();
-	const networkClient = new NetworkClientService();
-	const starlarkLSPServer = new StarlarkLSPService(configurationManager, networkClient, versionManager);
+
+	const { starlarkPath } = extensionContext.getLSPConfigurations();
+
+	const starlarkStreamingConnectionService = new StarlarkStreamingConnectionService();
+	const starlarkLSPServer = new StarlarkLSPService(extensionContext, starlarkStreamingConnectionService);
 	starlarkLSPServer.initiateLSPServer(starlarkPath);
 
 	const sidebarView = new SidebarView();

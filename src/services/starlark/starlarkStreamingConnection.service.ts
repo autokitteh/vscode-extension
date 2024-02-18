@@ -3,14 +3,14 @@ import { namespaces } from "@constants";
 import { LoggerService } from "@services";
 import { StreamInfo } from "vscode-languageclient";
 
-export class NetworkClientService {
+export class StarlarkStreamingConnectionService {
 	private retryTimer: NodeJS.Timeout | undefined;
 	private connecting: boolean = false;
 	private socket: Socket | null = null;
 	private retryCount: number = 0;
 	private maxRetries: number = 100;
 
-	public async startServer(host: string, port: number): Promise<StreamInfo> {
+	public async getServerOptionsStreamInfo(host: string, port: number): Promise<StreamInfo> {
 		return new Promise<StreamInfo>((resolve, reject) => {
 			if (this.retryCount >= this.maxRetries) {
 				reject(new Error("Failed to connect to the server after maximum retries."));
@@ -41,7 +41,6 @@ export class NetworkClientService {
 					this.retryCount++;
 
 					LoggerService.error(namespaces.startlarkLSPServer, "Connection error:" + error);
-					this.connecting = false;
 					clearTimeout(this.retryTimer);
 					this.retryTimer = setTimeout(connectToServer, 5000);
 				});

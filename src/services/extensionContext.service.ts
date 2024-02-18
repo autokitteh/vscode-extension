@@ -23,7 +23,11 @@ export class ExtensionContextService {
 		return this.getContext(key, defaultValue);
 	}
 
-	public getLSPConfigurations() {
+	public getLSPConfigurations(): {
+		starlarkPath: string;
+		starlarkLSPVersion: string;
+		extensionPath: string;
+	} {
 		const starlarkPath =
 			WorkspaceConfig.getFromWorkspace<string>("starlarkLSP", "") ||
 			this.getFromContext<string>("autokitteh.starlarkLSP", "");
