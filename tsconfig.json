@@ -2,12 +2,15 @@
 	"compilerOptions": {
 		"baseUrl": "src",
 		"esModuleInterop": true,
-		"lib": ["es2021", "dom"],
-		"module": "commonjs",
+		"target": "es5",
+        "module": "commonjs",
+        "lib": ["es2015"],
 		"moduleResolution": "node",
 		"outDir": "dist",
 		"plugins": [
-	  		{ "transform": "typescript-transform-paths", "afterDeclarations": true }],
+			{ "transform": "typescript-transform-paths" },
+			{ "transform": "typescript-transform-paths", "afterDeclarations": true }
+		],
 		"paths": {
 			"@ak-proto-ts/*": ["autokitteh/proto/gen/ts/autokitteh/*"],
 			"@api": ["api/index"],
@@ -44,8 +47,7 @@
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"sourceMap": true,
-		"strict": true,
-		"target": "es2021"
+		"strict": true
 	},
 	"exclude": ["node_modules", ".vscode-test", "vscode-react", "./src/autokitteh"],
 	"include": ["./src", "test/**/*.ts"]
