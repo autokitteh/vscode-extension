@@ -154,7 +154,8 @@
 				},
 				{
 					"command": "autokitteh.addConnections",
-					"group": "navigation"
+					"group": "navigation",
+					"when": "view == autokittehSidebarTree"
 				},
 				{
 					"command": "autokitteh.disconnect",
