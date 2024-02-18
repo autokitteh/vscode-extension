@@ -2,6 +2,7 @@
 	"initFailed": "Starlark LSP initialization has failed, trying again in 5 seconds",
 	"initSuccess": "Starlark LSP initiated successfuly",
 	"socketConnected": "Starlark LSP connected to the socket",
+	"socketManuallyClosed": "Starlark LSP Manually closed connection to the socket",
 	"socketConnectionError": "Starlark LSP failed to connect to the socket, reason: {{error}}",
 	"socketConnectionClosed": "Starlark LSP socket connection closed",
 	"downloadExecutableDialog": "Full functionality of Starlark in VSCode requires the Starlark LSP. Without it, the LSP features won't work.",

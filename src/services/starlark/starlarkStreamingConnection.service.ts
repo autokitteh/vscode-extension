@@ -61,7 +61,7 @@ export class StarlarkStreamingConnectionService {
 
 			StarlarkStreamingConnectionService.socket.end();
 			StarlarkStreamingConnectionService.socket = null;
-			LoggerService.info("NetworkClient", "Manually closed connection to LSP server");
+			LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.socketManuallyClosed"));
 		}
 	}
 }
