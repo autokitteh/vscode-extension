@@ -43,34 +43,6 @@ export class StarlarkLSPService {
 			this.startLSPServer(serverOptions as ServerOptions, clientOptions, "socket");
 			return;
 		}
-		this.initLocalLSP(clientOptions);
-	}
-
-	private async initLocalLSP(clientOptions: LanguageClientOptions) {
-		// let executableLSP;
-		// const { starlarkPath, starlarkLSPVersion, extensionPath } = this.extensionContext.getLSPConfigurations();
-
-		// executableLSP = await StarlarkVersionManagerService.updateLSPVersionIfNeeded(
-		// 	starlarkPath,
-		// 	starlarkLSPVersion,
-		// 	extensionPath
-		// );
-		// if (!executableLSP) {
-		// 	return;
-		// }
-
-		// const { path: newStarlarkPath, version: newStarlarkVersion } = executableLSP!;
-
-		// if (newStarlarkVersion !== starlarkLSPVersion) {
-		// 	WorkspaceConfig.setToWorkspace("starlarkLSP", newStarlarkPath);
-		// 	this.extensionContext.setToContext("autokitteh.starlarkLSP", newStarlarkPath);
-		// 	this.extensionContext.setToContext("autokitteh.starlarkVersion", newStarlarkVersion);
-		// 	LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
-		// 	commands.executeCommand(
-		// 		vsCommands.showInfoMessage,
-		// 		translate().t("lsp.executableDownloadedSuccessfully", { version: newStarlarkVersion })
-		// 	);
-		// }
 
 		let serverOptions = {
 			command: this.starlarkLSPPath,
