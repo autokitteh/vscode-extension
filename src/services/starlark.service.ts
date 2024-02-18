@@ -1,9 +1,15 @@
 import * as fs from "fs";
-import { namespaces, starlarkLSPUriScheme, starlarkLocalLSPDefaultArgs } from "@constants";
-import { ExtensionContextService, StarlarkStreamingConnectionService, LoggerService } from "@services";
+import { namespaces, starlarkLSPUriScheme, starlarkLocalLSPDefaultArgs, vsCommands } from "@constants";
+import { translate } from "@i18n";
+import {
+	ExtensionContextService,
+	StarlarkStreamingConnectionService,
+	LoggerService,
+	StarlarkVersionManagerService,
+} from "@services";
 import { StarlarkFileHandler } from "@starlark";
-import { ValidateURL } from "@utilities";
-import { workspace } from "vscode";
+import { ValidateURL, WorkspaceConfig } from "@utilities";
+import { commands, workspace } from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient";
 
 export class StarlarkLSPService {
@@ -42,6 +48,30 @@ export class StarlarkLSPService {
 			const serverOptions = () => StarlarkStreamingConnectionService.getServerOptionsStreamInfo(host, port);
 			this.startLSPServer(serverOptions as ServerOptions, clientOptions, "socket");
 			return;
+		}
+
+		const { starlarkPath, starlarkLSPVersion, extensionPath } = this.extensionContext.getLSPConfigurations();
+		const executableLSP = await StarlarkVersionManagerService.updateLSPVersionIfNeeded(
+			starlarkPath,
+			starlarkLSPVersion,
+			extensionPath
+		);
+
+		const { path: newStarlarkPath, version: newStarlarkVersion, error } = executableLSP!;
+		if (error) {
+			LoggerService.error(namespaces.startlarkLSPServer, error.message);
+			commands.executeCommand(vsCommands.showErrorMessage, error.message);
+		}
+
+		if (newStarlarkVersion !== starlarkLSPVersion) {
+			WorkspaceConfig.setToWorkspace("starlarkLSP", newStarlarkPath);
+			this.extensionContext.setToContext("autokitteh.starlarkLSP", newStarlarkPath);
+			this.extensionContext.setToContext("autokitteh.starlarkVersion", newStarlarkVersion);
+			LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
+			commands.executeCommand(
+				vsCommands.showInfoMessage,
+				translate().t("lsp.executableDownloadedSuccessfully", { version: newStarlarkVersion })
+			);
 		}
 
 		let serverOptions = {

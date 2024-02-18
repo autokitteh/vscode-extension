@@ -1,13 +1,11 @@
 require("module-alias/register");
 
-import { vsCommands, sidebarControllerRefreshRate, namespaces } from "@constants";
+import { vsCommands, sidebarControllerRefreshRate } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
-import { translate } from "@i18n";
-import { ExtensionContextService, LoggerService, StarlarkLSPService, StarlarkVersionManagerService } from "@services";
+import { ExtensionContextService, StarlarkLSPService } from "@services";
 import { SidebarTreeItem } from "@type/views";
-import { WorkspaceConfig } from "@utilities";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject } from "@vscommands";
 import { openAddConnectionsPage } from "@vscommands/sideBarActions";
@@ -34,30 +32,6 @@ export async function activate(context: ExtensionContext) {
 		context.workspaceState.get.bind(context.workspaceState),
 		context.extensionPath
 	);
-
-	const { starlarkPath, starlarkLSPVersion, extensionPath } = extensionContext.getLSPConfigurations();
-	const executableLSP = await StarlarkVersionManagerService.updateLSPVersionIfNeeded(
-		starlarkPath,
-		starlarkLSPVersion,
-		extensionPath
-	);
-
-	const { path: newStarlarkPath, version: newStarlarkVersion, error } = executableLSP!;
-	if (error) {
-		LoggerService.error(namespaces.startlarkLSPServer, error.message);
-		commands.executeCommand(vsCommands.showErrorMessage, error.message);
-	}
-
-	if (newStarlarkVersion !== starlarkLSPVersion) {
-		WorkspaceConfig.setToWorkspace("starlarkLSP", newStarlarkPath);
-		extensionContext.setToContext("autokitteh.starlarkLSP", newStarlarkPath);
-		extensionContext.setToContext("autokitteh.starlarkVersion", newStarlarkVersion);
-		LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedSuccessfully"));
-		commands.executeCommand(
-			vsCommands.showInfoMessage,
-			translate().t("lsp.executableDownloadedSuccessfully", { version: newStarlarkVersion })
-		);
-	}
 
 	const starlarkLSPServer = new StarlarkLSPService(extensionContext);
 	starlarkLSPServer.initiateLSPServer();
