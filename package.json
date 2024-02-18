@@ -255,6 +255,9 @@
 		"zlib": "^1.0.5"
 	},
 	"description": "Simplify the process of automating tasks",
+	"optionalDependencies": {
+		"@rollup/rollup-linux-x64-gnu": "4.12.0"
+	},
 	"devDependencies": {
 		"@commitlint/cli": "18.6.1",
 		"@commitlint/config-conventional": "18.6.2",
