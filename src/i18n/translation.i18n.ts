@@ -13,7 +13,7 @@ export const translate = () => {
 	} else {
 		i18n.init({
 			lng: "en",
-			debug: true,
+			debug: false,
 			resources: englishResources,
 			fallbackLng: "en",
 			ns: ["translation"],
