@@ -7,6 +7,7 @@
 		"moduleResolution": "node",
 		"outDir": "dist",
 		"plugins": [
+			{ "transform": "typescript-transform-paths" },
 	  		{ "transform": "typescript-transform-paths", "afterDeclarations": true }],
 		"paths": {
 			"@ak-proto-ts/*": ["autokitteh/proto/gen/ts/autokitteh/*"],
