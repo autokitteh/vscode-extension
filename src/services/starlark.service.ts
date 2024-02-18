@@ -14,18 +14,15 @@ import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-lan
 
 export class StarlarkLSPService {
 	private languageClient: LanguageClient | undefined = undefined;
-	private streamingConnectionManager: StarlarkStreamingConnectionService;
 	private extensionContext: ExtensionContextService;
+	private starlarkLSPPath: string;
 
-	public constructor(
-		extensionContext: ExtensionContextService,
-		streamingConnection: StarlarkStreamingConnectionService
-	) {
+	public constructor(extensionContext: ExtensionContextService) {
 		this.extensionContext = extensionContext;
-		this.streamingConnectionManager = streamingConnection;
+		this.starlarkLSPPath = extensionContext.getLSPConfigurations().starlarkPath;
 	}
 
-	public async initiateLSPServer(starlarkPath: string) {
+	public async initiateLSPServer() {
 		if (this.languageClient) {
 			this.languageClient.stop();
 		}
@@ -36,30 +33,23 @@ export class StarlarkLSPService {
 			outputChannelName: "autokitteh: Starlark LSP Server",
 		};
 
-		try {
-			/* By default, the Starlark LSP operates through a CMD command in stdio mode.
-			 * However, if the 'starlarkLSPSocketMode' is enabled, the LSP won't initiate automatically.
-			 * Instead, VSCode connects to 'localhost:starlarkLSPPort', expecting the Starlark LSP to be running in socket mode. */
-			if (ValidateURL(starlarkPath)) {
-				let serverURL = new URL(starlarkPath);
+		/* By default, the Starlark LSP operates through a CMD command in stdio mode.
+		 * However, if the 'starlarkLSPSocketMode' is enabled, the LSP won't initiate automatically.
+		 * Instead, VSCode connects to 'localhost:starlarkLSPPort', expecting the Starlark LSP to be running in socket mode. */
+		if (ValidateURL(this.starlarkLSPPath)) {
+			let serverURL = new URL(this.starlarkLSPPath);
 
-				const port = (serverURL.port && Number(serverURL.port)) as number;
-				const host = serverURL.hostname;
-				if (!port || !host) {
-					return;
-				}
-
-				const serverOptions = () => this.streamingConnectionManager.getServerOptionsStreamInfo(host, port);
-				this.startLSPServer(serverOptions as ServerOptions, clientOptions, "socket", starlarkPath);
+			const port = (serverURL.port && Number(serverURL.port)) as number;
+			const host = serverURL.hostname;
+			if (!port || !host) {
 				return;
 			}
 
-			this.streamingConnectionManager.closeConnection();
-			this.initLocalLSP(clientOptions);
-		} catch (error) {
-			LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
-			commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
+			const serverOptions = () => StarlarkStreamingConnectionService.getServerOptionsStreamInfo(host, port);
+			this.startLSPServer(serverOptions as ServerOptions, clientOptions, "socket");
+			return;
 		}
+		this.initLocalLSP(clientOptions);
 	}
 
 	private async initLocalLSP(clientOptions: LanguageClientOptions) {
@@ -99,15 +89,15 @@ export class StarlarkLSPService {
 		serverOptions: ServerOptions,
 		clientOptions: LanguageClientOptions,
 		starlarkLSPVersion: string = "socket",
-		starlarkPath: string
+		starlarkLSPPath?: string
 	) {
-		const localStarlarkFileExist = fs.existsSync(starlarkPath);
+		const currentStarlarkLSPPath = starlarkLSPPath || this.starlarkLSPPath;
+		const localStarlarkFileExist = fs.existsSync(currentStarlarkLSPPath);
 
-		if (localStarlarkFileExist || ValidateURL(starlarkPath)) {
-			LoggerService.info(
-				namespaces.startlarkLSPServer,
-				`Starting LSP Server (${starlarkLSPVersion}): ${starlarkPath} ${starlarkLocalLSPDefaultArgs.join(", ")}`
-			);
+		if (localStarlarkFileExist || ValidateURL(currentStarlarkLSPPath)) {
+			// eslint-disable-next-line max-len
+			const lspConfigurationMessage = `(${starlarkLSPVersion}): ${currentStarlarkLSPPath} ${starlarkLocalLSPDefaultArgs.join(", ")}`;
+			LoggerService.info(namespaces.startlarkLSPServer, `Starting LSP Server ${lspConfigurationMessage}}`);
 
 			this.languageClient = new LanguageClient("Starlark", "autokitteh: Starlark LSP", serverOptions, clientOptions);
 

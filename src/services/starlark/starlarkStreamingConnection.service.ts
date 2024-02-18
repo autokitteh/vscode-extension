@@ -1,24 +1,16 @@
 import { Socket, connect } from "net";
-import { namespaces } from "@constants";
+import { namespaces, starlarkLSPBySocketRefreshRate } from "@constants";
+import { translate } from "@i18n";
 import { LoggerService } from "@services";
 import { StreamInfo } from "vscode-languageclient";
 
 export class StarlarkStreamingConnectionService {
-	private retryTimer: NodeJS.Timeout | undefined;
-	private connecting: boolean = false;
-	private socket: Socket | null = null;
-	private retryCount: number = 0;
-	private maxRetries: number = 100;
+	private static retryTimer: NodeJS.Timeout | undefined;
+	private static connecting: boolean = false;
+	private static socket: Socket | null = null;
 
-	public async getServerOptionsStreamInfo(host: string, port: number): Promise<StreamInfo> {
-		return new Promise<StreamInfo>((resolve, reject) => {
-			if (this.retryCount >= this.maxRetries) {
-				reject(new Error("Failed to connect to the server after maximum retries."));
-
-				clearTimeout(this.retryTimer);
-				return;
-			}
-
+	public static async getServerOptionsStreamInfo(host: string, port: number): Promise<StreamInfo> {
+		return new Promise<StreamInfo>((resolve) => {
 			const connectToServer = () => {
 				if (this.connecting) {
 					return;
@@ -26,7 +18,7 @@ export class StarlarkStreamingConnectionService {
 				this.connecting = true;
 
 				this.socket = connect({ port, host }, () => {
-					LoggerService.info(namespaces.startlarkLSPServer, "Connected to LSP server");
+					LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.socketConnected"));
 					clearTimeout(this.retryTimer);
 					this.connecting = false;
 
@@ -38,11 +30,13 @@ export class StarlarkStreamingConnectionService {
 
 				this.socket.on("error", (error) => {
 					this.connecting = false;
-					this.retryCount++;
 
-					LoggerService.error(namespaces.startlarkLSPServer, "Connection error:" + error);
+					LoggerService.error(
+						namespaces.startlarkLSPServer,
+						translate().t("starlark.socketConnectionError", { error })
+					);
 					clearTimeout(this.retryTimer);
-					this.retryTimer = setTimeout(connectToServer, 5000);
+					this.retryTimer = setTimeout(connectToServer, starlarkLSPBySocketRefreshRate);
 				});
 
 				this.socket.on("end", () => {
@@ -50,11 +44,11 @@ export class StarlarkStreamingConnectionService {
 				});
 
 				this.socket.on("close", () => {
-					LoggerService.info(namespaces.startlarkLSPServer, "Connection closed");
+					LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.socketConnectionClosed"));
 					this.connecting = false;
 
 					clearTimeout(this.retryTimer);
-					this.retryTimer = setTimeout(connectToServer, 5000);
+					this.retryTimer = setTimeout(connectToServer, starlarkLSPBySocketRefreshRate);
 				});
 			};
 			connectToServer();
@@ -62,12 +56,11 @@ export class StarlarkStreamingConnectionService {
 	}
 
 	closeConnection(): void {
-		if (this.socket) {
-			clearTimeout(this.retryTimer);
+		if (StarlarkStreamingConnectionService.socket) {
+			clearTimeout(StarlarkStreamingConnectionService.retryTimer);
 
-			this.socket.end();
-			this.socket = null;
-			this.retryCount = 0;
+			StarlarkStreamingConnectionService.socket.end();
+			StarlarkStreamingConnectionService.socket = null;
 			LoggerService.info("NetworkClient", "Manually closed connection to LSP server");
 		}
 	}

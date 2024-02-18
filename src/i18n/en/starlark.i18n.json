@@ -1,4 +1,7 @@
 {
 	"initFailed": "Starlark LSP initialization has failed, trying again in 5 seconds",
-	"initSuccess": "Starlark LSP initiated successfuly"
+	"initSuccess": "Starlark LSP initiated successfuly",
+	"socketConnected": "Starlark LSP connected to the socket",
+	"socketConnectionError": "Starlark LSP failed to connect to the socket, reason: {{error}}",
+	"socketConnectionClosed": "Starlark LSP socket connection closed"
 }

@@ -4,7 +4,7 @@ import { vsCommands, sidebarControllerRefreshRate } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
-import { ExtensionContextService, StarlarkStreamingConnectionService, StarlarkLSPService } from "@services";
+import { ExtensionContextService, StarlarkLSPService } from "@services";
 import { SidebarTreeItem } from "@type/views";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject } from "@vscommands";
@@ -33,11 +33,8 @@ export async function activate(context: ExtensionContext) {
 		context.extensionPath
 	);
 
-	const { starlarkPath } = extensionContext.getLSPConfigurations();
-
-	const starlarkStreamingConnectionService = new StarlarkStreamingConnectionService();
-	const starlarkLSPServer = new StarlarkLSPService(extensionContext, starlarkStreamingConnectionService);
-	starlarkLSPServer.initiateLSPServer(starlarkPath);
+	const starlarkLSPServer = new StarlarkLSPService(extensionContext);
+	starlarkLSPServer.initiateLSPServer();
 
 	const sidebarView = new SidebarView();
 
