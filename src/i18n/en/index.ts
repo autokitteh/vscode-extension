@@ -1,7 +1,6 @@
 import deployments from "@i18n/en/deployments.i18n.json";
 import errors from "@i18n/en/errors.i18n.json";
 import general from "@i18n/en/general.i18n.json";
-import lsp from "@i18n/en/lsp.i18n.json";
 import manifest from "@i18n/en/manifest.i18n.json";
 import messages from "@i18n/en/messages.i18n.json";
 import projects from "@i18n/en/projects.i18n.json";
@@ -18,7 +17,6 @@ export const english = {
 	messages,
 	general,
 	walkthrough,
-	lsp,
 	manifest,
 	sessions,
 	starlark,

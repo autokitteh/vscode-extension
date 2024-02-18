@@ -3,5 +3,16 @@
 	"initSuccess": "Starlark LSP initiated successfuly",
 	"socketConnected": "Starlark LSP connected to the socket",
 	"socketConnectionError": "Starlark LSP failed to connect to the socket, reason: {{error}}",
-	"socketConnectionClosed": "Starlark LSP socket connection closed"
+	"socketConnectionClosed": "Starlark LSP socket connection closed",
+	"downloadExecutableDialog": "Full functionality of Starlark in VSCode requires the Starlark LSP. Without it, the LSP features won't work.",
+	"updateExecutableDialog": "Would you like to update the Starlark LSP. Without it, latest LSP features won't work.",
+	"downloadExecutableDialogApprove": "Download & Install",
+	"downloadExecutableDialogDismiss": "Dismiss",
+	"downloadExecutableInProgress": "Downloading LSP executable file - {{version}}",
+	"executableDownloadedUnpacking": "Unpacking LSP executable file...",
+	"executableDownloadedSuccessfully": "LSP executable file downloaded succefully",
+	"executableDownloadedFailedError": "LSP executable file download failed - {{error}}",
+	"executableDownloadedFailed": "LSP executable file download failed",
+	"executableArchitetureNotFound": "OS architecture not found or not supported",
+	"executableDownloadedDismissed": "Pay attention: full functionality of Starlark in VSCode requires the Starlark LSP. Without it, the LSP features won't work."
 }

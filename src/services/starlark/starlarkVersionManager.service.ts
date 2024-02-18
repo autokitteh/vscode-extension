@@ -14,13 +14,13 @@ export class StarlarkVersionManagerService {
 		currentPath: string,
 		currentVersion: string,
 		extensionPath: string
-	): Promise<{ path: string; version: string } | undefined> {
+	): Promise<{ path: string | undefined; version: string | undefined; error: Error | undefined }> {
 		const platform = os.platform();
 		const { data: arch, error: archError } = StarlarkVersionManagerService.determineArchitecture();
 		if (archError) {
 			LoggerService.info(namespaces.startlarkLSPServer, archError.message);
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("lsp.executableArchitetureNotFound"));
-			return;
+			commands.executeCommand(vsCommands.showErrorMessage, translate().t("starlark.executableArchitetureNotFound"));
+			return { path: currentPath, version: currentVersion, error: undefined };
 		}
 
 		const { data: latestRelease, error: releaseError } = await StarlarkVersionManagerService.fetchLatestReleaseInfo(
@@ -28,22 +28,25 @@ export class StarlarkVersionManagerService {
 			arch!
 		);
 		if (releaseError) {
-			LoggerService.info(
-				namespaces.startlarkLSPServer,
-				translate().t("lsp.executableDownloadedFailedError", { error: releaseError.message })
-			);
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("lsp.executableDownloadedFailed"));
-			return;
+			return {
+				path: currentPath,
+				version: currentVersion,
+				error: new Error(translate().t("starlark.executableDownloadedFailedError", { error: releaseError.message })),
+			};
 		}
 
 		const doesFileExist = fs.existsSync(currentPath);
 		if (currentVersion === latestRelease!.tag && doesFileExist) {
-			return { path: currentPath, version: currentVersion };
+			return { path: currentPath, version: currentVersion, error: undefined };
 		}
 
 		const userResponse = await StarlarkVersionManagerService.promptUserForUpdate(doesFileExist);
-		if (userResponse !== translate().t("lsp.downloadExecutableDialogApprove")) {
-			return { path: currentPath, version: currentVersion };
+		if (userResponse !== translate().t("starlark.downloadExecutableDialogApprove")) {
+			return {
+				path: currentPath,
+				version: currentVersion,
+				error: new Error(translate().t("starlark.executableDownloadedDismissed")),
+			};
 		}
 
 		const { data: newFilePath, error: newFileError } = await StarlarkVersionManagerService.downloadAndUpdateLSP(
@@ -51,15 +54,14 @@ export class StarlarkVersionManagerService {
 			extensionPath
 		);
 		if (newFileError) {
-			LoggerService.info(
-				namespaces.startlarkLSPServer,
-				translate().t("lsp.executableDownloadedFailedError", { error: newFileError.message })
-			);
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("lsp.executableDownloadedFailed"));
-			return;
+			return {
+				path: undefined,
+				version: undefined,
+				error: new Error(translate().t("starlark.executableDownloadedFailedError", { error: newFileError.message })),
+			};
 		}
 
-		return { path: newFilePath!, version: latestRelease!.tag };
+		return { path: newFilePath!, version: latestRelease!.tag, error: undefined };
 	}
 
 	private static async fetchLatestReleaseInfo(
@@ -107,11 +109,11 @@ export class StarlarkVersionManagerService {
 	}
 
 	private static async promptUserForUpdate(doesFileExist: boolean): Promise<string | undefined> {
-		const dialogType = doesFileExist ? "lsp.updateExecutableDialog" : "lsp.downloadExecutableDialog";
+		const dialogType = doesFileExist ? "starlark.updateExecutableDialog" : "starlark.downloadExecutableDialog";
 		return await window.showInformationMessage(
 			translate().t(dialogType),
-			translate().t("lsp.downloadExecutableDialogApprove"),
-			translate().t("lsp.downloadExecutableDialogDismiss")
+			translate().t("starlark.downloadExecutableDialogApprove"),
+			translate().t("starlark.downloadExecutableDialogDismiss")
 		);
 	}
 
@@ -126,7 +128,7 @@ export class StarlarkVersionManagerService {
 		const filePath = path.join(extensionPath, fileName);
 		await StarlarkVersionManagerService.downloadFile(release.url, filePath);
 
-		LoggerService.info(namespaces.startlarkLSPServer, translate().t("lsp.executableDownloadedUnpacking"));
+		LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.executableDownloadedUnpacking"));
 		await extractArchive(filePath, extensionPath);
 
 		const extractedFiles = await listFilesInDirectory(path.join(extensionPath, starlarkLSPExtractedDirectory));
