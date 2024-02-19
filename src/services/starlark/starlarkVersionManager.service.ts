@@ -126,9 +126,11 @@ export class StarlarkVersionManagerService {
 	}> {
 		const fileName = path.basename(new URL(release.url).pathname);
 		const filePath = path.join(extensionPath, fileName);
-		await StarlarkVersionManagerService.downloadFile(release.url, filePath);
+		LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.executableDownloading"));
 
+		await StarlarkVersionManagerService.downloadFile(release.url, filePath);
 		LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.executableDownloadedUnpacking"));
+
 		await extractArchive(filePath, extensionPath);
 
 		const extractedFiles = await listFilesInDirectory(path.join(extensionPath, starlarkLSPExtractedDirectory));
@@ -138,6 +140,7 @@ export class StarlarkVersionManagerService {
 				data: undefined,
 			};
 		}
+		LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.executableUnpackedSuccessfully"));
 
 		return {
 			data: extractedFiles[0],

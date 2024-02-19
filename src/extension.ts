@@ -33,9 +33,7 @@ export async function activate(context: ExtensionContext) {
 		context.extensionPath
 	);
 
-	const starlarkLSPServer = new StarlarkLSPService(extensionContext);
-	starlarkLSPServer.initiateLSPServer();
-
+	StarlarkLSPService.initStarlarkLSP(extensionContext);
 	const sidebarView = new SidebarView();
 
 	const sidebarController = new SidebarController(sidebarView, sidebarControllerRefreshRate);

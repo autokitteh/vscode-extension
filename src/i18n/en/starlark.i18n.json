@@ -10,10 +10,13 @@
 	"downloadExecutableDialogApprove": "Download & Install",
 	"downloadExecutableDialogDismiss": "Dismiss",
 	"downloadExecutableInProgress": "Downloading LSP executable file - {{version}}",
+	"executableDownloading": "Downloading LSP executable file...",
 	"executableDownloadedUnpacking": "Unpacking LSP executable file...",
 	"executableDownloadedSuccessfully": "LSP executable file downloaded succefully",
+	"executableUnpackedSuccessfully": "LSP executable file unpacked succefully",
 	"executableDownloadedFailedError": "LSP executable file download failed - {{error}}",
 	"executableDownloadedFailed": "LSP executable file download failed",
 	"executableArchitetureNotFound": "OS architecture not found or not supported",
+	"executableNotFound": "Starlark LSP executable not found at path: {{starlarkLSPPath}}",
 	"executableDownloadedDismissed": "Pay attention: full functionality of Starlark in VSCode requires the Starlark LSP. Without it, the LSP features won't work."
 }
