@@ -1,3 +1,10 @@
+# [0.8.0-dev.16](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.15...v0.8.0-dev.16) (2024-02-19)
+
+
+### Bug Fixes
+
+* remove the cloud icon from everywhere except the sidebar ([82de218](https://github.com/autokitteh/vscode-extension/commit/82de218477bad3e1b40fe3a172488b7755724666))
+
 # [0.8.0-dev.15](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.14...v0.8.0-dev.15) (2024-02-13)
 
 
