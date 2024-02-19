@@ -3,7 +3,7 @@ import { namespaces, starlarkLSPUriScheme, starlarkLocalLSPDefaultArgs, vsComman
 import { translate } from "@i18n";
 import {
 	ExtensionContextService,
-	StarlarkStreamingConnectionService,
+	StarlarkSocketStreamingService,
 	LoggerService,
 	StarlarkVersionManagerService,
 } from "@services";
@@ -45,7 +45,7 @@ export class StarlarkLSPService {
 				return;
 			}
 
-			const serverOptions = () => StarlarkStreamingConnectionService.getServerOptionsStreamInfo(host, port);
+			const serverOptions = () => StarlarkSocketStreamingService.getServerOptionsStreamInfo(host, port);
 			this.startLSPServer(serverOptions as ServerOptions, clientOptions, "socket");
 			return;
 		}

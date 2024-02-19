@@ -4,7 +4,7 @@ import { translate } from "@i18n";
 import { LoggerService } from "@services";
 import { StreamInfo } from "vscode-languageclient";
 
-export class StarlarkStreamingConnectionService {
+export class StarlarkSocketStreamingService {
 	private static retryTimer: NodeJS.Timeout | undefined;
 	private static connecting: boolean = false;
 	private static socket: Socket | null = null;
@@ -55,12 +55,12 @@ export class StarlarkStreamingConnectionService {
 		});
 	}
 
-	closeConnection(): void {
-		if (StarlarkStreamingConnectionService.socket) {
-			clearTimeout(StarlarkStreamingConnectionService.retryTimer);
+	public static closeConnection(): void {
+		if (StarlarkSocketStreamingService.socket) {
+			clearTimeout(StarlarkSocketStreamingService.retryTimer);
 
-			StarlarkStreamingConnectionService.socket.end();
-			StarlarkStreamingConnectionService.socket = null;
+			StarlarkSocketStreamingService.socket.end();
+			StarlarkSocketStreamingService.socket = null;
 			LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.socketManuallyClosed"));
 		}
 	}

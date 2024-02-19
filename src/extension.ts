@@ -4,7 +4,7 @@ import { vsCommands, sidebarControllerRefreshRate } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
-import { ExtensionContextService, StarlarkLSPService } from "@services";
+import { ExtensionContextService, StarlarkLSPService, StarlarkSocketStreamingService } from "@services";
 import { SidebarTreeItem } from "@type/views";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject } from "@vscommands";
@@ -63,4 +63,7 @@ export async function activate(context: ExtensionContext) {
 	if (isAppOn) {
 		commands.executeCommand(vsCommands.connect);
 	}
+}
+export function deactivate() {
+	StarlarkSocketStreamingService.closeConnection();
 }
