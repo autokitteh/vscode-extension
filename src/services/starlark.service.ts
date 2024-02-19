@@ -15,6 +15,7 @@ import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-lan
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;
 	private static starlarkLSPPath: string;
+	private static starlarkLSPVersion: string;
 
 	public static async initiateLSPServer() {
 		if (StarlarkLSPService.languageClient) {
@@ -40,7 +41,12 @@ export class StarlarkLSPService {
 			}
 
 			const serverOptions = () => StarlarkSocketStreamingService.getServerOptionsStreamInfo(host, port);
-			StarlarkLSPService.startLSPServer(serverOptions as ServerOptions, clientOptions, "socket");
+			StarlarkLSPService.startLSPServer(
+				serverOptions as ServerOptions,
+				clientOptions,
+				"socket",
+				StarlarkLSPService.starlarkLSPPath
+			);
 			return;
 		}
 
@@ -48,7 +54,13 @@ export class StarlarkLSPService {
 			command: StarlarkLSPService.starlarkLSPPath,
 			args: starlarkLocalLSPDefaultArgs,
 		};
-		StarlarkLSPService.startLSPServer(serverOptions, clientOptions, StarlarkLSPService.starlarkLSPPath!);
+
+		StarlarkLSPService.startLSPServer(
+			serverOptions,
+			clientOptions,
+			StarlarkLSPService.starlarkLSPVersion,
+			StarlarkLSPService.starlarkLSPPath!
+		);
 	}
 
 	private static async startLSPServer(
@@ -117,6 +129,7 @@ export class StarlarkLSPService {
 		}
 
 		StarlarkLSPService.starlarkLSPPath = newStarlarkPath!;
+		StarlarkLSPService.starlarkLSPVersion = newStarlarkVersion!;
 		StarlarkLSPService.initiateLSPServer();
 	}
 }
