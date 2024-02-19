@@ -24,16 +24,16 @@ export class ExtensionContextService {
 	}
 
 	public getLSPConfigurations(): {
-		starlarkPath: string;
+		starlarkLSPPath: string;
 		starlarkLSPVersion: string;
 		extensionPath: string;
 	} {
-		const starlarkPath =
+		const starlarkLSPPath =
 			WorkspaceConfig.getFromWorkspace<string>("starlarkLSP", "") ||
 			this.getFromContext<string>("autokitteh.starlarkLSP", "");
 		const starlarkLSPVersion = this.getFromContext<string>("autokitteh.starlarkVersion", "");
 
-		return { starlarkPath, starlarkLSPVersion, extensionPath: this.extensionPath };
+		return { starlarkLSPPath, starlarkLSPVersion, extensionPath: this.extensionPath };
 	}
 
 	public getExtensionPath(): string | undefined {
