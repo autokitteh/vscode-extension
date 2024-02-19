@@ -78,13 +78,13 @@ export class StarlarkLSPService {
 			command: this.starlarkLSPPath,
 			args: starlarkLocalLSPDefaultArgs,
 		};
-		this.startLSPServer(serverOptions, clientOptions);
+		this.startLSPServer(serverOptions, clientOptions, newStarlarkVersion!);
 	}
 
 	private startLSPServer(
 		serverOptions: ServerOptions,
 		clientOptions: LanguageClientOptions,
-		starlarkLSPVersion: string = "socket",
+		starlarkLSPVersion: string,
 		starlarkLSPPath?: string
 	) {
 		const currentStarlarkLSPPath = starlarkLSPPath || this.starlarkLSPPath;
