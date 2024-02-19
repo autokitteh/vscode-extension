@@ -1,12 +1,7 @@
 import * as fs from "fs";
 import { namespaces, starlarkLSPUriScheme, starlarkLocalLSPDefaultArgs, vsCommands } from "@constants";
 import { translate } from "@i18n/translation.i18n";
-import {
-	StarlarkSocketStreamingService,
-	LoggerService,
-	StarlarkVersionManagerService,
-	ExtensionContextService,
-} from "@services";
+import { StarlarkSocketStreamingService, LoggerService, StarlarkVersionManagerService } from "@services";
 import { StarlarkFileHandler } from "@starlark";
 import { ValidateURL, WorkspaceConfig } from "@utilities";
 import { commands, workspace } from "vscode";
@@ -50,14 +45,17 @@ export class StarlarkLSPService {
 		);
 	}
 
-	public static async initStarlarkLSP(extensionContext: ExtensionContextService) {
+	public static async initStarlarkLSP(
+		starlarkLSPPath: string,
+		starlarkLSPVersion: string,
+		extensionPath: string,
+		updateContext: (key: string, value: any) => Thenable<void>
+	) {
 		let clientOptions: LanguageClientOptions = {
 			documentSelector: [{ scheme: "file", language: "starlark" }],
 			initializationOptions: {},
 			outputChannelName: "autokitteh: Starlark LSP Server",
 		};
-
-		const { starlarkLSPPath, starlarkLSPVersion, extensionPath } = extensionContext.getLSPConfigurations();
 
 		/* By default, the Starlark LSP operates through a CMD command in stdio mode.
 		 * However, if the 'starlarkLSPSocketMode' is enabled, the LSP won't initiate automatically.
@@ -94,8 +92,8 @@ export class StarlarkLSPService {
 
 		if (newStarlarkVersion !== starlarkLSPVersion) {
 			WorkspaceConfig.setToWorkspace("starlarkLSP", newStarlarkPath);
-			extensionContext.setToContext("autokitteh.starlarkLSP", newStarlarkPath);
-			extensionContext.setToContext("autokitteh.starlarkVersion", newStarlarkVersion);
+			updateContext("autokitteh.starlarkLSP", newStarlarkPath);
+			updateContext("autokitteh.starlarkVersion", newStarlarkVersion);
 			LoggerService.info(
 				namespaces.startlarkLSPServer,
 				translate().t("starlark.executableDownloadedSuccessfully", { version: newStarlarkVersion })
