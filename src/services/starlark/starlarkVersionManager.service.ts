@@ -24,8 +24,6 @@ export class StarlarkVersionManagerService {
 		);
 		if (releaseError) {
 			return {
-				path: currentPath,
-				version: currentVersion,
 				error: new Error(translate().t("starlark.executableDownloadedFailedError", { error: releaseError.message })),
 			};
 		}
