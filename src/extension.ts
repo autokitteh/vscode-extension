@@ -67,7 +67,7 @@ export async function activate(context: ExtensionContext) {
 		const starlarkLSPPathFromConfig =
 			WorkspaceConfig.getFromWorkspace<string | undefined>("starlarkLSPPath", undefined) ||
 			context.workspaceState.get<string>("autokitteh.starlarkLSPPath", "");
-		const starlarkLSPVersion = context.workspaceState.get<string>("autokitteh.starlarkVersion", "");
+		const starlarkLSPVersionFromContext = context.workspaceState.get<string>("autokitteh.starlarkVersion", "");
 
 		if (isStalarkLSPSocketMode(starlarkLSPPathFromConfig)) {
 			let serverURL = new URL(starlarkLSPPathFromConfig);
@@ -95,7 +95,7 @@ export async function activate(context: ExtensionContext) {
 				error,
 			} = await StarlarkVersionManagerService.updateLSPVersionIfNeeded(
 				starlarkLSPPathFromConfig,
-				starlarkLSPVersion,
+				starlarkLSPVersionFromContext,
 				context.extensionPath
 			);
 			if (error) {
@@ -120,8 +120,8 @@ export async function activate(context: ExtensionContext) {
 				);
 				commands.executeCommand(vsCommands.showErrorMessage, translate().t("starlark.executableNotFound"));
 			} else {
-				if (starlarkVersionAfterVersionCheck !== starlarkLSPVersion) {
-					context.workspaceState.update("autokitteh.starlarkLSPPath", lspExecutableToStart);
+				if (starlarkVersionAfterVersionCheck !== starlarkLSPVersionFromContext) {
+					context.workspaceState.update("autokitteh.starlarkLSPPath", starlarkPathAfterVersionCheck);
 					context.workspaceState.update("autokitteh.starlarkVersion", starlarkVersionAfterVersionCheck);
 					LoggerService.info(
 						namespaces.startlarkLSPServer,
