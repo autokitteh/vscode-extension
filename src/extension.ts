@@ -13,7 +13,7 @@ import {
 	StarlarkVersionManagerService,
 } from "@services";
 import { SidebarTreeItem } from "@type/views";
-import { WorkspaceConfig } from "@utilities";
+import { WorkspaceConfig, isStalarkLSPSocketMode } from "@utilities";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject } from "@vscommands";
 import { openAddConnectionsPage } from "@vscommands/sideBarActions";
@@ -64,13 +64,11 @@ export async function activate(context: ExtensionContext) {
 	}
 
 	const initStarlarkLSP = async () => {
-		const starlarkSocketLspUrl = WorkspaceConfig.getFromWorkspace<string>("starlarkSocketLspUrl", "");
-		const starlarkSocketModeEnabled = WorkspaceConfig.getFromWorkspace<boolean>("starlarkSocketModeEnabled", false);
 		const starlarkLSPPath = context.workspaceState.get<string>("autokitteh.starlarkLSP", "");
 		const starlarkLSPVersion = context.workspaceState.get<string>("autokitteh.starlarkVersion", "");
 
-		if (starlarkSocketModeEnabled) {
-			let serverURL = new URL(starlarkSocketLspUrl);
+		if (isStalarkLSPSocketMode(starlarkLSPPath)) {
+			let serverURL = new URL(starlarkLSPPath);
 
 			const port = (serverURL.port && Number(serverURL.port)) as number;
 			const host = serverURL.hostname;
@@ -78,7 +76,7 @@ export async function activate(context: ExtensionContext) {
 				LoggerService.error(
 					namespaces.startlarkLSPServer,
 					translate().t("starlark.invalidSocketURLError", {
-						starlarkSocketLspUrl: starlarkSocketLspUrl,
+						starlarkSocketLspUrl: starlarkLSPPath,
 						interpolation: { escapeValue: false },
 					})
 				);
@@ -87,18 +85,23 @@ export async function activate(context: ExtensionContext) {
 			}
 
 			const serverOptions = () => StarlarkSocketStreamingService.getServerOptionsStreamInfo(host, port);
-			StarlarkLSPService.startSocketLSPServer(serverOptions, starlarkSocketLspUrl);
+			StarlarkLSPService.connectLSPServerBySocket(serverOptions, starlarkLSPPath);
 		} else {
-			const executableLSP = await StarlarkVersionManagerService.updateLSPVersionIfNeeded(
+			const {
+				path: newStarlarkPath,
+				version: newStarlarkVersion,
+				error,
+			} = await StarlarkVersionManagerService.updateLSPVersionIfNeeded(
 				starlarkLSPPath,
 				starlarkLSPVersion,
 				context.extensionPath
 			);
-
-			const { path: newStarlarkPath, version: newStarlarkVersion, error } = executableLSP!;
 			if (error) {
-				LoggerService.error(namespaces.startlarkLSPServer, error.message);
-				commands.executeCommand(vsCommands.showErrorMessage, error.message);
+				LoggerService.error(
+					namespaces.startlarkLSPServer,
+					translate().t("executableFetchError", { error: error.message })
+				);
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("executableFetchError"));
 			}
 
 			const localStarlarkFileExist = fs.existsSync(newStarlarkPath!);
@@ -132,7 +135,7 @@ export async function activate(context: ExtensionContext) {
 					args: starlarkLocalLSPDefaultArgs,
 				};
 
-				StarlarkLSPService.startLocalLSPServer(serverOptions, newStarlarkVersion!, newStarlarkPath!);
+				StarlarkLSPService.connectLSPServerLocally(serverOptions, newStarlarkVersion!, newStarlarkPath!);
 			}
 		}
 	};

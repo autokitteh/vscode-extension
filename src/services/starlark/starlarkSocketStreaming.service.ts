@@ -1,5 +1,5 @@
 import { Socket, connect } from "net";
-import { namespaces, starlarkLSPBySocketRefreshRate } from "@constants";
+import { namespaces, starlarkLSPSocketReconnectRefreshRate } from "@constants";
 import { translate } from "@i18n";
 import { LoggerService } from "@services";
 import { StreamInfo } from "vscode-languageclient";
@@ -36,7 +36,7 @@ export class StarlarkSocketStreamingService {
 						translate().t("starlark.socketConnectionError", { error })
 					);
 					clearTimeout(this.retryTimer);
-					this.retryTimer = setTimeout(connectToServer, starlarkLSPBySocketRefreshRate);
+					this.retryTimer = setTimeout(connectToServer, starlarkLSPSocketReconnectRefreshRate);
 				});
 
 				this.socket.on("end", () => {
@@ -48,7 +48,7 @@ export class StarlarkSocketStreamingService {
 					this.connecting = false;
 
 					clearTimeout(this.retryTimer);
-					this.retryTimer = setTimeout(connectToServer, starlarkLSPBySocketRefreshRate);
+					this.retryTimer = setTimeout(connectToServer, starlarkLSPSocketReconnectRefreshRate);
 				});
 			};
 			connectToServer();

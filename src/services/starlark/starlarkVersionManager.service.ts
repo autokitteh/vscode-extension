@@ -1,31 +1,26 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { namespaces, starlarkExecutableGithubRepository, starlarkLSPExtractedDirectory, vsCommands } from "@constants";
+import { namespaces, starlarkExecutableGithubRepository, starlarkLSPExtractedDirectory } from "@constants";
 import { translate } from "@i18n";
 import { AssetInfo, GitHubRelease } from "@interfaces";
 import { LoggerService } from "@services";
 import { extractArchive, listFilesInDirectory } from "@utilities";
 import axios from "axios";
-import { commands, window } from "vscode";
+import { window } from "vscode";
 
 export class StarlarkVersionManagerService {
 	public static async updateLSPVersionIfNeeded(
 		currentPath: string,
 		currentVersion: string,
 		extensionPath: string
-	): Promise<{ path: string | undefined; version: string | undefined; error: Error | undefined }> {
+	): Promise<{ path?: string; version?: string; error?: Error }> {
 		const platform = os.platform();
-		const { data: arch, error: archError } = StarlarkVersionManagerService.determineArchitecture();
-		if (archError) {
-			LoggerService.info(namespaces.startlarkLSPServer, archError.message);
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("starlark.executableArchitetureNotFound"));
-			return { path: currentPath, version: currentVersion, error: undefined };
-		}
+		const arch = StarlarkVersionManagerService.determineArchitecture();
 
 		const { data: latestRelease, error: releaseError } = await StarlarkVersionManagerService.fetchLatestReleaseInfo(
 			platform,
-			arch!
+			arch
 		);
 		if (releaseError) {
 			return {
@@ -37,7 +32,7 @@ export class StarlarkVersionManagerService {
 
 		const doesFileExist = fs.existsSync(currentPath);
 		if (currentVersion === latestRelease!.tag && doesFileExist) {
-			return { path: currentPath, version: currentVersion, error: undefined };
+			return { path: currentPath, version: currentVersion };
 		}
 
 		const userResponse = await StarlarkVersionManagerService.promptUserForUpdate(doesFileExist);
@@ -55,28 +50,26 @@ export class StarlarkVersionManagerService {
 		);
 		if (newFileError) {
 			return {
-				path: undefined,
-				version: undefined,
 				error: new Error(translate().t("starlark.executableDownloadedFailedError", { error: newFileError.message })),
 			};
 		}
 
-		return { path: newFilePath!, version: latestRelease!.tag, error: undefined };
+		return { path: newFilePath!, version: latestRelease!.tag };
 	}
 
 	private static async fetchLatestReleaseInfo(
 		platform: string,
 		arch: string
 	): Promise<{
-		data: AssetInfo | undefined;
-		error: Error | undefined;
+		data?: AssetInfo;
+		error?: Error;
 	}> {
 		try {
 			const response = await axios.get(starlarkExecutableGithubRepository);
 			const { data: assetInfo } = StarlarkVersionManagerService.extractAssetInfo(response.data, platform, arch);
-			return { data: assetInfo, error: undefined };
+			return { data: assetInfo };
 		} catch (error) {
-			return { error: error as Error, data: undefined };
+			return { error: error as Error };
 		}
 	}
 
@@ -85,8 +78,8 @@ export class StarlarkVersionManagerService {
 		platform: string,
 		arch: string
 	): {
-		data: AssetInfo | undefined;
-		error: Error | undefined;
+		data?: AssetInfo;
+		error?: Error;
 	} {
 		const platformIdentifier = `autokitteh-starlark-lsp_${platform}_${arch}`;
 		const latestRelease = data[0];
@@ -94,7 +87,6 @@ export class StarlarkVersionManagerService {
 
 		if (!matchingAsset) {
 			return {
-				data: undefined,
 				error: new Error(translate().t("errors.starlarkPlatformNotSupported")),
 			};
 		}
@@ -104,7 +96,6 @@ export class StarlarkVersionManagerService {
 				url: matchingAsset.browser_download_url,
 				tag: latestRelease.tag_name,
 			},
-			error: undefined,
 		};
 	}
 
@@ -121,8 +112,8 @@ export class StarlarkVersionManagerService {
 		release: AssetInfo,
 		extensionPath: string
 	): Promise<{
-		data: string | undefined;
-		error: Error | undefined;
+		data?: string;
+		error?: Error;
 	}> {
 		const fileName = path.basename(new URL(release.url).pathname);
 		const filePath = path.join(extensionPath, fileName);
@@ -137,14 +128,12 @@ export class StarlarkVersionManagerService {
 		if (extractedFiles.length !== 1) {
 			return {
 				error: new Error(translate().t("errors.corruptedLSPArchive")),
-				data: undefined,
 			};
 		}
 		LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.executableUnpackedSuccessfully"));
 
 		return {
 			data: extractedFiles[0],
-			error: undefined,
 		};
 	}
 
@@ -162,11 +151,8 @@ export class StarlarkVersionManagerService {
 		});
 	}
 
-	private static determineArchitecture(): { data: string | undefined; error: Error | undefined } {
+	private static determineArchitecture(): string {
 		const archMappings: Record<string, string> = { x64: "x86_64", arm64: "x86_64" };
-		return {
-			data: archMappings[os.arch()] || os.arch(),
-			error: undefined,
-		};
+		return archMappings[os.arch()] || os.arch();
 	}
 }

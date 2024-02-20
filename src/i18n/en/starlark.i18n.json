@@ -21,5 +21,7 @@
 	"executableNotFound": "Starlark LSP executable not found at path",
 	"executableDownloadedDismissed": "Pay attention: full functionality of Starlark in VSCode requires the Starlark LSP. Without it, the LSP features won't work.",
 	"invalidSocketURLError": "Invalid Starlark socket URL: {{starlarkSocketLspUrl}}",
-	"invalidSocketURL": "Invalid Starlark socket URL"
+	"invalidSocketURL": "Invalid Starlark socket URL",
+	"executableFetchError": "Error checking if there is a new Starlark LSP version: {{error}}",
+	"executableFetch": "Error checking if there is a new Starlark LSP version"
 }

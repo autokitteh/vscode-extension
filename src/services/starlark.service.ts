@@ -1,4 +1,4 @@
-import { namespaces, starlarkClientOptions, starlarkLSPUriScheme, starlarkLocalLSPDefaultArgs } from "@constants";
+import { namespaces, starlarkLSPClientOptions, starlarkLSPUriScheme, starlarkLocalLSPDefaultArgs } from "@constants";
 import { LoggerService } from "@services";
 import { StarlarkFileHandler } from "@starlark";
 import { workspace } from "vscode";
@@ -7,7 +7,7 @@ import { LanguageClient, ServerOptions } from "vscode-languageclient";
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;
 
-	public static async startSocketLSPServer(serverOptions: ServerOptions, starlarkSocketLspUrl: string) {
+	public static async connectLSPServerBySocket(serverOptions: ServerOptions, starlarkSocketLspUrl: string) {
 		const lspConfigurationMessage = `(socket): ${starlarkSocketLspUrl} ${starlarkLocalLSPDefaultArgs.join(", ")}`;
 		LoggerService.info(namespaces.startlarkLSPServer, `Starting LSP Server in socket mode ${lspConfigurationMessage}`);
 
@@ -15,7 +15,7 @@ export class StarlarkLSPService {
 			"Starlark",
 			"autokitteh: Starlark LSP",
 			serverOptions,
-			starlarkClientOptions
+			starlarkLSPClientOptions
 		);
 
 		StarlarkLSPService.languageClient.start();
@@ -26,7 +26,7 @@ export class StarlarkLSPService {
 		);
 	}
 
-	public static async startLocalLSPServer(
+	public static async connectLSPServerLocally(
 		serverOptions: ServerOptions,
 		starlarkLSPVersion: string,
 		starlarkLSPPath: string
@@ -39,7 +39,7 @@ export class StarlarkLSPService {
 			"Starlark",
 			"autokitteh: Starlark LSP",
 			serverOptions,
-			starlarkClientOptions
+			starlarkLSPClientOptions
 		);
 
 		StarlarkLSPService.languageClient.start();

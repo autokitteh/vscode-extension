@@ -20,6 +20,6 @@ export {
 	starlarkExecutableGithubRepository,
 	starlarkLSPExtractedDirectory,
 	starlarkLocalLSPDefaultArgs,
-	starlarkLSPBySocketRefreshRate,
-	starlarkClientOptions,
+	starlarkLSPSocketReconnectRefreshRate,
+	starlarkLSPClientOptions,
 } from "@constants/starlark.constants";
