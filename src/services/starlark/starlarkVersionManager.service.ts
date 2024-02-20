@@ -28,14 +28,14 @@ export class StarlarkVersionManagerService {
 			};
 		}
 
-		if (currentVersion === latestRelease!.tag) {
+		const doesFileExist = fs.existsSync(currentPath);
+		if (currentVersion === latestRelease!.tag && doesFileExist) {
 			return StarlarkVersionManagerService.ensureStarlarkExecutableExistsAndReturn({
 				path: currentPath,
 				version: currentVersion,
 			});
 		}
 
-		const doesFileExist = fs.existsSync(currentPath);
 		const userResponse = await StarlarkVersionManagerService.promptUserForUpdate(doesFileExist);
 		if (userResponse !== translate().t("starlark.downloadExecutableDialogApprove")) {
 			return StarlarkVersionManagerService.ensureStarlarkExecutableExistsAndReturn({
@@ -65,7 +65,7 @@ export class StarlarkVersionManagerService {
 	private static async ensureStarlarkExecutableExistsAndReturn({
 		path,
 		version,
-		didUpdate = false,
+		didUpdate,
 	}: {
 		path?: string;
 		version?: string;
