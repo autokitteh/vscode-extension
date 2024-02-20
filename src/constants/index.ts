@@ -21,4 +21,5 @@ export {
 	starlarkLSPExtractedDirectory,
 	starlarkLocalLSPDefaultArgs,
 	starlarkLSPBySocketRefreshRate,
+	starlarkClientOptions,
 } from "@constants/starlark.constants";

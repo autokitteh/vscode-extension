@@ -112,10 +112,17 @@
 					"description": "Refresh interval in seconds for the sidebar panel",
 					"type": "number"
 				},
-				"autokitteh.starlarkLSP": {
+				"autokitteh.starlarkSocketLspUrl": {
 					"default": "",
 					"description": "The path to the starlark LSP Server",
-					"type": "string"
+					"type": "string",
+					"title": "Starlark LSP Server Socket URL"
+				},
+				"autokitteh.starlarkSocketModeEnabled": {
+					"default": "",
+					"description": "Is Starlark LSP Server in socket mode",
+					"type": "boolean",
+					"title": "Starlark LSP Server Socket Mode Enabled"
 				}
 			},
 			"title": "autokitteh"
