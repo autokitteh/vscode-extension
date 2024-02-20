@@ -30,18 +30,15 @@ export class StarlarkVersionManagerService {
 
 		const doesFileExist = fs.existsSync(currentPath);
 		if (currentVersion === latestRelease!.tag && doesFileExist) {
-			return StarlarkVersionManagerService.ensureStarlarkExecutableExistsAndReturn({
-				path: currentPath,
-				version: currentVersion,
-			});
+			return { path: currentPath, version: currentVersion };
 		}
 
 		const userResponse = await StarlarkVersionManagerService.promptUserForUpdate(doesFileExist);
 		if (userResponse !== translate().t("starlark.downloadExecutableDialogApprove")) {
-			return StarlarkVersionManagerService.ensureStarlarkExecutableExistsAndReturn({
+			return {
 				path: currentPath,
 				version: currentVersion,
-			});
+			};
 		}
 
 		const { data: newFilePath, error: newFileError } = await StarlarkVersionManagerService.downloadAndUpdateLSP(
@@ -55,37 +52,10 @@ export class StarlarkVersionManagerService {
 			return { error };
 		}
 
-		return StarlarkVersionManagerService.ensureStarlarkExecutableExistsAndReturn({
+		return {
 			path: newFilePath!,
 			version: latestRelease!.tag,
 			didUpdate: true,
-		});
-	}
-
-	private static async ensureStarlarkExecutableExistsAndReturn({
-		path,
-		version,
-		didUpdate,
-	}: {
-		path?: string;
-		version?: string;
-		didUpdate?: boolean;
-	}): Promise<{ path?: string; version?: string; error?: Error; didUpdate?: boolean }> {
-		if (path && !fs.existsSync(path)) {
-			const log = translate().t("starlark.executableNotFoundError", {
-				starlarkLSPPath: path,
-				interpolation: { escapeValue: false },
-			});
-			const notification = translate().t("starlark.executableNotFound");
-			LoggerService.error(namespaces.startlarkLSPServer, log);
-
-			return { error: new Error(notification), didUpdate };
-		}
-
-		return {
-			path,
-			version,
-			didUpdate,
 		};
 	}
 
