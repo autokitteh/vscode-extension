@@ -1,6 +1,5 @@
 require("module-alias/register");
 
-import * as fs from "fs";
 import { vsCommands, sidebarControllerRefreshRate, namespaces, starlarkLocalLSPDefaultArgs } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
@@ -104,46 +103,31 @@ export async function activate(context: ExtensionContext) {
 					translate().t("executableFetchError", { error: error.message })
 				);
 				commands.executeCommand(vsCommands.showErrorMessage, translate().t("executableFetchError"));
+				return;
 			}
-
-			let lspExecutableToStart = starlarkPathAfterVersionCheck || starlarkLSPPathFromConfig;
-
-			const localStarlarkFileExist = fs.existsSync(lspExecutableToStart!);
-
-			if (!localStarlarkFileExist) {
-				LoggerService.error(
+			if (starlarkVersionAfterVersionCheck !== starlarkLSPVersionFromContext) {
+				context.workspaceState.update("autokitteh.starlarkLSPPath", starlarkPathAfterVersionCheck);
+				context.workspaceState.update("autokitteh.starlarkVersion", starlarkVersionAfterVersionCheck);
+				LoggerService.info(
 					namespaces.startlarkLSPServer,
-					translate().t("starlark.executableNotFoundError", {
-						starlarkLSPPath: lspExecutableToStart,
-						interpolation: { escapeValue: false },
-					})
+					translate().t("starlark.executableDownloadedSuccessfully", { version: starlarkVersionAfterVersionCheck })
 				);
-				commands.executeCommand(vsCommands.showErrorMessage, translate().t("starlark.executableNotFound"));
-			} else {
-				if (starlarkVersionAfterVersionCheck !== starlarkLSPVersionFromContext) {
-					context.workspaceState.update("autokitteh.starlarkLSPPath", starlarkPathAfterVersionCheck);
-					context.workspaceState.update("autokitteh.starlarkVersion", starlarkVersionAfterVersionCheck);
-					LoggerService.info(
-						namespaces.startlarkLSPServer,
-						translate().t("starlark.executableDownloadedSuccessfully", { version: starlarkVersionAfterVersionCheck })
-					);
-					commands.executeCommand(
-						vsCommands.showInfoMessage,
-						translate().t("starlark.executableDownloadedSuccessfully", { version: starlarkVersionAfterVersionCheck })
-					);
-				}
-
-				let serverOptions = {
-					command: starlarkLSPPathFromConfig,
-					args: starlarkLocalLSPDefaultArgs,
-				};
-
-				StarlarkLSPService.connectLSPServerLocally(
-					serverOptions,
-					starlarkVersionAfterVersionCheck!,
-					starlarkPathAfterVersionCheck!
+				commands.executeCommand(
+					vsCommands.showInfoMessage,
+					translate().t("starlark.executableDownloadedSuccessfully", { version: starlarkVersionAfterVersionCheck })
 				);
 			}
+
+			let serverOptions = {
+				command: starlarkLSPPathFromConfig,
+				args: starlarkLocalLSPDefaultArgs,
+			};
+
+			StarlarkLSPService.connectLSPServerLocally(
+				serverOptions,
+				starlarkVersionAfterVersionCheck!,
+				starlarkPathAfterVersionCheck!
+			);
 		}
 	};
 	initStarlarkLSP();

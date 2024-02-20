@@ -30,16 +30,18 @@ export class StarlarkVersionManagerService {
 
 		const doesFileExist = fs.existsSync(currentPath);
 		if (currentVersion === latestRelease!.tag && doesFileExist) {
-			return { path: currentPath, version: currentVersion };
+			return StarlarkVersionManagerService.ensureStarlarkExecutableExistsAndReturn({
+				path: currentPath,
+				version: currentVersion,
+			});
 		}
 
 		const userResponse = await StarlarkVersionManagerService.promptUserForUpdate(doesFileExist);
 		if (userResponse !== translate().t("starlark.downloadExecutableDialogApprove")) {
-			return {
+			return StarlarkVersionManagerService.ensureStarlarkExecutableExistsAndReturn({
 				path: currentPath,
 				version: currentVersion,
-				error: new Error(translate().t("starlark.executableDownloadedDismissed")),
-			};
+			});
 		}
 
 		const { data: newFilePath, error: newFileError } = await StarlarkVersionManagerService.downloadAndUpdateLSP(
@@ -47,12 +49,40 @@ export class StarlarkVersionManagerService {
 			extensionPath
 		);
 		if (newFileError) {
-			return {
-				error: new Error(translate().t("starlark.executableDownloadedFailedError", { error: newFileError.message })),
-			};
+			const error = new Error(
+				translate().t("starlark.executableDownloadedFailedError", { error: newFileError.message })
+			);
+			return { error };
 		}
 
-		return { path: newFilePath!, version: latestRelease!.tag };
+		return StarlarkVersionManagerService.ensureStarlarkExecutableExistsAndReturn({
+			path: newFilePath!,
+			version: latestRelease!.tag,
+		});
+	}
+
+	private static async ensureStarlarkExecutableExistsAndReturn({
+		path,
+		version,
+	}: {
+		path?: string;
+		version?: string;
+	}): Promise<{ path?: string; version?: string; error?: Error }> {
+		if (path && !fs.existsSync(path)) {
+			const log = translate().t("starlark.executableNotFoundError", {
+				starlarkLSPPath: path,
+				interpolation: { escapeValue: false },
+			});
+			const notification = translate().t("starlark.executableNotFound");
+			LoggerService.error(namespaces.startlarkLSPServer, log);
+
+			return { error: new Error(notification) };
+		}
+
+		return StarlarkVersionManagerService.ensureStarlarkExecutableExistsAndReturn({
+			path,
+			version,
+		});
 	}
 
 	private static async fetchLatestReleaseInfo(
