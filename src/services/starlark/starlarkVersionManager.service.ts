@@ -14,7 +14,7 @@ export class StarlarkVersionManagerService {
 		currentPath: string,
 		currentVersion: string,
 		extensionPath: string
-	): Promise<{ path?: string; version?: string; error?: Error }> {
+	): Promise<{ path?: string; version?: string; error?: Error; didUpdate?: boolean }> {
 		const platform = os.platform();
 		const arch = StarlarkVersionManagerService.determineArchitecture();
 

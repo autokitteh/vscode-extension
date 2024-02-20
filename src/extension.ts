@@ -92,6 +92,7 @@ export async function activate(context: ExtensionContext) {
 				path: starlarkPathAfterVersionCheck,
 				version: starlarkVersionAfterVersionCheck,
 				error,
+				didUpdate,
 			} = await StarlarkVersionManagerService.updateLSPVersionIfNeeded(
 				starlarkLSPPathFromConfig,
 				starlarkLSPVersionFromContext,
@@ -105,7 +106,7 @@ export async function activate(context: ExtensionContext) {
 				commands.executeCommand(vsCommands.showErrorMessage, translate().t("executableFetchError"));
 				return;
 			}
-			if (starlarkVersionAfterVersionCheck !== starlarkLSPVersionFromContext) {
+			if (didUpdate) {
 				context.workspaceState.update("autokitteh.starlarkLSPPath", starlarkPathAfterVersionCheck);
 				context.workspaceState.update("autokitteh.starlarkVersion", starlarkVersionAfterVersionCheck);
 				LoggerService.info(
