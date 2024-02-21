@@ -89,8 +89,8 @@ export async function activate(context: ExtensionContext) {
 			StarlarkLSPService.connectLSPServerBySocket(serverOptions, starlarkLSPPathFromConfig);
 		} else {
 			const {
-				path: starlarkPathAfterVersionCheck,
-				version: starlarkVersionAfterVersionCheck,
+				path: starlarkewPathAfterVersionUpdate,
+				version: starlarkNewVersionAfterVersionUpdate,
 				error,
 				didUpdate,
 			} = await StarlarkVersionManagerService.updateLSPVersionIfNeeded(
@@ -107,15 +107,15 @@ export async function activate(context: ExtensionContext) {
 				return;
 			}
 			if (didUpdate) {
-				context.workspaceState.update("autokitteh.starlarkLSPPath", starlarkPathAfterVersionCheck);
-				context.workspaceState.update("autokitteh.starlarkVersion", starlarkVersionAfterVersionCheck);
+				context.workspaceState.update("autokitteh.starlarkLSPPath", starlarkewPathAfterVersionUpdate);
+				context.workspaceState.update("autokitteh.starlarkVersion", starlarkNewVersionAfterVersionUpdate);
 				LoggerService.info(
 					namespaces.startlarkLSPServer,
-					translate().t("starlark.executableDownloadedSuccessfully", { version: starlarkVersionAfterVersionCheck })
+					translate().t("starlark.executableDownloadedSuccessfully", { version: starlarkNewVersionAfterVersionUpdate })
 				);
 				commands.executeCommand(
 					vsCommands.showInfoMessage,
-					translate().t("starlark.executableDownloadedSuccessfully", { version: starlarkVersionAfterVersionCheck })
+					translate().t("starlark.executableDownloadedSuccessfully", { version: starlarkNewVersionAfterVersionUpdate })
 				);
 			}
 
@@ -126,8 +126,8 @@ export async function activate(context: ExtensionContext) {
 
 			StarlarkLSPService.connectLSPServerLocally(
 				serverOptions,
-				starlarkVersionAfterVersionCheck!,
-				starlarkPathAfterVersionCheck!
+				starlarkNewVersionAfterVersionUpdate!,
+				starlarkewPathAfterVersionUpdate!
 			);
 		}
 	};
