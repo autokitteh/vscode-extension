@@ -64,7 +64,7 @@ function App() {
 						<div className="flex-grow"></div>
 						{!projectFolderState && (
 							<div className="mr-2">
-								<strong>{translate().t("reactApp.settings.setLocalDirectory")}: </strong>
+								<strong>{translate().t("reactApp.settings.setLocalDirectory")} </strong>
 							</div>
 						)}
 						<AKButton
@@ -72,7 +72,7 @@ function App() {
 							classes={cn(projectFolderState ? "bg-gray-700" : "bg-red-700")}
 							title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
 						>
-							<div className="codicon codicon-settings-gear w-4"></div>
+							<div className="codicon codicon-folder-opened w-4"></div>
 						</AKButton>
 					</div>
 
