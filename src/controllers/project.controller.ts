@@ -40,7 +40,7 @@ export class ProjectController {
 		this.setProjectNameInView();
 	}
 
-	async reveal(): Promise<void> {
+	reveal(): void {
 		if (!this.project) {
 			const projectNotFoundMessage = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
 			commands.executeCommand(vsCommands.showErrorMessage, projectNotFoundMessage);
@@ -49,14 +49,7 @@ export class ProjectController {
 		}
 		this.view.reveal(this.project.name);
 
-		const resourcesPath = await commands.executeCommand(vsCommands.getContext, this.projectId);
-
-		if (resourcesPath) {
-			this.view.update({
-				type: MessageType.setProjectFolderState,
-				payload: true,
-			});
-		}
+		this.toggleResourcesViewIfExist();
 	}
 
 	setProjectNameInView() {
@@ -239,14 +232,7 @@ export class ProjectController {
 			this.project = project;
 			this.view.show(this.project.name);
 
-			const resourcesPath = await commands.executeCommand(vsCommands.getContext, this.projectId);
-
-			if (resourcesPath) {
-				this.view.update({
-					type: MessageType.setProjectFolderState,
-					payload: true,
-				});
-			}
+			this.toggleResourcesViewIfExist();
 
 			this.startInterval(
 				ProjectIntervalTypes.deployments,
@@ -266,22 +252,14 @@ export class ProjectController {
 		this.hasDisplayedError = new Map();
 	}
 
-	async onFocus() {
+	onFocus() {
 		this.setProjectNameInView();
 		this.startInterval(
 			ProjectIntervalTypes.deployments,
 			() => this.loadAndDisplayDeployments(),
 			this.deploymentsRefreshRate
 		);
-
-		const resourcesPath = await commands.executeCommand(vsCommands.getContext, this.projectId);
-
-		if (resourcesPath) {
-			this.view.update({
-				type: MessageType.setProjectFolderState,
-				payload: true,
-			});
-		}
+		this.toggleResourcesViewIfExist();
 	}
 
 	onClose() {
@@ -325,12 +303,9 @@ export class ProjectController {
 		const uri = await window.showOpenDialog(options);
 		if (uri && uri.length > 0) {
 			const resourcePath = uri[0].fsPath;
-			commands.executeCommand(vsCommands.setContext, this.projectId, resourcePath);
+			await commands.executeCommand(vsCommands.setContext, this.projectId, resourcePath);
 
-			this.view.update({
-				type: MessageType.setProjectFolderState,
-				payload: true,
-			});
+			this.toggleResourcesViewIfExist();
 
 			commands.executeCommand(vsCommands.showInfoMessage, translate().t("resources.uploadSuccess"));
 			return;
@@ -413,5 +388,16 @@ export class ProjectController {
 			namespaces.projectController,
 			translate().t("deployments.deactivationSucceedId", { id: deploymentId })
 		);
+	}
+
+	async toggleResourcesViewIfExist() {
+		const resourcesPath = await commands.executeCommand(vsCommands.getContext, this.projectId);
+
+		if (resourcesPath) {
+			this.view.update({
+				type: MessageType.setProjectFolderState,
+				payload: true,
+			});
+		}
 	}
 }
