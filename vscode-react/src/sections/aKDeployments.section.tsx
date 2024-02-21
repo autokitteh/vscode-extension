@@ -70,7 +70,7 @@ export const AKDeployments = ({
 	};
 
 	return (
-		<div className="mt-4 h-[45vh] overflow-y-auto overflow-x-hidden">
+		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
 			{deployments && !!totalDeployments ? (
 				<div className="flex justify-end mb-2 w-full min-h-[20px] sticky">
 					{`${translate().t("reactApp.general.totalOf")} ${totalDeployments} ${translate().t(
