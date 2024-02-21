@@ -1,3 +1,10 @@
+# [0.8.0-dev.17](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.16...v0.8.0-dev.17) (2024-02-21)
+
+
+### Features
+
+* starlark lsp fix text & release ([#157](https://github.com/autokitteh/vscode-extension/issues/157)) ([25942a7](https://github.com/autokitteh/vscode-extension/commit/25942a7f81b94f11de7dc344c93c12e77df3f2c6))
+
 # [0.8.0-dev.16](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.15...v0.8.0-dev.16) (2024-02-19)
 
 
