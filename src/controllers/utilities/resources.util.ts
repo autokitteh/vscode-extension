@@ -14,7 +14,8 @@ export const getResources = async (
 		return { error: new Error(errorMsg) };
 	}
 
-	if (fs.existsSync(resourcesDirectoryPath)) {
+	const stats = fs.statSync(resourcesDirectoryPath);
+	if (stats && stats.isFile()) {
 		const fileName = path.basename(resourcesDirectoryPath);
 		try {
 			const fileBuffer = fs.readFileSync(resourcesDirectoryPath);
