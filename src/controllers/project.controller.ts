@@ -274,6 +274,7 @@ export class ProjectController {
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
+			return;
 		}
 		const { data: buildId, error } = await ProjectsService.build(this.projectId, mappedResources!);
 		if (error) {
@@ -318,6 +319,7 @@ export class ProjectController {
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
+			return;
 		}
 
 		const { data: deploymentId, error } = await ProjectsService.run(this.projectId, mappedResources!);

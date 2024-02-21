@@ -70,6 +70,7 @@ export class SidebarController {
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
+			return;
 		}
 
 		const { error, data } = await ProjectsService.build(projectId, mappedResources!);
@@ -92,6 +93,7 @@ export class SidebarController {
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
+			return;
 		}
 
 		const { error, data: deploymentId } = await ProjectsService.run(projectId, mappedResources!);
