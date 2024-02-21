@@ -8,17 +8,17 @@ import { commands } from "vscode";
 export const getResources = async (
 	projectId: string
 ): Promise<{ data?: Record<string, Uint8Array>; error?: Error }> => {
-	const resourcesDirectoryPath = (await commands.executeCommand(vsCommands.getContext, projectId)) as string;
-	if (!resourcesDirectoryPath) {
+	const resourcesPath = (await commands.executeCommand(vsCommands.getContext, projectId)) as string;
+	if (!resourcesPath) {
 		const errorMsg = translate().t("projects.resourcesDirectoryMissing");
 		return { error: new Error(errorMsg) };
 	}
 
-	const stats = fs.statSync(resourcesDirectoryPath);
+	const stats = fs.statSync(resourcesPath);
 	if (stats && stats.isFile()) {
-		const fileName = path.basename(resourcesDirectoryPath);
+		const fileName = path.basename(resourcesPath);
 		try {
-			const fileBuffer = fs.readFileSync(resourcesDirectoryPath);
+			const fileBuffer = fs.readFileSync(resourcesPath);
 			const mappedResources = { [fileName]: fileBuffer };
 			return { data: mappedResources };
 		} catch (error) {
@@ -28,7 +28,7 @@ export const getResources = async (
 		}
 	}
 
-	const resources = readDirectoryRecursive(resourcesDirectoryPath);
-	const mappedResources = await mapFilesToContentInBytes(resourcesDirectoryPath, resources);
+	const resources = readDirectoryRecursive(resourcesPath);
+	const mappedResources = await mapFilesToContentInBytes(resourcesPath, resources);
 	return { data: mappedResources };
 };

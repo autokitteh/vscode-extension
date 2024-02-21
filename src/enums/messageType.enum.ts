@@ -4,7 +4,7 @@ export enum MessageType {
 	setProjectFolderState = "SET_PROJECT_FOLDER",
 	setTheme = "SET_THEME",
 	runProject = "RUN_PROJECT",
-	fetchResourcesDir = "FETCH_RESOURCES_DIR",
+	fetchResources = "FETCH_RESOURCES_DIR",
 	buildProject = "BUILD_PROJECT",
 	setSessionsSection = "SET_SESSIONS_SECTION",
 	selectDeployment = "SELECT_DEPLOYMENT",

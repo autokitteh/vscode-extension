@@ -48,9 +48,9 @@ export class ProjectController {
 			return;
 		}
 
-		const resourcesDirectoryPath = await commands.executeCommand(vsCommands.getContext, this.projectId);
+		const resourcesPath = await commands.executeCommand(vsCommands.getContext, this.projectId);
 
-		if (resourcesDirectoryPath) {
+		if (resourcesPath) {
 			this.view.update({
 				type: MessageType.setProjectFolderState,
 				payload: true,
@@ -239,9 +239,9 @@ export class ProjectController {
 			this.project = project;
 			this.view.show(this.project.name);
 
-			const resourcesDirectoryPath = await commands.executeCommand(vsCommands.getContext, this.projectId);
+			const resourcesPath = await commands.executeCommand(vsCommands.getContext, this.projectId);
 
-			if (resourcesDirectoryPath) {
+			if (resourcesPath) {
 				this.view.update({
 					type: MessageType.setProjectFolderState,
 					payload: true,
@@ -305,7 +305,7 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, successMessage);
 	}
 
-	async fetchResourcesDir() {
+	async fetchResources() {
 		const options: OpenDialogOptions = {
 			canSelectFiles: true,
 			canSelectFolders: true,
@@ -315,8 +315,8 @@ export class ProjectController {
 
 		const uri = await window.showOpenDialog(options);
 		if (uri && uri.length > 0) {
-			const directoryPath = uri[0].fsPath;
-			commands.executeCommand(vsCommands.setContext, this.projectId, directoryPath);
+			const resourcePath = uri[0].fsPath;
+			commands.executeCommand(vsCommands.setContext, this.projectId, resourcePath);
 
 			this.view.update({
 				type: MessageType.setProjectFolderState,
