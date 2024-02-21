@@ -2,5 +2,5 @@
 	"uploadSuccess": "Resources uploaded successfully",
 	"uploadFailureError": "Resources upload failed - {{error}}",
 	"uploadFailure": "Resources upload failed",
-	"selectResourcesFolder": "Select a resource"
+	"selectResourcesFolder": "Select"
 }
