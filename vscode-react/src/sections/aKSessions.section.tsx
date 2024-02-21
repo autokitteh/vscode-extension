@@ -39,7 +39,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 	};
 
 	return (
-		<div className="mt-4 min-h-48 max-h-48 overflow-y-auto overflow-x-hidden">
+		<div className="mt-4  h-[43vh] overflow-y-auto overflow-x-hidden">
 			{sessions && !!totalSessions ? (
 				<div className="flex justify-end mb-2 w-full min-h-[20px] sticky">
 					{`${translate().t("reactApp.general.totalOf")} ${totalSessions} ${translate().t(
