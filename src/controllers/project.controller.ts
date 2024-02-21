@@ -47,6 +47,7 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, projectNotFoundMessage);
 			return;
 		}
+		this.view.reveal(this.project.name);
 
 		const resourcesPath = await commands.executeCommand(vsCommands.getContext, this.projectId);
 
@@ -56,7 +57,6 @@ export class ProjectController {
 				payload: true,
 			});
 		}
-		this.view.reveal(this.project.name);
 	}
 
 	setProjectNameInView() {
@@ -266,13 +266,22 @@ export class ProjectController {
 		this.hasDisplayedError = new Map();
 	}
 
-	onFocus() {
+	async onFocus() {
 		this.setProjectNameInView();
 		this.startInterval(
 			ProjectIntervalTypes.deployments,
 			() => this.loadAndDisplayDeployments(),
 			this.deploymentsRefreshRate
 		);
+
+		const resourcesPath = await commands.executeCommand(vsCommands.getContext, this.projectId);
+
+		if (resourcesPath) {
+			this.view.update({
+				type: MessageType.setProjectFolderState,
+				payload: true,
+			});
+		}
 	}
 
 	onClose() {
