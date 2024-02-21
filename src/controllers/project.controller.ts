@@ -283,10 +283,10 @@ export class ProjectController {
 	}
 
 	async build() {
-		const { data: mappedResources, error: ResourcesError } = await getResources(this.projectId);
-		if (ResourcesError) {
-			commands.executeCommand(vsCommands.showErrorMessage, (ResourcesError as Error).message);
-			LoggerService.error(namespaces.projectController, (ResourcesError as Error).message);
+		const { data: mappedResources, error: resourcesError } = await getResources(this.projectId);
+		if (resourcesError) {
+			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
+			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
 		}
 		const { data: buildId, error } = await ProjectsService.build(this.projectId, mappedResources!);
 		if (error) {
@@ -330,10 +330,10 @@ export class ProjectController {
 	}
 
 	async run() {
-		const { data: mappedResources, error: ResourcesError } = await getResources(this.projectId);
-		if (ResourcesError) {
-			commands.executeCommand(vsCommands.showErrorMessage, (ResourcesError as Error).message);
-			LoggerService.error(namespaces.projectController, (ResourcesError as Error).message);
+		const { data: mappedResources, error: resourcesError } = await getResources(this.projectId);
+		if (resourcesError) {
+			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
+			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
 		}
 
 		const { data: deploymentId, error } = await ProjectsService.run(this.projectId, mappedResources!);
