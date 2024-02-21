@@ -57,10 +57,6 @@ export const getRelativePath = (basePath: string, fullPath: string): string => {
 	return fullPath.replace(normalizedBasePath, "");
 };
 
-function readFileContentInBytes(filePath: string): Buffer {
-	return fs.readFileSync(filePath);
-}
-
 export const mapFilesToContentInBytes = async (
 	basePath: string,
 	fullPathArray: string[]
@@ -69,7 +65,7 @@ export const mapFilesToContentInBytes = async (
 
 	for (const fullPath of fullPathArray) {
 		const relativePath = getRelativePath(basePath, fullPath);
-		const contentBytes = readFileContentInBytes(fullPath);
+		const contentBytes = fs.readFileSync(fullPath);
 		fileContentMap[relativePath] = contentBytes;
 	}
 
