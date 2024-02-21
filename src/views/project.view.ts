@@ -46,6 +46,9 @@ export class ProjectView implements IProjectView {
 					case MessageType.deactivateDeployment:
 						this.delegate?.deactivateDeployment?.(message.payload as string);
 						break;
+					case MessageType.fetchResourcesDir:
+						this.delegate?.fetchResourcesDir?.();
+						break;
 				}
 			},
 			undefined,

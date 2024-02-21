@@ -6,6 +6,7 @@ export const namespaces = {
 	environmentsService: "Environments Service",
 	manifestService: "Manifest Service",
 	projectService: "Project Service",
+	resourcesService: "Resources Service",
 	projectController: "Project Controller",
 	projectSidebarController: "Project Sidebar Controller",
 	sessionsService: "Sessions Service",

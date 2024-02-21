@@ -1,4 +1,5 @@
 import { vsCommands, namespaces, channels } from "@constants";
+import { getResources } from "@controllers/utilities";
 import { MessageType } from "@enums";
 import { ProjectIntervalTypes } from "@enums";
 import { translate } from "@i18n";
@@ -9,7 +10,7 @@ import { DeploymentsService, ProjectsService, SessionsService, LoggerService } f
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
-import { commands } from "vscode";
+import { commands, OpenDialogOptions, window } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
@@ -39,12 +40,21 @@ export class ProjectController {
 		this.setProjectNameInView();
 	}
 
-	reveal(): void {
+	async reveal(): Promise<void> {
 		if (!this.project) {
 			const projectNotFoundMessage = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
 			commands.executeCommand(vsCommands.showErrorMessage, projectNotFoundMessage);
 			LoggerService.error(namespaces.projectController, projectNotFoundMessage);
 			return;
+		}
+
+		const resourcesDirectoryPath = await commands.executeCommand(vsCommands.getContext, this.projectId);
+
+		if (resourcesDirectoryPath) {
+			this.view.update({
+				type: MessageType.setProjectFolderState,
+				payload: true,
+			});
 		}
 		this.view.reveal(this.project.name);
 	}
@@ -228,6 +238,16 @@ export class ProjectController {
 		if (project) {
 			this.project = project;
 			this.view.show(this.project.name);
+
+			const resourcesDirectoryPath = await commands.executeCommand(vsCommands.getContext, this.projectId);
+
+			if (resourcesDirectoryPath) {
+				this.view.update({
+					type: MessageType.setProjectFolderState,
+					payload: true,
+				});
+			}
+
 			this.startInterval(
 				ProjectIntervalTypes.deployments,
 				() => this.loadAndDisplayDeployments(),
@@ -263,7 +283,12 @@ export class ProjectController {
 	}
 
 	async build() {
-		const { data: buildId, error } = await ProjectsService.build(this.projectId);
+		const { data: mappedResources, error: ResourcesError } = await getResources(this.projectId);
+		if (ResourcesError) {
+			commands.executeCommand(vsCommands.showErrorMessage, (ResourcesError as Error).message);
+			LoggerService.error(namespaces.projectController, (ResourcesError as Error).message);
+		}
+		const { data: buildId, error } = await ProjectsService.build(this.projectId, mappedResources!);
 		if (error) {
 			const notification = translate().t("projects.projectBuildFailed", {
 				id: this.projectId,
@@ -280,8 +305,38 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, successMessage);
 	}
 
+	async fetchResourcesDir() {
+		const options: OpenDialogOptions = {
+			canSelectFiles: true,
+			canSelectFolders: true,
+			canSelectMany: false,
+			openLabel: translate().t("resources.selectResourcesFolder"),
+		};
+
+		const uri = await window.showOpenDialog(options);
+		if (uri && uri.length > 0) {
+			const directoryPath = uri[0].fsPath;
+			commands.executeCommand(vsCommands.setContext, this.projectId, directoryPath);
+
+			this.view.update({
+				type: MessageType.setProjectFolderState,
+				payload: true,
+			});
+
+			commands.executeCommand(vsCommands.showInfoMessage, translate().t("resources.uploadSuccess"));
+			return;
+		}
+		commands.executeCommand(vsCommands.showErrorMessage, translate().t("resources.uploadFailure"));
+	}
+
 	async run() {
-		const { data: deploymentId, error } = await ProjectsService.run(this.projectId);
+		const { data: mappedResources, error: ResourcesError } = await getResources(this.projectId);
+		if (ResourcesError) {
+			commands.executeCommand(vsCommands.showErrorMessage, (ResourcesError as Error).message);
+			LoggerService.error(namespaces.projectController, (ResourcesError as Error).message);
+		}
+
+		const { data: deploymentId, error } = await ProjectsService.run(this.projectId, mappedResources!);
 
 		if (error) {
 			const notification = translate().t("projects.projectDeployFailed", {
@@ -310,38 +365,44 @@ export class ProjectController {
 		const { error } = await DeploymentsService.activate(deploymentId);
 
 		if (error) {
-			const notification = translate().t("projects.activationFailed", { id: deploymentId });
-			const log = `${notification} - ${(error as Error).message}`;
+			const notification = translate().t("deployments.activationFailed");
+			const log = `${translate().t("deployments.activationFailedId", {
+				id: deploymentId,
+			})} - ${(error as Error).message}`;
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
-		const successMessage = translate().t("deployments.activationSucceed", { id: deploymentId });
+		const successMessage = translate().t("deployments.activationSucceed");
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
-		LoggerService.info(namespaces.projectController, translate().t("projects.activationSucceed", { id: deploymentId }));
+		LoggerService.info(
+			namespaces.projectController,
+			translate().t("deployments.activationSucceedId", { id: deploymentId })
+		);
 	}
 
 	async deactivateDeployment(deploymentId: string) {
 		const { error } = await DeploymentsService.deactivate(deploymentId);
 
 		if (error) {
-			const notification = translate().t("deployments.deactivationFailed", {
+			const notification = translate().t("deployments.deactivationFailed");
+			const logMsg = translate().t("deployments.deactivationFailedId", {
 				id: deploymentId,
 			});
-			const log = `${notification} - ${(error as Error).message}`;
+			const log = `${logMsg} - ${(error as Error).message}`;
 
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
 
-		const successMessage = translate().t("deployments.deactivationSucceed", { id: deploymentId });
+		const successMessage = translate().t("deployments.deactivationSucceed");
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
 		LoggerService.info(
 			namespaces.projectController,
-			translate().t("projects.deactivationSucceed", { id: deploymentId })
+			translate().t("deployments.deactivationSucceedId", { id: deploymentId })
 		);
 	}
 }

@@ -1,4 +1,5 @@
 import { namespaces, vsCommands } from "@constants";
+import { getResources } from "@controllers/utilities";
 import { translate } from "@i18n";
 import { LoggerService, ProjectsService } from "@services";
 import { SidebarTreeItem } from "@type/views";
@@ -65,7 +66,13 @@ export class SidebarController {
 	}
 
 	async buildProject(projectId: string) {
-		const { error, data } = await ProjectsService.build(projectId);
+		const { data: mappedResources, error: ResourcesError } = await getResources(projectId);
+		if (ResourcesError) {
+			commands.executeCommand(vsCommands.showErrorMessage, (ResourcesError as Error).message);
+			LoggerService.error(namespaces.projectController, (ResourcesError as Error).message);
+		}
+
+		const { error, data } = await ProjectsService.build(projectId, mappedResources!);
 
 		if (error) {
 			const notification = translate().t("projects.projectBuildFailed", {
@@ -81,7 +88,13 @@ export class SidebarController {
 	}
 
 	async runProject(projectId: string) {
-		const { error, data: deploymentId } = await ProjectsService.run(projectId);
+		const { data: mappedResources, error: ResourcesError } = await getResources(projectId);
+		if (ResourcesError) {
+			commands.executeCommand(vsCommands.showErrorMessage, (ResourcesError as Error).message);
+			LoggerService.error(namespaces.projectController, (ResourcesError as Error).message);
+		}
+
+		const { error, data: deploymentId } = await ProjectsService.run(projectId, mappedResources!);
 
 		if (error) {
 			const notification = translate().t("projects.projectDeployFailed", { id: projectId });

@@ -33,6 +33,16 @@ export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.runProject, (focusedItem) => runProject(focusedItem, sidebarController))
 	);
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.setContext, async (key: string, value: any) => {
+			context.workspaceState.update(key, value);
+		})
+	);
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.getContext, async (key: string, defaultValue?: any) => {
+			return context.workspaceState.get(key, defaultValue);
+		})
+	);
 
 	const sidebarView = new SidebarView();
 

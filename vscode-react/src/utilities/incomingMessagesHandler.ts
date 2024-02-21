@@ -5,7 +5,6 @@ import { Message } from "@type";
 
 export const HandleIncomingMessages = (event: MessageEvent<Message>, handlers: IIncomingMessagesHandler) => {
 	const { payload } = event.data as Message;
-
 	switch (event.data.type) {
 		case MessageType.setTheme:
 			handlers.setThemeVisualType(payload as Theme);
@@ -21,6 +20,8 @@ export const HandleIncomingMessages = (event: MessageEvent<Message>, handlers: I
 			break;
 		case MessageType.selectDeployment:
 			handlers.setSelectedDeploymentId(payload as string);
+		case MessageType.setProjectFolderState:
+			handlers.setProjectFolderState(payload as boolean);
 		default:
 	}
 };

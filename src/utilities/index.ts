@@ -8,6 +8,12 @@ export { convertTimestampToDate } from "@utilities/convertTimestampToDate.utils"
 export { sortArray } from "@utilities/sortArray.utils";
 export { extractArchive } from "@utilities/archive.utils";
 export { isTypeOrInterface } from "@utilities/checkTypeOrInterface.utils";
-export { createDirectory, listFilesInDirectory } from "@utilities/fileSystem.utils";
 export { WorkspaceConfig } from "@utilities/workspaceConfig.util";
 export { isStalarkLSPSocketMode } from "@utilities/starlark.utils";
+export {
+	createDirectory,
+	listFilesInDirectory,
+	readDirectoryRecursive,
+	getRelativePath,
+	mapFilesToContentInBytes,
+} from "@utilities/fileSystem.utils";

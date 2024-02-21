@@ -1,10 +1,11 @@
-import * as fs from "fs/promises";
+import * as fs from "fs";
+import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { translate } from "@i18n";
 
 export const createDirectory = async (outputPath: string): Promise<void> => {
 	try {
-		await fs.mkdir(outputPath, { recursive: true });
+		await fsPromises.mkdir(outputPath, { recursive: true });
 	} catch (error) {
 		const nodeError = error as NodeJS.ErrnoException;
 
@@ -19,7 +20,7 @@ export const createDirectory = async (outputPath: string): Promise<void> => {
 };
 
 export const listFilesInDirectory = async (dirPath: string, includeDirectories: boolean = false): Promise<string[]> => {
-	const entries = await fs.readdir(dirPath, { withFileTypes: true });
+	const entries = await fsPromises.readdir(dirPath, { withFileTypes: true });
 	const files: string[] = [];
 
 	for (const entry of entries) {
@@ -34,4 +35,43 @@ export const listFilesInDirectory = async (dirPath: string, includeDirectories: 
 	}
 
 	return files;
+};
+
+export const readDirectoryRecursive = (directoryPath: string): string[] => {
+	let files: string[] = [];
+
+	fs.readdirSync(directoryPath).forEach((file) => {
+		const fullPath = path.join(directoryPath, file);
+		if (fs.statSync(fullPath).isDirectory()) {
+			files = files.concat(readDirectoryRecursive(fullPath));
+		} else {
+			files.push(fullPath);
+		}
+	});
+
+	return files;
+};
+
+export const getRelativePath = (basePath: string, fullPath: string): string => {
+	const normalizedBasePath = basePath.endsWith("/") ? basePath : `${basePath}/`;
+	return fullPath.replace(normalizedBasePath, "");
+};
+
+function readFileContentInBytes(filePath: string): Buffer {
+	return fs.readFileSync(filePath);
+}
+
+export const mapFilesToContentInBytes = async (
+	basePath: string,
+	fullPathArray: string[]
+): Promise<{ [key: string]: Buffer }> => {
+	const fileContentMap: { [key: string]: Buffer } = {};
+
+	for (const fullPath of fullPathArray) {
+		const relativePath = getRelativePath(basePath, fullPath);
+		const contentBytes = readFileContentInBytes(fullPath);
+		fileContentMap[relativePath] = contentBytes;
+	}
+
+	return fileContentMap;
 };
