@@ -116,7 +116,7 @@
 					"default": "",
 					"description": "The path to the starlark LSP Server",
 					"type": "string",
-					"title": "Starlark LSP Server Socket URL"
+					"title": "Starlark LSP executable or socket url path"
 				}
 			},
 			"title": "autokitteh"
