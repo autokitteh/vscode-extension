@@ -1,3 +1,10 @@
+# [0.8.0-dev.21](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.20...v0.8.0-dev.21) (2024-02-22)
+
+
+### Bug Fixes
+
+* adjust manifest schema to the new format ([#158](https://github.com/autokitteh/vscode-extension/issues/158)) ([f0ccf04](https://github.com/autokitteh/vscode-extension/commit/f0ccf043d1eefec14e1837ab638a4ad052d73069))
+
 # [0.8.0-dev.20](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.19...v0.8.0-dev.20) (2024-02-22)
 
 
