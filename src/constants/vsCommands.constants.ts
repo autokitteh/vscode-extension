@@ -15,4 +15,6 @@ export const vsCommands = {
 	showInfoMessage: "autokitteh.showInfoMessage",
 	downloadExecutableDialog: "autokitteh.downloadExecutableDialog",
 	addConnections: "autokitteh.addConnections",
+	setContext: "autokitteh.setContext",
+	getContext: "autokitteh.getContext",
 };
