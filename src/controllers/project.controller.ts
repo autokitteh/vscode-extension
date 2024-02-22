@@ -49,7 +49,7 @@ export class ProjectController {
 		}
 		this.view.reveal(this.project.name);
 
-		this.setResourcesStateInView();
+		this.notifyViewResourcesPathChanged();
 	}
 
 	setProjectNameInView() {
@@ -232,7 +232,7 @@ export class ProjectController {
 			this.project = project;
 			this.view.show(this.project.name);
 
-			this.setResourcesStateInView();
+			this.notifyViewResourcesPathChanged();
 
 			this.startInterval(
 				ProjectIntervalTypes.deployments,
@@ -259,7 +259,7 @@ export class ProjectController {
 			() => this.loadAndDisplayDeployments(),
 			this.deploymentsRefreshRate
 		);
-		this.setResourcesStateInView();
+		this.notifyViewResourcesPathChanged();
 	}
 
 	onClose() {
@@ -310,7 +310,7 @@ export class ProjectController {
 		const resourcePath = uri[0].fsPath;
 		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: resourcePath });
 
-		this.setResourcesStateInView();
+		this.notifyViewResourcesPathChanged();
 		return;
 	}
 
@@ -392,7 +392,7 @@ export class ProjectController {
 		);
 	}
 
-	async setResourcesStateInView() {
+	async notifyViewResourcesPathChanged() {
 		const resourcesPath = await this.getResourcesPath();
 
 		if (resourcesPath) {
