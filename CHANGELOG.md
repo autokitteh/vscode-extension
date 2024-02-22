@@ -1,3 +1,10 @@
+# [0.8.0-dev.20](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.19...v0.8.0-dev.20) (2024-02-22)
+
+
+### Features
+
+* handle build and deploy using files on server ([#155](https://github.com/autokitteh/vscode-extension/issues/155)) ([976a4f4](https://github.com/autokitteh/vscode-extension/commit/976a4f4ae3bed60f39fe950535a3cc6e75d11e71))
+
 # [0.8.0-dev.19](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.18...v0.8.0-dev.19) (2024-02-22)
 
 
