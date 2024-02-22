@@ -5,11 +5,11 @@ export const mockViewInterface = {
 	reveal: vi.fn(),
 	delegate: {
 		build: vi.fn(),
-		fetchResources: vi.fn(),
+		onClickSetResourcesDirectory: vi.fn(),
 		run: vi.fn(),
 	},
 	update: vi.fn(),
-	fetchResources: vi.fn(),
+	onClickSetResourcesDirectory: vi.fn(),
 	show: vi.fn(),
 	dispose: vi.fn(),
 } as IProjectView;

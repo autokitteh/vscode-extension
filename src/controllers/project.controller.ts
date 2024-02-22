@@ -293,7 +293,7 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, successMessage);
 	}
 
-	async fetchResources() {
+	async onClickSetResourcesDirectory() {
 		const options: OpenDialogOptions = {
 			canSelectFiles: true,
 			canSelectFolders: true,
@@ -302,16 +302,16 @@ export class ProjectController {
 		};
 
 		const uri = await window.showOpenDialog(options);
-		if (uri && uri.length > 0) {
-			const resourcePath = uri[0].fsPath;
-			await commands.executeCommand(vsCommands.setContext, this.projectId, resourcePath);
-
-			this.toggleResourcesViewIfExist();
-
-			commands.executeCommand(vsCommands.showInfoMessage, translate().t("resources.uploadSaved"));
+		if (!uri || uri.length === 0) {
+			commands.executeCommand(vsCommands.showErrorMessage, translate().t("resources.setResourcesFailed"));
 			return;
 		}
-		commands.executeCommand(vsCommands.showErrorMessage, translate().t("resources.uploadFailure"));
+
+		const resourcePath = uri[0].fsPath;
+		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: resourcePath });
+
+		this.toggleResourcesViewIfExist();
+		return;
 	}
 
 	async run() {
@@ -393,13 +393,23 @@ export class ProjectController {
 	}
 
 	async toggleResourcesViewIfExist() {
-		const resourcesPath = await commands.executeCommand(vsCommands.getContext, this.projectId);
+		const resourcesPath = await this.getResourcesPath();
 
 		if (resourcesPath) {
 			this.view.update({
 				type: MessageType.setProjectFolderState,
 				payload: true,
 			});
+		} else {
+			this.view.update({
+				type: MessageType.setProjectFolderState,
+				payload: false,
+			});
 		}
+	}
+
+	async getResourcesPath() {
+		const { path }: { path: string } = await commands.executeCommand(vsCommands.getContext, this.projectId);
+		return path;
 	}
 }

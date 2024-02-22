@@ -68,7 +68,7 @@ function App() {
 							</div>
 						)}
 						<AKButton
-							onClick={() => sendMessage(MessageType.fetchResources)}
+							onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
 							classes={cn(projectFolderState ? "bg-gray-700" : "bg-red-700")}
 							title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
 						>

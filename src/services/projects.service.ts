@@ -1,4 +1,4 @@
-import { DownloadResourcesResponse, SetResourcesResponse } from "@ak-proto-ts/projects/v1/svc_pb";
+import { SetResourcesResponse } from "@ak-proto-ts/projects/v1/svc_pb";
 import { projectsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { translate } from "@i18n";
@@ -50,18 +50,7 @@ export class ProjectsService {
 		return { data: buildId, error: undefined };
 	}
 
-	static async deploy(
-		projectId: string,
-		buildId: string,
-		resources: Record<string, Uint8Array>
-	): Promise<ServiceResponse<string>> {
-		const { error: resourcesError } = await this.setResources(projectId, resources);
-		if (resourcesError) {
-			LoggerService.error(`${namespaces.projectService} - Upload resources`, (resourcesError as Error).message);
-
-			return { data: undefined, error: resourcesError };
-		}
-
+	static async deploy(projectId: string, buildId: string): Promise<ServiceResponse<string>> {
 		const { data: environments, error: envError } = await EnvironmentsService.listByProjectId(projectId);
 		if (envError) {
 			return { data: undefined, error: envError };
@@ -89,17 +78,11 @@ export class ProjectsService {
 	}
 
 	static async run(projectId: string, resources: Record<string, Uint8Array>): Promise<ServiceResponse<string>> {
-		const { error: resourcesError } = await this.setResources(projectId, resources);
-		if (resourcesError) {
-			LoggerService.error(`${namespaces.projectService} - Upload resources`, (resourcesError as Error).message);
-
-			return { data: undefined, error: resourcesError };
-		}
 		const { data: buildId, error: buildError } = await this.build(projectId, resources);
 		if (buildError) {
 			return { data: undefined, error: buildError };
 		}
-		const { data: deploymentId, error } = await this.deploy(projectId, buildId!, resources);
+		const { data: deploymentId, error } = await this.deploy(projectId, buildId!);
 		if (error) {
 			LoggerService.error(`${namespaces.projectService} - Deploy`, (error as Error).message);
 
@@ -127,18 +110,6 @@ export class ProjectsService {
 				resources,
 			});
 			return { data: undefined, error: undefined };
-		} catch (error) {
-			LoggerService.error(namespaces.resourcesService, (error as Error).message);
-			return { data: undefined, error };
-		}
-	}
-
-	static async downloadResources(projectId: string): Promise<ServiceResponse<DownloadResourcesResponse>> {
-		try {
-			const resourcesResponse = await projectsClient.downloadResources({
-				projectId,
-			});
-			return { data: resourcesResponse, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.resourcesService, (error as Error).message);
 			return { data: undefined, error };
