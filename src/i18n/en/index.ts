@@ -7,6 +7,8 @@ import projects from "@i18n/en/projects.i18n.json";
 import reactAppDeployments from "@i18n/en/reactApp/deployments.reactApp.i18n.json";
 import reactAppGeneral from "@i18n/en/reactApp/general.reactApp.i18n.json";
 import reactAppSessions from "@i18n/en/reactApp/sessions.reactApp.i18n.json";
+import reactAppSettings from "@i18n/en/reactApp/settings.reactApp.i18n.json";
+import resources from "@i18n/en/resources.i18n.json";
 import sessions from "@i18n/en/sessions.i18n.json";
 import starlark from "@i18n/en/starlark.i18n.json";
 import walkthrough from "@i18n/en/walkthrough.i18n.json";
@@ -21,9 +23,11 @@ export const english = {
 	sessions,
 	starlark,
 	deployments,
+	resources,
 	reactApp: {
 		general: reactAppGeneral,
 		deployments: reactAppDeployments,
 		sessions: reactAppSessions,
+		settings: reactAppSettings,
 	},
 };
