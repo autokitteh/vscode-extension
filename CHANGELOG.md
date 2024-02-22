@@ -1,3 +1,10 @@
+# [0.8.0-dev.19](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.18...v0.8.0-dev.19) (2024-02-22)
+
+
+### Reverts
+
+* Revert "chore(release): 0.8.0-dev.18" ([73a63de](https://github.com/autokitteh/vscode-extension/commit/73a63ded6bb752314dc6d7af31717af2a93aa528))
+
 # [0.8.0-dev.17](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.16...v0.8.0-dev.17) (2024-02-21)
 
 
