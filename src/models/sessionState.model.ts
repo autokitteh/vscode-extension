@@ -17,7 +17,7 @@ export class SessionState {
 	dateTime?: Date;
 
 	constructor(record: ProtoSessionHistoryState) {
-		const stateCase = get(record, "data.value.states.case");
+		const stateCase = get(record, "data.value.states.case", get(record, "data.case"));
 
 		if (!stateCase || !(stateCase in SessionStateType)) {
 			LoggerService.error("SessionState", translate().t("errors.unexpectedSessionStateType"));
