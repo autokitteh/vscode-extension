@@ -397,12 +397,12 @@ export class ProjectController {
 
 		if (resourcesPath) {
 			this.view.update({
-				type: MessageType.setProjectFolderState,
+				type: MessageType.setResourcesDirState,
 				payload: true,
 			});
 		} else {
 			this.view.update({
-				type: MessageType.setProjectFolderState,
+				type: MessageType.setResourcesDirState,
 				payload: false,
 			});
 		}

@@ -7,5 +7,5 @@ export interface IIncomingMessagesHandler {
 	setProjectName(projectName: string | undefined): void;
 	setSessionsSection(sessions: SessionSectionViewModel | undefined): void;
 	setSelectedDeploymentId(selectDeploymentId: string | undefined): void;
-	setProjectFolderState(projectFolder: boolean): void;
+	setResourcesDirState(projectFolder: boolean): void;
 }

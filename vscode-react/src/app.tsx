@@ -18,7 +18,7 @@ function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
-	const [projectFolderState, setProjectFolderState] = useState<boolean>(false);
+	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 
 	const messageHandlers: IIncomingMessagesHandler = {
@@ -27,7 +27,7 @@ function App() {
 		setThemeVisualType,
 		setSessionsSection,
 		setSelectedDeploymentId,
-		setProjectFolderState,
+		setResourcesDirState,
 	};
 
 	const handleMessagesFromExtension = useCallback(
@@ -52,24 +52,24 @@ function App() {
 						<AKButton
 							classes="mx-4"
 							onClick={() => sendMessage(MessageType.buildProject)}
-							disabled={!projectFolderState}
+							disabled={!resourcesDirState}
 						>
 							<div className="codicon codicon-tools mr-2"></div>
 							{translate().t("reactApp.general.build")}
 						</AKButton>
-						<AKButton onClick={() => sendMessage(MessageType.runProject)} disabled={!projectFolderState}>
+						<AKButton onClick={() => sendMessage(MessageType.runProject)} disabled={!resourcesDirState}>
 							<div className="codicon codicon-rocket mr-2"></div>
 							{translate().t("reactApp.general.deploy")}
 						</AKButton>
 						<div className="flex-grow"></div>
-						{!projectFolderState && (
+						{!resourcesDirState && (
 							<div className="mr-2">
 								<strong>{translate().t("reactApp.settings.setLocalDirectory")} </strong>
 							</div>
 						)}
 						<AKButton
 							onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
-							classes={cn(projectFolderState ? "bg-gray-700" : "bg-red-700")}
+							classes={cn(resourcesDirState ? "bg-gray-700" : "bg-red-700")}
 							title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
 						>
 							<div className="codicon codicon-folder-opened w-4"></div>

@@ -1,7 +1,7 @@
 export enum MessageType {
 	setDeployments = "SET_DEPLOYMENTS",
 	setProjectName = "SET_PROJECT_NAME",
-	setProjectFolderState = "SET_PROJECT_FOLDER",
+	setResourcesDirState = "SET_RESOURCES_DIR_STATE",
 	setTheme = "SET_THEME",
 	runProject = "RUN_PROJECT",
 	onClickSetResourcesDirectory = "ON_CLICK_SET_RESOURCES_DIRECTORY",

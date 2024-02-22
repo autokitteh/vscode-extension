@@ -20,8 +20,8 @@ export const HandleIncomingMessages = (event: MessageEvent<Message>, handlers: I
 			break;
 		case MessageType.selectDeployment:
 			handlers.setSelectedDeploymentId(payload as string);
-		case MessageType.setProjectFolderState:
-			handlers.setProjectFolderState(payload as boolean);
+		case MessageType.setResourcesDirState:
+			handlers.setResourcesDirState(payload as boolean);
 		default:
 	}
 };
