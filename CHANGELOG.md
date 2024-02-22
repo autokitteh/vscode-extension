@@ -1,3 +1,10 @@
+# [0.8.0-dev.18](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.17...v0.8.0-dev.18) (2024-02-22)
+
+
+### Features
+
+* [wip] session logs - prints and functions ([db35031](https://github.com/autokitteh/vscode-extension/commit/db35031186cb05430380356c8fc7fab2cffaefe7))
+
 # [0.8.0-dev.17](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.16...v0.8.0-dev.17) (2024-02-21)
 
 
