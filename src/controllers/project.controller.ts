@@ -308,7 +308,7 @@ export class ProjectController {
 
 			this.toggleResourcesViewIfExist();
 
-			commands.executeCommand(vsCommands.showInfoMessage, translate().t("resources.uploadSuccess"));
+			commands.executeCommand(vsCommands.showInfoMessage, translate().t("resources.uploadSaved"));
 			return;
 		}
 		commands.executeCommand(vsCommands.showErrorMessage, translate().t("resources.uploadFailure"));

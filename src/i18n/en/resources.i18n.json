@@ -1,5 +1,6 @@
 {
 	"uploadSuccess": "Resources uploaded successfully",
+	"uploadSaved": "Resources folder saved successfully",
 	"uploadFailureError": "Resources upload failed - {{error}}",
 	"uploadFailure": "Resources upload failed",
 	"selectResourcesFolder": "Select"

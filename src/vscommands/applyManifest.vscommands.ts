@@ -10,8 +10,9 @@ export const applyManifest = async () => {
 
 	let { document } = window.activeTextEditor;
 	const mainfestYaml = document.getText();
+	const filePath = document.uri.fsPath;
 
-	const { data: logs, error } = await ManifestService.applyManifest(mainfestYaml);
+	const { data: logs, error } = await ManifestService.applyManifest(mainfestYaml, filePath);
 	if (error) {
 		commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (error as Error).message);
 
