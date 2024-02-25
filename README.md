@@ -27,7 +27,15 @@ For inquiries, contact: meow@autokitteh.com
 
 ## License 📜
 
-This project is licensed under the [MIT License](LICENSE.md).
+## License
+
+&copy; \<year\> \<authors\> \[\<email\>].
+
+This project is licensed under either of
+
+- [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0) ([`LICENSE.md`](LICENSE))
+
+The [autokitteh](https://autokitteh.com) license identifier for this project is `Apache-2.0`.
 
 ## How to Contribute 🤝
 
