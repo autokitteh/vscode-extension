@@ -409,7 +409,7 @@ export class ProjectController {
 	}
 
 	async getResourcesPath() {
-		const { path }: { path: string } = await commands.executeCommand(vsCommands.getContext, this.projectId);
-		return path;
+		const projectFromContext: { path?: string } = await commands.executeCommand(vsCommands.getContext, this.projectId);
+		return projectFromContext ? projectFromContext.path : undefined;
 	}
 }
