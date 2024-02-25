@@ -111,14 +111,16 @@ export async function activate(context: ExtensionContext) {
 			if (error) {
 				LoggerService.error(
 					namespaces.startlarkLSPServer,
-					translate().t("executableFetchError", { error: error.message })
+					translate().t("starlark.executableFetchError", { error: error.message })
 				);
-				commands.executeCommand(vsCommands.showErrorMessage, translate().t("executableFetchError"));
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("starlark.executableFetchError"));
 				return;
 			}
+
 			if (didUpdate) {
 				context.workspaceState.update("autokitteh.starlarkLSPPath", starlarkewPathAfterVersionUpdate);
 				context.workspaceState.update("autokitteh.starlarkVersion", starlarkNewVersionAfterVersionUpdate);
+
 				LoggerService.info(
 					namespaces.startlarkLSPServer,
 					translate().t("starlark.executableDownloadedSuccessfully", { version: starlarkNewVersionAfterVersionUpdate })
@@ -129,8 +131,16 @@ export async function activate(context: ExtensionContext) {
 				);
 			}
 
+			const starlarkLSPPathForServer = context.workspaceState.get<string>("autokitteh.starlarkLSPPath", "");
+
+			if (starlarkLSPPathForServer === "") {
+				LoggerService.error(namespaces.startlarkLSPServer, translate().t("starlark.LSPPathNotSetError"));
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("starlark.LSPPathNotSetError"));
+				return;
+			}
+
 			let serverOptions = {
-				command: starlarkLSPPathFromConfig,
+				command: starlarkLSPPathForServer,
 				args: starlarkLocalLSPDefaultArgs,
 			};
 
