@@ -118,8 +118,8 @@ export async function activate(context: ExtensionContext) {
 			}
 
 			if (didUpdate) {
-				context.workspaceState.update("autokitteh.starlarkLSPPath", starlarkewPathAfterVersionUpdate);
-				context.workspaceState.update("autokitteh.starlarkVersion", starlarkNewVersionAfterVersionUpdate);
+				await context.workspaceState.update("autokitteh.starlarkLSPPath", starlarkewPathAfterVersionUpdate);
+				await context.workspaceState.update("autokitteh.starlarkVersion", starlarkNewVersionAfterVersionUpdate);
 
 				LoggerService.info(
 					namespaces.startlarkLSPServer,
@@ -132,6 +132,7 @@ export async function activate(context: ExtensionContext) {
 			}
 
 			const starlarkLSPPathForServer = context.workspaceState.get<string>("autokitteh.starlarkLSPPath", "");
+			const starlarkLSPVersionForServer = context.workspaceState.get<string>("autokitteh.starlarkVersion", "");
 
 			if (starlarkLSPPathForServer === "") {
 				LoggerService.error(namespaces.startlarkLSPServer, translate().t("starlark.LSPPathNotSetError"));
@@ -144,11 +145,7 @@ export async function activate(context: ExtensionContext) {
 				args: starlarkLocalLSPDefaultArgs,
 			};
 
-			StarlarkLSPService.connectLSPServerLocally(
-				serverOptions,
-				starlarkNewVersionAfterVersionUpdate!,
-				starlarkewPathAfterVersionUpdate!
-			);
+			StarlarkLSPService.connectLSPServerLocally(serverOptions, starlarkLSPPathForServer, starlarkLSPVersionForServer);
 		}
 	};
 	initStarlarkLSP();
