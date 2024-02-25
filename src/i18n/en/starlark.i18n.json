@@ -23,5 +23,6 @@
 	"invalidSocketURLError": "Invalid Starlark socket URL: {{starlarkSocketLspUrl}}",
 	"invalidSocketURL": "Invalid Starlark socket URL",
 	"executableFetchError": "Error checking if there is a new Starlark LSP version: {{error}}",
-	"executableFetch": "Error checking if there is a new Starlark LSP version"
+	"executableFetch": "Error checking if there is a new Starlark LSP version",
+	"LSPPathNotSetError": "Starlark LSP path not set"
 }
