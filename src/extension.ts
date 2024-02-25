@@ -116,9 +116,19 @@ export async function activate(context: ExtensionContext) {
 				commands.executeCommand(vsCommands.showErrorMessage, translate().t("executableFetchError"));
 				return;
 			}
+
+			let serverOptions = {
+				command: starlarkLSPPathFromConfig,
+				args: starlarkLocalLSPDefaultArgs,
+			};
+
 			if (didUpdate) {
 				context.workspaceState.update("autokitteh.starlarkLSPPath", starlarkewPathAfterVersionUpdate);
 				context.workspaceState.update("autokitteh.starlarkVersion", starlarkNewVersionAfterVersionUpdate);
+				serverOptions = {
+					command: starlarkewPathAfterVersionUpdate!,
+					args: starlarkLocalLSPDefaultArgs,
+				};
 				LoggerService.info(
 					namespaces.startlarkLSPServer,
 					translate().t("starlark.executableDownloadedSuccessfully", { version: starlarkNewVersionAfterVersionUpdate })
@@ -128,11 +138,6 @@ export async function activate(context: ExtensionContext) {
 					translate().t("starlark.executableDownloadedSuccessfully", { version: starlarkNewVersionAfterVersionUpdate })
 				);
 			}
-
-			let serverOptions = {
-				command: starlarkLSPPathFromConfig,
-				args: starlarkLocalLSPDefaultArgs,
-			};
 
 			StarlarkLSPService.connectLSPServerLocally(
 				serverOptions,
