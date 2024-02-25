@@ -344,7 +344,7 @@
 		"validate": "run-p lint type:check format:check",
 		"package": "vsce package"
 	},
-	"version": "0.8.0-dev.21",
+	"version": "0.8.0-dev.22",
 	"workspaces": [
 		"vscode-react"
 	]
