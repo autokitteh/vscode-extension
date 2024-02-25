@@ -20,8 +20,12 @@ export const HandleIncomingMessages = (event: MessageEvent<Message>, handlers: I
 			break;
 		case MessageType.selectDeployment:
 			handlers.setSelectedDeploymentId(payload as string);
+			break;
 		case MessageType.setResourcesDirState:
 			handlers.setResourcesDirState(payload as boolean);
+			break;
+		case MessageType.setEntrypoints:
+			handlers.setEntrypoints(payload as { entrypoints: Record<string, string[]> });
 		default:
 	}
 };
