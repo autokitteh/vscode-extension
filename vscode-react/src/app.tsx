@@ -21,6 +21,7 @@ function App() {
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
+	const [entrypoints, setEntrypoints] = useState<{ entrypoints: Record<string, string[]> | undefined }>();
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [code, setCode] = useState("// type your code...");
 	const [modal, setModal] = useState(false);
@@ -32,6 +33,7 @@ function App() {
 		setSessionsSection,
 		setSelectedDeploymentId,
 		setResourcesDirState,
+		setEntrypoints,
 	};
 
 	const handleMessagesFromExtension = useCallback(
@@ -45,6 +47,10 @@ function App() {
 			window.removeEventListener("message", handleMessagesFromExtension);
 		};
 	}, [handleMessagesFromExtension]);
+
+	useEffect(() => {
+		console.log("entrypoints", entrypoints);
+	}, [entrypoints]);
 
 	const editorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
 		console.log("editorDidMount", editor);

@@ -267,6 +267,15 @@ export class ProjectController {
 				() => this.loadAndDisplayDeployments(),
 				this.deploymentsRefreshRate
 			);
+
+			const entrypoints = await commands.executeCommand(vsCommands.getContext, `${this.project.name}-entrypoints`);
+			if (entrypoints) {
+				this.view.update({
+					type: MessageType.setEntrypoints,
+					payload: entrypoints,
+				});
+			}
+
 			return;
 		}
 		LoggerService.error(namespaces.projectController, log);
