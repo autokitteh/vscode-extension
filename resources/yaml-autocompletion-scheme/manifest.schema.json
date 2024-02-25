@@ -56,15 +56,6 @@
 				"name": {
 					"type": "string"
 				},
-				"root_url": {
-					"type": "string"
-				},
-				"paths": {
-					"items": {
-						"type": "string"
-					},
-					"type": "array"
-				},
 				"connections": {
 					"items": {
 						"$ref": "#/$defs/Connection"
@@ -86,7 +77,7 @@
 			},
 			"additionalProperties": false,
 			"type": "object",
-			"required": ["name", "paths"]
+			"required": ["name"]
 		},
 		"Trigger": {
 			"properties": {
