@@ -1,3 +1,10 @@
+# [0.8.0-dev.25](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.24...v0.8.0-dev.25) (2024-02-25)
+
+
+### Bug Fixes
+
+* fix error on session states without date-time ([#159](https://github.com/autokitteh/vscode-extension/issues/159)) ([532c4f5](https://github.com/autokitteh/vscode-extension/commit/532c4f554e330a4a78389993607a3a8a7d1ff6e6))
+
 # [0.8.0-dev.24](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.23...v0.8.0-dev.24) (2024-02-25)
 
 
