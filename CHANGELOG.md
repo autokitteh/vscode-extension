@@ -1,3 +1,10 @@
+# [0.8.0-dev.24](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.23...v0.8.0-dev.24) (2024-02-25)
+
+
+### Bug Fixes
+
+* fix error on project load of path from context ([#162](https://github.com/autokitteh/vscode-extension/issues/162)) ([748269a](https://github.com/autokitteh/vscode-extension/commit/748269a69c9f427fa294d2452b470c4c58e98b3d))
+
 # [0.8.0-dev.23](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.22...v0.8.0-dev.23) (2024-02-25)
 
 
