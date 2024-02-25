@@ -79,7 +79,7 @@ function App() {
 						<AKButton onClick={() => setModal(true)} classes="w-10 mr-2">
 							<div className="codicon codicon-edit mr-2"></div>
 						</AKButton>
-						<AKButton onClick={() => sendMessage(MessageType.runProject)} classes="mr-4">
+						<AKButton onClick={() => sendMessage(MessageType.runSingleShot)} classes="mr-4">
 							<div className="codicon codicon-send mr-2"></div>
 							{translate().t("reactApp.general.singleShot")}
 						</AKButton>

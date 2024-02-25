@@ -1,5 +1,6 @@
 import { error } from "console";
 import { Session as ProtoSession } from "@ak-proto-ts/sessions/v1/session_pb";
+import { StartRequest } from "@ak-proto-ts/sessions/v1/svc_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { SessionState, convertSessionProtoToModel } from "@models";
@@ -42,6 +43,26 @@ export class SessionsService {
 			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 
 			return { data: undefined, error };
+		}
+	}
+
+	static async runSingleShot(deploymentId: string): Promise<void> {
+		try {
+			const newSession = {
+				deploymentId,
+				envId: "",
+				inputs: {},
+				entrypoint: {
+					col: 0,
+					row: 0,
+					name: "on_http_get",
+					path: "http.star",
+				},
+			};
+			const response = await sessionsClient.start({ session: newSession } as unknown as StartRequest);
+			console.log(response);
+		} catch (error) {
+			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 		}
 	}
 

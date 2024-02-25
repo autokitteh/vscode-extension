@@ -370,6 +370,13 @@ export class ProjectController {
 		});
 	}
 
+	async runSingleShot() {
+		LoggerService.info(namespaces.projectController, "signleShot");
+		if (this.selectedDeploymentId) {
+			await SessionsService.runSingleShot(this.selectedDeploymentId);
+		}
+	}
+
 	async deactivateDeployment(deploymentId: string) {
 		const { error } = await DeploymentsService.deactivate(deploymentId);
 
