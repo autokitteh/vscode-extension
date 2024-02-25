@@ -14,7 +14,7 @@ export class StarlarkVersionManagerService {
 		currentPath: string,
 		currentVersion: string,
 		extensionPath: string
-	): Promise<{ path?: string; version?: string; error?: Error; didUpdate?: boolean }> {
+	): Promise<{ path?: string; version?: string; error?: Error; didUpdate: boolean }> {
 		const platform = os.platform();
 		const arch = StarlarkVersionManagerService.determineArchitecture();
 
@@ -25,20 +25,18 @@ export class StarlarkVersionManagerService {
 		if (releaseError) {
 			return {
 				error: new Error(translate().t("starlark.executableDownloadedFailedError", { error: releaseError.message })),
+				didUpdate: false,
 			};
 		}
 
 		const doesFileExist = fs.existsSync(currentPath);
 		if (currentVersion === latestRelease!.tag && doesFileExist) {
-			return { path: currentPath, version: currentVersion };
+			return { didUpdate: false };
 		}
 
 		const userResponse = await StarlarkVersionManagerService.promptUserForUpdate(doesFileExist);
 		if (userResponse !== translate().t("starlark.downloadExecutableDialogApprove")) {
-			return {
-				path: currentPath,
-				version: currentVersion,
-			};
+			return { didUpdate: false };
 		}
 
 		const { data: newFilePath, error: newFileError } = await StarlarkVersionManagerService.downloadAndUpdateLSP(
@@ -49,7 +47,7 @@ export class StarlarkVersionManagerService {
 			const error = new Error(
 				translate().t("starlark.executableDownloadedFailedError", { error: newFileError.message })
 			);
-			return { error };
+			return { error, didUpdate: false };
 		}
 
 		return {
