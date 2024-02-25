@@ -1,3 +1,10 @@
+# [0.8.0-dev.22](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.21...v0.8.0-dev.22) (2024-02-25)
+
+
+### Bug Fixes
+
+* adjust manifest schema by ak server ([#163](https://github.com/autokitteh/vscode-extension/issues/163)) ([ff5ef12](https://github.com/autokitteh/vscode-extension/commit/ff5ef129bbd60dcb66365dccbf2c8572560b9f72))
+
 # [0.8.0-dev.21](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.20...v0.8.0-dev.21) (2024-02-22)
 
 
