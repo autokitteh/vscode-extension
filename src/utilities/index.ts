@@ -16,4 +16,5 @@ export {
 	readDirectoryRecursive,
 	getRelativePath,
 	mapFilesToContentInBytes,
+	getDirectoryOfFile,
 } from "@utilities/fileSystem.utils";

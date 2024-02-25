@@ -71,3 +71,5 @@ export const mapFilesToContentInBytes = async (
 
 	return fileContentMap;
 };
+
+export const getDirectoryOfFile = (filePath: string): string => path.dirname(filePath);
