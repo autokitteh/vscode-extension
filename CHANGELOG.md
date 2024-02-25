@@ -1,3 +1,10 @@
+# [0.8.0-dev.26](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.25...v0.8.0-dev.26) (2024-02-25)
+
+
+### Bug Fixes
+
+* fix starlark initiation ([#166](https://github.com/autokitteh/vscode-extension/issues/166)) ([e6748d8](https://github.com/autokitteh/vscode-extension/commit/e6748d87b4329729b286ba1e4b8bded58742b979))
+
 # [0.8.0-dev.25](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.24...v0.8.0-dev.25) (2024-02-25)
 
 
