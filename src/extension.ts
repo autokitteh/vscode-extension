@@ -118,8 +118,8 @@ export async function activate(context: ExtensionContext) {
 			}
 
 			if (didUpdate) {
-				context.workspaceState.update("autokitteh.starlarkLSPPath", starlarkewPathAfterVersionUpdate);
-				context.workspaceState.update("autokitteh.starlarkVersion", starlarkNewVersionAfterVersionUpdate);
+				await context.workspaceState.update("autokitteh.starlarkLSPPath", starlarkewPathAfterVersionUpdate);
+				await context.workspaceState.update("autokitteh.starlarkVersion", starlarkNewVersionAfterVersionUpdate);
 
 				LoggerService.info(
 					namespaces.startlarkLSPServer,
