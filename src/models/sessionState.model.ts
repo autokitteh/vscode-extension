@@ -26,7 +26,7 @@ export class SessionState {
 		}
 
 		const dateTimeStamp = get(record, "data.value.t") as unknown as ProtoTimestamp;
-		this.dateTime = convertTimestampToDate(dateTimeStamp);
+		this.dateTime = dateTimeStamp ? convertTimestampToDate(dateTimeStamp) : undefined;
 		this.error = get(
 			record,
 			"data.value.states.value.error.message",
