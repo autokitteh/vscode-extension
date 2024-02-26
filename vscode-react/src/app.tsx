@@ -130,8 +130,7 @@ function App() {
 		transform: "translate(-50%, 10%)", // Adjust to perfectly center
 		display: showPopper ? "flex" : "none", // Control visibility
 		width: "45%",
-		zIndex: 9999, // Ensure it's above other content
-		// Add more styles as needed for padding, background, etc.
+		zIndex: 40, // Ensure popper is always on top
 	};
 	return (
 		<main>
@@ -193,13 +192,20 @@ function App() {
 								</VSCodeDropdown>
 							</div>
 							<div>
-								<div className="codicon codicon-symbol-namespace" ref={referenceEl}></div>{" "}
-								{"{param1: 'test', param2: 'test'..."}
+								<div
+									className="codicon codicon-symbol-namespace inline-block"
+									ref={referenceEl}
+									onClick={() => setModal(true)}
+								></div>{" "}
+								<div onClick={() => setModal(true)} className=" inline-block">
+									{"{param1: 'test', param2: 'test'..."}
+								</div>
 							</div>
 							<div>
-								<AKButton>Save</AKButton>
-								<AKButton>Save & Send</AKButton>
-								<AKButton classes="bg-white text-black">Dismiss</AKButton>
+								<AKButton onClick={() => togglePopper()}>Save</AKButton>
+								<AKButton classes="bg-white text-black" onClick={() => togglePopper()}>
+									Dismiss
+								</AKButton>
 							</div>
 						</div>
 						<AKButton classes="w-10 mr-2" onClick={togglePopper}>
@@ -236,6 +242,7 @@ function App() {
 										value={code}
 										onChange={(value) => setCode(value)}
 										editorDidMount={editorDidMount}
+										className="z-50"
 									/>
 								</div>
 								<div className="flex w-full justify-end mt-2">
