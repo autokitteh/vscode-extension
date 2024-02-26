@@ -2,6 +2,7 @@
 	"clickHere": "Click here to connect",
 	"projects": "Projects",
 	"noProjectsFound": "No projects found",
+	"noProjectsCreated": "No new projects created",
 	"openProject": "Open project",
 	"projectBuildSucceed": "Project build succeed - id: {{id}}",
 	"projectBuildFailed": "Project build failed - id: {{id}}",
