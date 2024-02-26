@@ -25,7 +25,7 @@ export const HandleIncomingMessages = (event: MessageEvent<Message>, handlers: I
 			handlers.setResourcesDirState(payload as boolean);
 			break;
 		case MessageType.setEntrypoints:
-			handlers.setEntrypoints(payload as { entrypoints: Record<string, string[]> });
+			handlers.setEntrypoints(payload as Record<string, string[]>);
 		default:
 	}
 };

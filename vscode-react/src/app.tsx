@@ -23,10 +23,11 @@ function App() {
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
-	const [entrypoints, setEntrypoints] = useState<{ entrypoints: Record<string, string[]> | undefined }>();
+	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [code, setCode] = useState("// type your code...");
 	const [modal, setModal] = useState(false);
+	console.log("start");
 
 	const messageHandlers: IIncomingMessagesHandler = {
 		setDeploymentsSection,
@@ -50,8 +51,34 @@ function App() {
 		};
 	}, [handleMessagesFromExtension]);
 
+	const [files, setFiles] = useState("");
+	const [selectedFile, setSelectedFile] = useState("");
+	const [functions, setFunctions] = useState([]);
+	const [selectedFunction, setSelectedFunction] = useState("");
+
 	useEffect(() => {
-		console.log("entrypoints", entrypoints);
+		if (files) {
+			console.log("selectedFile", selectedFile);
+			console.log("selectedFile", files);
+
+			// Update functions when selectedFile changes
+			const functionsForSelectedFile = files[selectedFile];
+			console.log("functionsForSelectedFile", functionsForSelectedFile);
+
+			setFunctions(functionsForSelectedFile || []);
+			setSelectedFunction(functionsForSelectedFile?.[0] || "");
+		}
+	}, [selectedFile]);
+
+	useEffect(() => {
+		if (entrypoints) {
+			console.log("entrypoints1", entrypoints);
+			console.log("entrypoints2", entrypoints["http.star"]);
+
+			setFiles(entrypoints);
+			setSelectedFile("http.star");
+			setFunctions(entrypoints["http.star"]);
+		}
 	}, [entrypoints]);
 
 	const editorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => setupPasteFormatting(editor);
@@ -102,7 +129,7 @@ function App() {
 		left: "31%",
 		transform: "translate(-50%, 10%)", // Adjust to perfectly center
 		display: showPopper ? "flex" : "none", // Control visibility
-		width: "34%",
+		width: "45%",
 		zIndex: 9999, // Ensure it's above other content
 		// Add more styles as needed for padding, background, etc.
 	};
@@ -132,33 +159,49 @@ function App() {
 							ref={popperEl}
 							style={centeredPopperStyles}
 							{...attributes.popper}
-							className="bg-white text-black border border-gray-300 p-4 rounded-lg shadow-lg space-between"
+							// eslint-disable-next-line max-len
+							className="justify-between lg:flex-row bg-white text-black border border-gray-300 p-4 rounded-lg shadow-lg md:flex-col sm:flex-col max-sm:flex-col"
 						>
 							<div>
 								File:
-								<VSCodeDropdown>
-									<option value="option1">Option 1</option>
-									<option value="option2">Option 2</option>
-									<option value="option3">Option 3</option>
+								<VSCodeDropdown
+									value={selectedFile}
+									onChange={(e) => setSelectedFile(e.target.value)}
+									// disabled={files && Object(files).keys.length <= 1}
+								>
+									{files &&
+										Object.keys(files).map((file) => (
+											<option key={file} value={file}>
+												{file}
+											</option>
+										))}
 								</VSCodeDropdown>
 							</div>
 							<div>
 								Entrypoint:
-								<VSCodeDropdown>
-									<option value="option1">Option 1</option>
-									<option value="option2">Option 2</option>
-									<option value="option3">Option 3</option>
+								<VSCodeDropdown
+									value={selectedFunction}
+									onChange={(e) => setSelectedFunction(e.target.value)}
+									// disabled={functions && functions.length <= 1}
+								>
+									{functions &&
+										functions.map((func) => (
+											<option key={func} value={func}>
+												{func}
+											</option>
+										))}
 								</VSCodeDropdown>
 							</div>
 							<div>
-								<div className="codicon codicon-symbol-namespace" ref={referenceEl}></div> Modify Params
+								<div className="codicon codicon-symbol-namespace" ref={referenceEl}></div>{" "}
+								{"{param1: 'test', param2: 'test'..."}
 							</div>
 							<div>
 								<AKButton>Save</AKButton>
+								<AKButton>Save & Send</AKButton>
+								<AKButton classes="bg-white text-black">Dismiss</AKButton>
 							</div>
 						</div>
-
-						<button>I'm a mystery</button>
 						<AKButton classes="w-10 mr-2" onClick={togglePopper}>
 							<div className="codicon codicon-edit mr-2" ref={referenceEl}></div>
 						</AKButton>

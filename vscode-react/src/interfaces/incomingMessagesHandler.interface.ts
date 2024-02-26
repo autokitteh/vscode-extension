@@ -8,5 +8,5 @@ export interface IIncomingMessagesHandler {
 	setSessionsSection(sessions: SessionSectionViewModel | undefined): void;
 	setSelectedDeploymentId(selectDeploymentId: string | undefined): void;
 	setResourcesDirState(projectFolder: boolean): void;
-	setEntrypoints(entrypoints: { entrypoints: Record<string, string[]> }): void;
+	setEntrypoints(entrypoints: Record<string, string[]>): void;
 }
