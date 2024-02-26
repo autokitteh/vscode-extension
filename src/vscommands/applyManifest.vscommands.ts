@@ -21,9 +21,9 @@ export const applyManifest = async () => {
 
 	const manifestDirectory = getDirectoryOfFile(filePath);
 
-	const { logs, project } = manifestResponse;
+	const { logs, projectIds } = manifestResponse;
 
-	await commands.executeCommand(vsCommands.setContext, project.projectId, { path: manifestDirectory });
+	await commands.executeCommand(vsCommands.setContext, projectIds[0], { path: manifestDirectory });
 
 	(logs || []).forEach((log) => LoggerService.info(namespaces.applyManifest, `${log}`));
 	commands.executeCommand(vsCommands.showInfoMessage, translate().t("manifest.appliedSuccessfully"));
