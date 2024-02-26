@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { CSSProperties, useCallback, useEffect, useRef, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
@@ -12,8 +12,10 @@ import { HandleIncomingMessages, sendMessage } from "@react-utilities";
 import { cn } from "@react-utilities/cnClasses.utils";
 import { Message } from "@type";
 import "./app.css";
+import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
 import * as monaco from "monaco-editor";
 import MonacoEditor from "react-monaco-editor";
+import { usePopper } from "react-popper";
 
 function App() {
 	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel | undefined>();
@@ -52,15 +54,58 @@ function App() {
 		console.log("entrypoints", entrypoints);
 	}, [entrypoints]);
 
-	const editorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
-		console.log("editorDidMount", editor);
-		editor.focus();
-	};
-	const onChange = (newValue: string, e: monaco.editor.IModelContentChangedEvent) => {
-		console.log("onChange", newValue, e);
-		setCode(newValue);
+	const editorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => setupPasteFormatting(editor);
+
+	const setupPasteFormatting = (editor: monaco.editor.IStandaloneCodeEditor) => {
+		editor.onDidPaste((e) => {
+			const pastedContent = editor.getModel()?.getValueInRange(e.range);
+			if (!pastedContent) {
+				return;
+			}
+			const formattedContent = formatPastedContent(pastedContent);
+
+			editor.executeEdits("", [
+				{
+					range: e.range,
+					text: formattedContent,
+					forceMoveMarkers: true,
+				},
+			]);
+
+			setCode(formattedContent);
+		});
 	};
 
+	const formatPastedContent = (content: string) => {
+		return JSON.stringify(JSON.parse(content), null, 2);
+	};
+
+	const referenceEl = useRef<HTMLDivElement | null>(null);
+	const popperEl = useRef<HTMLDivElement | null>(null);
+
+	const { attributes } = usePopper(referenceEl.current, popperEl.current, {
+		placement: "bottom",
+		modifiers: [
+			{
+				name: "offset",
+				options: {
+					offset: [0, 10], // [skidding, distance]
+				},
+			},
+		],
+	});
+	const [showPopper, setShowPopper] = useState(false); // State to control popper visibility
+	const togglePopper = () => setShowPopper(!showPopper); // Function to toggle popper visibility
+	const centeredPopperStyles: CSSProperties = {
+		position: "fixed", // Use 'fixed' to position relative to the viewport
+		top: "5%",
+		left: "31%",
+		transform: "translate(-50%, 10%)", // Adjust to perfectly center
+		display: showPopper ? "flex" : "none", // Control visibility
+		width: "34%",
+		zIndex: 9999, // Ensure it's above other content
+		// Add more styles as needed for padding, background, etc.
+	};
 	return (
 		<main>
 			{!!projectName ? (
@@ -82,10 +127,42 @@ function App() {
 						</AKButton>
 
 						<div className="mx-4">|</div>
-						<AKButton onClick={() => setModal(true)} classes="w-10 mr-2">
-							<div className="codicon codicon-edit mr-2"></div>
+
+						<div
+							ref={popperEl}
+							style={centeredPopperStyles}
+							{...attributes.popper}
+							className="bg-white text-black border border-gray-300 p-4 rounded-lg shadow-lg space-between"
+						>
+							<div>
+								File:
+								<VSCodeDropdown>
+									<option value="option1">Option 1</option>
+									<option value="option2">Option 2</option>
+									<option value="option3">Option 3</option>
+								</VSCodeDropdown>
+							</div>
+							<div>
+								Entrypoint:
+								<VSCodeDropdown>
+									<option value="option1">Option 1</option>
+									<option value="option2">Option 2</option>
+									<option value="option3">Option 3</option>
+								</VSCodeDropdown>
+							</div>
+							<div>
+								<div className="codicon codicon-symbol-namespace" ref={referenceEl}></div> Modify Params
+							</div>
+							<div>
+								<AKButton>Save</AKButton>
+							</div>
+						</div>
+
+						<button>I'm a mystery</button>
+						<AKButton classes="w-10 mr-2" onClick={togglePopper}>
+							<div className="codicon codicon-edit mr-2" ref={referenceEl}></div>
 						</AKButton>
-						<AKButton onClick={() => sendMessage(MessageType.runSingleShot)} classes="mr-4">
+						<AKButton onClick={() => sendMessage(MessageType.runSingleShot, code)} classes="mr-4">
 							<div className="codicon codicon-send mr-2"></div>
 							{translate().t("reactApp.general.singleShot")}
 						</AKButton>
@@ -114,7 +191,7 @@ function App() {
 										width="100vw"
 										theme="vs-dark"
 										value={code}
-										onChange={onChange}
+										onChange={(value) => setCode(value)}
 										editorDidMount={editorDidMount}
 									/>
 								</div>
