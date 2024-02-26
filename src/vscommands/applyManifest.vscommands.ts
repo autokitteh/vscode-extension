@@ -23,7 +23,7 @@ export const applyManifest = async () => {
 
 	const { logs, projectIds } = manifestResponse!;
 	if (projectIds.length === 0) {
-		commands.executeCommand(vsCommands.showErrorMessage, translate().t("projects.noProjectsCreated"));
+		commands.executeCommand(vsCommands.showErrorMessage, translate().t("manifest.noProjectsCreated"));
 	} else {
 		await commands.executeCommand(vsCommands.setContext, projectIds[0], { path: manifestDirectory });
 	}
