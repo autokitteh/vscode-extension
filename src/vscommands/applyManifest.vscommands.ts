@@ -21,7 +21,7 @@ export const applyManifest = async () => {
 
 	const manifestDirectory = getDirectoryOfFile(filePath);
 
-	const { logs, projectIds } = manifestResponse;
+	const { logs, projectIds } = manifestResponse!;
 
 	await commands.executeCommand(vsCommands.setContext, projectIds[0], { path: manifestDirectory });
 
