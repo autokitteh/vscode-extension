@@ -27,7 +27,7 @@ For inquiries, contact: meow@autokitteh.com
 
 ## License 📜
 
-&copy; \2024 \autokitteh.
+&copy; 2024 autokitteh.
 
 This project is licensed under
 
