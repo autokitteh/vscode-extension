@@ -51,19 +51,14 @@ function App() {
 		};
 	}, [handleMessagesFromExtension]);
 
-	const [files, setFiles] = useState("");
-	const [selectedFile, setSelectedFile] = useState("");
-	const [functions, setFunctions] = useState([]);
-	const [selectedFunction, setSelectedFunction] = useState("");
+	const [files, setFiles] = useState<Record<string, string[]>>();
+	const [selectedFile, setSelectedFile] = useState<string>("");
+	const [functions, setFunctions] = useState<string[]>();
+	const [selectedFunction, setSelectedFunction] = useState<string>("");
 
 	useEffect(() => {
 		if (files) {
-			console.log("selectedFile", selectedFile);
-			console.log("selectedFile", files);
-
-			// Update functions when selectedFile changes
 			const functionsForSelectedFile = files[selectedFile];
-			console.log("functionsForSelectedFile", functionsForSelectedFile);
 
 			setFunctions(functionsForSelectedFile || []);
 			setSelectedFunction(functionsForSelectedFile?.[0] || "");
@@ -72,9 +67,6 @@ function App() {
 
 	useEffect(() => {
 		if (entrypoints) {
-			console.log("entrypoints1", entrypoints);
-			console.log("entrypoints2", entrypoints["http.star"]);
-
 			setFiles(entrypoints);
 			setSelectedFile("http.star");
 			setFunctions(entrypoints["http.star"]);
@@ -166,7 +158,7 @@ function App() {
 								<VSCodeDropdown
 									value={selectedFile}
 									onChange={(e) => setSelectedFile(e.target.value)}
-									// disabled={files && Object(files).keys.length <= 1}
+									disabled={files !== undefined && Object.keys(files).length <= 1}
 								>
 									{files &&
 										Object.keys(files).map((file) => (
@@ -181,7 +173,7 @@ function App() {
 								<VSCodeDropdown
 									value={selectedFunction}
 									onChange={(e) => setSelectedFunction(e.target.value)}
-									// disabled={functions && functions.length <= 1}
+									disabled={functions !== undefined && functions.length <= 1}
 								>
 									{functions &&
 										functions.map((func) => (
