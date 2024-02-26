@@ -113,17 +113,18 @@ function App() {
 			},
 		],
 	});
-	const [showPopper, setShowPopper] = useState(false); // State to control popper visibility
-	const togglePopper = () => setShowPopper(!showPopper); // Function to toggle popper visibility
+	const [showPopper, setShowPopper] = useState(false);
+	const togglePopper = () => setShowPopper(!showPopper);
 	const centeredPopperStyles: CSSProperties = {
-		position: "fixed", // Use 'fixed' to position relative to the viewport
+		position: "fixed",
 		top: "5%",
 		left: "31%",
-		transform: "translate(-50%, 10%)", // Adjust to perfectly center
-		display: showPopper ? "flex" : "none", // Control visibility
+		transform: "translate(-50%, 10%)",
+		display: showPopper ? "flex" : "none",
 		width: "45%",
-		zIndex: 40, // Ensure popper is always on top
+		zIndex: 40,
 	};
+
 	return (
 		<main>
 			{!!projectName ? (
@@ -157,7 +158,7 @@ function App() {
 								File:
 								<VSCodeDropdown
 									value={selectedFile}
-									onChange={(e) => setSelectedFile(e.target.value)}
+									onChange={(e: any) => setSelectedFile(e.target.value)}
 									disabled={files !== undefined && Object.keys(files).length <= 1}
 								>
 									{files &&
@@ -172,7 +173,7 @@ function App() {
 								Entrypoint:
 								<VSCodeDropdown
 									value={selectedFunction}
-									onChange={(e) => setSelectedFunction(e.target.value)}
+									onChange={(e: any) => setSelectedFunction(e.target.value)}
 									disabled={functions !== undefined && functions.length <= 1}
 								>
 									{functions &&
