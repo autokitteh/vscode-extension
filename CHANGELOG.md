@@ -1,3 +1,10 @@
+# [0.8.0-dev.27](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.26...v0.8.0-dev.27) (2024-02-26)
+
+
+### Features
+
+* set root directory of project by manifest directory ([#160](https://github.com/autokitteh/vscode-extension/issues/160)) ([7060782](https://github.com/autokitteh/vscode-extension/commit/70607825485cf681e325559b0174834a4a7f9a7b))
+
 # [0.8.0-dev.26](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.25...v0.8.0-dev.26) (2024-02-25)
 
 
