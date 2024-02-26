@@ -268,7 +268,10 @@ export class ProjectController {
 				this.deploymentsRefreshRate
 			);
 
-			const entrypoints = await commands.executeCommand(vsCommands.getContext, `${this.project.name}-entrypoints`);
+			const { entrypoints } = (await commands.executeCommand(
+				vsCommands.getContext,
+				`${this.project.name}-entrypoints`
+			)) as { entrypoints: Record<string, string[]> };
 			if (entrypoints) {
 				this.view.update({
 					type: MessageType.setEntrypoints,
