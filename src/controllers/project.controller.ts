@@ -397,7 +397,9 @@ export class ProjectController {
 		});
 	}
 
-	async runSingleShot() {
+	async runSingleShot(sessionProps: string) {
+		console.log(sessionProps);
+
 		LoggerService.info(namespaces.projectController, "signleShot");
 		if (this.selectedDeploymentId) {
 			await SessionsService.runSingleShot(this.selectedDeploymentId);

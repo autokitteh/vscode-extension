@@ -12,7 +12,7 @@ export interface IProjectViewDelegate {
 	activateDeployment?: Callback<string>;
 	copyToClipboard?: Callback<string>;
 	deactivateDeployment?: Callback<string>;
-	runSingleShot?: Callback;
+	runSingleShot?: Callback<string>;
 }
 
 export interface IProjectView {

@@ -52,7 +52,7 @@ export class ProjectView implements IProjectView {
 						this.delegate?.copyToClipboard?.(message.payload as string);
 						break;
 					case MessageType.runSingleShot:
-						this.delegate?.runSingleShot?.();
+						this.delegate?.runSingleShot?.(message.payload as string);
 						break;
 				}
 			},
