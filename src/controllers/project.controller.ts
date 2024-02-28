@@ -1,7 +1,6 @@
 import { vsCommands, namespaces, channels } from "@constants";
 import { getResources } from "@controllers/utilities";
-import { MessageType } from "@enums";
-import { ProjectIntervalTypes } from "@enums";
+import { MessageType, ProjectIntervalTypes, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { SessionState } from "@models";
@@ -24,6 +23,7 @@ export class ProjectController {
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
+	private selectedSessionId?: string;
 	private hasDisplayedError: Map<ProjectIntervalTypes, boolean> = new Map();
 
 	constructor(
@@ -100,8 +100,6 @@ export class ProjectController {
 	}
 
 	async selectDeployment(deploymentId: string): Promise<void> {
-		this.stopInterval(ProjectIntervalTypes.sessionHistory);
-
 		this.selectedDeploymentId = deploymentId;
 		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
 
@@ -133,20 +131,15 @@ export class ProjectController {
 	}
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
-		const { data: sessionHistoryStates, error } = await SessionsService.getHistoryBySessionId(sessionId);
-		if (error || !sessionHistoryStates?.length) {
-			if (error) {
-				if (!this.hasDisplayedError.get(ProjectIntervalTypes.sessionHistory)) {
-					const notification = translate().t("errors.noResponse");
-					commands.executeCommand(vsCommands.showErrorMessage, notification);
-					this.hasDisplayedError.set(ProjectIntervalTypes.sessionHistory, true);
-				}
+		const { data: sessionHistoryStates, error: sessionsError } = await SessionsService.getHistoryBySessionId(sessionId);
 
-				LoggerService.error(
-					namespaces.projectController,
-					`${translate().t("errors.sessionLogFetchFailed")} - ${(error as Error).message}`
-				);
-			}
+		if (sessionsError) {
+			commands.executeCommand(vsCommands.showErrorMessage, (sessionsError as Error).message);
+			LoggerService.error(namespaces.projectController, (sessionsError as Error).message);
+			return;
+		}
+		if (!sessionHistoryStates?.length || !sessionHistoryStates) {
+			LoggerService.sessionLog(translate().t("sessions.emptyHistory"));
 			return;
 		}
 
@@ -154,47 +147,57 @@ export class ProjectController {
 			return;
 		}
 
-		this.sessionHistoryStates = sessionHistoryStates;
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+		this.outputSessionLogs(sessionHistoryStates);
 
-		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
-
-		LoggerService.sessionLog(`[${lastState.dateTime!.toISOString()}] ${lastState.type}`);
-		LoggerService.sessionLog(`${translate().t("sessions.logs")}:`);
-		if (lastState.containLogs()) {
-			lastState.getLogs().forEach((logStr) => {
-				LoggerService.sessionLog(`	${logStr}`);
-			});
-		} else {
-			LoggerService.sessionLog(`	${translate().t("sessions.noLogs")}`);
-		}
-
-		LoggerService.sessionLog(`${translate().t("sessions.errors")}:`);
-		if (lastState.isError()) {
-			const printedError = lastState.getError();
-			LoggerService.sessionLog(`	${printedError}`);
-		} else {
-			LoggerService.sessionLog(`	${translate().t("sessions.errors")}:`);
-		}
-
-		LoggerService.sessionLog(`${translate().t("sessions.callstack")}:`);
-		if (!lastState.getCallstack().length) {
-			LoggerService.sessionLog(`	${translate().t("sessions.callstackNoPrints")}`);
+		if (sessionHistoryStates[sessionHistoryStates.length - 1].isFinished()) {
+			this.outputSessionFinishDetails(sessionHistoryStates[sessionHistoryStates.length - 1]);
+			this.stopInterval(ProjectIntervalTypes.sessionHistory);
 			return;
 		}
-		lastState.getCallstack().forEach((callstackObj) => {
-			const { col, name, path, row } = callstackObj.location;
-			const formatCallstackString = `${path}: ${row}.${col}: ${name}`;
-			LoggerService.sessionLog(`	${formatCallstackString}`);
-		});
 
-		if (lastState.isFinished()) {
-			this.stopInterval(ProjectIntervalTypes.sessionHistory);
+		this.sessionHistoryStates = sessionHistoryStates;
+	}
+
+	private outputSessionLogs(sessionStates: SessionState[]) {
+		const logPrefix = translate().t("sessions.logs");
+		LoggerService.sessionLog(`${logPrefix}:`);
+
+		const hasLogs = sessionStates.some((state) => state.getLogs().length);
+		if (!hasLogs) {
+			return;
 		}
+		for (let i = 0; i < sessionStates.length; i++) {
+			if (sessionStates[i].type !== SessionStateType.error && sessionStates[i].type !== SessionStateType.completed) {
+				sessionStates[i].getLogs().forEach((logStr) => LoggerService.sessionLog(`	${logStr}`));
+			}
+		}
+	}
+
+	private outputSessionFinishDetails(lastState: SessionState) {
+		this.outputErrorDetails(lastState);
+		this.outputCallstackDetails(lastState);
+	}
+
+	private outputErrorDetails(state: SessionState) {
+		LoggerService.sessionLog(`${translate().t("sessions.errors")}:`);
+		const errorMessage = state.isError() ? state.getError() : "";
+		LoggerService.sessionLog(`	${errorMessage}`);
+	}
+
+	private outputCallstackDetails(state: SessionState) {
+		LoggerService.sessionLog(`${translate().t("sessions.callstack")}:`);
+		if (!state.getCallstack().length) {
+			return;
+		}
+		state.getCallstack().forEach(({ location: { col, name, path, row } }) => {
+			LoggerService.sessionLog(`	${path}: ${row}.${col}: ${name}`);
+		});
 	}
 
 	async displaySessionLogs(sessionId: string): Promise<void> {
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
+		this.selectedSessionId = sessionId;
 
 		this.startInterval(
 			ProjectIntervalTypes.sessionHistory,
@@ -203,7 +206,7 @@ export class ProjectController {
 		);
 	}
 
-	async startInterval(intervalKey: ProjectIntervalTypes, loadFunc: () => Promise<void>, refreshRate: number) {
+	async startInterval(intervalKey: ProjectIntervalTypes, loadFunc: () => Promise<void> | void, refreshRate: number) {
 		if (this.intervalKeeper.has(intervalKey)) {
 			this.stopInterval(intervalKey);
 		}
@@ -260,6 +263,13 @@ export class ProjectController {
 			this.deploymentsRefreshRate
 		);
 		this.notifyViewResourcesPathChanged();
+		if (this.selectedSessionId) {
+			this.startInterval(
+				ProjectIntervalTypes.sessionHistory,
+				() => this.displaySessionsHistory(this.selectedSessionId!),
+				this.sessionsLogRefreshRate
+			);
+		}
 	}
 
 	onClose() {
