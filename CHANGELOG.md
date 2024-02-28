@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## [0.8.1](https://github.com/autokitteh/vscode-extension/compare/v0.8.0...v0.8.1) (2024-02-28)
 
 
@@ -5,6 +6,8 @@
 
 * display of the session logs prefixes ([#171](https://github.com/autokitteh/vscode-extension/issues/171)) ([#172](https://github.com/autokitteh/vscode-extension/issues/172)) ([7c9b735](https://github.com/autokitteh/vscode-extension/commit/7c9b735c3a228f90c16bcd7414ac3b5369c0a169))
 
+=======
+>>>>>>> 8f7b72f (chore(release): 0.8.1-dev.1)
 ## [0.8.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.8.0...v0.8.1-dev.1) (2024-02-28)
 
 
