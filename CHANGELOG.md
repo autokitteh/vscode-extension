@@ -1,3 +1,10 @@
+# [0.8.0-dev.28](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.27...v0.8.0-dev.28) (2024-02-28)
+
+
+### Bug Fixes
+
+* fix logs to display the prints in running sessions ([#153](https://github.com/autokitteh/vscode-extension/issues/153)) ([bea9883](https://github.com/autokitteh/vscode-extension/commit/bea988373582b875ebf7af2eaead42cb780e44ef))
+
 # [0.8.0-dev.27](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.26...v0.8.0-dev.27) (2024-02-26)
 
 
