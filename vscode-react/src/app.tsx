@@ -1,4 +1,4 @@
-import { CSSProperties, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
@@ -101,30 +101,29 @@ function App() {
 	const referenceEl = useRef<HTMLDivElement | null>(null);
 	const popperEl = useRef<HTMLDivElement | null>(null);
 
-	const { attributes } = usePopper(referenceEl.current, popperEl.current, {
+	const { attributes, styles } = usePopper(referenceEl.current, popperEl.current, {
 		placement: "bottom",
 		modifiers: [
 			{
 				name: "offset",
 				options: {
-					offset: [0, 10], // [skidding, distance]
+					offset: [0, 10],
 				},
 			},
 		],
 	});
 	const [showPopper, setShowPopper] = useState(false);
 	const togglePopper = () => setShowPopper(!showPopper);
-	const centeredPopperStyles: CSSProperties = {
-		position: "fixed",
-		top: "5%",
-		left: "31%",
-		transform: "translate(-50%, 10%)",
-		display: showPopper ? "flex" : "none",
-		zIndex: 40,
-	};
+
+	const popperClasses = cn(
+		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
+		"border border-gray-300 p-4 rounded-lg shadow-lg",
+		{ invisible: !showPopper }
+	);
 
 	return (
 		<main>
+			{showPopper && <div className="absolute w-full h-full z-20" onClick={() => togglePopper()}></div>}
 			{!!projectName ? (
 				<div className="flex flex-col w-full">
 					<div className="flex items-center w-full">
@@ -145,14 +144,8 @@ function App() {
 
 						<div className="mx-4">|</div>
 
-						<div
-							ref={popperEl}
-							style={centeredPopperStyles}
-							{...attributes.popper}
-							// eslint-disable-next-line max-len
-							className="justify-between flex-col bg-vscode-editor-background text-vscode-foreground border border-gray-300 p-4 rounded-lg shadow-lg gap-4"
-						>
-							<div>
+						<div ref={popperEl} style={styles.popper} {...attributes.popper} className={popperClasses}>
+							<div className="mb-3">
 								<strong>File:</strong>
 								<VSCodeDropdown
 									value={selectedFile}
@@ -168,7 +161,7 @@ function App() {
 										))}
 								</VSCodeDropdown>
 							</div>
-							<div>
+							<div className="mb-3">
 								<strong>Entrypoint:</strong>
 								<VSCodeDropdown
 									value={selectedFunction}
@@ -184,20 +177,18 @@ function App() {
 										))}
 								</VSCodeDropdown>
 							</div>
-							<div>
+							<div className="mb-3">
 								<strong>Session parameters:</strong>
 								<div onClick={() => setModal(true)} className="flex cursor-pointer">
 									{"{param1: 'test', param2: 'test'..."}
 								</div>
 							</div>
-							<div>
-								<AKButton onClick={() => togglePopper()}>Save</AKButton>
-								<AKButton
-									classes="bg-vscode-editor-background text-vscode-foreground ml-4"
-									onClick={() => togglePopper()}
-								>
+							<div className="flex">
+								<AKButton classes="bg-vscode-editor-background text-vscode-foreground" onClick={() => togglePopper()}>
 									Dismiss
 								</AKButton>
+								<div className="flex-grow" />
+								<AKButton onClick={() => togglePopper()}>Save</AKButton>
 							</div>
 						</div>
 						<AKButton
