@@ -7,5 +7,6 @@
 	"activationFailedId": "Deployment activation failed - id: {{id}}",
 	"deactivationSucceedId": "Deployment deactivation succeed - id: {{id}}",
 	"deactivationFailedId": "Deployment deactivation failed - id: {{id}}",
-	"deploymentSelectionFailed": "Deployment selection failed - review the logs"
+	"deploymentSelectionFailed": "Deployment selection failed - review the logs",
+	"noSelectedDeployment": "No deployment selected, you must select a deployment for the single-shot action"
 }

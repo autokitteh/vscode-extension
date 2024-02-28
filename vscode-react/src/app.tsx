@@ -194,14 +194,14 @@ function App() {
 						<AKButton
 							classes="w-10 mr-2"
 							onClick={togglePopper}
-							disabled={!resourcesDirState && !!deploymentsSection && !!deploymentsSection.totalDeployments}
+							disabled={!resourcesDirState || !deploymentsSection || !deploymentsSection.totalDeployments}
 						>
 							<div className="codicon codicon-edit mr-2" ref={referenceEl}></div>
 						</AKButton>
 						<AKButton
 							onClick={() => sendMessage(MessageType.runSingleShot, code)}
 							classes="mr-4"
-							disabled={!resourcesDirState}
+							disabled={!resourcesDirState || !deploymentsSection || !deploymentsSection.totalDeployments}
 						>
 							<div className="codicon codicon-send mr-2"></div>
 							{translate().t("reactApp.general.singleShot")}

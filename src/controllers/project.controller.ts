@@ -401,13 +401,16 @@ export class ProjectController {
 		});
 	}
 
-	async runSingleShot(sessionProps: string) {
-		console.log(sessionProps);
-
-		LoggerService.info(namespaces.projectController, "signleShot");
-		if (this.selectedDeploymentId) {
-			await SessionsService.runSingleShot(this.selectedDeploymentId);
+	async runSingleShot(sessionInputs: string) {
+		if (!this.selectedDeploymentId) {
+			commands.executeCommand(vsCommands.showErrorMessage, translate().t("deployments.noSelectedDeployment"));
+			return;
 		}
+		let sessionInputsObject = {};
+		try {
+			sessionInputsObject = JSON.parse(sessionInputs);
+		} catch (error) {}
+		await SessionsService.runSingleShot(this.selectedDeploymentId, sessionInputsObject);
 	}
 
 	async deactivateDeployment(deploymentId: string) {
