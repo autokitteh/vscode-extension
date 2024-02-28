@@ -33,5 +33,6 @@
 	"sessionLogFetchFailed": "Couldn't fetch session log",
 	"deploymentsFetchFailed": "Couldn't fetch deployments",
 	"sessionFetchFailed": "Couldn't fetch sessions for deployment",
-	"noResponse": "Connectivity issue, no response from server"
+	"noResponse": "Connectivity issue, no response from server",
+	"sessionLogMissingDateTime": "Session History - No date time"
 }

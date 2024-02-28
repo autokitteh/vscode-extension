@@ -2,7 +2,6 @@ import { SessionStateType } from "@enums";
 import { translate } from "@i18n/index";
 import { LoggerService } from "@services";
 import { Callstack, ProtoSessionHistoryState } from "@type/models";
-import { ProtoTimestamp } from "@type/utilities";
 import { convertTimestampToDate } from "@utilities";
 import { get } from "lodash";
 
@@ -18,7 +17,7 @@ export class SessionState {
 
 	constructor(session: ProtoSessionHistoryState) {
 		let sessionState = get(session, "data.case", SessionStateType.unknown) as SessionStateType;
-		if (get(session, "data.case") === "state") {
+		if (sessionState.toString() === "state") {
 			sessionState = get(session, "data.value.states.case", SessionStateType.unknown) as SessionStateType;
 		}
 		if (!sessionState || !(sessionState in SessionStateType)) {
@@ -30,7 +29,7 @@ export class SessionState {
 		switch (sessionState) {
 			case SessionStateType.callAttemptStart:
 				this.type = SessionStateType.callAttemptStart;
-				this.dateTime = convertTimestampToDate(get(session, "data.value.startedAt") as unknown as ProtoTimestamp);
+				this.dateTime = convertTimestampToDate(get(session, "data.value.startedAt"));
 				break;
 			case SessionStateType.callAttemptComplete:
 				this.handleCallAttemptComplete(session);
@@ -43,7 +42,7 @@ export class SessionState {
 				this.logs = ["Print: " + get(session, "data.value", "")];
 				break;
 			default:
-				this.handleDefaultCase(session);
+				throw new Error(translate().t("errors.unexpectedSessionStateType"));
 		}
 
 		if (this.dateTime === undefined) {
@@ -57,7 +56,7 @@ export class SessionState {
 		let functionResponse = get(session, "data.value.result.result.value.type.value.v", "");
 		const functionName = get(session, "data.value.result.result.value.type.case", "") as string;
 		if (functionName === "time") {
-			functionResponse = convertTimestampToDate(functionResponse as unknown as ProtoTimestamp).toISOString();
+			functionResponse = convertTimestampToDate(functionResponse).toISOString();
 		}
 		this.logs = [`Result: ${functionName} - ${functionResponse}`];
 	}
@@ -71,28 +70,18 @@ export class SessionState {
 		this.logs = [`Function: ${functionName}(${args})`];
 	}
 
-	private handleDefaultCase(session: ProtoSessionHistoryState) {
-		const stateCase = get(session, "data.value.states.case");
-		if (!stateCase || !(stateCase in SessionStateType)) {
-			this.type = SessionStateType.unknown;
-		} else if (stateCase) {
-			this.type = stateCase as SessionStateType;
-			this.logs = get(session, "data.value.states.value.prints", []);
-		}
-	}
-
 	private setDateTime(session: ProtoSessionHistoryState, sessionState: string) {
 		try {
-			let dateTimeStamp: ProtoTimestamp;
-			if (["callSpec", "callAttemptComplete", "print"].includes(sessionState)) {
-				dateTimeStamp = get(session, "t") as unknown as ProtoTimestamp;
+			let dateTimeStamp;
+			if (sessionState in ["callSpec", "callAttemptComplete", "print"]) {
+				dateTimeStamp = get(session, "t");
 			} else {
-				dateTimeStamp = get(session, "data.value.t") as unknown as ProtoTimestamp;
+				dateTimeStamp = get(session, "data.value.t");
 			}
 
 			this.dateTime = convertTimestampToDate(dateTimeStamp);
 		} catch (error) {
-			console.error("Error setting dateTime:", error);
+			throw new Error(translate().t("errors.sessionLogMissingDateTime"));
 		}
 	}
 
