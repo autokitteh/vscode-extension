@@ -40,7 +40,7 @@ export class SessionState {
 				break;
 			case SessionStateType.print:
 				this.type = SessionStateType.print;
-				this.logs = [`${translate().t("historyPrint")}: ${get(session, "data.value", "")}`];
+				this.logs = [`${translate().t("sessions.historyPrint")}: ${get(session, "data.value", "")}`];
 				break;
 			default:
 				if (!unhandledSessionStates.includes(sessionState)) {
@@ -72,7 +72,7 @@ export class SessionState {
 		if (functionName === "time") {
 			functionResponse = convertTimestampToDate(functionResponse).toISOString();
 		}
-		this.logs = [`${translate().t("historyResult")}: ${functionName} - ${functionResponse}`];
+		this.logs = [`${translate().t("sessions.historyResult")}: ${functionName} - ${functionResponse}`];
 	}
 
 	private handleFuncCall(session: ProtoSessionHistoryState) {
@@ -81,7 +81,7 @@ export class SessionState {
 		const args = get(session, "data.value.args", [])
 			.map((arg: any) => arg.type.value.v)
 			.join(", ");
-		this.logs = [`${translate().t("historyFunction")}: ${functionName}(${args})`];
+		this.logs = [`${translate().t("sessions.historyFunction")}: ${functionName}(${args})`];
 	}
 
 	private setDateTime(session: ProtoSessionHistoryState, sessionState: string) {
