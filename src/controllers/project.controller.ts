@@ -139,18 +139,18 @@ export class ProjectController {
 
 		if (sessionHistoryStates[sessionHistoryStates.length - 1].isFinished()) {
 			LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
-			this.logSessionLogs(sessionHistoryStates);
-			this.logSessionFinishDetails(sessionHistoryStates[sessionHistoryStates.length - 1]);
+			this.outputSessionLogs(sessionHistoryStates);
+			this.outputSessionFinishDetails(sessionHistoryStates[sessionHistoryStates.length - 1]);
 			this.stopInterval(ProjectIntervalTypes.sessionHistory);
 			return;
 		}
 
 		this.sessionHistoryStates = sessionHistoryStates;
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
-		this.logSessionLogs(sessionHistoryStates);
+		this.outputSessionLogs(sessionHistoryStates);
 	}
 
-	private logSessionLogs(sessionStates: SessionState[]) {
+	private outputSessionLogs(sessionStates: SessionState[]) {
 		const logPrefix = translate().t("sessions.logs");
 		LoggerService.sessionLog(`${logPrefix}:`);
 
@@ -165,18 +165,18 @@ export class ProjectController {
 		}
 	}
 
-	private logSessionFinishDetails(lastState: SessionState) {
-		this.logErrorDetails(lastState);
-		this.logCallstackDetails(lastState);
+	private outputSessionFinishDetails(lastState: SessionState) {
+		this.outputErrorDetails(lastState);
+		this.outputCallstackDetails(lastState);
 	}
 
-	private logErrorDetails(state: SessionState) {
+	private outputErrorDetails(state: SessionState) {
 		LoggerService.sessionLog(`${translate().t("sessions.errors")}:`);
 		const errorMessage = state.isError() ? state.getError() : "";
 		LoggerService.sessionLog(`	${errorMessage}`);
 	}
 
-	private logCallstackDetails(state: SessionState) {
+	private outputCallstackDetails(state: SessionState) {
 		LoggerService.sessionLog(`${translate().t("sessions.callstack")}:`);
 		if (!state.getCallstack().length) {
 			return;
