@@ -18,7 +18,6 @@ export class ProjectController {
 	public projectId: string;
 	public project?: Project;
 	private sessions?: Session[] = [];
-	private sessionHistoryStates: SessionState[] = [];
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
@@ -79,7 +78,7 @@ export class ProjectController {
 		this.deployments = deployments;
 		const deploymentsViewObject: DeploymentSectionViewModel = {
 			deployments,
-			totalDeployments: deployments?.length ?? 0,
+			totalDeployments: deployments?.length || 0,
 		};
 
 		this.view.update({
