@@ -4,5 +4,6 @@
 	"errors": "Errors",
 	"noErrors": "No errors to display",
 	"callstack": "Callstack",
-	"callstackNoPrints": "No callstack to display"
+	"callstackNoPrints": "No callstack to display",
+	"emptyHistory": "Session history states are empty"
 }

@@ -131,9 +131,15 @@ export class ProjectController {
 	}
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
-		const { data: sessionHistoryStates } = await SessionsService.getHistoryBySessionId(sessionId);
+		const { data: sessionHistoryStates, error: sessionsError } = await SessionsService.getHistoryBySessionId(sessionId);
+
+		if (sessionsError) {
+			commands.executeCommand(vsCommands.showErrorMessage, (sessionsError as Error).message);
+			LoggerService.error(namespaces.projectController, (sessionsError as Error).message);
+			return;
+		}
 		if (!sessionHistoryStates?.length || !sessionHistoryStates) {
-			LoggerService.sessionLog(translate().t("errors.sessionHistoryIsEmpty"));
+			LoggerService.sessionLog(translate().t("sessions.emptyHistory"));
 			return;
 		}
 
@@ -141,17 +147,16 @@ export class ProjectController {
 			return;
 		}
 
+		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+		this.outputSessionLogs(sessionHistoryStates);
+
 		if (sessionHistoryStates[sessionHistoryStates.length - 1].isFinished()) {
-			LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
-			this.outputSessionLogs(sessionHistoryStates);
 			this.outputSessionFinishDetails(sessionHistoryStates[sessionHistoryStates.length - 1]);
 			this.stopInterval(ProjectIntervalTypes.sessionHistory);
 			return;
 		}
 
 		this.sessionHistoryStates = sessionHistoryStates;
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
-		this.outputSessionLogs(sessionHistoryStates);
 	}
 
 	private outputSessionLogs(sessionStates: SessionState[]) {
