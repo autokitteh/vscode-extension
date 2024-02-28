@@ -156,7 +156,6 @@ export class ProjectController {
 
 		const hasLogs = sessionStates.some((state) => state.getLogs().length);
 		if (!hasLogs) {
-			LoggerService.sessionLog(`	${translate().t("sessions.noLogs")}`);
 			return;
 		}
 		for (let i = 0; i < sessionStates.length; i++) {
@@ -173,14 +172,13 @@ export class ProjectController {
 
 	private logErrorDetails(state: SessionState) {
 		LoggerService.sessionLog(`${translate().t("sessions.errors")}:`);
-		const errorMessage = state.isError() ? state.getError() : translate().t("sessions.noErrors");
+		const errorMessage = state.isError() ? state.getError() : "";
 		LoggerService.sessionLog(`	${errorMessage}`);
 	}
 
 	private logCallstackDetails(state: SessionState) {
 		LoggerService.sessionLog(`${translate().t("sessions.callstack")}:`);
 		if (!state.getCallstack().length) {
-			LoggerService.sessionLog(`	${translate().t("sessions.callstackNoPrints")}`);
 			return;
 		}
 		state.getCallstack().forEach(({ location: { col, name, path, row } }) => {

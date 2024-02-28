@@ -25,6 +25,8 @@ export class SessionState {
 			return;
 		}
 
+		const unhandledSessionStates = ["created", "running", "error", "completed"];
+
 		switch (sessionState) {
 			case SessionStateType.callAttemptStart:
 				this.type = SessionStateType.callAttemptStart;
@@ -41,6 +43,9 @@ export class SessionState {
 				this.logs = ["Print: " + get(session, "data.value", "")];
 				break;
 			default:
+				if (!unhandledSessionStates.includes(sessionState)) {
+					throw new Error(translate().t("errors.unexpectedSessionStateType"));
+				}
 				this.handleDefaultCase(session);
 		}
 
