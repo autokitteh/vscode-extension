@@ -46,8 +46,7 @@ export const AKDeployments = ({
 	}, []);
 
 	const isDeploymentStateStartable = (deploymentState: number) =>
-		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT ||
-		deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
+		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
 
 	const getSessionsByDeploymentId = (deploymentId: string) => {
 		sendMessage(MessageType.selectDeployment, deploymentId);
@@ -71,7 +70,7 @@ export const AKDeployments = ({
 	};
 
 	return (
-		<div className="mt-4 min-h-48 max-h-48 overflow-y-auto overflow-x-hidden">
+		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
 			{deployments && !!totalDeployments ? (
 				<div className="flex justify-end mb-2 w-full min-h-[20px] sticky">
 					{`${translate().t("reactApp.general.totalOf")} ${totalDeployments} ${translate().t(
@@ -81,30 +80,21 @@ export const AKDeployments = ({
 			) : (
 				<div className="flex mb-2 w-full min-h-[20px]" />
 			)}
-			<h1 className="text-lg font-extralight mb-2">
-				{translate().t("reactApp.deployments.tableTitle")}
-			</h1>
+			<h1 className="text-lg font-extralight mb-2">{translate().t("reactApp.deployments.tableTitle")}</h1>
 			<AKTable>
 				<AKTableHeader classes="sticky top-0">
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.time")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.status")}</AKTableHeaderCell>
-					<AKTableHeaderCell>
-						{translate().t("reactApp.sessions.statuses.running")}
-					</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.sessions.statuses.running")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.sessions.statuses.error")}</AKTableHeaderCell>
-					<AKTableHeaderCell>
-						{translate().t("reactApp.sessions.statuses.completed")}
-					</AKTableHeaderCell>
+					<AKTableHeaderCell>{translate().t("reactApp.sessions.statuses.completed")}</AKTableHeaderCell>
 
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.buildId")}</AKTableHeaderCell>
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.actions")}</AKTableHeaderCell>
 				</AKTableHeader>
 				{deployments &&
 					deployments.map((deployment: Deployment) => (
-						<AKTableRow
-							key={deployment.deploymentId}
-							isSelected={selectedDeployment === deployment.deploymentId}
-						>
+						<AKTableRow key={deployment.deploymentId} isSelected={selectedDeployment === deployment.deploymentId}>
 							<AKTableCell
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
@@ -159,9 +149,7 @@ export const AKDeployments = ({
 						</AKTableRow>
 					))}
 			</AKTable>
-			{(isLoading || !deployments) && (
-				<AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>
-			)}
+			{(isLoading || !deployments) && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
 			{deployments && deployments.length === 0 && (
 				<AKTableMessage>{translate().t("reactApp.deployments.noDeployments")}</AKTableMessage>
 			)}

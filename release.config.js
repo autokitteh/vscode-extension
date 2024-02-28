@@ -41,16 +41,15 @@ module.exports = {
 				slackWebhook: process.env.SLACK_WEBHOOK_URL,
 				onSuccessTemplate: {
 					text:
-						":partying_face: *Meow-velous News, Team!* :paw_prints: \n" +
+						":announcement: *Meow-velous News, Team!* :announcement: \n" +
+						"> Click here: $repo_url/releases to download and install the latest release and enjoy the " +
+						"latest features.\n\n" +
 						"Version *$npm_package_version* has just landed on our digital doorstep, " +
 						"and it's purr-fectly packed with features!\n\n \n\n" +
 						":yasss_cat: What's New:\n" +
 						"$release_notes	\n\n" +
-						":announcement: *A Paws-itive Reminder:*\n" +
-						"> Don't forget to update your systems! It's easier than herding cats," +
-						"we promise. Just click here: $repo_url, download and install the latest release and enjoy the " +
-						"latest features.\n\n*Happy Coding, Furr-iends!* " +
 						"Let's make some paw-some progress!\n\n" +
+						"*Happy Coding, Furr-iends!* " +
 						":cat-roomba-exceptionally-fast: " +
 						"*Stay Pawsome!*\n :catjam: _Your Dev Team_ :catjam:",
 				},

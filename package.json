@@ -15,6 +15,9 @@
 		"@views": "dist/src/views",
 		"@vscommands": "dist/src/vscommands"
 	},
+	"extensionDependencies": [
+		"redhat.vscode-yaml"
+	],
 	"contributes": {
 		"activationEvents": [
 			"onCommand:autokitteh.buildProject",
@@ -23,6 +26,24 @@
 		"breakpoints": [
 			{
 				"language": "starlark"
+			}
+		],
+		"yamlValidation": [
+			{
+				"fileMatch": "*.ak.yaml",
+				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
+			},
+			{
+				"fileMatch": "*.ak.yml",
+				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
+			},
+			{
+				"fileMatch": "autokitteh.yaml",
+				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
+			},
+			{
+				"fileMatch": "autokitteh.yml",
+				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
 			}
 		],
 		"commands": [
@@ -38,6 +59,14 @@
 				"command": "autokitteh.connect",
 				"icon": "./resources/sidebar/top-panel-connect.svg",
 				"title": "autokitteh: Connect to server"
+			},
+			{
+				"command": "autokitteh.addConnections",
+				"icon": {
+					"dark": "./resources/sidebar/icons/dark/cloud-upload.svg",
+					"light": "./resources/sidebar/icons/light/cloud-upload.svg"
+				},
+				"title": "autokitteh: Add connection"
 			},
 			{
 				"command": "autokitteh.disconnect",
@@ -84,9 +113,10 @@
 					"type": "number"
 				},
 				"autokitteh.starlarkLSPPath": {
-					"default": "ak",
-					"description": "The path to the Starlark LSP Server",
-					"type": "string"
+					"default": "",
+					"description": "The path to the starlark LSP Server",
+					"type": "string",
+					"title": "Starlark LSP executable or socket url path"
 				}
 			},
 			"title": "autokitteh"
@@ -122,6 +152,11 @@
 					"command": "autokitteh.connect",
 					"group": "navigation",
 					"when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
+				},
+				{
+					"command": "autokitteh.addConnections",
+					"group": "navigation",
+					"when": "view == autokittehSidebarTree"
 				},
 				{
 					"command": "autokitteh.disconnect",
@@ -206,20 +241,24 @@
 		]
 	},
 	"dependencies": {
-		"@connectrpc/connect": "^1.1.4",
-		"@connectrpc/connect-node": "^1.1.4",
+		"@connectrpc/connect": "^1.3.0",
+		"@connectrpc/connect-node": "^1.3.0",
 		"@vscode/codicons": "^0.0.35",
-		"axios": "^1.6.2",
-		"i18next": "^23.7.11",
+		"adm-zip": "^0.5.10",
+		"axios": "^1.6.7",
+		"i18next": "^23.8.2",
 		"lodash": "^4.17.21",
 		"module-alias": "^2.2.3",
 		"moment": "^2.30.1",
-		"vscode-languageclient": "^6.1.3"
+		"tar": "^6.2.0",
+		"tar-fs": "^3.0.5",
+		"vscode-languageclient": "^6.1.3",
+		"zlib": "^1.0.5"
 	},
 	"description": "Simplify the process of automating tasks",
 	"devDependencies": {
-		"@commitlint/cli": "18.4.4",
-		"@commitlint/config-conventional": "18.4.4",
+		"@commitlint/cli": "18.6.1",
+		"@commitlint/config-conventional": "18.6.2",
 		"@githubocto/tailwind-vscode": "^1.0.5",
 		"@semantic-release/changelog": "^6.0.3",
 		"@semantic-release/commit-analyzer": "^11.1.0",
@@ -227,35 +266,39 @@
 		"@semantic-release/github": "^9.2.6",
 		"@semantic-release/npm": "^11.0.2",
 		"@semantic-release/release-notes-generator": "^12.1.0",
-		"@types/glob": "^7.1.3",
+		"@types/adm-zip": "^0.5.5",
+		"@types/glob": "^8.1.0",
 		"@types/js-yaml": "^4.0.9",
 		"@types/lodash": "^4.14.202",
-		"@types/node": "^20.10.6",
-		"@types/sinon": "^17.0.2",
-		"@types/vscode": "^1.85.0",
-		"@typescript-eslint/eslint-plugin": "^6.14.0",
-		"@typescript-eslint/parser": "^6.14.0",
-		"esbuild": "0.19.8",
+		"@types/node": "^20.11.19",
+		"@types/sinon": "^17.0.3",
+		"@types/tar": "^6.1.11",
+		"@types/tar-fs": "^2.0.4",
+		"@types/vscode": "^1.86.0",
+		"@typescript-eslint/eslint-plugin": "^7.0.1",
+		"@typescript-eslint/parser": "^7.0.1",
+		"@vscode/vsce": "^2.23.0",
+		"esbuild": "0.20.0",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-import": "^2.29.0",
-		"eslint-plugin-unicorn": "^50.0.1",
-		"glob": "^7.1.6",
-		"husky": "^8.0.3",
-		"lint-staged": "^15.2.0",
+		"eslint-plugin-import": "^2.29.1",
+		"eslint-plugin-unicorn": "^51.0.1",
+		"glob": "^10.3.10",
+		"husky": "^9.0.11",
+		"lint-staged": "^15.2.2",
 		"npm-run-all": "^4.1.5",
-		"prettier": "^3.1.1",
-		"rollup": "^4.9.5",
-		"semantic-release": "^23.0.0",
+		"prettier": "^3.2.5",
+		"rollup": "^4.11.0",
+		"semantic-release": "^23.0.2",
 		"semantic-release-slack-bot": "^4.0.2",
 		"semantic-release-vsce": "^5.6.4",
 		"sinon": "^17.0.1",
 		"typescript": "^5.3.3",
-		"vitest": "^1.1.1",
+		"vitest": "^1.2.2",
 		"vscode-test": "^1.5.0"
 	},
 	"engines": {
-		"vscode": "^1.85.0"
+		"vscode": "^1.86.0"
 	},
 	"homepage": "https://autokitteh.com",
 	"icon": "./resources/extensions-marketplace/ak-extension-icon.png",
@@ -299,10 +342,9 @@
 		"test:all": "vitest run && npm run test:run --workspace=vscode-react",
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
-		"local-package": "node preBuildLocalVersion.js && vsce package && node postBuildLocalVersion.js",
 		"package": "vsce package"
 	},
-	"version": "0.7.0",
+	"version": "0.8.0-dev.28",
 	"workspaces": [
 		"vscode-react"
 	]

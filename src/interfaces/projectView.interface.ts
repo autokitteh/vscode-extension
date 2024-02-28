@@ -5,6 +5,7 @@ export interface IProjectViewDelegate {
 	onBlur?: Callback;
 	onFocus?: Callback;
 	build: Callback;
+	onClickSetResourcesDirectory: Callback;
 	run: Callback;
 	selectDeployment?: Callback<string>;
 	displaySessionLogs?: Callback<string>;

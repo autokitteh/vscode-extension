@@ -32,11 +32,7 @@ export class LoggerService {
 		);
 	}
 
-	public static info(
-		namespace: string,
-		message: string,
-		channelName: string = LoggerService.defaultChannelName
-	): void {
+	public static info(namespace: string, message: string, channelName: string = LoggerService.defaultChannelName): void {
 		this.output(namespace, message, channelName);
 	}
 
@@ -58,25 +54,13 @@ export class LoggerService {
 		this.output(namespace, message, channelName, LoggerLevel.debug);
 	}
 
-	public static warn(
-		namespace: string,
-		message: string,
-		channelName: string = LoggerService.defaultChannelName
-	): void {
-		this.initializeOutputChannel(channelName);
+	public static sessionLog(message: string): void {
+		this.initializeOutputChannel(channels.appOutputSessionsLogName);
 
-		this.output(namespace, message, channelName, LoggerLevel.warn);
+		this.outputChannels[channels.appOutputSessionsLogName].appendLine(message);
 	}
 
-	public static print(namespace: string, message: string, channelName: string): void {
-		this.initializeOutputChannel(channelName);
-
-		this.outputChannels[channelName].appendLine(`[${namespace}]: ${message}`);
-	}
-
-	public static printError(namespace: string, message: string, channelName: string): void {
-		this.initializeOutputChannel(channelName);
-
-		this.outputChannels[channelName].appendLine(`Error: [${namespace}]: ${message}`);
+	public static reveal(channelName: string = LoggerService.defaultChannelName) {
+		this.outputChannels[channelName].show();
 	}
 }

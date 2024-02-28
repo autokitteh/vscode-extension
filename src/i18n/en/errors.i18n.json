@@ -1,6 +1,6 @@
 {
-	"unexpectedError": "We're sorry, but an unexpected error has occurred and the application is currently unavailable. Please try again later.",
 	"projectNotFound": "Couldn't fetch the project details",
+	"projectNotFoundWithID": "Couldn't fetch the project details, project ID: {{id}}",
 	"showProjectDetails": "Click on a project to show its details",
 	"environmentsNotDefinedForProject": "Environments not defined for this project",
 	"deploymentsNotDefinedForProject": "Deployments not defined for this project",
@@ -14,6 +14,24 @@
 	"deploymentFailed": "Deployment failed",
 	"projectEnvironmentsNotFound": "Project environments not found",
 	"unexpectedSessionStateType": "Unexpected session state type",
+	"sessionLogMissingErrorMessage": "Session History - Get error from not error state",
+	"sessionLogMissingOnErrorType": "Session History - No error",
 	"missingSessionStateType": "Missing session state type",
-	"missingStarlarkLSPPort": "Starlark LSP port is not set"
+	"missingStarlarkLSPPort": "Starlark LSP port is not set",
+	"issueGettingLSP": "There was an issue installing Starlark LSP",
+	"fetchingReleaseInfo": "Couldn't fetch LSP executable: {{error}}",
+	"starlarLSPInit": "Couldn't initialize LSP executable.",
+	"issueExtractLSP": "Extraction error: {{error}}",
+	"corruptedLSPArchive": "LSP archive is corrupted, installation failed",
+	"starlarkPlatformNotSupported": "Starlark LSP is not supported on this platform",
+	"unsupportedArchiveType": "Unsupported archive type: {{type}}",
+	"errorExtractingArchive": "Error extracting archive: {{error}}",
+	"creatingDirectoryAlreadyExist": "Cannot create directory, a file with the same name exists: {{outputPath}}",
+	"creatingDirectoryPermission": "Permission denied to create or access directory: {{outputPath}}",
+	"creatingDirectoryAccess": "Failed to create or access directory: {{outputPath}}, Error: {{error}}",
+	"couldNotFetchLSP": "Couldn't fetch latest LSP executable release",
+	"sessionLogFetchFailed": "Couldn't fetch session log",
+	"deploymentsFetchFailed": "Couldn't fetch deployments",
+	"sessionFetchFailed": "Couldn't fetch sessions for deployment",
+	"noResponse": "Connectivity issue, no response from server"
 }

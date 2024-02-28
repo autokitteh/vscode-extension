@@ -1,3 +1,193 @@
+# [0.8.0-dev.28](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.27...v0.8.0-dev.28) (2024-02-28)
+
+
+### Bug Fixes
+
+* fix logs to display the prints in running sessions ([#153](https://github.com/autokitteh/vscode-extension/issues/153)) ([bea9883](https://github.com/autokitteh/vscode-extension/commit/bea988373582b875ebf7af2eaead42cb780e44ef))
+
+# [0.8.0-dev.27](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.26...v0.8.0-dev.27) (2024-02-26)
+
+
+### Features
+
+* set root directory of project by manifest directory ([#160](https://github.com/autokitteh/vscode-extension/issues/160)) ([7060782](https://github.com/autokitteh/vscode-extension/commit/70607825485cf681e325559b0174834a4a7f9a7b))
+
+# [0.8.0-dev.26](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.25...v0.8.0-dev.26) (2024-02-25)
+
+
+### Bug Fixes
+
+* fix starlark initiation ([#166](https://github.com/autokitteh/vscode-extension/issues/166)) ([e6748d8](https://github.com/autokitteh/vscode-extension/commit/e6748d87b4329729b286ba1e4b8bded58742b979))
+
+# [0.8.0-dev.25](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.24...v0.8.0-dev.25) (2024-02-25)
+
+
+### Bug Fixes
+
+* fix error on session states without date-time ([#159](https://github.com/autokitteh/vscode-extension/issues/159)) ([532c4f5](https://github.com/autokitteh/vscode-extension/commit/532c4f554e330a4a78389993607a3a8a7d1ff6e6))
+
+# [0.8.0-dev.24](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.23...v0.8.0-dev.24) (2024-02-25)
+
+
+### Bug Fixes
+
+* fix error on project load of path from context ([#162](https://github.com/autokitteh/vscode-extension/issues/162)) ([748269a](https://github.com/autokitteh/vscode-extension/commit/748269a69c9f427fa294d2452b470c4c58e98b3d))
+
+# [0.8.0-dev.23](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.22...v0.8.0-dev.23) (2024-02-25)
+
+
+### Bug Fixes
+
+* fix starlark initiation ([#161](https://github.com/autokitteh/vscode-extension/issues/161)) ([760b697](https://github.com/autokitteh/vscode-extension/commit/760b697c5a03540865687ea49241f9bd936d0fe2))
+
+# [0.8.0-dev.22](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.21...v0.8.0-dev.22) (2024-02-25)
+
+
+### Bug Fixes
+
+* adjust manifest schema by ak server ([#163](https://github.com/autokitteh/vscode-extension/issues/163)) ([ff5ef12](https://github.com/autokitteh/vscode-extension/commit/ff5ef129bbd60dcb66365dccbf2c8572560b9f72))
+
+# [0.8.0-dev.21](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.20...v0.8.0-dev.21) (2024-02-22)
+
+
+### Bug Fixes
+
+* adjust manifest schema to the new format ([#158](https://github.com/autokitteh/vscode-extension/issues/158)) ([f0ccf04](https://github.com/autokitteh/vscode-extension/commit/f0ccf043d1eefec14e1837ab638a4ad052d73069))
+
+# [0.8.0-dev.20](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.19...v0.8.0-dev.20) (2024-02-22)
+
+
+### Features
+
+* handle build and deploy using files on server ([#155](https://github.com/autokitteh/vscode-extension/issues/155)) ([976a4f4](https://github.com/autokitteh/vscode-extension/commit/976a4f4ae3bed60f39fe950535a3cc6e75d11e71))
+
+# [0.8.0-dev.19](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.18...v0.8.0-dev.19) (2024-02-22)
+
+
+### Reverts
+
+* Revert "chore(release): 0.8.0-dev.18" ([73a63de](https://github.com/autokitteh/vscode-extension/commit/73a63ded6bb752314dc6d7af31717af2a93aa528))
+
+# [0.8.0-dev.17](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.16...v0.8.0-dev.17) (2024-02-21)
+
+
+### Features
+
+* starlark lsp fix text & release ([#157](https://github.com/autokitteh/vscode-extension/issues/157)) ([25942a7](https://github.com/autokitteh/vscode-extension/commit/25942a7f81b94f11de7dc344c93c12e77df3f2c6))
+
+# [0.8.0-dev.16](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.15...v0.8.0-dev.16) (2024-02-19)
+
+
+### Bug Fixes
+
+* remove the cloud icon from everywhere except the sidebar ([82de218](https://github.com/autokitteh/vscode-extension/commit/82de218477bad3e1b40fe3a172488b7755724666))
+
+# [0.8.0-dev.15](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.14...v0.8.0-dev.15) (2024-02-13)
+
+
+### Bug Fixes
+
+* fix typo ([#148](https://github.com/autokitteh/vscode-extension/issues/148)) ([48f9c19](https://github.com/autokitteh/vscode-extension/commit/48f9c19704b40f9be1ddedb77c6160c0de25e846))
+* remove request handler - avoid multiple notifications on disconnect ([#145](https://github.com/autokitteh/vscode-extension/issues/145)) ([87956db](https://github.com/autokitteh/vscode-extension/commit/87956db55a8af4d0c7ca9cac56d576ce41942695))
+
+# [0.8.0-dev.14](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.13...v0.8.0-dev.14) (2024-02-13)
+
+
+### Bug Fixes
+
+* session logs refresh fix ([#147](https://github.com/autokitteh/vscode-extension/issues/147)) ([0d2aae9](https://github.com/autokitteh/vscode-extension/commit/0d2aae97bae3561c9b6aa1fffac10b1b21fc7522))
+
+# [0.8.0-dev.13](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.12...v0.8.0-dev.13) (2024-02-08)
+
+
+### Bug Fixes
+
+* starlark initialization ([#140](https://github.com/autokitteh/vscode-extension/issues/140)) ([5b6baab](https://github.com/autokitteh/vscode-extension/commit/5b6baabf8ac62199551f3f5a041c1061e0550a0f))
+
+# [0.8.0-dev.12](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.11...v0.8.0-dev.12) (2024-02-08)
+
+
+### Reverts
+
+* Revert "fix: don't pull submodule on github workflow (#137)" (#139) ([961e5fd](https://github.com/autokitteh/vscode-extension/commit/961e5fd8e7060eb9ff6656685147cc044e21fb1b)), closes [#137](https://github.com/autokitteh/vscode-extension/issues/137) [#139](https://github.com/autokitteh/vscode-extension/issues/139)
+
+# [0.8.0-dev.11](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.10...v0.8.0-dev.11) (2024-02-08)
+
+
+### Features
+
+* add connection button in the sidebar ([#136](https://github.com/autokitteh/vscode-extension/issues/136)) ([ff84a0c](https://github.com/autokitteh/vscode-extension/commit/ff84a0cbff41aed618a5d01bff358415ee87e91d))
+
+# [0.8.0-dev.10](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.9...v0.8.0-dev.10) (2024-02-08)
+
+
+### Bug Fixes
+
+* log actions made from sidebar and project controllers ([#138](https://github.com/autokitteh/vscode-extension/issues/138)) ([bbae286](https://github.com/autokitteh/vscode-extension/commit/bbae286d11e8f5b8e08c403654c1fe89c4218689))
+
+# [0.8.0-dev.9](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.8...v0.8.0-dev.9) (2024-02-08)
+
+
+### Bug Fixes
+
+* fix message handler function code ([#141](https://github.com/autokitteh/vscode-extension/issues/141)) ([374f6ff](https://github.com/autokitteh/vscode-extension/commit/374f6ff23fb5efbfb461d641a91719fafaf17e97))
+
+# [0.8.0-dev.8](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.7...v0.8.0-dev.8) (2024-02-07)
+
+
+### Features
+
+* download lsp executable ([#128](https://github.com/autokitteh/vscode-extension/issues/128)) ([58eba08](https://github.com/autokitteh/vscode-extension/commit/58eba08b4e6b4c8be019b48be0e998c52e3e8779))
+
+# [0.8.0-dev.7](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.6...v0.8.0-dev.7) (2024-02-07)
+
+
+### Bug Fixes
+
+* don't pull submodule on github workflow ([#137](https://github.com/autokitteh/vscode-extension/issues/137)) ([4bc5938](https://github.com/autokitteh/vscode-extension/commit/4bc5938d7bf812996b447cf997ba735c5c9b8286))
+
+# [0.8.0-dev.6](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.5...v0.8.0-dev.6) (2024-02-04)
+
+
+### Bug Fixes
+
+* fix session history prints ([#131](https://github.com/autokitteh/vscode-extension/issues/131)) ([b05d787](https://github.com/autokitteh/vscode-extension/commit/b05d7875296dccf3435cdcc9f5b647d383f012d6))
+
+# [0.8.0-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.4...v0.8.0-dev.5) (2024-02-04)
+
+
+### Features
+
+* add callstack logs on errored states ([#129](https://github.com/autokitteh/vscode-extension/issues/129)) ([6e516e9](https://github.com/autokitteh/vscode-extension/commit/6e516e90323da8d6b34f474e16b34ae8a702cb0d))
+
+# [0.8.0-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.3...v0.8.0-dev.4) (2024-02-01)
+
+
+### Bug Fixes
+
+* stop session-history intervals on deployment change ([#130](https://github.com/autokitteh/vscode-extension/issues/130)) ([4a7a30b](https://github.com/autokitteh/vscode-extension/commit/4a7a30b735fde670805180bdbe8338baec3f1502))
+
+# [0.8.0-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.2...v0.8.0-dev.3) (2024-01-30)
+
+
+### Bug Fixes
+
+* display error when no environments found ([#124](https://github.com/autokitteh/vscode-extension/issues/124)) ([d561d9e](https://github.com/autokitteh/vscode-extension/commit/d561d9e4830b3f05aff1e0714503ce55dd6f5c9b))
+
+# [0.8.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.8.0-dev.1...v0.8.0-dev.2) (2024-01-30)
+
+
+### Bug Fixes
+
+* display sessions on deployment deactivation/activation ([#125](https://github.com/autokitteh/vscode-extension/issues/125)) ([b61d5a6](https://github.com/autokitteh/vscode-extension/commit/b61d5a646ed869a8f2749df08f7c439e04697eb9))
+
+# [0.8.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.7.0...v0.8.0-dev.1) (2024-01-29)
+
+
+### Features
+
+* add yaml schema validation ([#121](https://github.com/autokitteh/vscode-extension/issues/121)) ([2731675](https://github.com/autokitteh/vscode-extension/commit/2731675a1b410a9d0fcd94f6b295957a28372ad7))
+
 # [0.7.0](https://github.com/autokitteh/vscode-extension/compare/v0.6.1...v0.7.0) (2024-01-28)
 
 

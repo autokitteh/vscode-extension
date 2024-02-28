@@ -2,12 +2,14 @@ import { LoggerService } from "@services";
 import { window } from "vscode";
 
 export class MessageHandler {
-	static infoMessage(namespace: string, messageText: string): void {
+	static infoMessage(messageText: string): void {
 		window.showInformationMessage(messageText);
-		LoggerService.info(namespace, messageText);
 	}
-	static errorMessage(namespace: string, messageText: string): void {
-		window.showErrorMessage(messageText);
-		LoggerService.error(namespace, messageText);
+	static errorMessage(messageText: string): void {
+		window.showErrorMessage(messageText, "View log").then((selection) => {
+			if (selection === "View log") {
+				LoggerService.reveal();
+			}
+		});
 	}
 }

@@ -1,24 +1,23 @@
-import { RequestHandler } from "@controllers/utilities/requestHandler";
+import { namespaces, vsCommands } from "@constants";
+import { getResources } from "@controllers/utilities";
 import { translate } from "@i18n";
-import { ProjectsService } from "@services";
+import { LoggerService, ProjectsService } from "@services";
 import { SidebarTreeItem } from "@type/views";
 import { ISidebarView } from "interfaces";
 import isEqual from "lodash/isEqual";
-import { window } from "vscode";
+import { commands, window } from "vscode";
 
 export class SidebarController {
 	private view: ISidebarView;
 	private intervalTimerId?: NodeJS.Timeout;
 	private refreshRate: number;
+	private projectsFetchErrorDisplayed: boolean = false;
 	private projects?: SidebarTreeItem[];
-	private noProjectMessageDisplayed = false;
-	private connectionErrorDisplayed = false;
 
 	constructor(sidebarView: ISidebarView, refreshRate: number) {
 		this.view = sidebarView;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
 		this.refreshRate = refreshRate;
-		this.connectionErrorDisplayed = false;
 	}
 
 	public connect = async () => {
@@ -28,10 +27,19 @@ export class SidebarController {
 	};
 
 	private fetchProjects = async (): Promise<SidebarTreeItem[] | undefined> => {
-		const { data: projects, error } = await RequestHandler.handleServiceResponse(() =>
-			ProjectsService.list()
-		);
+		const { data: projects, error } = await ProjectsService.list();
+
 		if (error) {
+			if (!this.projectsFetchErrorDisplayed) {
+				const notification = translate().t("projects.fetchProjectsFailed");
+				commands.executeCommand(vsCommands.showErrorMessage, notification);
+				this.projectsFetchErrorDisplayed = true;
+			}
+
+			LoggerService.error(
+				namespaces.projectSidebarController,
+				translate().t("projects.fetchProjectsFailedError", { error: (error as Error).message })
+			);
 			return;
 		}
 		if (projects!.length) {
@@ -44,7 +52,6 @@ export class SidebarController {
 	};
 
 	private startInterval() {
-		this.noProjectMessageDisplayed = false;
 		this.intervalTimerId = setInterval(() => this.refreshProjects(), this.refreshRate);
 	}
 
@@ -59,27 +66,53 @@ export class SidebarController {
 	}
 
 	async buildProject(projectId: string) {
-		await RequestHandler.handleServiceResponse(() => ProjectsService.build(projectId), {
-			formatSuccessMessage: (data?: string): string =>
-				`${translate().t("projects.projectBuildSucceed", { id: data })}`,
-			formatFailureMessage: (error): string =>
-				translate().t("projects.projectBuildFailed", {
-					id: projectId,
-					error: (error as Error).message,
-				}),
-		});
+		const { data: mappedResources, error: resourcesError } = await getResources(projectId);
+		if (resourcesError) {
+			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
+			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
+			return;
+		}
+
+		const { error, data } = await ProjectsService.build(projectId, mappedResources!);
+
+		if (error) {
+			const notification = translate().t("projects.projectBuildFailed", {
+				id: projectId,
+			});
+			const log = `${notification} - ${(error as Error).message}`;
+			LoggerService.error(namespaces.projectSidebarController, log);
+			return;
+		}
+		const successMessage = translate().t("projects.projectBuildSucceed", { id: data });
+		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
+		LoggerService.info(namespaces.projectController, successMessage);
 	}
 
 	async runProject(projectId: string) {
-		await RequestHandler.handleServiceResponse(() => ProjectsService.run(projectId), {
-			formatSuccessMessage: (): string =>
-				`${translate().t("projects.projectDeploySucceed", { id: projectId })}`,
-			formatFailureMessage: (error): string =>
-				`${translate().t("projects.projectDeployFailed", {
-					id: projectId,
-					error: (error as Error).message,
-				})}`,
-		});
+		const { data: mappedResources, error: resourcesError } = await getResources(projectId);
+		if (resourcesError) {
+			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
+			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
+			return;
+		}
+
+		const { error, data: deploymentId } = await ProjectsService.run(projectId, mappedResources!);
+
+		if (error) {
+			const notification = translate().t("projects.projectDeployFailed", { id: projectId });
+			const log = `${notification} - ${(error as Error).message}`;
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.projectSidebarController, log);
+			return;
+		}
+		commands.executeCommand(
+			vsCommands.showInfoMessage,
+			translate().t("projects.projectDeploySucceed", { id: deploymentId })
+		);
+		LoggerService.info(
+			namespaces.projectController,
+			translate().t("projects.projectDeploySucceed", { id: deploymentId })
+		);
 	}
 
 	public resetSidebar = () => {

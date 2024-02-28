@@ -1,110 +1,52 @@
-import { connect } from "net";
-import { namespaces, vsCommands } from "@constants";
-import { starlarkLSPPath, starlarkLSPUriScheme, starlarkLSPArgs } from "@constants";
-import { getConfig } from "@constants/utilities";
-import { translate } from "@i18n";
-import { LoggerService } from "@services/logger.service";
+import { namespaces, starlarkLSPClientOptions, starlarkLSPUriScheme, starlarkLocalLSPDefaultArgs } from "@constants";
+import { LoggerService } from "@services";
 import { StarlarkFileHandler } from "@starlark";
-import { workspace, commands, ConfigurationChangeEvent } from "vscode";
-import {
-	LanguageClient,
-	LanguageClientOptions,
-	ServerOptions,
-	StreamInfo,
-} from "vscode-languageclient";
-
-const host = "127.0.0.1";
+import { workspace } from "vscode";
+import { LanguageClient, ServerOptions } from "vscode-languageclient";
 
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;
-	private static lspServerErrorDisplayed: boolean = false;
 
-	public static init() {
-		if (StarlarkLSPService.languageClient) {
-			return;
-		}
-		this.initiateLSPServer();
-		workspace.onDidChangeConfiguration(this.onChangeConfiguration);
-	}
-
-	private static initiateLSPServer() {
-		workspace.registerTextDocumentContentProvider(
-			starlarkLSPUriScheme,
-			new StarlarkFileHandler(StarlarkLSPService.languageClient!)
-		);
-		if (StarlarkLSPService.languageClient) {
-			return;
-		}
-
-		let serverOptions: ServerOptions | Promise<StreamInfo> = {
-			command: starlarkLSPPath,
-			args: starlarkLSPArgs,
-		};
-
-		let clientOptions: LanguageClientOptions = {
-			documentSelector: [{ scheme: "file", language: "starlark" }],
-			initializationOptions: {},
-		};
-
-		/* By default, the Starlark LSP operates through a CMD command in stdio mode.
-		 * However, if the 'starlarkLSPSocketMode' is enabled, the LSP won't initiate automatically.
-		 * Instead, VSCode connects to 'localhost:starlarkLSPPort', expecting the Starlark LSP to be running in socket mode. */
-		const isLSPSocketMode = workspace
-			.getConfiguration()
-			.get("autokitteh.starlarkLSPSocketMode") as boolean;
-
-		if (isLSPSocketMode) {
-			const port = getConfig<number>("autokitteh.starlarkLSPPort", 0);
-			if (!port) {
-				LoggerService.error(
-					namespaces.startlarkLSPServer,
-					translate().t("errors.missingStarlarkLSPPort")
-				);
-				commands.executeCommand(
-					vsCommands.showErrorMessage,
-					namespaces.startlarkLSPServer,
-					translate().t("errors.missingStarlarkLSPPort")
-				);
-
-				return;
-			}
-			const socket = connect({ host, port });
-			let streamListener: StreamInfo = { writer: socket, reader: socket };
-
-			serverOptions = () => new Promise((resolve) => resolve(streamListener));
-		}
-
-		LoggerService.info(
-			namespaces.startlarkLSPServer,
-			`Starting LSP Server: ${starlarkLSPPath} ${starlarkLSPArgs.join(", ")}`
-		);
+	public static async connectLSPServerBySocket(serverOptions: ServerOptions, starlarkSocketLspUrl: string) {
+		const lspConfigurationMessage = `(socket): ${starlarkSocketLspUrl} ${starlarkLocalLSPDefaultArgs.join(", ")}`;
+		LoggerService.info(namespaces.startlarkLSPServer, `Starting LSP Server in socket mode ${lspConfigurationMessage}`);
 
 		StarlarkLSPService.languageClient = new LanguageClient(
 			"Starlark",
 			"autokitteh: Starlark LSP",
 			serverOptions,
-			clientOptions
+			starlarkLSPClientOptions
 		);
 
-		try {
-			StarlarkLSPService.languageClient.start();
-		} catch (error) {
-			LoggerService.error(namespaces.deploymentsService, (error as Error).message);
-		}
+		StarlarkLSPService.languageClient.start();
+
+		workspace.registerTextDocumentContentProvider(
+			starlarkLSPUriScheme,
+			new StarlarkFileHandler(StarlarkLSPService.languageClient!)
+		);
 	}
 
-	private static onChangeConfiguration(event: ConfigurationChangeEvent) {
-		const settingsChanged =
-			event.affectsConfiguration("autokitteh.starlarkLSPType") ||
-			event.affectsConfiguration("autokitteh.autokitteh.starlarkLSPArguments");
-		if (!settingsChanged) {
-			return;
-		}
+	public static async connectLSPServerLocally(
+		serverOptions: ServerOptions,
+		starlarkLSPVersion: string,
+		starlarkLSPPath: string
+	) {
+		// eslint-disable-next-line max-len
+		const lspConfigurationMessage = `(${starlarkLSPVersion}): ${starlarkLSPPath} ${starlarkLocalLSPDefaultArgs.join(", ")}`;
+		LoggerService.info(namespaces.startlarkLSPServer, `Starting LSP Server ${lspConfigurationMessage}`);
 
-		if (StarlarkLSPService.languageClient) {
-			StarlarkLSPService.languageClient.stop();
-			StarlarkLSPService.languageClient = undefined;
-		}
-		StarlarkLSPService.initiateLSPServer();
+		StarlarkLSPService.languageClient = new LanguageClient(
+			"Starlark",
+			"autokitteh: Starlark LSP",
+			serverOptions,
+			starlarkLSPClientOptions
+		);
+
+		StarlarkLSPService.languageClient.start();
+
+		workspace.registerTextDocumentContentProvider(
+			starlarkLSPUriScheme,
+			new StarlarkFileHandler(StarlarkLSPService.languageClient!)
+		);
 	}
 }

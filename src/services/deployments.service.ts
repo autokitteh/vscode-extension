@@ -10,9 +10,7 @@ import { flattenArray, getIds, sortArray } from "@utilities";
 import { get } from "lodash";
 
 export class DeploymentsService {
-	static async listByEnvironmentIds(
-		environmentsIds: string[]
-	): Promise<ServiceResponse<Deployment[]>> {
+	static async listByEnvironmentIds(environmentsIds: string[]): Promise<ServiceResponse<Deployment[]>> {
 		try {
 			const deploymentsPromises = environmentsIds.map(
 				async (envId) =>
@@ -25,13 +23,8 @@ export class DeploymentsService {
 			const deploymentsResponses = await Promise.allSettled(deploymentsPromises);
 			const deploymentsSettled = flattenArray<Deployment>(
 				deploymentsResponses
-					.filter(
-						(response): response is PromiseFulfilledResult<ListResponse> =>
-							response.status === "fulfilled"
-					)
-					.map((response) =>
-						get(response, "value.deployments", []).map(convertDeploymentProtoToModel)
-					)
+					.filter((response): response is PromiseFulfilledResult<ListResponse> => response.status === "fulfilled")
+					.map((response) => get(response, "value.deployments", []).map(convertDeploymentProtoToModel))
 			);
 
 			const unsettledResponses = deploymentsResponses
@@ -50,8 +43,7 @@ export class DeploymentsService {
 	}
 
 	static async listByProjectId(projectId: string): Promise<ServiceResponse<Deployment[]>> {
-		const { data: environments, error: environmentsError } =
-			await EnvironmentsService.listByProjectId(projectId);
+		const { data: environments, error: environmentsError } = await EnvironmentsService.listByProjectId(projectId);
 
 		if (environmentsError) {
 			LoggerService.error(namespaces.deploymentsService, (environmentsError as Error).message);
@@ -60,8 +52,7 @@ export class DeploymentsService {
 		}
 
 		const environmentIds = getIds(environments!, "envId");
-		const { data: projectDeployments, error: deploymentsError } =
-			await this.listByEnvironmentIds(environmentIds);
+		const { data: projectDeployments, error: deploymentsError } = await this.listByEnvironmentIds(environmentIds);
 
 		if (deploymentsError) {
 			LoggerService.error(namespaces.deploymentsService, (deploymentsError as Error).message);
@@ -73,10 +64,7 @@ export class DeploymentsService {
 		return { data: projectDeployments!, error: undefined };
 	}
 
-	static async create(deployment: {
-		envId: string;
-		buildId: string;
-	}): Promise<ServiceResponse<string>> {
+	static async create(deployment: { envId: string; buildId: string }): Promise<ServiceResponse<string>> {
 		try {
 			const createResponse = await deploymentsClient.create({ deployment });
 

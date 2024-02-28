@@ -1,6 +1,11 @@
 {
-	"activationSucceed": "Deployment activation succeed - id: {{id}}",
-	"activationFailed": "Deployment activation failed - id: {{id}} \nReason: {{error}}",
-	"deactivationSucceed": "Deployment deactivation succeed - id: {{id}}",
-	"deactivationFailed": "Deployment deactivation failed - id: {{id}} \nReason: {{error}}"
+	"activationSucceed": "Deployment activation succeed",
+	"activationFailed": "Deployment activation failed",
+	"deactivationSucceed": "Deployment deactivation succeed",
+	"deactivationFailed": "Deployment deactivation failed",
+	"activationSucceedId": "Deployment activation succeed - id: {{id}}",
+	"activationFailedId": "Deployment activation failed - id: {{id}}",
+	"deactivationSucceedId": "Deployment deactivation succeed - id: {{id}}",
+	"deactivationFailedId": "Deployment deactivation failed - id: {{id}}",
+	"deploymentSelectionFailed": "Deployment selection failed - review the logs"
 }

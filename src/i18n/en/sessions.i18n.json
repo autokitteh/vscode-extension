@@ -1,3 +1,12 @@
 {
-	"noLogs": "No logs to display"
+	"noLogs": "No logs to display",
+	"logs": "Logs",
+	"errors": "Errors",
+	"noErrors": "No errors to display",
+	"callstack": "Callstack",
+	"callstackNoPrints": "No callstack to display",
+	"emptyHistory": "Session history states are empty",
+	"historyResult": "Result",
+	"historyFunction": "Function",
+	"historyPrint": "Print"
 }

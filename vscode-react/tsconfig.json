@@ -20,6 +20,8 @@
 			"@constants/*": ["../src/constants/*"],
 			"@enums": ["../src/enums/index"],
 			"@enums/*": ["../src/enums/*"],
+			"@interfaces": ["../src/interfaces/index"],
+			"@interfaces/*": ["../src/interfaces/*"],
 			"@i18n": ["../src/i18n/index"],
 			"@i18n/*": ["../src/i18n/*"],
 			"@models": ["../src/models/index"],
@@ -50,14 +52,14 @@
 			"@starlark": ["../src/starlark/index"],
 			"@starlark/*": ["../src/starlark/*"],
 			"@utils": ["../src/utilities/index"],
-			"@utils/*": ["../src/utilities/*"],
+			"@utils/*": ["../src/utilities/*"]
 		},
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"strict": true,
 		"target": "esnext",
 		"types": ["vite-plugin-svgr/client"],
-		"useDefineForClassFields": true,
+		"useDefineForClassFields": true
 	},
-	"include": ["./src", "./tests/**/*.test.ts"],
+	"include": ["./src", "./tests/**/*.test.ts"]
 }

@@ -24,9 +24,7 @@ export class SessionsService {
 	static async listByDeploymentId(deploymentId: string): Promise<ServiceResponse<Session[]>> {
 		try {
 			const response = await sessionsClient.list({ deploymentId });
-			const sessions = response.sessions.map((session: ProtoSession) =>
-				convertSessionProtoToModel(session)
-			);
+			const sessions = response.sessions.map((session: ProtoSession) => convertSessionProtoToModel(session));
 			return { data: sessions, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.sessionsService, (error as Error).message);
@@ -35,14 +33,10 @@ export class SessionsService {
 		}
 	}
 
-	static async getHistoryBySessionId(
-		sessionId: string
-	): Promise<ServiceResponse<Array<SessionState>>> {
+	static async getHistoryBySessionId(sessionId: string): Promise<ServiceResponse<Array<SessionState>>> {
 		try {
-			const response = await sessionsClient.getHistory({ sessionId });
-			const sessionHistory = response.history?.states.map(
-				(state: ProtoSessionHistoryState) => new SessionState(state)
-			);
+			const response = await sessionsClient.getLog({ sessionId });
+			const sessionHistory = response.log?.records.map((state: ProtoSessionHistoryState) => new SessionState(state));
 			return { data: sessionHistory, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.sessionsService, (error as Error).message);
@@ -71,11 +65,7 @@ export class SessionsService {
 			const sessions = flattenArray<Session>(
 				sessionsResponses
 					.filter((response) => response.status === "fulfilled")
-					.map((response) =>
-						get(response, "value.sessions", []).map((session) =>
-							convertSessionProtoToModel(session)
-						)
-					)
+					.map((response) => get(response, "value.sessions", []).map((session) => convertSessionProtoToModel(session)))
 			);
 
 			return { data: sessions, error: undefined };

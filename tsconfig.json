@@ -37,14 +37,14 @@
 			"@views": ["views/index"],
 			"@views/*": ["views/*"],
 			"@vscommands": ["vscommands/index"],
-			"@vscommands/*": ["vscommands/*"],
+			"@vscommands/*": ["vscommands/*"]
 		},
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
-		"target": "es2021",
+		"target": "es2021"
 	},
 	"exclude": ["node_modules", ".vscode-test", "vscode-react", "./src/autokitteh"],
-	"include": ["./src", "./tests/**/*.ts"],
+	"include": ["./src", "./tests/**/*.ts"]
 }

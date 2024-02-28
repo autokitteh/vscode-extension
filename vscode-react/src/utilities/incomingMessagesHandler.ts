@@ -3,12 +3,8 @@ import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
 
-export const HandleIncomingMessages = (
-	event: MessageEvent<Message>,
-	handlers: IIncomingMessagesHandler
-) => {
+export const HandleIncomingMessages = (event: MessageEvent<Message>, handlers: IIncomingMessagesHandler) => {
 	const { payload } = event.data as Message;
-
 	switch (event.data.type) {
 		case MessageType.setTheme:
 			handlers.setThemeVisualType(payload as Theme);
@@ -24,6 +20,8 @@ export const HandleIncomingMessages = (
 			break;
 		case MessageType.selectDeployment:
 			handlers.setSelectedDeploymentId(payload as string);
+		case MessageType.setResourcesDirState:
+			handlers.setResourcesDirState(payload as boolean);
 		default:
 	}
 };
