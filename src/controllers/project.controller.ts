@@ -18,6 +18,7 @@ export class ProjectController {
 	public projectId: string;
 	public project?: Project;
 	private sessions?: Session[] = [];
+	private sessionHistoryStates: SessionState[] = [];
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
@@ -133,6 +134,10 @@ export class ProjectController {
 		const { data: sessionHistoryStates } = await SessionsService.getHistoryBySessionId(sessionId);
 		if (!sessionHistoryStates?.length || !sessionHistoryStates) {
 			LoggerService.sessionLog(translate().t("errors.sessionHistoryIsEmpty"));
+			return;
+		}
+
+		if (isEqual(this.sessionHistoryStates, sessionHistoryStates)) {
 			return;
 		}
 
