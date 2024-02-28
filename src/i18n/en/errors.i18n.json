@@ -34,5 +34,6 @@
 	"deploymentsFetchFailed": "Couldn't fetch deployments",
 	"sessionFetchFailed": "Couldn't fetch sessions for deployment",
 	"noResponse": "Connectivity issue, no response from server",
-	"sessionLogMissingDateTime": "Session History - No date time"
+	"sessionLogMissingDateTime": "Session History - No date time",
+	"sessionHistoryIsEmpty": "Session history states are empty"
 }

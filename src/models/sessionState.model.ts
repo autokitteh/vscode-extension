@@ -20,9 +20,8 @@ export class SessionState {
 		if (sessionState.toString() === "state") {
 			sessionState = get(session, "data.value.states.case", SessionStateType.unknown) as SessionStateType;
 		}
-		if (!sessionState || !(sessionState in SessionStateType)) {
+		if (!sessionState || !Object.values(SessionStateType).includes(sessionState)) {
 			LoggerService.error("SessionState", translate().t("errors.unexpectedSessionStateType"));
-			this.type = SessionStateType.unknown;
 			return;
 		}
 
@@ -42,13 +41,23 @@ export class SessionState {
 				this.logs = ["Print: " + get(session, "data.value", "")];
 				break;
 			default:
-				throw new Error(translate().t("errors.unexpectedSessionStateType"));
+				this.handleDefaultCase(session);
 		}
 
 		if (this.dateTime === undefined) {
 			this.setDateTime(session, sessionState);
 		}
 		this.setErrorAndCallstack(session);
+	}
+
+	private handleDefaultCase(session: ProtoSessionHistoryState) {
+		const stateCase = get(session, "data.value.states.case");
+		if (!stateCase || !(stateCase in SessionStateType)) {
+			this.type = SessionStateType.unknown;
+		} else if (stateCase) {
+			this.type = stateCase as SessionStateType;
+			this.logs = get(session, "data.value.states.value.prints", []);
+		}
 	}
 
 	private handleCallAttemptComplete(session: ProtoSessionHistoryState) {
@@ -80,9 +89,7 @@ export class SessionState {
 			}
 
 			this.dateTime = convertTimestampToDate(dateTimeStamp);
-		} catch (error) {
-			throw new Error(translate().t("errors.sessionLogMissingDateTime"));
-		}
+		} catch (error) {}
 	}
 
 	private setErrorAndCallstack(session: ProtoSessionHistoryState) {

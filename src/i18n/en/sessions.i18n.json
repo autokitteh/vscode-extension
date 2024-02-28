@@ -2,7 +2,7 @@
 	"noLogs": "No logs to display",
 	"logs": "Logs",
 	"errors": "Errors",
-	"noErrors": "No errors",
+	"noErrors": "No errors to display",
 	"callstack": "Callstack",
-	"callstackNoPrints": "nothing found here"
+	"callstackNoPrints": "No callstack to display"
 }

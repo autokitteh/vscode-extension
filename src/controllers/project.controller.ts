@@ -132,11 +132,8 @@ export class ProjectController {
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
 		const { data: sessionHistoryStates } = await SessionsService.getHistoryBySessionId(sessionId);
-		if (!sessionHistoryStates?.length) {
-			throw new Error("No session history states found.");
-		}
-
-		if (isEqual(this.sessionHistoryStates, sessionHistoryStates)) {
+		if (!sessionHistoryStates?.length || !sessionHistoryStates) {
+			LoggerService.sessionLog(translate().t("errors.sessionHistoryIsEmpty"));
 			return;
 		}
 
