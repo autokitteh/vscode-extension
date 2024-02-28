@@ -25,9 +25,8 @@ function App() {
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
 	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
-	const [code, setCode] = useState("// type your code...");
+	const [code, setCode] = useState("// modify session parameters");
 	const [modal, setModal] = useState(false);
-	console.log("start");
 
 	const messageHandlers: IIncomingMessagesHandler = {
 		setDeploymentsSection,
@@ -68,8 +67,8 @@ function App() {
 	useEffect(() => {
 		if (entrypoints) {
 			setFiles(entrypoints);
-			setSelectedFile("http.star");
-			setFunctions(entrypoints["http.star"]);
+			setSelectedFile(Object.keys(entrypoints)[0]);
+			setFunctions(entrypoints[Object.keys(entrypoints)[0]]);
 		}
 	}, [entrypoints]);
 
@@ -121,7 +120,6 @@ function App() {
 		left: "31%",
 		transform: "translate(-50%, 10%)",
 		display: showPopper ? "flex" : "none",
-		width: "45%",
 		zIndex: 40,
 	};
 
@@ -152,14 +150,15 @@ function App() {
 							style={centeredPopperStyles}
 							{...attributes.popper}
 							// eslint-disable-next-line max-len
-							className="justify-between lg:flex-row bg-white text-black border border-gray-300 p-4 rounded-lg shadow-lg md:flex-col sm:flex-col max-sm:flex-col"
+							className="justify-between flex-col bg-vscode-editor-background text-vscode-foreground border border-gray-300 p-4 rounded-lg shadow-lg gap-4"
 						>
 							<div>
-								File:
+								<strong>File:</strong>
 								<VSCodeDropdown
 									value={selectedFile}
 									onChange={(e: any) => setSelectedFile(e.target.value)}
 									disabled={files !== undefined && Object.keys(files).length <= 1}
+									className="flex"
 								>
 									{files &&
 										Object.keys(files).map((file) => (
@@ -170,11 +169,12 @@ function App() {
 								</VSCodeDropdown>
 							</div>
 							<div>
-								Entrypoint:
+								<strong>Entrypoint:</strong>
 								<VSCodeDropdown
 									value={selectedFunction}
 									onChange={(e: any) => setSelectedFunction(e.target.value)}
 									disabled={functions !== undefined && functions.length <= 1}
+									className="flex"
 								>
 									{functions &&
 										functions.map((func) => (
@@ -185,26 +185,33 @@ function App() {
 								</VSCodeDropdown>
 							</div>
 							<div>
-								<div
-									className="codicon codicon-symbol-namespace inline-block"
-									ref={referenceEl}
-									onClick={() => setModal(true)}
-								></div>{" "}
-								<div onClick={() => setModal(true)} className=" inline-block">
+								<strong>Session parameters:</strong>
+								<div onClick={() => setModal(true)} className="flex cursor-pointer">
 									{"{param1: 'test', param2: 'test'..."}
 								</div>
 							</div>
 							<div>
 								<AKButton onClick={() => togglePopper()}>Save</AKButton>
-								<AKButton classes="bg-white text-black" onClick={() => togglePopper()}>
+								<AKButton
+									classes="bg-vscode-editor-background text-vscode-foreground ml-4"
+									onClick={() => togglePopper()}
+								>
 									Dismiss
 								</AKButton>
 							</div>
 						</div>
-						<AKButton classes="w-10 mr-2" onClick={togglePopper}>
+						<AKButton
+							classes="w-10 mr-2"
+							onClick={togglePopper}
+							disabled={!resourcesDirState && !!deploymentsSection && !!deploymentsSection.totalDeployments}
+						>
 							<div className="codicon codicon-edit mr-2" ref={referenceEl}></div>
 						</AKButton>
-						<AKButton onClick={() => sendMessage(MessageType.runSingleShot, code)} classes="mr-4">
+						<AKButton
+							onClick={() => sendMessage(MessageType.runSingleShot, code)}
+							classes="mr-4"
+							disabled={!resourcesDirState}
+						>
 							<div className="codicon codicon-send mr-2"></div>
 							{translate().t("reactApp.general.singleShot")}
 						</AKButton>
