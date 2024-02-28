@@ -139,7 +139,7 @@ export class ProjectController {
 
 		if (sessionHistoryStates[sessionHistoryStates.length - 1].isFinished()) {
 			LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
-			this.logSessionStates(sessionHistoryStates);
+			this.logSessionLogs(sessionHistoryStates);
 			this.logSessionFinishDetails(sessionHistoryStates[sessionHistoryStates.length - 1]);
 			this.stopInterval(ProjectIntervalTypes.sessionHistory);
 			return;
@@ -147,10 +147,10 @@ export class ProjectController {
 
 		this.sessionHistoryStates = sessionHistoryStates;
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
-		this.logSessionStates(sessionHistoryStates);
+		this.logSessionLogs(sessionHistoryStates);
 	}
 
-	private logSessionStates(sessionStates: SessionState[]) {
+	private logSessionLogs(sessionStates: SessionState[]) {
 		const logPrefix = translate().t("sessions.logs");
 		LoggerService.sessionLog(`${logPrefix}:`);
 
