@@ -19,6 +19,7 @@ export class ProjectController {
 	public project?: Project;
 	private sessions?: Session[] = [];
 	private sessionHistoryStates: SessionLogRecord[] = [];
+	private sessionInputs?: any;
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
@@ -396,6 +397,7 @@ export class ProjectController {
 
 	async copyToClipboard(data: string) {
 		const sessionInputs = this.sessions?.find((session) => session.sessionId === data)?.inputs;
+		this.sessionInputs = sessionInputs;
 		env.clipboard.writeText(JSON.stringify(sessionInputs)).then(() => {
 			commands.executeCommand(vsCommands.showInfoMessage, translate().t("sessions.sessionDataCopiedSuccessfully"));
 		});
@@ -406,10 +408,14 @@ export class ProjectController {
 			commands.executeCommand(vsCommands.showErrorMessage, translate().t("deployments.noSelectedDeployment"));
 			return;
 		}
-		let sessionInputsObject = {};
+		let sessionInputsObject;
 		try {
 			sessionInputsObject = JSON.parse(sessionInputs);
-		} catch (error) {}
+		} catch (error) {
+			console.log(error);
+		}
+		console.log(this.sessionInputs);
+
 		await SessionsService.runSingleShot(this.selectedDeploymentId, sessionInputsObject);
 	}
 
