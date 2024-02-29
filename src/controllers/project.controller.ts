@@ -412,15 +412,21 @@ export class ProjectController {
 		const sessionInputs = this.sessions?.find((session) => session.sessionId === data)?.inputs;
 		if (sessionInputs) {
 			this.sessionSingleShotInputs.sessionInputs = sessionInputs;
+			commands.executeCommand(vsCommands.showInfoMessage, translate().t("sessions.sessionParamsCopied"));
+
+			this.view.update({
+				type: MessageType.setSingleshotParams,
+				payload: true,
+			});
 		}
 	}
 
-	async runSingleShot() {
+	async runSingleshot() {
 		if (!this.selectedDeploymentId) {
 			commands.executeCommand(vsCommands.showErrorMessage, translate().t("deployments.noSelectedDeployment"));
 			return;
 		}
-		const { data: sessionId, error } = await SessionsService.runSingleShot(
+		const { data: sessionId, error } = await SessionsService.runSingleshot(
 			this.sessionSingleShotInputs.deploymentId,
 			this.sessionSingleShotInputs.sessionInputs
 		);
@@ -435,8 +441,8 @@ export class ProjectController {
 			return;
 		}
 		const successMessage = translate().t("sessions.singleShotSucceed");
-		commands.executeCommand(vsCommands.showErrorMessage, successMessage);
-		LoggerService.error(namespaces.projectController, successMessage);
+		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
+		LoggerService.info(namespaces.projectController, successMessage);
 
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		this.selectedSessionId = sessionId;

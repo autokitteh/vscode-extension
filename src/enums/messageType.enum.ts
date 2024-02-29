@@ -12,6 +12,7 @@ export enum MessageType {
 	deactivateDeployment = "DEACTIVATE_DEPLOYMENT",
 	activateDeployment = "ACTIVATE_DEPLOYMENT",
 	copyToClipboard = "COPY_TO_CLIPBOARD",
-	runSingleShot = "RUN_SINGLE_SHOT",
+	runSingleshot = "RUN_SINGLE_SHOT",
 	setEntrypoints = "SET_ENTRYPOINTS",
+	setSingleshotParams = "SET_SINGLESHOT_PARAMS",
 }

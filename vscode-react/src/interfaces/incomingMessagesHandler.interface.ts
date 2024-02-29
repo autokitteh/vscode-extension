@@ -9,4 +9,5 @@ export interface IIncomingMessagesHandler {
 	setSelectedDeploymentId(selectDeploymentId: string | undefined): void;
 	setResourcesDirState(projectFolder: boolean): void;
 	setEntrypoints(entrypoints: Record<string, string[]>): void;
+	setSingleshotParamsDefined(singleshotParamsDefined: boolean): void;
 }

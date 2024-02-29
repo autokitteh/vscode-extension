@@ -49,7 +49,7 @@ export class SessionsService {
 		}
 	}
 
-	static async runSingleShot(deploymentId: string, sessionInputs: any): Promise<ServiceResponse<string>> {
+	static async runSingleshot(deploymentId: string, sessionInputs: any): Promise<ServiceResponse<string>> {
 		try {
 			const newSession = {
 				deploymentId,

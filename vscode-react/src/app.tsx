@@ -13,7 +13,6 @@ import { cn } from "@react-utilities/cnClasses.utils";
 import { Message } from "@type";
 import "./app.css";
 import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
-import * as monaco from "monaco-editor";
 import MonacoEditor from "react-monaco-editor";
 import { usePopper } from "react-popper";
 
@@ -25,8 +24,9 @@ function App() {
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
 	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
-	const [code, setCode] = useState("// modify session parameters");
+	const [executeParams, setExecuteParams] = useState("");
 	const [modal, setModal] = useState(false);
+	const [singleshotParamsDefined, setSingleshotParamsDefined] = useState(false);
 
 	const messageHandlers: IIncomingMessagesHandler = {
 		setDeploymentsSection,
@@ -36,6 +36,7 @@ function App() {
 		setSelectedDeploymentId,
 		setResourcesDirState,
 		setEntrypoints,
+		setSingleshotParamsDefined,
 	};
 
 	const handleMessagesFromExtension = useCallback(
@@ -71,32 +72,6 @@ function App() {
 			setFunctions(entrypoints[Object.keys(entrypoints)[0]]);
 		}
 	}, [entrypoints]);
-
-	const editorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => setupPasteFormatting(editor);
-
-	const setupPasteFormatting = (editor: monaco.editor.IStandaloneCodeEditor) => {
-		editor.onDidPaste((e) => {
-			const pastedContent = editor.getModel()?.getValueInRange(e.range);
-			if (!pastedContent) {
-				return;
-			}
-			const formattedContent = formatPastedContent(pastedContent);
-
-			editor.executeEdits("", [
-				{
-					range: e.range,
-					text: formattedContent,
-					forceMoveMarkers: true,
-				},
-			]);
-
-			setCode(formattedContent);
-		});
-	};
-
-	const formatPastedContent = (content: string) => {
-		return JSON.stringify(JSON.parse(content), null, 2);
-	};
 
 	const referenceEl = useRef<HTMLDivElement | null>(null);
 	const popperEl = useRef<HTMLDivElement | null>(null);
@@ -150,7 +125,7 @@ function App() {
 								<VSCodeDropdown
 									value={selectedFile}
 									onChange={(e: any) => setSelectedFile(e.target.value)}
-									disabled={files !== undefined && Object.keys(files).length <= 1}
+									disabled={singleshotParamsDefined && files !== undefined && Object.keys(files).length <= 1}
 									className="flex"
 								>
 									{files &&
@@ -179,9 +154,24 @@ function App() {
 							</div>
 							<div className="mb-3">
 								<strong>Session parameters:</strong>
-								<div onClick={() => setModal(true)} className="flex cursor-pointer">
+
+								<VSCodeDropdown
+									value={selectedFile}
+									onChange={(e: any) => setSelectedFile(e.target.value)}
+									disabled={singleshotParamsDefined && files !== undefined && Object.keys(files).length <= 1}
+									className="flex"
+								>
+									{files &&
+										Object.keys(files).map((file) => (
+											<option key={file} value={file}>
+												{file}
+											</option>
+										))}
+								</VSCodeDropdown>
+								{/* <div onClick={() => setModal(true)} className="flex cursor-pointer">
 									{"{param1: 'test', param2: 'test'..."}
 								</div>
+								 */}
 							</div>
 							<div className="flex">
 								<AKButton classes="bg-vscode-editor-background text-vscode-foreground" onClick={() => togglePopper()}>
@@ -199,7 +189,7 @@ function App() {
 							<div className="codicon codicon-edit mr-2" ref={referenceEl}></div>
 						</AKButton>
 						<AKButton
-							onClick={() => sendMessage(MessageType.runSingleShot, code)}
+							onClick={() => sendMessage(MessageType.runSingleshot, executeParams)}
 							classes="mr-4"
 							disabled={!resourcesDirState || !deploymentsSection || !deploymentsSection.totalDeployments}
 						>
@@ -230,9 +220,8 @@ function App() {
 										height="50vh"
 										width="100vw"
 										theme="vs-dark"
-										value={code}
-										onChange={(value) => setCode(value)}
-										editorDidMount={editorDidMount}
+										value={executeParams}
+										onChange={(value) => setExecuteParams(value)}
 										className="z-50"
 									/>
 								</div>
