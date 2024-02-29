@@ -9,7 +9,7 @@ import { DeploymentsService, ProjectsService, SessionsService, LoggerService } f
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
-import { commands, OpenDialogOptions, window, env } from "vscode";
+import { commands, OpenDialogOptions, window } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
@@ -19,13 +19,23 @@ export class ProjectController {
 	public project?: Project;
 	private sessions?: Session[] = [];
 	private sessionHistoryStates: SessionLogRecord[] = [];
-	private sessionInputs?: any;
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
 	private selectedSessionId?: string;
 	private hasDisplayedError: Map<ProjectIntervalTypes, boolean> = new Map();
+	private sessionSingleShotInputs: {
+		deploymentId: string;
+		sessionInputs: Record<string, any>;
+		triggerFile: string;
+		triggerFunction: string;
+	} = {
+		deploymentId: "",
+		sessionInputs: {},
+		triggerFile: "",
+		triggerFunction: "",
+	};
 
 	constructor(
 		projectView: IProjectView,
@@ -127,6 +137,9 @@ export class ProjectController {
 
 	async selectDeployment(deploymentId: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
+		this.sessionSingleShotInputs.deploymentId = deploymentId;
+		this.sessionSingleShotInputs.sessionInputs = {};
+
 		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
 
 		if (error) {
@@ -397,26 +410,42 @@ export class ProjectController {
 
 	async copyToClipboard(data: string) {
 		const sessionInputs = this.sessions?.find((session) => session.sessionId === data)?.inputs;
-		this.sessionInputs = sessionInputs;
-		env.clipboard.writeText(JSON.stringify(sessionInputs)).then(() => {
-			commands.executeCommand(vsCommands.showInfoMessage, translate().t("sessions.sessionDataCopiedSuccessfully"));
-		});
+		if (sessionInputs) {
+			this.sessionSingleShotInputs.sessionInputs = sessionInputs;
+		}
 	}
 
-	async runSingleShot(sessionInputs: string) {
+	async runSingleShot() {
 		if (!this.selectedDeploymentId) {
 			commands.executeCommand(vsCommands.showErrorMessage, translate().t("deployments.noSelectedDeployment"));
 			return;
 		}
-		let sessionInputsObject;
-		try {
-			sessionInputsObject = JSON.parse(sessionInputs);
-		} catch (error) {
-			console.log(error);
-		}
-		console.log(this.sessionInputs);
+		const { data: sessionId, error } = await SessionsService.runSingleShot(
+			this.sessionSingleShotInputs.deploymentId,
+			this.sessionSingleShotInputs.sessionInputs
+		);
 
-		await SessionsService.runSingleShot(this.selectedDeploymentId, sessionInputsObject);
+		if (error) {
+			const notification = translate().t("sessions.singleShotFailed");
+			const log = `${translate().t("sessions.singleShotFailedError", {
+				error,
+			})}`;
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.projectController, log);
+			return;
+		}
+		const successMessage = translate().t("sessions.singleShotSucceed");
+		commands.executeCommand(vsCommands.showErrorMessage, successMessage);
+		LoggerService.error(namespaces.projectController, successMessage);
+
+		this.stopInterval(ProjectIntervalTypes.sessionHistory);
+		this.selectedSessionId = sessionId;
+
+		this.startInterval(
+			ProjectIntervalTypes.sessionHistory,
+			() => this.displaySessionsHistory(sessionId!),
+			this.sessionsLogRefreshRate
+		);
 	}
 
 	async deactivateDeployment(deploymentId: string) {

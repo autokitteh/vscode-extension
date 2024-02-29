@@ -49,7 +49,7 @@ export class SessionsService {
 		}
 	}
 
-	static async runSingleShot(deploymentId: string, sessionInputs: any): Promise<void> {
+	static async runSingleShot(deploymentId: string, sessionInputs: any): Promise<ServiceResponse<string>> {
 		try {
 			const newSession = {
 				deploymentId,
@@ -63,9 +63,10 @@ export class SessionsService {
 				},
 			};
 			const response = await sessionsClient.start({ session: newSession } as unknown as StartRequest);
-			console.log(response);
+			return { data: response.sessionId, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.sessionsService, (error as Error).message);
+			return { data: undefined, error };
 		}
 	}
 

@@ -12,5 +12,7 @@
 	"historyTime": "Time",
 	"historyNoOutput": "No output",
 	"historyPrint": "Print",
-	"sessionDataCopiedSuccessfully": "Session data copied successfully"
+	"singleShotFailed": "Session re-run failed",
+	"singleShotSucceed": "Session re-run succeed",
+	"singleShotFailedError": "Session re-run failed - {{error}}"
 }
