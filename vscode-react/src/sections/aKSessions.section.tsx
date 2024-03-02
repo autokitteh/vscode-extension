@@ -14,11 +14,17 @@ import {
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
 
-export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewModel) => {
+export const AKSessions = ({ sessions, totalSessions = 0, selectedSessionId }: SessionSectionViewModel) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSession, setSelectedSession] = useState("");
+
+	useEffect(() => {
+		if (typeof selectedSessionId === "string") {
+			setSelectedSession(selectedSessionId);
+		}
+	}, [selectedSessionId]);
 
 	useEffect(() => {
 		if (isLoading) {

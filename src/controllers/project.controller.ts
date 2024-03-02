@@ -137,10 +137,6 @@ export class ProjectController {
 	async selectDeployment(deploymentId: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
 		this.sessionExecution.executionInputs = {};
-		this.view.update({
-			type: MessageType.setExecutionInputsDefined,
-			payload: false,
-		});
 
 		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
 
@@ -417,8 +413,8 @@ export class ProjectController {
 			commands.executeCommand(vsCommands.showInfoMessage, translate().t("sessions.sessionParamsCopied"));
 
 			this.view.update({
-				type: MessageType.setExecutionInputsDefined,
-				payload: true,
+				type: MessageType.setExecutionInputs,
+				payload: executionInputs,
 			});
 		}
 	}
@@ -456,13 +452,17 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, successMessage);
 
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
-		this.selectedSessionId = sessionId;
 
 		this.startInterval(
 			ProjectIntervalTypes.sessionHistory,
 			() => this.displaySessionsHistory(sessionId!),
 			this.sessionsLogRefreshRate
 		);
+
+		this.view.update({
+			type: MessageType.selectSession,
+			payload: sessionId,
+		});
 	}
 
 	async deactivateDeployment(deploymentId: string) {

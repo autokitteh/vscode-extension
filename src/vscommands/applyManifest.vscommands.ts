@@ -16,7 +16,7 @@ export const applyManifest = async () => {
 
 	const projectYamlContent = yaml.load(mainfestYaml) as { project: { triggers: any[]; name: string } };
 	const triggers = projectYamlContent.project.triggers;
-	const entryPoints = triggers.reduce(
+	const entrypoints = triggers.reduce(
 		(acc, { entrypoint }) => {
 			const [filename, functionName] = entrypoint.split(":");
 			if (acc[filename]) {
@@ -30,7 +30,7 @@ export const applyManifest = async () => {
 	);
 
 	await commands.executeCommand(vsCommands.setContext, `${projectYamlContent.project.name}-entrypoints`, {
-		entrypoints: entryPoints,
+		entrypoints,
 	});
 
 	const { data: manifestResponse, error } = await ManifestService.applyManifest(mainfestYaml, filePath);

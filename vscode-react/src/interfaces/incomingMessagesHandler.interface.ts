@@ -7,7 +7,8 @@ export interface IIncomingMessagesHandler {
 	setProjectName(projectName: string | undefined): void;
 	setSessionsSection(sessions: SessionSectionViewModel | undefined): void;
 	setSelectedDeploymentId(selectDeploymentId: string | undefined): void;
+	setSelectedSessionId(selectSessionId: string | undefined): void;
 	setResourcesDirState(projectFolder: boolean): void;
 	setEntrypoints(entrypoints: Record<string, string[]>): void;
-	setExecutionInputsDefined(executionInputsDefined: boolean): void;
+	setExecutionInputs(executionInputs: Record<string, any>): void;
 }

@@ -27,8 +27,12 @@ export const HandleIncomingMessages = (event: MessageEvent<Message>, handlers: I
 		case MessageType.setEntrypoints:
 			handlers.setEntrypoints(payload as Record<string, string[]>);
 			break;
-		case MessageType.setExecutionInputsDefined:
-			handlers.setExecutionInputsDefined(payload as boolean);
+		case MessageType.setExecutionInputs:
+			handlers.setExecutionInputs(payload as Record<string, any>);
+			break;
+		case MessageType.selectSession:
+			handlers.setSelectedSessionId(payload as string);
+			break;
 		default:
 	}
 };

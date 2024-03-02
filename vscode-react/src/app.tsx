@@ -21,12 +21,13 @@ function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
+	const [selectedSessionId, setSelectedSessionId] = useState<string | undefined>();
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
 	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [modal, setModal] = useState(false);
 	const [executeProps, setExecuteProps] = useState<ExecutionParams>({});
-	const [executionInputsDefined, setExecutionInputsDefined] = useState(false);
+	const [executionInputs, setExecutionInputs] = useState<Record<string, any | undefined>>();
 
 	const messageHandlers: IIncomingMessagesHandler = {
 		setDeploymentsSection,
@@ -36,7 +37,8 @@ function App() {
 		setSelectedDeploymentId,
 		setResourcesDirState,
 		setEntrypoints,
-		setExecutionInputsDefined,
+		setExecutionInputs,
+		setSelectedSessionId,
 	};
 
 	const handleMessagesFromExtension = useCallback(
@@ -91,15 +93,23 @@ function App() {
 	const togglePopper = () => setShowPopper(!showPopper);
 
 	const isReadyToExecute = () => {
-		return !!(
-			selectedDeploymentId &&
-			executeProps.triggerFile &&
-			executeProps.triggerFunction &&
-			executionInputsDefined
+		console.log(
+			"is ready",
+			selectedDeploymentId,
+			executeProps.triggerFile,
+			executeProps.triggerFunction,
+			executionInputs
 		);
+
+		console.log(
+			"executeProps",
+			selectedDeploymentId && executeProps.triggerFile && executeProps.triggerFunction && executionInputs
+		);
+
+		return !!(selectedDeploymentId && executeProps.triggerFile && executeProps.triggerFunction && executionInputs);
 	};
 
-	const submitExecutionInputs = () => {
+	const saveExecutionProps = () => {
 		const executionProps = {
 			triggerFile: selectedFile,
 			triggerFunction: selectedFunction,
@@ -175,16 +185,26 @@ function App() {
 							</div>
 							<div className="mb-3">
 								<strong>Session parameters:</strong>
-								<div onClick={() => setModal(true)} className="flex cursor-pointer bg-vscode-dropdown-background">
-									{"{param1: 'test', param2: 'test'..."}
-								</div>
+								{executionInputs ? (
+									JSON.stringify(executionInputs).length > 5 ? (
+										<div onClick={() => setModal(true)} className="flex cursor-pointer bg-vscode-dropdown-background">
+											{JSON.stringify(executionInputs).substring(0, 6) + "\u2026"}
+										</div>
+									) : (
+										<div onClick={() => setModal(true)} className="flex cursor-pointer bg-vscode-dropdown-background">
+											{JSON.stringify(executionInputs)}
+										</div>
+									)
+								) : (
+									<div>Set session execution params</div>
+								)}
 							</div>
 							<div className="flex">
 								<AKButton classes="bg-vscode-editor-background text-vscode-foreground" onClick={() => togglePopper()}>
 									Dismiss
 								</AKButton>
 								<div className="flex-grow" />
-								<AKButton onClick={() => submitExecutionInputs()}>Save</AKButton>
+								<AKButton onClick={() => saveExecutionProps()}>Save</AKButton>
 							</div>
 						</div>
 						<AKButton
@@ -214,25 +234,21 @@ function App() {
 					</div>
 					{modal && (
 						<AKModal>
-							<div className="text-black text-xl">Session parameters</div>
 							<div className="m-auto">
 								<div className="flex w-fulljustify-end mt-2">
 									<MonacoEditor
 										language="json"
-										height="50vh"
+										height="90vh"
 										width="100vw"
 										theme="vs-dark"
-										// value={executeProps}
-										// onChange={(value) => setExecuteParams(value)}
+										value={executionInputs && JSON.stringify(executionInputs, null, 2)}
 										className="z-50"
+										options={{ domReadOnly: true }}
 									/>
 								</div>
 								<div className="flex w-full justify-end mt-2">
-									<AKButton classes="bg-gray-500" onClick={() => setModal(false)}>
-										Dismiss
-									</AKButton>
 									<AKButton classes="ml-2" onClick={() => setModal(false)}>
-										Update
+										OK
 									</AKButton>
 								</div>
 							</div>
@@ -244,7 +260,11 @@ function App() {
 						totalDeployments={deploymentsSection?.totalDeployments}
 						selectedDeploymentId={selectedDeploymentId}
 					/>
-					<AKSessions sessions={sessionsSection?.sessions} totalSessions={sessionsSection?.totalSessions} />
+					<AKSessions
+						sessions={sessionsSection?.sessions}
+						totalSessions={sessionsSection?.totalSessions}
+						selectedSessionId={selectedSessionId}
+					/>
 				</div>
 			) : (
 				<div className="flex justify-center items-center h-screen w-screen">
