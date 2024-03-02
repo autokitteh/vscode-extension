@@ -10,7 +10,7 @@ import { IIncomingMessagesHandler } from "@react-interfaces";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { HandleIncomingMessages, sendMessage } from "@react-utilities";
 import { cn } from "@react-utilities/cnClasses.utils";
-import { Message } from "@type";
+import { ExecutionParams, Message } from "@type";
 import "./app.css";
 import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
 import MonacoEditor from "react-monaco-editor";
@@ -24,9 +24,9 @@ function App() {
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
 	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
-	const [executeParams, setExecuteParams] = useState("");
 	const [modal, setModal] = useState(false);
-	const [singleshotParamsDefined, setSingleshotParamsDefined] = useState(false);
+	const [executeProps, setExecuteProps] = useState<ExecutionParams>({});
+	const [executionInputsDefined, setExecutionInputsDefined] = useState(false);
 
 	const messageHandlers: IIncomingMessagesHandler = {
 		setDeploymentsSection,
@@ -36,7 +36,7 @@ function App() {
 		setSelectedDeploymentId,
 		setResourcesDirState,
 		setEntrypoints,
-		setSingleshotParamsDefined,
+		setExecutionInputsDefined,
 	};
 
 	const handleMessagesFromExtension = useCallback(
@@ -90,6 +90,27 @@ function App() {
 	const [showPopper, setShowPopper] = useState(false);
 	const togglePopper = () => setShowPopper(!showPopper);
 
+	const isReadyToExecute = () => {
+		return !!(
+			selectedDeploymentId &&
+			executeProps.triggerFile &&
+			executeProps.triggerFunction &&
+			executionInputsDefined
+		);
+	};
+
+	const submitExecutionInputs = () => {
+		const executionProps = {
+			triggerFile: selectedFile,
+			triggerFunction: selectedFunction,
+		};
+		setExecuteProps(executionProps);
+		togglePopper();
+	};
+	const runExecution = () => {
+		sendMessage(MessageType.runExecution, executeProps);
+	};
+
 	const popperClasses = cn(
 		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
 		"border border-gray-300 p-4 rounded-lg shadow-lg",
@@ -125,7 +146,7 @@ function App() {
 								<VSCodeDropdown
 									value={selectedFile}
 									onChange={(e: any) => setSelectedFile(e.target.value)}
-									disabled={singleshotParamsDefined && files !== undefined && Object.keys(files).length <= 1}
+									disabled={files !== undefined && Object.keys(files).length <= 1}
 									className="flex"
 								>
 									{files &&
@@ -154,31 +175,16 @@ function App() {
 							</div>
 							<div className="mb-3">
 								<strong>Session parameters:</strong>
-
-								<VSCodeDropdown
-									value={selectedFile}
-									onChange={(e: any) => setSelectedFile(e.target.value)}
-									disabled={singleshotParamsDefined && files !== undefined && Object.keys(files).length <= 1}
-									className="flex"
-								>
-									{files &&
-										Object.keys(files).map((file) => (
-											<option key={file} value={file}>
-												{file}
-											</option>
-										))}
-								</VSCodeDropdown>
-								{/* <div onClick={() => setModal(true)} className="flex cursor-pointer">
+								<div onClick={() => setModal(true)} className="flex cursor-pointer bg-vscode-dropdown-background">
 									{"{param1: 'test', param2: 'test'..."}
 								</div>
-								 */}
 							</div>
 							<div className="flex">
 								<AKButton classes="bg-vscode-editor-background text-vscode-foreground" onClick={() => togglePopper()}>
 									Dismiss
 								</AKButton>
 								<div className="flex-grow" />
-								<AKButton onClick={() => togglePopper()}>Save</AKButton>
+								<AKButton onClick={() => submitExecutionInputs()}>Save</AKButton>
 							</div>
 						</div>
 						<AKButton
@@ -188,13 +194,9 @@ function App() {
 						>
 							<div className="codicon codicon-edit mr-2" ref={referenceEl}></div>
 						</AKButton>
-						<AKButton
-							onClick={() => sendMessage(MessageType.runSingleshot, executeParams)}
-							classes="mr-4"
-							disabled={!resourcesDirState || !deploymentsSection || !deploymentsSection.totalDeployments}
-						>
+						<AKButton onClick={runExecution} classes="mr-4" disabled={!isReadyToExecute()}>
 							<div className="codicon codicon-send mr-2"></div>
-							{translate().t("reactApp.general.singleShot")}
+							{translate().t("reactApp.general.execute")}
 						</AKButton>
 						<div className="flex-grow"></div>
 						{!resourcesDirState && (
@@ -220,8 +222,8 @@ function App() {
 										height="50vh"
 										width="100vw"
 										theme="vs-dark"
-										value={executeParams}
-										onChange={(value) => setExecuteParams(value)}
+										// value={executeProps}
+										// onChange={(value) => setExecuteParams(value)}
 										className="z-50"
 									/>
 								</div>

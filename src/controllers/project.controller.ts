@@ -6,6 +6,7 @@ import { IProjectView } from "@interfaces";
 import { SessionLogRecord } from "@models";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
+import { ExecutionParams } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
@@ -25,14 +26,12 @@ export class ProjectController {
 	private selectedDeploymentId?: string;
 	private selectedSessionId?: string;
 	private hasDisplayedError: Map<ProjectIntervalTypes, boolean> = new Map();
-	private sessionSingleShotInputs: {
-		deploymentId: string;
-		sessionInputs: Record<string, any>;
+	private sessionExecution: {
+		executionInputs: Record<string, any>;
 		triggerFile: string;
 		triggerFunction: string;
 	} = {
-		deploymentId: "",
-		sessionInputs: {},
+		executionInputs: {},
 		triggerFile: "",
 		triggerFunction: "",
 	};
@@ -137,8 +136,11 @@ export class ProjectController {
 
 	async selectDeployment(deploymentId: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
-		this.sessionSingleShotInputs.deploymentId = deploymentId;
-		this.sessionSingleShotInputs.sessionInputs = {};
+		this.sessionExecution.executionInputs = {};
+		this.view.update({
+			type: MessageType.setExecutionInputsDefined,
+			payload: false,
+		});
 
 		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
 
@@ -408,39 +410,48 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, translate().t("projects.activationSucceed", { id: deploymentId }));
 	}
 
-	async copyToClipboard(data: string) {
-		const sessionInputs = this.sessions?.find((session) => session.sessionId === data)?.inputs;
-		if (sessionInputs) {
-			this.sessionSingleShotInputs.sessionInputs = sessionInputs;
+	async setSessionExecutionInputs(data: string) {
+		const executionInputs = this.sessions?.find((session) => session.sessionId === data)?.inputs;
+		if (executionInputs) {
+			this.sessionExecution.executionInputs = executionInputs;
 			commands.executeCommand(vsCommands.showInfoMessage, translate().t("sessions.sessionParamsCopied"));
 
 			this.view.update({
-				type: MessageType.setSingleshotParams,
+				type: MessageType.setExecutionInputsDefined,
 				payload: true,
 			});
 		}
 	}
 
-	async runSingleshot() {
+	async saveExecutionProps(data: ExecutionParams) {
+		this.sessionExecution = {
+			...this.sessionExecution,
+			...data,
+		};
+	}
+
+	async runExecution() {
 		if (!this.selectedDeploymentId) {
 			commands.executeCommand(vsCommands.showErrorMessage, translate().t("deployments.noSelectedDeployment"));
 			return;
 		}
-		const { data: sessionId, error } = await SessionsService.runSingleshot(
-			this.sessionSingleShotInputs.deploymentId,
-			this.sessionSingleShotInputs.sessionInputs
+		const { data: sessionId, error } = await SessionsService.runExecution(
+			this.selectedDeploymentId,
+			this.sessionExecution.executionInputs,
+			this.sessionExecution.triggerFile,
+			this.sessionExecution.triggerFunction
 		);
 
 		if (error) {
-			const notification = translate().t("sessions.singleShotFailed");
-			const log = `${translate().t("sessions.singleShotFailedError", {
+			const notification = translate().t("sessions.executionFailed");
+			const log = `${translate().t("sessions.executionFailedError", {
 				error,
 			})}`;
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
-		const successMessage = translate().t("sessions.singleShotSucceed");
+		const successMessage = translate().t("sessions.executionSucceed");
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 		LoggerService.info(namespaces.projectController, successMessage);
 

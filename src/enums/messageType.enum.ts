@@ -11,8 +11,9 @@ export enum MessageType {
 	displaySessionLogs = "DISPLAY_SESSION_LOGS",
 	deactivateDeployment = "DEACTIVATE_DEPLOYMENT",
 	activateDeployment = "ACTIVATE_DEPLOYMENT",
-	copyToClipboard = "COPY_TO_CLIPBOARD",
-	runSingleshot = "RUN_SINGLE_SHOT",
+	setSessionExecutionInputs = "COPY_TO_CLIPBOARD",
+	runExecution = "RUN_EXECUTION",
 	setEntrypoints = "SET_ENTRYPOINTS",
-	setSingleshotParams = "SET_SINGLESHOT_PARAMS",
+	setExecutionInputsDefined = "SET_EXECUTION_INPUTS",
+	saveExecutionProps = "SAVE_EXECUTION_PROPS",
 }

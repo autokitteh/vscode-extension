@@ -10,5 +10,5 @@
 	"sessions": "sessions",
 	"deployments": "deployments",
 	"unknown": "Unknown",
-	"singleShot": "Single shot"
+	"execute": "Execute"
 }

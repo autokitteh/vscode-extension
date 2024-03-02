@@ -12,8 +12,8 @@
 	"historyTime": "Time",
 	"historyNoOutput": "No output",
 	"historyPrint": "Print",
-	"singleShotFailed": "Session re-run failed",
-	"singleShotSucceed": "Session re-run succeed",
-	"singleShotFailedError": "Session re-run failed - {{error}}",
-	"sessionParamsCopied": "Session parameters added to executuion parameters"
+	"executionFailed": "Session execution failed",
+	"executionSucceed": "Session execution succeed",
+	"executionFailedError": "Session execution failed - {{error}}",
+	"sessionParamsCopied": "Session parameters added to execution"
 }

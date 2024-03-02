@@ -26,6 +26,9 @@ export const HandleIncomingMessages = (event: MessageEvent<Message>, handlers: I
 			break;
 		case MessageType.setEntrypoints:
 			handlers.setEntrypoints(payload as Record<string, string[]>);
+			break;
+		case MessageType.setExecutionInputsDefined:
+			handlers.setExecutionInputsDefined(payload as boolean);
 		default:
 	}
 };

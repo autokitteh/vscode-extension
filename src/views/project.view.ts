@@ -1,7 +1,7 @@
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n/translation.i18n";
 import { IProjectView, IProjectViewDelegate } from "@interfaces";
-import { Message } from "@type";
+import { ExecutionParams, Message } from "@type";
 import { getNonce } from "@utilities";
 import { getUri } from "@utilities/getUri.utils";
 import * as vscode from "vscode";
@@ -48,11 +48,14 @@ export class ProjectView implements IProjectView {
 						break;
 					case MessageType.onClickSetResourcesDirectory:
 						this.delegate?.onClickSetResourcesDirectory?.();
-					case MessageType.copyToClipboard:
-						this.delegate?.copyToClipboard?.(message.payload as string);
+					case MessageType.setSessionExecutionInputs:
+						this.delegate?.setSessionExecutionInputs?.(message.payload as string);
 						break;
-					case MessageType.runSingleshot:
-						this.delegate?.runSingleshot?.(message.payload as string);
+					case MessageType.runExecution:
+						this.delegate?.runExecution?.(message.payload as string);
+						break;
+					case MessageType.saveExecutionProps:
+						this.delegate?.saveExecutionProps?.(message.payload as ExecutionParams);
 						break;
 				}
 			},

@@ -49,7 +49,12 @@ export class SessionsService {
 		}
 	}
 
-	static async runSingleshot(deploymentId: string, sessionInputs: any): Promise<ServiceResponse<string>> {
+	static async runExecution(
+		deploymentId: string,
+		sessionInputs: Record<any, any>,
+		triggerFile: string,
+		triggerFunction: string
+	): Promise<ServiceResponse<string>> {
 		try {
 			const newSession = {
 				deploymentId,
@@ -58,8 +63,8 @@ export class SessionsService {
 				entrypoint: {
 					col: 0,
 					row: 0,
-					name: "on_http_get",
-					path: "http.star",
+					name: triggerFunction,
+					path: triggerFile,
 				},
 			};
 			const response = await sessionsClient.start({ session: newSession } as unknown as StartRequest);
