@@ -173,10 +173,14 @@ export class ProjectView implements IProjectView {
 			  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 			  <meta
 				http-equiv="Content-Security-Policy"
-				content="default-src 'none'; font-src ${this.panel.webview.cspSource}; 
-				style-src vscode-resource: 'self' 'unsafe-inline';
-				script-src 'nonce-${nonce}';">
-							  
+				content="default-src 'none'; 
+				font-src ${this.panel.webview.cspSource} 'self' https://*.vscode-cdn.net https://cdn.jsdelivr.net; 
+				style-src vscode-resource: 'self'  https://cdn.jsdelivr.net 'unsafe-inline';
+				script-src-elem vscode-resource: 'self' https://cdn.jsdelivr.net 'unsafe-inline';
+				worker-src 'self' blob:;
+				img-src 'self' data:;
+				script-src 'self' https://cdn.jsdelivr.net https://*.vscode-cdn.net;">
+
 			  <link rel="stylesheet" type="text/css" href="${stylesUri}">
 			  <link rel="stylesheet" type="text/css" href="${codiconsUri}">
 			  <title>${translate().t("general.companyName")}</title>

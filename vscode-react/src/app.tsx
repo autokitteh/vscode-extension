@@ -4,6 +4,7 @@ import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
 import { DeploymentSectionViewModel } from "@models";
 import { SessionSectionViewModel } from "@models/views";
+import { Editor } from "@monaco-editor/react";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKButton, AKLogo, AKModal } from "@react-components";
 import { IIncomingMessagesHandler } from "@react-interfaces";
@@ -13,7 +14,6 @@ import { cn } from "@react-utilities/cnClasses.utils";
 import { ExecutionParams, Message } from "@type";
 import "./app.css";
 import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
-import MonacoEditor from "react-monaco-editor";
 import { usePopper } from "react-popper";
 
 function App() {
@@ -75,6 +75,20 @@ function App() {
 		}
 	}, [entrypoints]);
 
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") {
+				setModal(false);
+			}
+		};
+
+		document.addEventListener("keydown", handleKeyDown);
+
+		return () => {
+			document.removeEventListener("keydown", handleKeyDown);
+		};
+	}, []);
+
 	const referenceEl = useRef<HTMLDivElement | null>(null);
 	const popperEl = useRef<HTMLDivElement | null>(null);
 
@@ -93,19 +107,6 @@ function App() {
 	const togglePopper = () => setShowPopper(!showPopper);
 
 	const isReadyToExecute = () => {
-		console.log(
-			"is ready",
-			selectedDeploymentId,
-			executeProps.triggerFile,
-			executeProps.triggerFunction,
-			executionInputs
-		);
-
-		console.log(
-			"executeProps",
-			selectedDeploymentId && executeProps.triggerFile && executeProps.triggerFunction && executionInputs
-		);
-
 		return !!(selectedDeploymentId && executeProps.triggerFile && executeProps.triggerFunction && executionInputs);
 	};
 
@@ -234,21 +235,22 @@ function App() {
 					</div>
 					{modal && (
 						<AKModal>
+							<div className="flex justify-end cursor-pointer" onClick={() => setModal(false)}>
+								X
+							</div>
 							<div className="m-auto">
-								<div className="flex w-fulljustify-end mt-2">
-									<MonacoEditor
-										language="json"
+								<div className="flex w-full justify-end mt-2">
+									<Editor
 										height="90vh"
-										width="100vw"
+										defaultLanguage="json"
+										defaultValue={executionInputs ? JSON.stringify(executionInputs, null, 2) : ""}
 										theme="vs-dark"
-										value={executionInputs && JSON.stringify(executionInputs, null, 2)}
-										className="z-50"
-										options={{ domReadOnly: true }}
+										options={{ readOnly: true }}
 									/>
 								</div>
 								<div className="flex w-full justify-end mt-2">
 									<AKButton classes="ml-2" onClick={() => setModal(false)}>
-										OK
+										Close
 									</AKButton>
 								</div>
 							</div>
