@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
-import { AKDeploymentState } from "@react-components";
+import { AKButton, AKDeploymentState } from "@react-components";
 import {
 	AKTable,
 	AKTableMessage,
@@ -12,8 +12,13 @@ import {
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
 import { DeploymentState } from "@react-enums";
-import { getTimePassed, sendMessage } from "@react-utilities";
+import { IIncomingDeploymentsMessagesHandler } from "@react-interfaces";
+import { HandleDeploymentsIncomingMessages, getTimePassed, sendMessage } from "@react-utilities";
+import { cn } from "@react-utilities/cnClasses.utils";
+import { Message } from "@type";
 import { Deployment } from "@type/models";
+import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
+import { usePopper } from "react-popper";
 
 export const AKDeployments = ({
 	deployments,
@@ -68,6 +73,78 @@ export const AKDeployments = ({
 	const activateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.activateDeployment, deploymentId);
 	};
+
+	const referenceEl = useRef<HTMLDivElement | null>(null);
+	const popperEl = useRef<HTMLDivElement | null>(null);
+
+	const [files, setFiles] = useState<Record<string, string[]>>();
+	const [selectedFile, setSelectedFile] = useState<string>("");
+	const [functions, setFunctions] = useState<string[]>();
+	const [selectedFunction, setSelectedFunction] = useState<string>("");
+	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
+	const [executionInputs, setExecutionInputs] = useState<Record<string, string[]>>();
+
+	const messageHandlers: IIncomingDeploymentsMessagesHandler = {
+		setEntrypoints,
+		setExecutionInputs,
+	};
+
+	const handleMessagesFromExtension = useCallback(
+		(event: MessageEvent<Message>) => HandleDeploymentsIncomingMessages(event, messageHandlers),
+		[]
+	);
+
+	useEffect(() => {
+		window.addEventListener("message", handleMessagesFromExtension);
+		return () => {
+			window.removeEventListener("message", handleMessagesFromExtension);
+		};
+	}, [handleMessagesFromExtension]);
+
+	useEffect(() => {
+		if (entrypoints) {
+			setFiles(entrypoints);
+			setSelectedFile(Object.keys(entrypoints)[0]);
+			setFunctions(entrypoints[Object.keys(entrypoints)[0]]);
+		}
+	}, [entrypoints]);
+
+	useEffect(() => {
+		if (files) {
+			const functionsForSelectedFile = files[selectedFile];
+			setFunctions(functionsForSelectedFile || []);
+			setSelectedFunction(functionsForSelectedFile?.[0] || "");
+		}
+	}, [selectedFile]);
+
+	const { attributes, styles } = usePopper(referenceEl.current, popperEl.current, {
+		placement: "bottom",
+		modifiers: [
+			{
+				name: "offset",
+				options: {
+					offset: [0, 10],
+				},
+			},
+		],
+	});
+	const [showPopper, setShowPopper] = useState(false);
+	const togglePopper = () => setShowPopper(!showPopper);
+
+	const saveExecutionProps = () => {
+		// const executionProps = {
+		// 	triggerFile: selectedFile,
+		// 	triggerFunction: selectedFunction,
+		// };
+		// setExecuteProps(executionProps);
+		togglePopper();
+	};
+
+	const popperClasses = cn(
+		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
+		"border border-gray-300 p-4 rounded-lg shadow-lg",
+		{ invisible: !showPopper }
+	);
 
 	return (
 		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
@@ -138,6 +215,78 @@ export const AKDeployments = ({
 										className="codicon codicon-debug-stop cursor-pointer text-red-500"
 										onClick={() => deactivateBuild(deployment.deploymentId)}
 									></div>
+								)}
+
+								<div ref={popperEl} style={styles.popper} {...attributes.popper} className={popperClasses}>
+									<div className="mb-3 text-left">
+										<strong className="mb-2">File</strong>
+										<VSCodeDropdown
+											value={selectedFile}
+											onChange={(e: any) => setSelectedFile(e.target.value)}
+											disabled={files !== undefined && Object.keys(files).length <= 1}
+											className="flex"
+										>
+											{files &&
+												Object.keys(files).map((file) => (
+													<option key={file} value={file}>
+														{file}
+													</option>
+												))}
+										</VSCodeDropdown>
+									</div>
+									<div className="mb-3 text-left">
+										<strong className="mb-2">Entrypoint</strong>
+										<VSCodeDropdown
+											value={selectedFunction}
+											onChange={(e: any) => setSelectedFunction(e.target.value)}
+											disabled={functions !== undefined && functions.length <= 1}
+											className="flex"
+										>
+											{functions &&
+												functions.map((func) => (
+													<option key={func} value={func}>
+														{func}
+													</option>
+												))}
+										</VSCodeDropdown>
+									</div>
+									<div className="mb-3 text-left">
+										<strong className="mb-2">Session parameters</strong>
+										{executionInputs ? (
+											JSON.stringify(executionInputs).length > 5 ? (
+												<div
+													// onClick={() => setModal(true)}
+													className="flex cursor-pointer bg-vscode-dropdown-background"
+												>
+													{JSON.stringify(executionInputs).substring(0, 6) + "\u2026"}
+												</div>
+											) : (
+												<div
+													// onClick={() => setModal(true)}
+													className="flex cursor-pointer bg-vscode-dropdown-background"
+												>
+													{JSON.stringify(executionInputs)}
+												</div>
+											)
+										) : (
+											<div>Set session execution params</div>
+										)}
+									</div>
+									<div className="flex">
+										<AKButton
+											classes="bg-vscode-editor-background text-vscode-foreground"
+											onClick={() => togglePopper()}
+										>
+											Dismiss
+										</AKButton>
+										<div className="flex-grow" />
+										<AKButton onClick={() => saveExecutionProps()}>Save</AKButton>
+									</div>
+								</div>
+								{!isDeploymentStateStartable(deployment.state) && (
+									<AKButton classes="w-10 mr-2" onClick={togglePopper}>
+										<div className="codicon codicon-debug-continue mr-2" ref={referenceEl}></div>
+									</AKButton>
 								)}
 							</AKTableCell>
 						</AKTableRow>

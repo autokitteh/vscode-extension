@@ -9,6 +9,4 @@ export interface IIncomingMessagesHandler {
 	setSelectedDeploymentId(selectDeploymentId: string | undefined): void;
 	setSelectedSessionId(selectSessionId: string | undefined): void;
 	setResourcesDirState(projectFolder: boolean): void;
-	setEntrypoints(entrypoints: Record<string, string[]>): void;
-	setExecutionInputs(executionInputs: Record<string, any>): void;
 }

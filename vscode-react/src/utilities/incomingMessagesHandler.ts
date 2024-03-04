@@ -24,12 +24,6 @@ export const HandleIncomingMessages = (event: MessageEvent<Message>, handlers: I
 		case MessageType.setResourcesDirState:
 			handlers.setResourcesDirState(payload as boolean);
 			break;
-		case MessageType.setEntrypoints:
-			handlers.setEntrypoints(payload as Record<string, string[]>);
-			break;
-		case MessageType.setExecutionInputs:
-			handlers.setExecutionInputs(payload as Record<string, any>);
-			break;
 		case MessageType.selectSession:
 			handlers.setSelectedSessionId(payload as string);
 			break;

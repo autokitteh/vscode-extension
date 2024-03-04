@@ -1,20 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
 import { DeploymentSectionViewModel } from "@models";
 import { SessionSectionViewModel } from "@models/views";
-import { Editor } from "@monaco-editor/react";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
-import { AKButton, AKLogo, AKModal } from "@react-components";
+import { AKButton, AKLogo } from "@react-components";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { HandleIncomingMessages, sendMessage } from "@react-utilities";
 import { cn } from "@react-utilities/cnClasses.utils";
-import { ExecutionParams, Message } from "@type";
+import { Message } from "@type";
 import "./app.css";
-import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
-import { usePopper } from "react-popper";
 
 function App() {
 	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel | undefined>();
@@ -23,11 +20,7 @@ function App() {
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
 	const [selectedSessionId, setSelectedSessionId] = useState<string | undefined>();
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
-	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
-	const [modal, setModal] = useState(false);
-	const [executeProps, setExecuteProps] = useState<ExecutionParams>({});
-	const [executionInputs, setExecutionInputs] = useState<Record<string, any | undefined>>();
 
 	const messageHandlers: IIncomingMessagesHandler = {
 		setDeploymentsSection,
@@ -36,8 +29,6 @@ function App() {
 		setSessionsSection,
 		setSelectedDeploymentId,
 		setResourcesDirState,
-		setEntrypoints,
-		setExecutionInputs,
 		setSelectedSessionId,
 	};
 
@@ -53,84 +44,8 @@ function App() {
 		};
 	}, [handleMessagesFromExtension]);
 
-	const [files, setFiles] = useState<Record<string, string[]>>();
-	const [selectedFile, setSelectedFile] = useState<string>("");
-	const [functions, setFunctions] = useState<string[]>();
-	const [selectedFunction, setSelectedFunction] = useState<string>("");
-
-	useEffect(() => {
-		if (files) {
-			const functionsForSelectedFile = files[selectedFile];
-
-			setFunctions(functionsForSelectedFile || []);
-			setSelectedFunction(functionsForSelectedFile?.[0] || "");
-		}
-	}, [selectedFile]);
-
-	useEffect(() => {
-		if (entrypoints) {
-			setFiles(entrypoints);
-			setSelectedFile(Object.keys(entrypoints)[0]);
-			setFunctions(entrypoints[Object.keys(entrypoints)[0]]);
-		}
-	}, [entrypoints]);
-
-	useEffect(() => {
-		const handleKeyDown = (event: KeyboardEvent) => {
-			if (event.key === "Escape") {
-				setModal(false);
-			}
-		};
-
-		document.addEventListener("keydown", handleKeyDown);
-
-		return () => {
-			document.removeEventListener("keydown", handleKeyDown);
-		};
-	}, []);
-
-	const referenceEl = useRef<HTMLDivElement | null>(null);
-	const popperEl = useRef<HTMLDivElement | null>(null);
-
-	const { attributes, styles } = usePopper(referenceEl.current, popperEl.current, {
-		placement: "bottom",
-		modifiers: [
-			{
-				name: "offset",
-				options: {
-					offset: [0, 10],
-				},
-			},
-		],
-	});
-	const [showPopper, setShowPopper] = useState(false);
-	const togglePopper = () => setShowPopper(!showPopper);
-
-	const isReadyToExecute = () => {
-		return !!(selectedDeploymentId && executeProps.triggerFile && executeProps.triggerFunction && executionInputs);
-	};
-
-	const saveExecutionProps = () => {
-		const executionProps = {
-			triggerFile: selectedFile,
-			triggerFunction: selectedFunction,
-		};
-		setExecuteProps(executionProps);
-		togglePopper();
-	};
-	const runExecution = () => {
-		sendMessage(MessageType.runExecution, executeProps);
-	};
-
-	const popperClasses = cn(
-		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
-		"border border-gray-300 p-4 rounded-lg shadow-lg",
-		{ invisible: !showPopper }
-	);
-
 	return (
 		<main>
-			{showPopper && <div className="absolute w-full h-full z-20" onClick={() => togglePopper()}></div>}
 			{!!projectName ? (
 				<div className="flex flex-col w-full">
 					<div className="flex items-center w-full">
@@ -150,75 +65,10 @@ function App() {
 						</AKButton>
 
 						<div className="mx-4">|</div>
-
-						<div ref={popperEl} style={styles.popper} {...attributes.popper} className={popperClasses}>
-							<div className="mb-3">
-								<strong>File:</strong>
-								<VSCodeDropdown
-									value={selectedFile}
-									onChange={(e: any) => setSelectedFile(e.target.value)}
-									disabled={files !== undefined && Object.keys(files).length <= 1}
-									className="flex"
-								>
-									{files &&
-										Object.keys(files).map((file) => (
-											<option key={file} value={file}>
-												{file}
-											</option>
-										))}
-								</VSCodeDropdown>
-							</div>
-							<div className="mb-3">
-								<strong>Entrypoint:</strong>
-								<VSCodeDropdown
-									value={selectedFunction}
-									onChange={(e: any) => setSelectedFunction(e.target.value)}
-									disabled={functions !== undefined && functions.length <= 1}
-									className="flex"
-								>
-									{functions &&
-										functions.map((func) => (
-											<option key={func} value={func}>
-												{func}
-											</option>
-										))}
-								</VSCodeDropdown>
-							</div>
-							<div className="mb-3">
-								<strong>Session parameters:</strong>
-								{executionInputs ? (
-									JSON.stringify(executionInputs).length > 5 ? (
-										<div onClick={() => setModal(true)} className="flex cursor-pointer bg-vscode-dropdown-background">
-											{JSON.stringify(executionInputs).substring(0, 6) + "\u2026"}
-										</div>
-									) : (
-										<div onClick={() => setModal(true)} className="flex cursor-pointer bg-vscode-dropdown-background">
-											{JSON.stringify(executionInputs)}
-										</div>
-									)
-								) : (
-									<div>Set session execution params</div>
-								)}
-							</div>
-							<div className="flex">
-								<AKButton classes="bg-vscode-editor-background text-vscode-foreground" onClick={() => togglePopper()}>
-									Dismiss
-								</AKButton>
-								<div className="flex-grow" />
-								<AKButton onClick={() => saveExecutionProps()}>Save</AKButton>
-							</div>
-						</div>
-						<AKButton
-							classes="w-10 mr-2"
-							onClick={togglePopper}
-							disabled={!resourcesDirState || !deploymentsSection || !deploymentsSection.totalDeployments}
-						>
-							<div className="codicon codicon-edit mr-2" ref={referenceEl}></div>
-						</AKButton>
-						<AKButton onClick={runExecution} classes="mr-4" disabled={!isReadyToExecute()}>
+						{/* <AKButton onClick={runExecution} classes="mr-4" disabled={!isReadyToExecute()}>
 							<div className="codicon codicon-send mr-2"></div>
 							{translate().t("reactApp.general.execute")}
-						</AKButton>
+						</AKButton> */}
 						<div className="flex-grow"></div>
 						{!resourcesDirState && (
 							<div className="mr-2">
@@ -233,7 +83,7 @@ function App() {
 							<div className="codicon codicon-folder-opened w-4"></div>
 						</AKButton>
 					</div>
-					{modal && (
+					{/* {modal && (
 						<AKModal>
 							<div className="flex justify-end cursor-pointer" onClick={() => setModal(false)}>
 								X
@@ -255,7 +105,7 @@ function App() {
 								</div>
 							</div>
 						</AKModal>
-					)}
+					)} */}
 
 					<AKDeployments
 						deployments={deploymentsSection?.deployments}
