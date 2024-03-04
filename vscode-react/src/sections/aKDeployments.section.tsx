@@ -242,7 +242,7 @@ export const AKDeployments = () => {
 
 								<div ref={popperEl} style={styles.popper} {...attributes.popper} className={popperClasses}>
 									<div className="mb-3 text-left">
-										<strong className="mb-2">File</strong>
+										<strong className="mb-2">{translate().t("reactApp.executeFile")}</strong>
 										<VSCodeDropdown
 											value={selectedFile}
 											onChange={(e: any) => setSelectedFile(e.target.value)}
@@ -258,7 +258,7 @@ export const AKDeployments = () => {
 										</VSCodeDropdown>
 									</div>
 									<div className="mb-3 text-left">
-										<strong className="mb-2">Entrypoint</strong>
+										<strong className="mb-2">{translate().t("reactApp.executeEntrypoint")}</strong>
 										<VSCodeDropdown
 											value={selectedFunction}
 											onChange={(e: any) => setSelectedFunction(e.target.value)}
@@ -292,7 +292,7 @@ export const AKDeployments = () => {
 												</div>
 											)
 										) : (
-											<div>Set session execution params</div>
+											<div>{translate().t("reactApp.executeMissingParams")}</div>
 										)}
 									</div>
 									<div className="flex">
@@ -303,7 +303,7 @@ export const AKDeployments = () => {
 											Dismiss
 										</AKButton>
 										<div className="flex-grow" />
-										<AKButton onClick={() => saveExecutionProps()}>Save & Run</AKButton>
+										<AKButton onClick={() => saveExecutionProps()}>{translate().t("reactApp.saveAndRun")}</AKButton>
 									</div>
 								</div>
 							</AKTableCell>
