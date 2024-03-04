@@ -30,7 +30,6 @@ export const AKDeployments = () => {
 	const [totalDeployments, setTotalDeployments] = useState<number | undefined>();
 	const [deployments, setDeployments] = useState<Deployment[] | undefined>();
 	const [modal, setModal] = useState(false);
-	const [executeProps, setExecuteProps] = useState<{ triggerFunction: string; triggerFile: string }>();
 	const [files, setFiles] = useState<Record<string, string[]>>();
 	const [selectedFile, setSelectedFile] = useState<string>("");
 	const [functions, setFunctions] = useState<string[]>();
@@ -76,15 +75,14 @@ export const AKDeployments = () => {
 			},
 		],
 	});
-	const saveExecutionProps = () => {
+	const runExecution = () => {
 		const activeDeployment = deployments?.find((d) => !isDeploymentStateStartable(d.state));
 		const executionProps = {
 			triggerFile: selectedFile,
 			triggerFunction: selectedFunction,
 			deploymentId: activeDeployment?.deploymentId,
 		};
-		setExecuteProps(executionProps);
-		sendMessage(MessageType.runExecution, executeProps);
+		sendMessage(MessageType.runExecution, executionProps);
 
 		togglePopper();
 	};
@@ -305,7 +303,7 @@ export const AKDeployments = () => {
 											{translate().t("reactApp.deployments.dismiss")}
 										</AKButton>
 										<div className="flex-grow" />
-										<AKButton onClick={() => saveExecutionProps()}>
+										<AKButton onClick={() => runExecution()}>
 											{translate().t("reactApp.deployments.saveAndRun")}
 										</AKButton>
 									</div>

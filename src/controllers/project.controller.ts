@@ -412,38 +412,47 @@ export class ProjectController {
 	}
 
 	async runExecution(executionParams: ExecutionParams) {
-		const { data: sessionId, error } = await SessionsService.runExecution(
-			executionParams.deploymentId,
-			this.sessionExecutionInputs,
-			executionParams.triggerFile,
-			executionParams.triggerFunction
-		);
+		try {
+			const { data: sessionId, error } = await SessionsService.runExecution(
+				executionParams.deploymentId,
+				this.sessionExecutionInputs,
+				executionParams.triggerFile,
+				executionParams.triggerFunction
+			);
 
-		if (error) {
+			if (error) {
+				const notification = translate().t("sessions.executionFailed");
+				const log = `${translate().t("sessions.executionFailedError", {
+					error,
+				})}`;
+				commands.executeCommand(vsCommands.showErrorMessage, notification);
+				LoggerService.error(namespaces.projectController, log);
+				return;
+			}
+			const successMessage = translate().t("sessions.executionSucceed");
+			commands.executeCommand(vsCommands.showInfoMessage, successMessage);
+			LoggerService.info(namespaces.projectController, successMessage);
+
+			this.stopInterval(ProjectIntervalTypes.sessionHistory);
+
+			this.startInterval(
+				ProjectIntervalTypes.sessionHistory,
+				() => this.displaySessionsHistory(sessionId!),
+				this.sessionsLogRefreshRate
+			);
+
+			this.view.update({
+				type: MessageType.selectSession,
+				payload: sessionId,
+			});
+		} catch (error) {
 			const notification = translate().t("sessions.executionFailed");
 			const log = `${translate().t("sessions.executionFailedError", {
 				error,
 			})}`;
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
 			LoggerService.error(namespaces.projectController, log);
-			return;
 		}
-		const successMessage = translate().t("sessions.executionSucceed");
-		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
-		LoggerService.info(namespaces.projectController, successMessage);
-
-		this.stopInterval(ProjectIntervalTypes.sessionHistory);
-
-		this.startInterval(
-			ProjectIntervalTypes.sessionHistory,
-			() => this.displaySessionsHistory(sessionId!),
-			this.sessionsLogRefreshRate
-		);
-
-		this.view.update({
-			type: MessageType.selectSession,
-			payload: sessionId,
-		});
 	}
 
 	async deactivateDeployment(deploymentId: string) {
