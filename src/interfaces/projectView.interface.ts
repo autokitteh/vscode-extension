@@ -13,8 +13,7 @@ export interface IProjectViewDelegate {
 	activateDeployment?: Callback<string>;
 	setSessionExecutionInputs?: Callback<string>;
 	deactivateDeployment?: Callback<string>;
-	runExecution?: Callback<string>;
-	saveExecutionProps?: Callback<ExecutionParams>;
+	runExecution?: Callback<ExecutionParams>;
 }
 
 export interface IProjectView {

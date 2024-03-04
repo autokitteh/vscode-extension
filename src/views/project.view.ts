@@ -52,11 +52,9 @@ export class ProjectView implements IProjectView {
 						this.delegate?.setSessionExecutionInputs?.(message.payload as string);
 						break;
 					case MessageType.runExecution:
-						this.delegate?.runExecution?.(message.payload as string);
+						this.delegate?.runExecution?.(message.payload as ExecutionParams);
 						break;
-					case MessageType.saveExecutionProps:
-						this.delegate?.saveExecutionProps?.(message.payload as ExecutionParams);
-						break;
+					default:
 				}
 			},
 			undefined,

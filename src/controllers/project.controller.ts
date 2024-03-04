@@ -26,15 +26,7 @@ export class ProjectController {
 	private selectedDeploymentId?: string;
 	private selectedSessionId?: string;
 	private hasDisplayedError: Map<ProjectIntervalTypes, boolean> = new Map();
-	private sessionExecution: {
-		executionInputs: Record<string, any>;
-		triggerFile: string;
-		triggerFunction: string;
-	} = {
-		executionInputs: {},
-		triggerFile: "",
-		triggerFunction: "",
-	};
+	private sessionExecutionInputs: Record<string, any> = {};
 
 	constructor(
 		projectView: IProjectView,
@@ -136,7 +128,7 @@ export class ProjectController {
 
 	async selectDeployment(deploymentId: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
-		this.sessionExecution.executionInputs = {};
+		this.sessionExecutionInputs = {};
 
 		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
 
@@ -409,7 +401,7 @@ export class ProjectController {
 	async setSessionExecutionInputs(data: string) {
 		const executionInputs = this.sessions?.find((session) => session.sessionId === data)?.inputs;
 		if (executionInputs) {
-			this.sessionExecution.executionInputs = executionInputs;
+			this.sessionExecutionInputs = executionInputs;
 			commands.executeCommand(vsCommands.showInfoMessage, translate().t("sessions.sessionParamsCopied"));
 
 			this.view.update({
@@ -419,23 +411,12 @@ export class ProjectController {
 		}
 	}
 
-	async saveExecutionProps(data: ExecutionParams) {
-		this.sessionExecution = {
-			...this.sessionExecution,
-			...data,
-		};
-	}
-
-	async runExecution() {
-		if (!this.selectedDeploymentId) {
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("deployments.noSelectedDeployment"));
-			return;
-		}
+	async runExecution(executionParams: ExecutionParams) {
 		const { data: sessionId, error } = await SessionsService.runExecution(
-			this.selectedDeploymentId,
-			this.sessionExecution.executionInputs,
-			this.sessionExecution.triggerFile,
-			this.sessionExecution.triggerFunction
+			executionParams.deploymentId,
+			this.sessionExecutionInputs,
+			executionParams.triggerFile,
+			executionParams.triggerFunction
 		);
 
 		if (error) {

@@ -77,9 +77,11 @@ export const AKDeployments = () => {
 		],
 	});
 	const saveExecutionProps = () => {
+		const activeDeployment = deployments?.find((d) => isDeploymentStateStartable(d.state));
 		const executionProps = {
 			triggerFile: selectedFile,
 			triggerFunction: selectedFunction,
+			deploymentId: activeDeployment?.deploymentId,
 		};
 		setExecuteProps(executionProps);
 		sendMessage(MessageType.runExecution, executeProps);
@@ -242,7 +244,7 @@ export const AKDeployments = () => {
 
 								<div ref={popperEl} style={styles.popper} {...attributes.popper} className={popperClasses}>
 									<div className="mb-3 text-left">
-										<strong className="mb-2">{translate().t("reactApp.executeFile")}</strong>
+										<strong className="mb-2">{translate().t("reactApp.deployments.executeFile")}</strong>
 										<VSCodeDropdown
 											value={selectedFile}
 											onChange={(e: any) => setSelectedFile(e.target.value)}
@@ -258,7 +260,7 @@ export const AKDeployments = () => {
 										</VSCodeDropdown>
 									</div>
 									<div className="mb-3 text-left">
-										<strong className="mb-2">{translate().t("reactApp.executeEntrypoint")}</strong>
+										<strong className="mb-2">{translate().t("reactApp.deployments.executeEntrypoint")}</strong>
 										<VSCodeDropdown
 											value={selectedFunction}
 											onChange={(e: any) => setSelectedFunction(e.target.value)}
@@ -292,7 +294,7 @@ export const AKDeployments = () => {
 												</div>
 											)
 										) : (
-											<div>{translate().t("reactApp.executeMissingParams")}</div>
+											<div>{translate().t("reactApp.deployments.executeMissingParams")}</div>
 										)}
 									</div>
 									<div className="flex">
@@ -300,10 +302,12 @@ export const AKDeployments = () => {
 											classes="bg-vscode-editor-background text-vscode-foreground"
 											onClick={() => togglePopper()}
 										>
-											Dismiss
+											{translate().t("reactApp.deployments.dismiss")}
 										</AKButton>
 										<div className="flex-grow" />
-										<AKButton onClick={() => saveExecutionProps()}>{translate().t("reactApp.saveAndRun")}</AKButton>
+										<AKButton onClick={() => saveExecutionProps()}>
+											{translate().t("reactApp.deployments.saveAndRun")}
+										</AKButton>
 									</div>
 								</div>
 							</AKTableCell>
@@ -332,7 +336,7 @@ export const AKDeployments = () => {
 						</div>
 						<div className="flex w-full justify-end mt-2">
 							<AKButton classes="ml-2" onClick={() => setModal(false)}>
-								{translate().t("reactApp.general.closeModalButton")}
+								{translate().t("reactApp.deployments.closeModalButton")}
 							</AKButton>
 						</div>
 					</div>

@@ -1,4 +1,5 @@
 export type ExecutionParams = {
-	triggerFile?: string;
-	triggerFunction?: string;
+	triggerFile: string;
+	triggerFunction: string;
+	deploymentId: string;
 };
