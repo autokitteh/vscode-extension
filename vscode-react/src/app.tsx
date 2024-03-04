@@ -53,8 +53,6 @@ function App() {
 							<div className="codicon codicon-rocket mr-2"></div>
 							{translate().t("reactApp.general.deploy")}
 						</AKButton>
-
-						<div className="mx-4">|</div>
 						<div className="flex-grow"></div>
 						{!resourcesDirState && (
 							<div className="mr-2">
