@@ -77,7 +77,7 @@ export const AKDeployments = () => {
 		],
 	});
 	const saveExecutionProps = () => {
-		const activeDeployment = deployments?.find((d) => isDeploymentStateStartable(d.state));
+		const activeDeployment = deployments?.find((d) => !isDeploymentStateStartable(d.state));
 		const executionProps = {
 			triggerFile: selectedFile,
 			triggerFunction: selectedFunction,
