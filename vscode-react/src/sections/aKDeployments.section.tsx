@@ -31,6 +31,76 @@ export const AKDeployments = () => {
 	const [deployments, setDeployments] = useState<Deployment[] | undefined>();
 	const [modal, setModal] = useState(false);
 	const [executeProps, setExecuteProps] = useState<{ triggerFunction: string; triggerFile: string }>();
+	const [files, setFiles] = useState<Record<string, string[]>>();
+	const [selectedFile, setSelectedFile] = useState<string>("");
+	const [functions, setFunctions] = useState<string[]>();
+	const [selectedFunction, setSelectedFunction] = useState<string>("");
+	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
+	const [executionInputs, setExecutionInputs] = useState<Record<string, string[]>>();
+	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
+	const [showPopper, setShowPopper] = useState(false);
+
+	const referenceEl = useRef<HTMLDivElement | null>(null);
+	const popperEl = useRef<HTMLDivElement | null>(null);
+	const isDeploymentStateStartable = (deploymentState: number) =>
+		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
+	const getSessionsByDeploymentId = (deploymentId: string) => {
+		sendMessage(MessageType.selectDeployment, deploymentId);
+		setSelectedDeployment(deploymentId);
+	};
+	const messageHandlers: IIncomingDeploymentsMessagesHandler = {
+		setEntrypoints,
+		setExecutionInputs,
+		setDeploymentsSection,
+		setSelectedDeploymentId,
+	};
+	const handleMessagesFromExtension = useCallback(
+		(event: MessageEvent<Message>) => HandleDeploymentsIncomingMessages(event, messageHandlers),
+		[]
+	);
+	const getSessionStateCount = (deployment: Deployment, state: string) => {
+		if (!deployment.sessionStats) {
+			return translate().t("reactApp.general.unknown");
+		}
+		const session = deployment.sessionStats.find((s) => s.state === state);
+		return session ? session.count : 0;
+	};
+	const { attributes, styles } = usePopper(referenceEl.current, popperEl.current, {
+		placement: "bottom",
+		modifiers: [
+			{
+				name: "offset",
+				options: {
+					offset: [0, 10],
+				},
+			},
+		],
+	});
+	const saveExecutionProps = () => {
+		const executionProps = {
+			triggerFile: selectedFile,
+			triggerFunction: selectedFunction,
+		};
+		setExecuteProps(executionProps);
+		sendMessage(MessageType.runExecution, executeProps);
+
+		togglePopper();
+	};
+	const popperClasses = cn(
+		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
+		"border border-gray-300 p-4 rounded-lg shadow-lg",
+		{ invisible: !showPopper }
+	);
+
+	const deactivateBuild = (deploymentId: string) => {
+		sendMessage(MessageType.deactivateDeployment, deploymentId);
+	};
+
+	const activateBuild = (deploymentId: string) => {
+		sendMessage(MessageType.activateDeployment, deploymentId);
+	};
+
+	const togglePopper = () => setShowPopper(!showPopper);
 
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -64,58 +134,11 @@ export const AKDeployments = () => {
 		return () => clearInterval(interval);
 	}, []);
 
-	const isDeploymentStateStartable = (deploymentState: number) =>
-		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
-
-	const getSessionsByDeploymentId = (deploymentId: string) => {
-		sendMessage(MessageType.selectDeployment, deploymentId);
-		setSelectedDeployment(deploymentId);
-	};
-
-	const getSessionStateCount = (deployment: Deployment, state: string) => {
-		if (!deployment.sessionStats) {
-			return translate().t("reactApp.general.unknown");
-		}
-		const session = deployment.sessionStats.find((s) => s.state === state);
-		return session ? session.count : 0;
-	};
-
-	const deactivateBuild = (deploymentId: string) => {
-		sendMessage(MessageType.deactivateDeployment, deploymentId);
-	};
-
-	const activateBuild = (deploymentId: string) => {
-		sendMessage(MessageType.activateDeployment, deploymentId);
-	};
-
-	const referenceEl = useRef<HTMLDivElement | null>(null);
-	const popperEl = useRef<HTMLDivElement | null>(null);
-
-	const [files, setFiles] = useState<Record<string, string[]>>();
-	const [selectedFile, setSelectedFile] = useState<string>("");
-	const [functions, setFunctions] = useState<string[]>();
-	const [selectedFunction, setSelectedFunction] = useState<string>("");
-	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
-	const [executionInputs, setExecutionInputs] = useState<Record<string, string[]>>();
-	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
-
 	useEffect(() => {
 		if (typeof selectedDeploymentId === "string") {
 			setSelectedDeployment(selectedDeploymentId);
 		}
 	}, [selectedDeploymentId]);
-
-	const messageHandlers: IIncomingDeploymentsMessagesHandler = {
-		setEntrypoints,
-		setExecutionInputs,
-		setDeploymentsSection,
-		setSelectedDeploymentId,
-	};
-
-	const handleMessagesFromExtension = useCallback(
-		(event: MessageEvent<Message>) => HandleDeploymentsIncomingMessages(event, messageHandlers),
-		[]
-	);
 
 	useEffect(() => {
 		window.addEventListener("message", handleMessagesFromExtension);
@@ -139,37 +162,6 @@ export const AKDeployments = () => {
 			setSelectedFunction(functionsForSelectedFile?.[0] || "");
 		}
 	}, [selectedFile]);
-
-	const { attributes, styles } = usePopper(referenceEl.current, popperEl.current, {
-		placement: "bottom",
-		modifiers: [
-			{
-				name: "offset",
-				options: {
-					offset: [0, 10],
-				},
-			},
-		],
-	});
-	const [showPopper, setShowPopper] = useState(false);
-	const togglePopper = () => setShowPopper(!showPopper);
-
-	const saveExecutionProps = () => {
-		const executionProps = {
-			triggerFile: selectedFile,
-			triggerFunction: selectedFunction,
-		};
-		setExecuteProps(executionProps);
-		sendMessage(MessageType.runExecution, executeProps);
-
-		togglePopper();
-	};
-
-	const popperClasses = cn(
-		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
-		"border border-gray-300 p-4 rounded-lg shadow-lg",
-		{ invisible: !showPopper }
-	);
 
 	return (
 		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">

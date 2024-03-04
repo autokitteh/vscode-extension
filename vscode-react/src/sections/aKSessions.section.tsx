@@ -32,6 +32,13 @@ export const AKSessions = () => {
 		(event: MessageEvent<Message>) => HandleSessionsIncomingMessages(event, messageHandlers),
 		[]
 	);
+	const displaySessionLogs = (sessionId: string) => {
+		sendMessage(MessageType.displaySessionLogs, sessionId);
+		setSelectedSession(sessionId);
+	};
+	const setSessionExecutionInputs = (data: string) => {
+		sendMessage(MessageType.setSessionExecutionInputs, data);
+	};
 
 	useEffect(() => {
 		window.addEventListener("message", handleMessagesFromExtension);
@@ -52,15 +59,6 @@ export const AKSessions = () => {
 
 		return () => clearInterval(interval);
 	}, []);
-
-	const displaySessionLogs = (sessionId: string) => {
-		sendMessage(MessageType.displaySessionLogs, sessionId);
-		setSelectedSession(sessionId);
-	};
-
-	const setSessionExecutionInputs = (data: string) => {
-		sendMessage(MessageType.setSessionExecutionInputs, data);
-	};
 
 	return (
 		<div className="mt-4  h-[43vh] overflow-y-auto overflow-x-hidden">
