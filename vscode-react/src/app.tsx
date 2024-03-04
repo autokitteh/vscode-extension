@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
-import { SessionSectionViewModel } from "@models/views";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKButton, AKLogo } from "@react-components";
 import { IIncomingMessagesHandler } from "@react-interfaces";
@@ -15,16 +14,12 @@ import "./app.css";
 function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
-	const [selectedSessionId, setSelectedSessionId] = useState<string | undefined>();
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
-	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 
 	const messageHandlers: IIncomingMessagesHandler = {
 		setProjectName,
 		setThemeVisualType,
-		setSessionsSection,
 		setResourcesDirState,
-		setSelectedSessionId,
 	};
 
 	const handleMessagesFromExtension = useCallback(
@@ -103,11 +98,7 @@ function App() {
 					)} */}
 
 					<AKDeployments />
-					<AKSessions
-						sessions={sessionsSection?.sessions}
-						totalSessions={sessionsSection?.totalSessions}
-						selectedSessionId={selectedSessionId}
-					/>
+					<AKSessions />
 				</div>
 			) : (
 				<div className="flex justify-center items-center h-screen w-screen">

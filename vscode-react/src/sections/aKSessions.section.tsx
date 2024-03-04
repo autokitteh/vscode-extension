@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
@@ -11,20 +11,34 @@ import {
 	AKTableRow,
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
-import { getTimePassed, sendMessage } from "@react-utilities";
+import { IIncomingSessionsMessagesHandler } from "@react-interfaces";
+import { HandleSessionsIncomingMessages, getTimePassed, sendMessage } from "@react-utilities";
+import { Message } from "@type";
 import { Session } from "@type/models";
 
-export const AKSessions = ({ sessions, totalSessions = 0, selectedSessionId }: SessionSectionViewModel) => {
+export const AKSessions = () => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
-	const [selectedSession, setSelectedSession] = useState("");
+	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
+	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
+
+	const { sessions, totalSessions } = sessionsSection || {};
+	const messageHandlers: IIncomingSessionsMessagesHandler = {
+		setSessionsSection,
+		setSelectedSession,
+	};
+	const handleMessagesFromExtension = useCallback(
+		(event: MessageEvent<Message>) => HandleSessionsIncomingMessages(event, messageHandlers),
+		[]
+	);
 
 	useEffect(() => {
-		if (typeof selectedSessionId === "string") {
-			setSelectedSession(selectedSessionId);
-		}
-	}, [selectedSessionId]);
+		window.addEventListener("message", handleMessagesFromExtension);
+		return () => {
+			window.removeEventListener("message", handleMessagesFromExtension);
+		};
+	}, [handleMessagesFromExtension]);
 
 	useEffect(() => {
 		if (isLoading) {
