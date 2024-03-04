@@ -7,12 +7,11 @@ interface AKButtonProps {
 	onClick?: () => void;
 	title?: string;
 	disabled?: boolean;
-	ref?: React.RefObject<any>;
 }
 
-export const AKButton = ({ children, classes, onClick, title, disabled, ref }: AKButtonProps) => {
+export const AKButton = ({ children, classes, onClick, title, disabled }: AKButtonProps) => {
 	return (
-		<VSCodeButton className={classes} onClick={onClick} title={title} disabled={disabled} ref={ref}>
+		<VSCodeButton className={classes} onClick={onClick} title={title} disabled={disabled}>
 			{children}
 		</VSCodeButton>
 	);
