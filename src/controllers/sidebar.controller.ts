@@ -48,7 +48,7 @@ export class SidebarController {
 				key: project.projectId,
 			}));
 		}
-		return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
+		return [{ label: translate().t("projects.projectNotFound"), key: undefined }];
 	};
 
 	private startInterval() {

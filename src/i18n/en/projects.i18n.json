@@ -1,7 +1,7 @@
 {
 	"clickHere": "Click here to enable the extension",
 	"projects": "Projects",
-	"noProjectsFound": "No projects found",
+	"projectNotFound": "No projects found",
 	"openProject": "Open project",
 	"projectBuildSucceed": "Project build succeed - id: {{id}}",
 	"projectBuildFailed": "Project build failed - id: {{id}}",
@@ -10,5 +10,6 @@
 	"fetchProjectsFailed": "Projects fetch failed",
 	"fetchProjectsFailedError": "Projects fetch failed - error: {{error}}",
 	"resourcesDirectoryMissing": "Resources directory missing",
-	"errorReadingResource": "Error reading the selected directory or file"
+	"errorReadingResource": "Error reading the selected directory or file",
+	"projectNotCreated": "There was an issue creating the project"
 }

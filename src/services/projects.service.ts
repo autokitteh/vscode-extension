@@ -8,6 +8,25 @@ import { ServiceResponse } from "@type";
 import { Project } from "@type/models";
 
 export class ProjectsService {
+	static async create(projectName: string): Promise<ServiceResponse<string>> {
+		try {
+			const { projectId } = await projectsClient.create({
+				project: {
+					name: projectName,
+				},
+			});
+			if (!projectId) {
+				LoggerService.error(namespaces.projectService, translate().t("errors.projectNotCreated"));
+
+				return { data: undefined, error: translate().t("errors.projectNotCreated") };
+			}
+			return { data: projectId, error: undefined };
+		} catch (error) {
+			LoggerService.error(namespaces.projectService, (error as Error).message);
+			return { data: undefined, error };
+		}
+	}
+
 	static async get(projectId: string): Promise<ServiceResponse<Project>> {
 		try {
 			const { project } = await projectsClient.get({ projectId });
