@@ -20,27 +20,26 @@ import { Deployment } from "@type/models";
 import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
 import { usePopper } from "react-popper";
 
-export const AKDeployments = ({
-	deployments,
-	totalDeployments = 0,
-	selectedDeploymentId,
-}: DeploymentSectionViewModel) => {
+export const AKDeployments = () => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedDeployment, setSelectedDeployment] = useState("");
-
-	useEffect(() => {
-		if (typeof selectedDeploymentId === "string") {
-			setSelectedDeployment(selectedDeploymentId);
-		}
-	}, [selectedDeploymentId]);
+	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel | undefined>();
+	const [totalDeployments, setTotalDeployments] = useState<number | undefined>();
+	const [deployments, setDeployments] = useState<Deployment[] | undefined>();
 
 	useEffect(() => {
 		if (deployments && isLoading) {
 			setIsLoading(false);
 		}
 	}, [deployments]);
+	useEffect(() => {
+		if (deploymentsSection) {
+			setTotalDeployments(deploymentsSection.totalDeployments);
+			setDeployments(deploymentsSection?.deployments);
+		}
+	}, [deploymentsSection]);
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -83,10 +82,19 @@ export const AKDeployments = ({
 	const [selectedFunction, setSelectedFunction] = useState<string>("");
 	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
 	const [executionInputs, setExecutionInputs] = useState<Record<string, string[]>>();
+	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
+
+	useEffect(() => {
+		if (typeof selectedDeploymentId === "string") {
+			setSelectedDeployment(selectedDeploymentId);
+		}
+	}, [selectedDeploymentId]);
 
 	const messageHandlers: IIncomingDeploymentsMessagesHandler = {
 		setEntrypoints,
 		setExecutionInputs,
+		setDeploymentsSection,
+		setSelectedDeploymentId,
 	};
 
 	const handleMessagesFromExtension = useCallback(
@@ -211,10 +219,18 @@ export const AKDeployments = ({
 										onClick={() => activateBuild(deployment.deploymentId)}
 									></div>
 								) : (
-									<div
-										className="codicon codicon-debug-stop cursor-pointer text-red-500"
-										onClick={() => deactivateBuild(deployment.deploymentId)}
-									></div>
+									<div>
+										<div
+											className="codicon codicon-redo mr-2 cursor-pointer"
+											ref={referenceEl}
+											title="Execute"
+											onClick={togglePopper}
+										></div>
+										<div
+											className="codicon codicon-debug-stop cursor-pointer text-red-500"
+											onClick={() => deactivateBuild(deployment.deploymentId)}
+										></div>
+									</div>
 								)}
 
 								<div ref={popperEl} style={styles.popper} {...attributes.popper} className={popperClasses}>
@@ -283,11 +299,6 @@ export const AKDeployments = ({
 										<AKButton onClick={() => saveExecutionProps()}>Save</AKButton>
 									</div>
 								</div>
-								{!isDeploymentStateStartable(deployment.state) && (
-									<AKButton classes="w-10 mr-2" onClick={togglePopper}>
-										<div className="codicon codicon-debug-continue mr-2" ref={referenceEl}></div>
-									</AKButton>
-								)}
 							</AKTableCell>
 						</AKTableRow>
 					))}
