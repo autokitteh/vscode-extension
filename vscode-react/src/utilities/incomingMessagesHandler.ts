@@ -11,7 +11,6 @@ export const HandleIncomingMessages = (event: MessageEvent<Message>, handlers: I
 		case MessageType.setProjectName:
 			handlers.setProjectName(payload as string);
 			break;
-
 		case MessageType.setResourcesDirState:
 			handlers.setResourcesDirState(payload as boolean);
 			break;

@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
-import { AKButton, AKDeploymentState } from "@react-components";
+import { Editor } from "@monaco-editor/react";
+import { AKButton, AKDeploymentState, AKModal } from "@react-components";
 import {
 	AKTable,
 	AKTableMessage,
@@ -28,6 +29,20 @@ export const AKDeployments = () => {
 	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel | undefined>();
 	const [totalDeployments, setTotalDeployments] = useState<number | undefined>();
 	const [deployments, setDeployments] = useState<Deployment[] | undefined>();
+	const [modal, setModal] = useState(false);
+	const [executeProps, setExecuteProps] = useState<{ triggerFunction: string; triggerFile: string }>();
+
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") {
+				setModal(false);
+			}
+		};
+		window.addEventListener("keydown", handleKeyDown);
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+		};
+	}, []);
 
 	useEffect(() => {
 		if (deployments && isLoading) {
@@ -140,11 +155,13 @@ export const AKDeployments = () => {
 	const togglePopper = () => setShowPopper(!showPopper);
 
 	const saveExecutionProps = () => {
-		// const executionProps = {
-		// 	triggerFile: selectedFile,
-		// 	triggerFunction: selectedFunction,
-		// };
-		// setExecuteProps(executionProps);
+		const executionProps = {
+			triggerFile: selectedFile,
+			triggerFunction: selectedFunction,
+		};
+		setExecuteProps(executionProps);
+		sendMessage(MessageType.runExecution, executeProps);
+
 		togglePopper();
 	};
 
@@ -271,14 +288,14 @@ export const AKDeployments = () => {
 										{executionInputs ? (
 											JSON.stringify(executionInputs).length > 5 ? (
 												<div
-													// onClick={() => setModal(true)}
+													onClick={() => setModal(true)}
 													className="flex cursor-pointer bg-vscode-dropdown-background"
 												>
 													{JSON.stringify(executionInputs).substring(0, 6) + "\u2026"}
 												</div>
 											) : (
 												<div
-													// onClick={() => setModal(true)}
+													onClick={() => setModal(true)}
 													className="flex cursor-pointer bg-vscode-dropdown-background"
 												>
 													{JSON.stringify(executionInputs)}
@@ -296,7 +313,7 @@ export const AKDeployments = () => {
 											Dismiss
 										</AKButton>
 										<div className="flex-grow" />
-										<AKButton onClick={() => saveExecutionProps()}>Save</AKButton>
+										<AKButton onClick={() => saveExecutionProps()}>Save & Run</AKButton>
 									</div>
 								</div>
 							</AKTableCell>
@@ -306,6 +323,30 @@ export const AKDeployments = () => {
 			{(isLoading || !deployments) && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
 			{deployments && deployments.length === 0 && (
 				<AKTableMessage>{translate().t("reactApp.deployments.noDeployments")}</AKTableMessage>
+			)}
+
+			{modal && (
+				<AKModal>
+					<div className="flex justify-end cursor-pointer" onClick={() => setModal(false)}>
+						X
+					</div>
+					<div className="m-auto">
+						<div className="flex w-full justify-end mt-2">
+							<Editor
+								height="90vh"
+								defaultLanguage="json"
+								defaultValue={executionInputs ? JSON.stringify(executionInputs, null, 2) : ""}
+								theme="vs-dark"
+								options={{ readOnly: true }}
+							/>
+						</div>
+						<div className="flex w-full justify-end mt-2">
+							<AKButton classes="ml-2" onClick={() => setModal(false)}>
+								Close
+							</AKButton>
+						</div>
+					</div>
+				</AKModal>
 			)}
 		</div>
 	);

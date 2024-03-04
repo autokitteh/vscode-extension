@@ -55,10 +55,6 @@ function App() {
 						</AKButton>
 
 						<div className="mx-4">|</div>
-						{/* <AKButton onClick={runExecution} classes="mr-4" disabled={!isReadyToExecute()}>
-							<div className="codicon codicon-send mr-2"></div>
-							{translate().t("reactApp.general.execute")}
-						</AKButton> */}
 						<div className="flex-grow"></div>
 						{!resourcesDirState && (
 							<div className="mr-2">
@@ -73,30 +69,6 @@ function App() {
 							<div className="codicon codicon-folder-opened w-4"></div>
 						</AKButton>
 					</div>
-					{/* {modal && (
-						<AKModal>
-							<div className="flex justify-end cursor-pointer" onClick={() => setModal(false)}>
-								X
-							</div>
-							<div className="m-auto">
-								<div className="flex w-full justify-end mt-2">
-									<Editor
-										height="90vh"
-										defaultLanguage="json"
-										defaultValue={executionInputs ? JSON.stringify(executionInputs, null, 2) : ""}
-										theme="vs-dark"
-										options={{ readOnly: true }}
-									/>
-								</div>
-								<div className="flex w-full justify-end mt-2">
-									<AKButton classes="ml-2" onClick={() => setModal(false)}>
-										Close
-									</AKButton>
-								</div>
-							</div>
-						</AKModal>
-					)} */}
-
 					<AKDeployments />
 					<AKSessions />
 				</div>
