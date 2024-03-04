@@ -109,8 +109,14 @@ export const AKDeployments = () => {
 			}
 		};
 		window.addEventListener("keydown", handleKeyDown);
+
+		const interval = setInterval(() => {
+			setRerender((rerender) => rerender + 1);
+		}, 1000);
+
 		return () => {
 			window.removeEventListener("keydown", handleKeyDown);
+			clearInterval(interval);
 		};
 	}, []);
 
@@ -125,14 +131,6 @@ export const AKDeployments = () => {
 			setDeployments(deploymentsSection?.deployments);
 		}
 	}, [deploymentsSection]);
-
-	useEffect(() => {
-		const interval = setInterval(() => {
-			setRerender((rerender) => rerender + 1);
-		}, 1000);
-
-		return () => clearInterval(interval);
-	}, []);
 
 	useEffect(() => {
 		if (typeof selectedDeploymentId === "string") {
