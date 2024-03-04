@@ -17,14 +17,14 @@ export const applyManifest = async () => {
 	const projectYamlContent = yaml.load(mainfestYaml) as { project: { triggers: any[]; name: string } };
 	const triggers = projectYamlContent.project.triggers;
 	const entrypoints = triggers.reduce(
-		(acc, { entrypoint }) => {
+		(entrypointsObject, { entrypoint }) => {
 			const [filename, functionName] = entrypoint.split(":");
-			if (acc[filename]) {
-				acc[filename].push(functionName);
+			if (entrypointsObject[filename]) {
+				entrypointsObject[filename].push(functionName);
 			} else {
-				acc[filename] = [functionName];
+				entrypointsObject[filename] = [functionName];
 			}
-			return acc;
+			return entrypointsObject;
 		},
 		{} as Record<string, string[]>
 	);
