@@ -12,6 +12,7 @@ import { ServiceResponse } from "@type";
 import { Session } from "@type/models";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
+import * as values from "@ak-proto-ts/values/v1/values_pb";
 
 export class SessionsService {
 	static async listByEnvironmentId(environmentId: string): Promise<ServiceResponse<Session[]>> {
@@ -67,6 +68,18 @@ export class SessionsService {
 					path: triggerFile,
 				},
 			};
+
+			let v = new values.Value();
+			new values.String({ v: "test" });
+			sessionsClient.start({
+				session: {
+					deploymentId,
+					envId: "",
+					inputs: {
+						efi: v,
+					},
+				},
+			});
 			const response = await sessionsClient.start({ session: newSession } as unknown as StartRequest);
 			return { data: response.sessionId, error: undefined };
 		} catch (error) {
