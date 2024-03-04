@@ -17,5 +17,6 @@
 	"executeEntrypoint": "Entrypoint",
 	"executeFile": "File",
 	"executeMissingParams": "Set session execution params",
-	"saveAndRun": "Save & Run"
+	"saveAndRun": "Save & Run",
+	"closeModalButton": "Close"
 }

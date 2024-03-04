@@ -332,7 +332,7 @@ export const AKDeployments = () => {
 						</div>
 						<div className="flex w-full justify-end mt-2">
 							<AKButton classes="ml-2" onClick={() => setModal(false)}>
-								Close
+								{translate().t("reactApp.general.closeModalButton")}
 							</AKButton>
 						</div>
 					</div>
