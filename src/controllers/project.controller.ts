@@ -1,6 +1,6 @@
 import { vsCommands, namespaces, channels } from "@constants";
 import { getResources } from "@controllers/utilities";
-import { MessageType, ProjectIntervalTypes, SessionStateType } from "@enums";
+import { MessageType, ProjectIntervalTypes, SessionLogStateTypes } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { SessionState } from "@models";
@@ -168,15 +168,20 @@ export class ProjectController {
 			return;
 		}
 		for (let i = 0; i < sessionStates.length; i++) {
-			if (sessionStates[i].type !== SessionStateType.error && sessionStates[i].type !== SessionStateType.completed) {
+			if (
+				sessionStates[i].state !== SessionLogStateTypes.error &&
+				sessionStates[i].state !== SessionLogStateTypes.completed
+			) {
 				sessionStates[i].getLogs().forEach((logStr) => LoggerService.sessionLog(`	${logStr}`));
 			}
 		}
 	}
 
 	private outputSessionFinishDetails(lastState: SessionState) {
-		this.outputErrorDetails(lastState);
-		this.outputCallstackDetails(lastState);
+		if (lastState.isError()) {
+			this.outputErrorDetails(lastState);
+			this.outputCallstackDetails(lastState);
+		}
 	}
 
 	private outputErrorDetails(state: SessionState) {
