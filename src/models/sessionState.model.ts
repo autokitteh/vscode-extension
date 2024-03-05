@@ -2,7 +2,6 @@ import { SessionLogRecord as ProtoSessionLogRecord } from "@ak-proto-ts/sessions
 import { Value } from "@ak-proto-ts/values/v1/values_pb";
 import { SessionLogStateTypes, SessionLogTypes } from "@enums";
 import { translate } from "@i18n/index";
-import { LoggerService } from "@services";
 import { Callstack } from "@type/models";
 import { convertTimestampToDate } from "@utilities";
 
