@@ -1,9 +1,10 @@
+import { SessionLogRecord } from "@ak-proto-ts/sessions/v1/session_pb";
+import { Value } from "@ak-proto-ts/values/v1/values_pb";
 import { SessionStateType } from "@enums";
 import { translate } from "@i18n/index";
 import { LoggerService } from "@services";
-import { Callstack, ProtoSessionHistoryState } from "@type/models";
+import { Callstack } from "@type/models";
 import { convertTimestampToDate } from "@utilities";
-import { get } from "lodash";
 
 export class SessionState {
 	type: SessionStateType = SessionStateType.unknown;
@@ -13,7 +14,7 @@ export class SessionState {
 	call?: object;
 	dateTime?: Date;
 
-	constructor(session: ProtoSessionHistoryState) {
+	constructor(session: SessionLogRecord) {
 		const stateTypeMapping: Record<string, SessionStateType> = {
 			callSpec: SessionStateType.callSpec,
 			callAttemptComplete: SessionStateType.callAttemptComplete,
@@ -22,9 +23,9 @@ export class SessionState {
 			print: SessionStateType.print,
 		};
 
-		const state = get(session, "state") ?? session;
+		const state = session.state ?? session;
 
-		if (Object.keys(state).length === 0 && !get(session, "print")) {
+		if (!session) {
 			LoggerService.error("SessionState", translate().t("errors.unexpectedSessionStateType"));
 			return;
 		}
@@ -43,7 +44,7 @@ export class SessionState {
 		switch (sessionState) {
 			case SessionStateType.callAttemptStart:
 				this.type = SessionStateType.callAttemptStart;
-				this.dateTime = convertTimestampToDate(get(session, `${this.type}.startedAt`));
+				this.dateTime = convertTimestampToDate(session[SessionStateType.callAttemptStart]?.startedAt);
 				break;
 			case SessionStateType.callAttemptComplete:
 				this.handleCallAttemptComplete(session);
@@ -53,7 +54,7 @@ export class SessionState {
 				break;
 			case SessionStateType.print:
 				this.type = SessionStateType.print;
-				this.logs = [`${translate().t("sessions.historyPrint")}: ${get(session, "print", "")}`];
+				this.logs = [`${translate().t("sessions.historyPrint")}: ${session.print}`];
 				break;
 			default:
 				if (!unhandledSessionStates.includes(sessionState)) {
@@ -68,20 +69,20 @@ export class SessionState {
 		this.setErrorAndCallstack(session);
 	}
 
-	private handleDefaultCase(session: ProtoSessionHistoryState) {
-		const stateCase = Object.keys(get(session, "state", {}))[0] as SessionStateType;
+	private handleDefaultCase(session: SessionLogRecord) {
+		const stateCase = Object.keys(session.state || {})[0] as SessionStateType;
 		if (!stateCase || !(stateCase in SessionStateType)) {
 			this.type = SessionStateType.unknown;
 		} else if (stateCase) {
 			this.type = stateCase as SessionStateType;
-			this.logs = get(session, "print", []);
+			this.logs = session.print ? [session.print] : [];
 		}
 	}
 
-	private handleCallAttemptComplete(session: ProtoSessionHistoryState) {
+	private handleCallAttemptComplete(session: SessionLogRecord) {
 		this.type = SessionStateType.callAttemptComplete;
-		let functionResponse = get(session, `${this.type}.result.value.struct.fields.body.string.v`, "");
-		const functionName = get(session, `${this.type}.result.value.struct.ctor.string.v`, "") as string;
+		let functionResponse = session[this.type]?.result?.value?.struct?.fields?.body?.string?.v || "";
+		const functionName = session[this.type]?.result?.value?.struct?.ctor?.string?.v || "";
 		if (functionName === "time") {
 			functionResponse = convertTimestampToDate(functionResponse).toISOString();
 		}
@@ -92,25 +93,26 @@ export class SessionState {
 		this.logs = [`${translate().t("sessions.historyResult")}: ${functionName} - ${functionResponse}`];
 	}
 
-	private handleFuncCall(session: ProtoSessionHistoryState) {
+	private handleFuncCall(session: SessionLogRecord) {
 		this.type = SessionStateType.callSpec;
-		const functionName = get(session, `[${this.type}].function.function.name`, "");
-		const args = get(session, `[${this.type}].args`, [])
-			.map((arg: any) => get(arg, "string.v"))
+
+		const functionName = session[this.type]?.function?.function?.name || "";
+		const args = (session[this.type]?.args || [])
+			.map((arg: Value) => arg.string?.v)
 			.join(", ")
 			.replace(/, ([^,]*)$/, "");
 		this.logs = [`${translate().t("sessions.historyFunction")}: ${functionName}(${args})`];
 	}
 
-	private setDateTime(session: ProtoSessionHistoryState) {
+	private setDateTime(session: SessionLogRecord) {
 		try {
-			this.dateTime = convertTimestampToDate(get(session, "data.value.t"));
+			this.dateTime = convertTimestampToDate(session.t);
 		} catch (error) {}
 	}
 
-	private setErrorAndCallstack(session: ProtoSessionHistoryState) {
-		this.error = get(session, "state.error.error.message", translate().t("errors.sessionLogMissingOnErrorType"));
-		this.callstackTrace = get(session, "state.error.error.callstack", []) as Callstack[];
+	private setErrorAndCallstack(session: SessionLogRecord) {
+		this.error = session?.state?.error?.error?.message || translate().t("errors.sessionLogMissingOnErrorType");
+		this.callstackTrace = (session?.state?.error?.error?.callstack || []) as Callstack[];
 	}
 
 	getError(): string {
