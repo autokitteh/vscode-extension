@@ -84,7 +84,7 @@ export class SessionState {
 		if (functionName === "time") {
 			functionResponse = convertTimestampToDate(functionResponse).toISOString();
 		}
-		if (functionName === "" && functionResponse === "") {
+		if (!functionName && !functionResponse) {
 			this.logs = [];
 			return;
 		}
