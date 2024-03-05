@@ -60,8 +60,7 @@ export const mapFilesToContentInBytes = async (
 
 	for (const fullPath of fullPathArray) {
 		const relativePath = path.relative(basePath, fullPath);
-		const contentBytes = fs.readFileSync(fullPath);
-		fileContentMap[relativePath] = contentBytes;
+		fileContentMap[relativePath] = fs.readFileSync(fullPath);
 	}
 
 	return fileContentMap;
