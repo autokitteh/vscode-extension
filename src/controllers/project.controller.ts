@@ -1,6 +1,6 @@
 import { vsCommands, namespaces, channels } from "@constants";
 import { getResources } from "@controllers/utilities";
-import { MessageType, ProjectIntervalTypes, SessionLogStateTypes } from "@enums";
+import { MessageType, ProjectIntervalTypes } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { SessionState } from "@models";

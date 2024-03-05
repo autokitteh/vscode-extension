@@ -22,13 +22,6 @@ export class SessionState {
 			state: SessionLogTypes.state,
 		};
 
-		if (!session) {
-			LoggerService.error(
-				"SessionState",
-				translate().t("errors.unexpectedSessionStateType", { error: "Session doesn't exist" })
-			);
-			return;
-		}
 		let sessionState = Object.keys(stateTypeMapping).find((key) => key in session);
 		if (!sessionState) {
 			if (session.print) {
