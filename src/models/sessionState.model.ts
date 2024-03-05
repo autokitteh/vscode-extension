@@ -105,7 +105,9 @@ export class SessionState {
 	private setDateTime(session: ProtoSessionLogRecord) {
 		try {
 			this.dateTime = convertTimestampToDate(session.t);
-		} catch (error) {}
+		} catch (error) {
+			LoggerService.error("SessionState", (error as Error).message);
+		}
 	}
 
 	private setErrorAndCallstack(session: ProtoSessionLogRecord) {
