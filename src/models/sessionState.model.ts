@@ -1,4 +1,4 @@
-import { SessionLogRecord } from "@ak-proto-ts/sessions/v1/session_pb";
+import { SessionLogRecord as ProtoSessionLogRecord } from "@ak-proto-ts/sessions/v1/session_pb";
 import { Value } from "@ak-proto-ts/values/v1/values_pb";
 import { SessionStateType } from "@enums";
 import { translate } from "@i18n/index";
@@ -14,7 +14,7 @@ export class SessionState {
 	call?: object;
 	dateTime?: Date;
 
-	constructor(session: SessionLogRecord) {
+	constructor(session: ProtoSessionLogRecord) {
 		const stateTypeMapping: Record<string, SessionStateType> = {
 			callSpec: SessionStateType.callSpec,
 			callAttemptComplete: SessionStateType.callAttemptComplete,
@@ -67,7 +67,7 @@ export class SessionState {
 		this.setErrorAndCallstack(session);
 	}
 
-	private handleDefaultCase(session: SessionLogRecord) {
+	private handleDefaultCase(session: ProtoSessionLogRecord) {
 		const stateCase = Object.keys(session.state || {})[0] as SessionStateType;
 		if (!stateCase || !(stateCase in SessionStateType)) {
 			this.type = SessionStateType.unknown;
@@ -77,7 +77,7 @@ export class SessionState {
 		}
 	}
 
-	private handleCallAttemptComplete(session: SessionLogRecord) {
+	private handleCallAttemptComplete(session: ProtoSessionLogRecord) {
 		this.type = SessionStateType.callAttemptComplete;
 		let functionResponse = session[this.type]?.result?.value?.struct?.fields?.body?.string?.v || "";
 		const functionName = session[this.type]?.result?.value?.struct?.ctor?.string?.v || "";
@@ -91,7 +91,7 @@ export class SessionState {
 		this.logs = [`${translate().t("sessions.historyResult")}: ${functionName} - ${functionResponse}`];
 	}
 
-	private handleFuncCall(session: SessionLogRecord) {
+	private handleFuncCall(session: ProtoSessionLogRecord) {
 		this.type = SessionStateType.callSpec;
 
 		const functionName = session[this.type]?.function?.function?.name || "";
@@ -102,13 +102,13 @@ export class SessionState {
 		this.logs = [`${translate().t("sessions.historyFunction")}: ${functionName}(${args})`];
 	}
 
-	private setDateTime(session: SessionLogRecord) {
+	private setDateTime(session: ProtoSessionLogRecord) {
 		try {
 			this.dateTime = convertTimestampToDate(session.t);
 		} catch (error) {}
 	}
 
-	private setErrorAndCallstack(session: SessionLogRecord) {
+	private setErrorAndCallstack(session: ProtoSessionLogRecord) {
 		this.error = session?.state?.error?.error?.message || translate().t("errors.sessionLogMissingOnErrorType");
 		this.callstackTrace = (session?.state?.error?.error?.callstack || []) as Callstack[];
 	}
