@@ -26,18 +26,14 @@ export class SessionState {
 		const state = session.state ?? session;
 
 		if (!session) {
-			LoggerService.error("SessionState", translate().t("errors.unexpectedSessionStateType"));
+			LoggerService.error(
+				"SessionState",
+				translate().t("errors.unexpectedSessionStateType", { error: "Session doesn't exist" })
+			);
 			return;
 		}
 
 		const sessionState = Object.keys(stateTypeMapping).find((key) => key in state) ?? Object.keys(state)[0];
-
-		const determinedStateType: SessionStateType = stateTypeMapping[sessionState] || SessionStateType.unknown;
-
-		if (!Object.values(SessionStateType).includes(determinedStateType)) {
-			LoggerService.error("SessionState", translate().t("errors.unexpectedSessionStateType"));
-			return;
-		}
 
 		const unhandledSessionStates = ["created", "running", "error", "completed"];
 
@@ -58,7 +54,9 @@ export class SessionState {
 				break;
 			default:
 				if (!unhandledSessionStates.includes(sessionState)) {
-					throw new Error(translate().t("errors.unexpectedSessionStateType"));
+					throw new Error(
+						translate().t("errors.unexpectedSessionStateType", { error: "Session history state type doesn't exist" })
+					);
 				}
 				this.handleDefaultCase(session);
 		}

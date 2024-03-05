@@ -13,7 +13,7 @@
 	"buildFailed": "Build failed",
 	"deploymentFailed": "Deployment failed",
 	"projectEnvironmentsNotFound": "Project environments not found",
-	"unexpectedSessionStateType": "Unexpected session state type",
+	"unexpectedSessionStateType": "Unexpected session state type - {{error}}",
 	"sessionLogMissingErrorMessage": "Session History - Get error from not error state",
 	"sessionLogMissingOnErrorType": "Session History - No error",
 	"missingSessionStateType": "Missing session state type",

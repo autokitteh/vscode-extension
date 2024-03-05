@@ -1,11 +1,14 @@
 import { error } from "console";
-import { Session as ProtoSession } from "@ak-proto-ts/sessions/v1/session_pb";
+import {
+	Session as ProtoSession,
+	SessionLogRecord as ProtoSessionLogRecord,
+} from "@ak-proto-ts/sessions/v1/session_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { SessionState, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
-import { ProtoSessionHistoryState, Session } from "@type/models";
+import { Session } from "@type/models";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
 
@@ -36,7 +39,7 @@ export class SessionsService {
 	static async getHistoryBySessionId(sessionId: string): Promise<ServiceResponse<Array<SessionState>>> {
 		try {
 			const response = await sessionsClient.getLog({ sessionId });
-			const sessionHistory = response.log?.records.map((state: ProtoSessionHistoryState) => new SessionState(state));
+			const sessionHistory = response.log?.records.map((state: ProtoSessionLogRecord) => new SessionState(state));
 			return { data: sessionHistory, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.sessionsService, (error as Error).message);
