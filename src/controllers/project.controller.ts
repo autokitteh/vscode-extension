@@ -168,10 +168,7 @@ export class ProjectController {
 			return;
 		}
 		for (let i = 0; i < sessionStates.length; i++) {
-			if (
-				sessionStates[i].state !== SessionLogStateTypes.error &&
-				sessionStates[i].state !== SessionLogStateTypes.completed
-			) {
+			if (!sessionStates[i].isFinished()) {
 				sessionStates[i].getLogs().forEach((logStr) => LoggerService.sessionLog(`	${logStr}`));
 			}
 		}
