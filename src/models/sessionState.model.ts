@@ -41,7 +41,7 @@ export class SessionState {
 				break;
 			case SessionLogTypes.state:
 				this.state = Object.keys(session.state!)[0] as SessionLogStateTypes;
-				this.logs = session.print ? [session.print] : [];
+				this.logs = session.print ? [session.print.text] : [];
 				if (this.state === SessionLogStateTypes.error) {
 					this.error = session?.state?.error?.error?.message || translate().t("errors.sessionLogMissingOnErrorType");
 					this.callstackTrace = (session?.state?.error?.error?.callstack || []) as Callstack[];
