@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MessageType, StateOfSessionLogType } from "@enums";
+import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
 import { AKDeploymentState } from "@react-components";
@@ -113,19 +113,19 @@ export const AKDeployments = ({
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
 							>
-								{getSessionStateCount(deployment, StateOfSessionLogType.running)}
+								{getSessionStateCount(deployment, SessionStateType.running)}
 							</AKTableCell>
 							<AKTableCell
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
 							>
-								{getSessionStateCount(deployment, StateOfSessionLogType.error)}
+								{getSessionStateCount(deployment, SessionStateType.error)}
 							</AKTableCell>
 							<AKTableCell
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 								classes={["cursor-pointer"]}
 							>
-								{getSessionStateCount(deployment, StateOfSessionLogType.completed)}
+								{getSessionStateCount(deployment, SessionStateType.completed)}
 							</AKTableCell>
 							<AKTableCell
 								onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}

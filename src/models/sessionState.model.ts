@@ -6,47 +6,47 @@ import { Callstack } from "@type/models";
 import { convertTimestampToDate } from "@utilities";
 
 export class SessionLogRecord {
-	type: SessionLogRecordType | undefined;
-	state: SessionStateType | undefined;
+	type: SessionLogRecordType = SessionLogRecordType.unknown;
+	state?: SessionStateType | undefined;
 	callstackTrace: Callstack[] = [];
 	logs?: string[];
 	error?: string;
 	dateTime?: Date;
 
-	constructor(session: ProtoSessionLogRecord) {
-		let sessionState = Object.keys(SessionLogRecordType).find((key) => key in session);
-		if (!sessionState && session.print) {
-			sessionState = SessionLogRecordType.print;
+	constructor(logRecord: ProtoSessionLogRecord) {
+		let logRecordType = Object.keys(SessionLogRecordType).filter((key) => key !== "t")[0];
+		if (!logRecordType && logRecord.print) {
+			logRecordType = SessionLogRecordType.print;
 		}
 
-		switch (sessionState) {
+		switch (logRecordType) {
 			case SessionLogRecordType.callAttemptStart:
 				this.type = SessionLogRecordType.callAttemptStart;
-				this.dateTime = convertTimestampToDate(session[SessionLogRecordType.callAttemptStart]!.startedAt);
+				this.dateTime = convertTimestampToDate(logRecord[SessionLogRecordType.callAttemptStart]!.startedAt);
 				break;
 			case SessionLogRecordType.callAttemptComplete:
-				this.handleCallAttemptComplete(session);
+				this.handleCallAttemptComplete(logRecord);
 				break;
 			case SessionLogRecordType.callSpec:
-				this.handleFuncCall(session);
+				this.handleFuncCall(logRecord);
 				break;
 			case SessionLogRecordType.state:
 				this.type = SessionLogRecordType.state;
-				this.state = Object.keys(session.state!)[0] as SessionStateType;
-				this.logs = session.print ? [session.print.text] : [];
+				this.state = Object.keys(logRecord.state!)[0] as SessionStateType;
+				this.logs = logRecord.print ? [logRecord.print.text] : [];
 				if (this.state === SessionStateType.error) {
-					this.error = session?.state?.error?.error?.message || translate().t("errors.sessionLogMissingOnErrorType");
-					this.callstackTrace = (session?.state?.error?.error?.callstack || []) as Callstack[];
+					this.error = logRecord?.state?.error?.error?.message || translate().t("errors.sessionLogMissingOnErrorType");
+					this.callstackTrace = (logRecord?.state?.error?.error?.callstack || []) as Callstack[];
 				}
 				break;
 			case SessionLogRecordType.print:
 				this.type = SessionLogRecordType.print;
-				this.logs = [`${translate().t("sessions.historyPrint")}: ${session.print!.text}`];
+				this.logs = [`${translate().t("sessions.historyPrint")}: ${logRecord.print!.text}`];
 				break;
 		}
 
-		if (!this.dateTime && session.t) {
-			this.dateTime = convertTimestampToDate(session.t);
+		if (!this.dateTime && logRecord.t) {
+			this.dateTime = convertTimestampToDate(logRecord.t);
 		}
 	}
 
