@@ -1,5 +1,5 @@
 import { namespaces, vsCommands } from "@constants";
-import { getResources } from "@controllers/utilities";
+import { AppStateHandler, getResources } from "@controllers/utilities";
 import { translate } from "@i18n";
 import { LoggerService, ProjectsService } from "@services";
 import { SidebarTreeItem } from "@type/views";
@@ -51,8 +51,13 @@ export class SidebarController {
 		return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
 	};
 
-	private startInterval() {
-		this.intervalTimerId = setInterval(() => this.refreshProjects(), this.refreshRate);
+	private async startInterval() {
+		this.intervalTimerId = setInterval(async () => {
+			const isAppOn = await AppStateHandler.get();
+			if (isAppOn) {
+				this.refreshProjects();
+			}
+		}, this.refreshRate);
 	}
 
 	private async refreshProjects() {

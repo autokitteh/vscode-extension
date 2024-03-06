@@ -51,10 +51,12 @@ export async function activate(context: ExtensionContext) {
 
 	commands.registerCommand(vsCommands.connect, async () => {
 		await AppStateHandler.set(true);
+		LoggerService.info(namespaces.appStateHandler, "App state is enabled");
 		sidebarController.connect();
 	});
 	commands.registerCommand(vsCommands.disconnect, async () => {
 		await AppStateHandler.set(false);
+		LoggerService.info(namespaces.appStateHandler, "App state is disabled");
 		sidebarController.disconnect();
 	});
 

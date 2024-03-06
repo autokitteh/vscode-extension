@@ -1,5 +1,5 @@
 import { vsCommands, namespaces, channels } from "@constants";
-import { getResources } from "@controllers/utilities";
+import { AppStateHandler, getResources } from "@controllers/utilities";
 import { MessageType, ProjectIntervalTypes } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
@@ -213,7 +213,12 @@ export class ProjectController {
 		await loadFunc();
 		this.intervalKeeper.set(
 			intervalKey,
-			setInterval(() => loadFunc(), refreshRate)
+			setInterval(async () => {
+				const isAppOn = await AppStateHandler.get();
+				if (isAppOn) {
+					loadFunc();
+				}
+			}, refreshRate)
 		);
 	}
 
