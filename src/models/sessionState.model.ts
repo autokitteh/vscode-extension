@@ -9,7 +9,7 @@ import { convertTimestampToDate } from "@utilities";
 
 export class SessionLogRecord {
 	type: SessionLogRecordType = SessionLogRecordType.unknown;
-	state?: SessionStateType | undefined;
+	state?: SessionStateType;
 	callstackTrace: Callstack[] = [];
 	logs?: string[];
 	error?: string;
