@@ -40,7 +40,11 @@ export class SessionLogRecord {
 			case SessionLogRecordType.state:
 				this.type = SessionLogRecordType.state;
 				this.state = Object.keys(logRecord.state!)[0] as SessionStateType;
-				this.logs = logRecord.print ? [logRecord.print.text] : [];
+				if (this.state === SessionStateType.running) {
+					this.logs = [logRecord.state?.running?.call?.function?.name || ""];
+				} else {
+					this.logs = logRecord.print ? [logRecord.print.text] : [];
+				}
 				if (this.state === SessionStateType.error) {
 					this.error = logRecord?.state?.error?.error?.message || translate().t("errors.sessionLogMissingOnErrorType");
 					this.callstackTrace = (logRecord?.state?.error?.error?.callstack || []) as Callstack[];
