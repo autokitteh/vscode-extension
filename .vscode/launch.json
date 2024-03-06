@@ -24,6 +24,17 @@
 			"args": ["run", "--run", "--environment", "node"],
 			"console": "integratedTerminal",
 			"internalConsoleOptions": "neverOpen"
+		},
+		{
+			"name": "Extension Tests",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"--extensionTestsPath=${workspaceFolder}/dist/src/test/suite/index"
+			],
+			"outFiles": ["${workspaceFolder}/dist/src/test/**/*.test.js"]
 		}
 	]
 }

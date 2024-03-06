@@ -3,6 +3,7 @@ on:
   push:
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  DISPLAY: :99
 permissions:
   contents: read
 jobs:
@@ -21,6 +22,10 @@ jobs:
         with:
           node-version: "21.2.0"
           cache: "npm"
+      - name: Set up XVFB
+        run: |
+          sudo apt-get install -y xvfb
+          Xvfb :99 -ac &
       - name: Pull submodule from remote
         run: git submodule update --remote
       - name: Install dependencies for both vscode and react app
