@@ -43,7 +43,7 @@ export class SessionLogRecord {
 				this.state = Object.keys(logRecord.state!)[0] as SessionStateType;
 				if (this.state === SessionStateType.running) {
 					const functionRunning = logRecord.state?.running?.call?.function?.name;
-					this.logs = functionRunning ? [functionRunning] : [];
+					this.logs = functionRunning ? [`${translate().t("sessions.historyInitFunction")}: ${functionRunning}`] : [];
 				}
 				if (this.state === SessionStateType.error) {
 					this.error = logRecord?.state?.error?.error?.message || translate().t("errors.sessionLogMissingOnErrorType");
@@ -64,12 +64,29 @@ export class SessionLogRecord {
 	private handleCallAttemptComplete(session: ProtoSessionLogRecord) {
 		this.type = SessionLogRecordType.callAttemptComplete;
 		let functionResponse = session[this.type]?.result?.value?.struct?.fields?.body?.string?.v || "";
-		const functionName = session[this.type]?.result?.value?.struct?.ctor?.string?.v || "";
+		let functionName = session[this.type]?.result?.value?.struct?.ctor?.string?.v || "";
+		if (session[this.type]?.result?.value?.time) {
+			this.logs = [
+				// eslint-disable-next-line max-len
+				`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${translate().t("sessions.historyTime")} - ${convertTimestampToDate(session[this.type]?.result?.value?.time?.v).toISOString()}`,
+			];
+			return;
+		}
+		if (session[this.type]?.result?.value?.nothing) {
+			this.logs = [
+				// eslint-disable-next-line max-len
+				`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${translate().t("sessions.historyNoOutput")}`,
+			];
+			return;
+		}
 		if (!functionName && !functionResponse) {
 			this.logs = [];
 			return;
 		}
-		this.logs = [`${translate().t("sessions.historyResult")}: ${functionName} - ${functionResponse}`];
+		this.logs = [
+			// eslint-disable-next-line max-len
+			`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${functionName} - ${functionResponse}`,
+		];
 	}
 
 	private handleFuncCall(session: ProtoSessionLogRecord) {

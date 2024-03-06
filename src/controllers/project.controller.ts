@@ -173,7 +173,9 @@ export class ProjectController {
 		}
 		for (let i = 0; i < sessionStates.length; i++) {
 			if (!sessionStates[i].isFinished()) {
-				sessionStates[i].getLogs().forEach((logStr) => LoggerService.sessionLog(`\t${logStr}`));
+				sessionStates[i]
+					.getLogs()
+					.forEach((logStr) => LoggerService.sessionLog(`${sessionStates[i].dateTime?.toISOString()}\t${logStr}`));
 			}
 		}
 	}
