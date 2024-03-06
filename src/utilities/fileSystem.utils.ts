@@ -2,7 +2,6 @@ import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { translate } from "@i18n";
-import { isHiddenFile } from "is-hidden-file";
 
 export const createDirectory = async (outputPath: string): Promise<void> => {
 	try {
@@ -38,11 +37,18 @@ export const listFilesInDirectory = async (dirPath: string, includeDirectories: 
 	return files;
 };
 
+const isUnixHiddenPath = function (path: string) {
+	return /(^|\/)\.[^\/\.]/g.test(path);
+};
+
 export const readDirectoryRecursive = (directoryPath: string): string[] => {
 	let files: string[] = [];
 
 	fs.readdirSync(directoryPath).forEach((file) => {
 		const fullPath = path.join(directoryPath, file);
+		if (isUnixHiddenPath(fullPath)) {
+			return;
+		}
 		if (fs.statSync(fullPath).isDirectory()) {
 			files = files.concat(readDirectoryRecursive(fullPath));
 		} else {
