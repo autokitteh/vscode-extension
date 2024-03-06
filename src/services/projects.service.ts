@@ -16,9 +16,9 @@ export class ProjectsService {
 				},
 			});
 			if (!projectId) {
-				LoggerService.error(namespaces.projectService, translate().t("errors.projectNotCreated"));
+				LoggerService.error(namespaces.projectService, translate().t("errors.projectNotCreated", { projectName }));
 
-				return { data: undefined, error: translate().t("errors.projectNotCreated") };
+				return { data: undefined, error: translate().t("errors.projectNotCreated", { projectName }) };
 			}
 			return { data: projectId, error: undefined };
 		} catch (error) {
@@ -32,7 +32,6 @@ export class ProjectsService {
 			const { project } = await projectsClient.get({ projectId });
 			if (!project) {
 				LoggerService.error(namespaces.projectService, translate().t("errors.projectNotFound"));
-
 				return { data: undefined, error: translate().t("errors.projectNotFound") };
 			}
 			return { data: project, error: undefined };

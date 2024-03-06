@@ -11,5 +11,5 @@
 	"fetchProjectsFailedError": "Projects fetch failed - error: {{error}}",
 	"resourcesDirectoryMissing": "Resources directory missing",
 	"errorReadingResource": "Error reading the selected directory or file",
-	"projectNotCreated": "There was an issue creating the project"
+	"projectNotCreated": "There was an issue creating the project: {{projectName}}"
 }
