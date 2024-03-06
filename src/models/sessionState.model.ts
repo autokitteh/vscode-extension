@@ -1,7 +1,9 @@
 import { SessionLogRecord as ProtoSessionLogRecord } from "@ak-proto-ts/sessions/v1/session_pb";
 import { Value } from "@ak-proto-ts/values/v1/values_pb";
+import { namespaces } from "@constants";
 import { SessionStateType, SessionLogRecordType } from "@enums";
 import { translate } from "@i18n/index";
+import { LoggerService } from "@services";
 import { Callstack } from "@type/models";
 import { convertTimestampToDate } from "@utilities";
 
@@ -14,10 +16,15 @@ export class SessionLogRecord {
 	dateTime?: Date;
 
 	constructor(logRecord: ProtoSessionLogRecord) {
-		let logRecordType = Object.keys(SessionLogRecordType).filter((key) => key !== "t")[0];
-		if (!logRecordType && logRecord.print) {
-			logRecordType = SessionLogRecordType.print;
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { t, ...props } = logRecord;
+		if (Object.keys(props).length > 1) {
+			LoggerService.error(
+				namespaces.sessionsHistory,
+				`More than one log record type found: ${Object.keys(props).join(", ")}`
+			);
 		}
+		const logRecordType = Object.keys(props)[0] as SessionLogRecordType;
 
 		switch (logRecordType) {
 			case SessionLogRecordType.callAttemptStart:
