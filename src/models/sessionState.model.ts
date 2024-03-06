@@ -23,6 +23,7 @@ export class SessionLogRecord {
 				namespaces.sessionsHistory,
 				`More than one session log record type found: ${Object.keys(props).join(", ")}`
 			);
+			return;
 		}
 		const logRecordType = Object.keys(props)[0] as SessionLogRecordType;
 
