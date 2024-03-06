@@ -1,4 +1,4 @@
-export enum SessionLogTypes {
+export enum SessionLogRecordType {
 	print = "print",
 	unknown = "unknown",
 	state = "state",
@@ -6,7 +6,7 @@ export enum SessionLogTypes {
 	callAttemptStart = "callAttemptStart",
 	callAttemptComplete = "callAttemptComplete",
 }
-export enum SessionLogStateTypes {
+export enum StateOfSessionLogType {
 	created = "created",
 	running = "running",
 	error = "error",

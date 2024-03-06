@@ -3,7 +3,7 @@ import { getResources } from "@controllers/utilities";
 import { MessageType, ProjectIntervalTypes } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
-import { SessionState } from "@models";
+import { SessionLogRecord } from "@models";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
 import { Callback } from "@type/interfaces";
@@ -18,7 +18,7 @@ export class ProjectController {
 	public projectId: string;
 	public project?: Project;
 	private sessions?: Session[] = [];
-	private sessionHistoryStates: SessionState[] = [];
+	private sessionHistoryStates: SessionLogRecord[] = [];
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
@@ -159,7 +159,7 @@ export class ProjectController {
 		this.sessionHistoryStates = sessionHistoryStates;
 	}
 
-	private outputSessionLogs(sessionStates: SessionState[]) {
+	private outputSessionLogs(sessionStates: SessionLogRecord[]) {
 		const logPrefix = translate().t("sessions.logs");
 		LoggerService.sessionLog(`${logPrefix}:`);
 
@@ -174,20 +174,20 @@ export class ProjectController {
 		}
 	}
 
-	private outputSessionFinishDetails(lastState: SessionState) {
+	private outputSessionFinishDetails(lastState: SessionLogRecord) {
 		if (lastState.isError()) {
 			this.outputErrorDetails(lastState);
 			this.outputCallstackDetails(lastState);
 		}
 	}
 
-	private outputErrorDetails(state: SessionState) {
+	private outputErrorDetails(state: SessionLogRecord) {
 		LoggerService.sessionLog(`${translate().t("sessions.errors")}:`);
 		const errorMessage = state.isError() ? state.getError() : "";
 		LoggerService.sessionLog(`	${errorMessage}`);
 	}
 
-	private outputCallstackDetails(state: SessionState) {
+	private outputCallstackDetails(state: SessionLogRecord) {
 		LoggerService.sessionLog(`${translate().t("sessions.callstack")}:`);
 		if (!state.getCallstack().length) {
 			return;

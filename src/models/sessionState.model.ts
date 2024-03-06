@@ -1,54 +1,54 @@
 import { SessionLogRecord as ProtoSessionLogRecord } from "@ak-proto-ts/sessions/v1/session_pb";
 import { Value } from "@ak-proto-ts/values/v1/values_pb";
-import { SessionLogStateTypes, SessionLogTypes } from "@enums";
+import { StateOfSessionLogType, SessionLogRecordType } from "@enums";
 import { translate } from "@i18n/index";
 import { Callstack } from "@type/models";
 import { convertTimestampToDate } from "@utilities";
 
-export class SessionState {
-	type: SessionLogTypes | undefined;
-	state: SessionLogStateTypes | undefined;
+export class SessionLogRecord {
+	type: SessionLogRecordType | undefined;
+	state: StateOfSessionLogType | undefined;
 	callstackTrace: Callstack[] = [];
 	logs?: string[];
 	error?: string;
 	dateTime?: Date;
 
 	constructor(session: ProtoSessionLogRecord) {
-		const stateTypeMapping: Record<string, SessionLogTypes> = {
-			callSpec: SessionLogTypes.callSpec,
-			callAttemptComplete: SessionLogTypes.callAttemptComplete,
-			callAttemptStart: SessionLogTypes.callAttemptStart,
-			state: SessionLogTypes.state,
+		const stateTypeMapping: Record<string, SessionLogRecordType> = {
+			callSpec: SessionLogRecordType.callSpec,
+			callAttemptComplete: SessionLogRecordType.callAttemptComplete,
+			callAttemptStart: SessionLogRecordType.callAttemptStart,
+			state: SessionLogRecordType.state,
 		};
 
 		let sessionState = Object.keys(stateTypeMapping).find((key) => key in session);
 		if (!sessionState) {
 			if (session.print) {
-				sessionState = SessionLogTypes.print;
+				sessionState = SessionLogRecordType.print;
 			}
 		}
 
 		switch (sessionState) {
-			case SessionLogTypes.callAttemptStart:
-				this.type = SessionLogTypes.callAttemptStart;
-				this.dateTime = convertTimestampToDate(session[SessionLogTypes.callAttemptStart]!.startedAt);
+			case SessionLogRecordType.callAttemptStart:
+				this.type = SessionLogRecordType.callAttemptStart;
+				this.dateTime = convertTimestampToDate(session[SessionLogRecordType.callAttemptStart]!.startedAt);
 				break;
-			case SessionLogTypes.callAttemptComplete:
+			case SessionLogRecordType.callAttemptComplete:
 				this.handleCallAttemptComplete(session);
 				break;
-			case SessionLogTypes.callSpec:
+			case SessionLogRecordType.callSpec:
 				this.handleFuncCall(session);
 				break;
-			case SessionLogTypes.state:
-				this.state = Object.keys(session.state!)[0] as SessionLogStateTypes;
+			case SessionLogRecordType.state:
+				this.state = Object.keys(session.state!)[0] as StateOfSessionLogType;
 				this.logs = session.print ? [session.print.text] : [];
-				if (this.state === SessionLogStateTypes.error) {
+				if (this.state === StateOfSessionLogType.error) {
 					this.error = session?.state?.error?.error?.message || translate().t("errors.sessionLogMissingOnErrorType");
 					this.callstackTrace = (session?.state?.error?.error?.callstack || []) as Callstack[];
 				}
 				break;
-			case SessionLogTypes.print:
-				this.type = SessionLogTypes.print;
+			case SessionLogRecordType.print:
+				this.type = SessionLogRecordType.print;
 				this.logs = [`${translate().t("sessions.historyPrint")}: ${session.print}`];
 				break;
 		}
@@ -59,7 +59,7 @@ export class SessionState {
 	}
 
 	private handleCallAttemptComplete(session: ProtoSessionLogRecord) {
-		this.type = SessionLogTypes.callAttemptComplete;
+		this.type = SessionLogRecordType.callAttemptComplete;
 		let functionResponse = session[this.type]?.result?.value?.struct?.fields?.body?.string?.v || "";
 		const functionName = session[this.type]?.result?.value?.struct?.ctor?.string?.v || "";
 		if (functionName === "time") {
@@ -73,7 +73,7 @@ export class SessionState {
 	}
 
 	private handleFuncCall(session: ProtoSessionLogRecord) {
-		this.type = SessionLogTypes.callSpec;
+		this.type = SessionLogRecordType.callSpec;
 
 		const functionName = session[this.type]?.function?.function?.name || "";
 		const args = (session[this.type]?.args || [])
@@ -92,19 +92,19 @@ export class SessionState {
 	}
 
 	isError(): boolean {
-		return this.state === SessionLogStateTypes.error;
+		return this.state === StateOfSessionLogType.error;
 	}
 
 	isRunning(): boolean {
-		return this.state === SessionLogStateTypes.running;
+		return this.state === StateOfSessionLogType.running;
 	}
 
 	isPrint(): boolean {
-		return this.type === SessionLogTypes.print;
+		return this.type === SessionLogRecordType.print;
 	}
 
 	isFinished(): boolean {
-		return this.state === SessionLogStateTypes.error || this.state === SessionLogStateTypes.completed;
+		return this.state === StateOfSessionLogType.error || this.state === StateOfSessionLogType.completed;
 	}
 
 	containLogs(): boolean {
