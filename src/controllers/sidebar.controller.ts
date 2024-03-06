@@ -1,5 +1,5 @@
 import { namespaces, vsCommands } from "@constants";
-import { AppStateHandler, getResources } from "@controllers/utilities";
+import { getResources } from "@controllers/utilities";
 import { translate } from "@i18n";
 import { LoggerService, ProjectsService } from "@services";
 import { SidebarTreeItem } from "@type/views";
@@ -52,12 +52,7 @@ export class SidebarController {
 	};
 
 	private async startInterval() {
-		this.intervalTimerId = setInterval(async () => {
-			const isAppOn = await AppStateHandler.get();
-			if (isAppOn) {
-				this.refreshProjects();
-			}
-		}, this.refreshRate);
+		this.intervalTimerId = setInterval(async () => this.refreshProjects(), this.refreshRate);
 	}
 
 	private async refreshProjects() {

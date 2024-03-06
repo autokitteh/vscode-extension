@@ -33,6 +33,18 @@ export class TabsManagerController {
 		}
 	}
 
+	public connect() {
+		for (const key in this.openWebviews) {
+			this.openWebviews[key].connect();
+		}
+	}
+
+	public disconnect() {
+		for (const key in this.openWebviews) {
+			this.openWebviews[key].disconnect();
+		}
+	}
+
 	private disposeWebview(controllerId: string) {
 		delete this.openWebviews[controllerId];
 	}

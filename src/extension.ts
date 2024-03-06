@@ -50,12 +50,14 @@ export async function activate(context: ExtensionContext) {
 	const tabsManager = new TabsManagerController(context);
 
 	commands.registerCommand(vsCommands.connect, async () => {
-		await AppStateHandler.set(true);
 		sidebarController.connect();
+		tabsManager.connect();
+		await AppStateHandler.set(true);
 	});
 	commands.registerCommand(vsCommands.disconnect, async () => {
-		await AppStateHandler.set(false);
 		sidebarController.disconnect();
+		tabsManager.disconnect();
+		await AppStateHandler.set(false);
 	});
 
 	context.subscriptions.push(
