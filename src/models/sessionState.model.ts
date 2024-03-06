@@ -21,7 +21,7 @@ export class SessionLogRecord {
 		if (Object.keys(props).length > 1) {
 			LoggerService.error(
 				namespaces.sessionsHistory,
-				`More than one log record type found: ${Object.keys(props).join(", ")}`
+				`More than one session log record type found: ${Object.keys(props).join(", ")}`
 			);
 		}
 		const logRecordType = Object.keys(props)[0] as SessionLogRecordType;
