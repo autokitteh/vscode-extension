@@ -190,7 +190,7 @@ export class ProjectController {
 			return;
 		}
 		state.getCallstack().forEach(({ location: { col, name, path, row } }) => {
-			LoggerService.sessionLog(`	${path}: ${row}.${col}: ${name}`);
+			LoggerService.sessionLog(`\t${path}: ${row}.${col}: ${name}`);
 		});
 	}
 

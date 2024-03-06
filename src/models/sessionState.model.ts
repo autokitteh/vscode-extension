@@ -42,7 +42,8 @@ export class SessionLogRecord {
 				this.type = SessionLogRecordType.state;
 				this.state = Object.keys(logRecord.state!)[0] as SessionStateType;
 				if (this.state === SessionStateType.running) {
-					this.logs = [logRecord.state?.running?.call?.function?.name || ""];
+					const functionRunning = logRecord.state?.running?.call?.function?.name;
+					this.logs = functionRunning ? [functionRunning] : [];
 				}
 				if (this.state === SessionStateType.error) {
 					this.error = logRecord?.state?.error?.error?.message || translate().t("errors.sessionLogMissingOnErrorType");
