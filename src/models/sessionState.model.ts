@@ -61,9 +61,6 @@ export class SessionLogRecord {
 		this.type = SessionLogRecordType.callAttemptComplete;
 		let functionResponse = session[this.type]?.result?.value?.struct?.fields?.body?.string?.v || "";
 		const functionName = session[this.type]?.result?.value?.struct?.ctor?.string?.v || "";
-		if (functionName === "time") {
-			functionResponse = convertTimestampToDate(functionResponse).toISOString();
-		}
 		if (!functionName && !functionResponse) {
 			this.logs = [];
 			return;
