@@ -22,7 +22,10 @@ export class ProjectsService {
 			}
 			return { data: projectId, error: undefined };
 		} catch (error) {
-			LoggerService.error(namespaces.projectService, (error as Error).message);
+			LoggerService.error(
+				namespaces.projectService,
+				`${translate().t("errors.projectNotCreated", { projectName })}: ${(error as Error).message}`
+			);
 			return { data: undefined, error };
 		}
 	}
