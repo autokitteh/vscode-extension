@@ -11,7 +11,7 @@ export class SessionLogRecord {
 	type: SessionLogRecordType = SessionLogRecordType.unknown;
 	state?: SessionStateType;
 	callstackTrace: Callstack[] = [];
-	logs?: string[];
+	logs?: string;
 	error?: string;
 	dateTime?: Date;
 
@@ -43,7 +43,9 @@ export class SessionLogRecord {
 				this.state = Object.keys(logRecord.state!)[0] as SessionStateType;
 				if (this.state === SessionStateType.running) {
 					const functionRunning = logRecord.state?.running?.call?.function?.name;
-					this.logs = functionRunning ? [`${translate().t("sessions.historyInitFunction")}: ${functionRunning}`] : [];
+					this.logs = functionRunning
+						? `${translate().t("sessions.historyInitFunction")}: ${functionRunning}`
+						: undefined;
 				}
 				if (this.state === SessionStateType.error) {
 					this.error = logRecord?.state?.error?.error?.message || translate().t("errors.sessionLogMissingOnErrorType");
@@ -52,7 +54,7 @@ export class SessionLogRecord {
 				break;
 			case SessionLogRecordType.print:
 				this.type = SessionLogRecordType.print;
-				this.logs = [`${translate().t("sessions.historyPrint")}: ${logRecord.print!.text}`];
+				this.logs = `${translate().t("sessions.historyPrint")}: ${logRecord.print!.text}`;
 				break;
 		}
 
@@ -63,30 +65,30 @@ export class SessionLogRecord {
 
 	private handleCallAttemptComplete(session: ProtoSessionLogRecord) {
 		this.type = SessionLogRecordType.callAttemptComplete;
+
 		let functionResponse = session[this.type]?.result?.value?.struct?.fields?.body?.string?.v || "";
 		let functionName = session[this.type]?.result?.value?.struct?.ctor?.string?.v || "";
+
 		if (session[this.type]?.result?.value?.time) {
-			this.logs = [
+			this.logs =
 				// eslint-disable-next-line max-len
-				`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${translate().t("sessions.historyTime")} - ${convertTimestampToDate(session[this.type]?.result?.value?.time?.v).toISOString()}`,
-			];
+				`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${translate().t("sessions.historyTime")} - ${convertTimestampToDate(session[this.type]?.result?.value?.time?.v).toISOString()}`;
+
 			return;
 		}
 		if (session[this.type]?.result?.value?.nothing) {
-			this.logs = [
+			this.logs =
 				// eslint-disable-next-line max-len
-				`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${translate().t("sessions.historyNoOutput")}`,
-			];
+				`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${translate().t("sessions.historyNoOutput")}`;
 			return;
 		}
 		if (!functionName && !functionResponse) {
-			this.logs = [];
+			this.logs = undefined;
 			return;
 		}
-		this.logs = [
+		this.logs =
 			// eslint-disable-next-line max-len
-			`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${functionName} - ${functionResponse}`,
-		];
+			`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${functionName} - ${functionResponse}`;
 	}
 
 	private handleFuncCall(session: ProtoSessionLogRecord) {
@@ -97,7 +99,7 @@ export class SessionLogRecord {
 			.map((arg: Value) => arg.string?.v)
 			.join(", ")
 			.replace(/, ([^,]*)$/, "");
-		this.logs = [`${translate().t("sessions.historyFunction")}: ${functionName}(${args})`];
+		this.logs = `${translate().t("sessions.historyFunction")}: ${functionName}(${args})`;
 	}
 
 	getError(): string {
