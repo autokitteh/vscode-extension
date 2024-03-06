@@ -1,4 +1,4 @@
-import { StateOfSessionLogType } from "@enums";
+import { SessionStateType } from "@enums";
 
 export type Deployment = {
 	deploymentId: string;
@@ -7,7 +7,7 @@ export type Deployment = {
 	createdAt: Date;
 	state: number;
 	sessionStats?: {
-		state?: StateOfSessionLogType;
+		state?: SessionStateType;
 		count: number;
 	}[];
 };

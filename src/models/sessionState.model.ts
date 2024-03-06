@@ -1,13 +1,13 @@
 import { SessionLogRecord as ProtoSessionLogRecord } from "@ak-proto-ts/sessions/v1/session_pb";
 import { Value } from "@ak-proto-ts/values/v1/values_pb";
-import { StateOfSessionLogType, SessionLogRecordType } from "@enums";
+import { SessionStateType, SessionLogRecordType } from "@enums";
 import { translate } from "@i18n/index";
 import { Callstack } from "@type/models";
 import { convertTimestampToDate } from "@utilities";
 
 export class SessionLogRecord {
 	type: SessionLogRecordType | undefined;
-	state: StateOfSessionLogType | undefined;
+	state: SessionStateType | undefined;
 	callstackTrace: Callstack[] = [];
 	logs?: string[];
 	error?: string;
@@ -32,9 +32,9 @@ export class SessionLogRecord {
 				break;
 			case SessionLogRecordType.state:
 				this.type = SessionLogRecordType.state;
-				this.state = Object.keys(session.state!)[0] as StateOfSessionLogType;
+				this.state = Object.keys(session.state!)[0] as SessionStateType;
 				this.logs = session.print ? [session.print.text] : [];
-				if (this.state === StateOfSessionLogType.error) {
+				if (this.state === SessionStateType.error) {
 					this.error = session?.state?.error?.error?.message || translate().t("errors.sessionLogMissingOnErrorType");
 					this.callstackTrace = (session?.state?.error?.error?.callstack || []) as Callstack[];
 				}
@@ -84,11 +84,11 @@ export class SessionLogRecord {
 	}
 
 	isError(): boolean {
-		return this.state === StateOfSessionLogType.error;
+		return this.state === SessionStateType.error;
 	}
 
 	isRunning(): boolean {
-		return this.state === StateOfSessionLogType.running;
+		return this.state === SessionStateType.running;
 	}
 
 	isPrint(): boolean {
@@ -96,7 +96,7 @@ export class SessionLogRecord {
 	}
 
 	isFinished(): boolean {
-		return this.state === StateOfSessionLogType.error || this.state === StateOfSessionLogType.completed;
+		return this.state === SessionStateType.error || this.state === SessionStateType.completed;
 	}
 
 	containLogs(): boolean {

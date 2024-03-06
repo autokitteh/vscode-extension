@@ -178,8 +178,6 @@ export class ProjectController {
 		}
 	}
 
-	private outputSessionFinishDetails(lastState: SessionLogRecord) {}
-
 	private outputErrorDetails(state: SessionLogRecord) {
 		LoggerService.sessionLog(`${translate().t("sessions.errors")}:`);
 		const errorMessage = state.isError() ? state.getError() : "";
