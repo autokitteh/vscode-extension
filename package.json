@@ -348,6 +348,7 @@
 		"test:all": "npm run test && npm run test:run --workspace=vscode-react",
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
+		"vitest": "vitest run",
 		"package": "vsce package",
 		"prepare": "husky install",
 		"test-vscode-extension": "vscode-test",
