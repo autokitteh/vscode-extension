@@ -150,8 +150,12 @@ export class ProjectController {
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		this.outputSessionLogs(sessionHistoryStates);
 
-		if (sessionHistoryStates[sessionHistoryStates.length - 1].isFinished()) {
-			this.outputSessionFinishDetails(sessionHistoryStates[sessionHistoryStates.length - 1]);
+		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
+		if (lastState.isFinished()) {
+			if (lastState.isError()) {
+				this.outputErrorDetails(lastState);
+				this.outputCallstackDetails(lastState);
+			}
 			this.stopInterval(ProjectIntervalTypes.sessionHistory);
 			return;
 		}
@@ -174,12 +178,7 @@ export class ProjectController {
 		}
 	}
 
-	private outputSessionFinishDetails(lastState: SessionLogRecord) {
-		if (lastState.isError()) {
-			this.outputErrorDetails(lastState);
-			this.outputCallstackDetails(lastState);
-		}
-	}
+	private outputSessionFinishDetails(lastState: SessionLogRecord) {}
 
 	private outputErrorDetails(state: SessionLogRecord) {
 		LoggerService.sessionLog(`${translate().t("sessions.errors")}:`);
