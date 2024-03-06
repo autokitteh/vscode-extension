@@ -14,18 +14,9 @@ export class SessionLogRecord {
 	dateTime?: Date;
 
 	constructor(session: ProtoSessionLogRecord) {
-		const stateTypeMapping: Record<string, SessionLogRecordType> = {
-			callSpec: SessionLogRecordType.callSpec,
-			callAttemptComplete: SessionLogRecordType.callAttemptComplete,
-			callAttemptStart: SessionLogRecordType.callAttemptStart,
-			state: SessionLogRecordType.state,
-		};
-
-		let sessionState = Object.keys(stateTypeMapping).find((key) => key in session);
-		if (!sessionState) {
-			if (session.print) {
-				sessionState = SessionLogRecordType.print;
-			}
+		let sessionState = Object.keys(SessionLogRecordType).find((key) => key in session);
+		if (!sessionState && session.print) {
+			sessionState = SessionLogRecordType.print;
 		}
 
 		switch (sessionState) {
@@ -40,6 +31,7 @@ export class SessionLogRecord {
 				this.handleFuncCall(session);
 				break;
 			case SessionLogRecordType.state:
+				this.type = SessionLogRecordType.state;
 				this.state = Object.keys(session.state!)[0] as StateOfSessionLogType;
 				this.logs = session.print ? [session.print.text] : [];
 				if (this.state === StateOfSessionLogType.error) {
@@ -49,7 +41,7 @@ export class SessionLogRecord {
 				break;
 			case SessionLogRecordType.print:
 				this.type = SessionLogRecordType.print;
-				this.logs = [`${translate().t("sessions.historyPrint")}: ${session.print}`];
+				this.logs = [`${translate().t("sessions.historyPrint")}: ${session.print!.text}`];
 				break;
 		}
 
