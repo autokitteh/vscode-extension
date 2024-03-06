@@ -3,4 +3,4 @@ export type { Message } from "@type/message.type";
 export type { LocalhostConnection } from "@type/connection.type";
 export type { ApplyResponse } from "@type/entities";
 export type { ServiceResponse } from "@type/services.types";
-export type { ExecutionParams } from "@type/executionParams.type";
+export type { SessionExecutionParams } from "@type/sessionExecutionParams.type";

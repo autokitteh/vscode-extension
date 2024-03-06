@@ -15,5 +15,6 @@
 	"executionFailed": "Session execution failed",
 	"executionSucceed": "Session execution succeed",
 	"executionFailedError": "Session execution failed - {{error}}",
-	"sessionParamsCopied": "Session parameters added to execution"
+	"sessionParamsCopySuccess": "Session parameters added to execution",
+	"sessionParamsCopyFail": "Failed to add session parameters to execution"
 }

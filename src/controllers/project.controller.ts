@@ -6,7 +6,7 @@ import { IProjectView } from "@interfaces";
 import { SessionLogRecord } from "@models";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
-import { ExecutionParams } from "@type";
+import { SessionExecutionParams } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
@@ -402,21 +402,23 @@ export class ProjectController {
 		const executionInputs = this.sessions?.find((session) => session.sessionId === data)?.inputs;
 		if (executionInputs) {
 			this.sessionExecutionInputs = executionInputs;
-			commands.executeCommand(vsCommands.showInfoMessage, translate().t("sessions.sessionParamsCopied"));
+			commands.executeCommand(vsCommands.showInfoMessage, translate().t("sessions.sessionParamsCopySuccess"));
 
 			this.view.update({
 				type: MessageType.setExecutionInputs,
 				payload: executionInputs,
 			});
+			return;
 		}
+		commands.executeCommand(vsCommands.showErrorMessage, translate().t("sessions.sessionParamsCopyFail"));
 	}
 
-	async runExecution(executionParams: ExecutionParams) {
+	async runExecution(sessionExecutionParams: SessionExecutionParams) {
 		const { data: sessionId, error } = await SessionsService.runExecution(
-			executionParams.deploymentId,
+			sessionExecutionParams.deploymentId,
 			this.sessionExecutionInputs,
-			executionParams.triggerFile,
-			executionParams.triggerFunction
+			sessionExecutionParams.triggerFile,
+			sessionExecutionParams.triggerFunction
 		);
 
 		if (error) {

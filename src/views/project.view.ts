@@ -1,7 +1,7 @@
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n/translation.i18n";
 import { IProjectView, IProjectViewDelegate } from "@interfaces";
-import { ExecutionParams, Message } from "@type";
+import { SessionExecutionParams, Message } from "@type";
 import { getNonce } from "@utilities";
 import { getUri } from "@utilities/getUri.utils";
 import * as vscode from "vscode";
@@ -52,7 +52,7 @@ export class ProjectView implements IProjectView {
 						this.delegate?.setSessionExecutionInputs?.(message.payload as string);
 						break;
 					case MessageType.runExecution:
-						this.delegate?.runExecution?.(message.payload as ExecutionParams);
+						this.delegate?.runExecution?.(message.payload as SessionExecutionParams);
 						break;
 					default:
 				}

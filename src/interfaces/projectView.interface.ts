@@ -1,4 +1,4 @@
-import { ExecutionParams } from "@type";
+import { SessionExecutionParams } from "@type";
 import { Callback } from "@type/interfaces";
 
 export interface IProjectViewDelegate {
@@ -13,7 +13,7 @@ export interface IProjectViewDelegate {
 	activateDeployment?: Callback<string>;
 	setSessionExecutionInputs?: Callback<string>;
 	deactivateDeployment?: Callback<string>;
-	runExecution?: Callback<ExecutionParams>;
+	runExecution?: Callback<SessionExecutionParams>;
 }
 
 export interface IProjectView {
