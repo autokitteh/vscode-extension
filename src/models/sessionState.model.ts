@@ -130,7 +130,7 @@ export class SessionLogRecord {
 		return !!(this.logs && this.logs.length);
 	}
 
-	getLogs(): string[] {
-		return this.logs || [];
+	getLogs(): string | undefined {
+		return this.logs;
 	}
 }

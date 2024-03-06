@@ -167,15 +167,13 @@ export class ProjectController {
 		const logPrefix = translate().t("sessions.logs");
 		LoggerService.sessionLog(`${logPrefix}:`);
 
-		const hasLogs = sessionStates.some((state) => state.getLogs().length);
+		const hasLogs = sessionStates.some((state) => state.getLogs());
 		if (!hasLogs) {
 			return;
 		}
 		for (let i = 0; i < sessionStates.length; i++) {
-			if (!sessionStates[i].isFinished()) {
-				sessionStates[i]
-					.getLogs()
-					.forEach((logStr) => LoggerService.sessionLog(`${sessionStates[i].dateTime?.toISOString()}\t${logStr}`));
+			if (!sessionStates[i].isFinished() && sessionStates[i].getLogs()) {
+				LoggerService.sessionLog(`${sessionStates[i].dateTime?.toISOString()}\t${sessionStates[i].getLogs()}`);
 			}
 		}
 	}
