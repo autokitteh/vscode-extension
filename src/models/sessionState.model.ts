@@ -39,18 +39,7 @@ export class SessionLogRecord {
 				this.handleFuncCall(logRecord);
 				break;
 			case SessionLogRecordType.state:
-				this.type = SessionLogRecordType.state;
-				this.state = Object.keys(logRecord.state!)[0] as SessionStateType;
-				if (this.state === SessionStateType.running) {
-					const functionRunning = logRecord.state?.running?.call?.function?.name;
-					this.logs = functionRunning
-						? `${translate().t("sessions.historyInitFunction")}: ${functionRunning}`
-						: undefined;
-				}
-				if (this.state === SessionStateType.error) {
-					this.error = logRecord?.state?.error?.error?.message || translate().t("errors.sessionLogMissingOnErrorType");
-					this.callstackTrace = (logRecord?.state?.error?.error?.callstack || []) as Callstack[];
-				}
+				this.handleStateRecord(logRecord);
 				break;
 			case SessionLogRecordType.print:
 				this.type = SessionLogRecordType.print;
@@ -60,6 +49,19 @@ export class SessionLogRecord {
 
 		if (!this.dateTime && logRecord.t) {
 			this.dateTime = convertTimestampToDate(logRecord.t);
+		}
+	}
+
+	private handleStateRecord(logRecord: ProtoSessionLogRecord) {
+		this.type = SessionLogRecordType.state;
+		this.state = Object.keys(logRecord.state!)[0] as SessionStateType;
+		if (this.state === SessionStateType.running) {
+			const functionRunning = logRecord.state?.running?.call?.function?.name;
+			this.logs = functionRunning ? `${translate().t("sessions.historyInitFunction")}: ${functionRunning}` : undefined;
+		}
+		if (this.state === SessionStateType.error) {
+			this.error = logRecord?.state?.error?.error?.message || translate().t("errors.sessionLogMissingOnErrorType");
+			this.callstackTrace = (logRecord?.state?.error?.error?.callstack || []) as Callstack[];
 		}
 	}
 
