@@ -238,7 +238,7 @@ export class ProjectController {
 		await loadFunc();
 		this.intervalKeeper.set(
 			intervalKey,
-			setInterval(async () => loadFunc(), refreshRate)
+			setInterval(() => loadFunc(), refreshRate)
 		);
 	}
 
