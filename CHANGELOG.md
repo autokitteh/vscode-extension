@@ -1,3 +1,10 @@
+## [0.8.2-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.8.1...v0.8.2-dev.1) (2024-03-07)
+
+
+### Bug Fixes
+
+* display of the session logs with the new backend ([#173](https://github.com/autokitteh/vscode-extension/issues/173)) ([e5b3d08](https://github.com/autokitteh/vscode-extension/commit/e5b3d08db8e341890aaaa9732873f6d242cc538e))
+
 ## [0.8.1](https://github.com/autokitteh/vscode-extension/compare/v0.8.0...v0.8.1) (2024-02-28)
 
 
