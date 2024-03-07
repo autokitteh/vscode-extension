@@ -59,6 +59,31 @@ export class ProjectController {
 		});
 	}
 
+	public enable = async () => {
+		this.setProjectNameInView();
+		this.startInterval(
+			ProjectIntervalTypes.deployments,
+			() => this.loadAndDisplayDeployments(),
+			this.deploymentsRefreshRate
+		);
+		this.notifyViewResourcesPathChanged();
+		if (this.selectedSessionId) {
+			this.startInterval(
+				ProjectIntervalTypes.sessionHistory,
+				() => this.displaySessionsHistory(this.selectedSessionId!),
+				this.sessionsLogRefreshRate
+			);
+		}
+	};
+
+	public disable = async () => {
+		this.stopInterval(ProjectIntervalTypes.deployments);
+		this.stopInterval(ProjectIntervalTypes.sessionHistory);
+		this.deployments = undefined;
+		this.sessions = undefined;
+		this.hasDisplayedError = new Map();
+	};
+
 	async loadAndDisplayDeployments() {
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
 		if (error) {
@@ -248,28 +273,11 @@ export class ProjectController {
 	}
 
 	onBlur() {
-		this.stopInterval(ProjectIntervalTypes.deployments);
-		this.stopInterval(ProjectIntervalTypes.sessionHistory);
-		this.deployments = undefined;
-		this.sessions = undefined;
-		this.hasDisplayedError = new Map();
+		this.disable();
 	}
 
 	onFocus() {
-		this.setProjectNameInView();
-		this.startInterval(
-			ProjectIntervalTypes.deployments,
-			() => this.loadAndDisplayDeployments(),
-			this.deploymentsRefreshRate
-		);
-		this.notifyViewResourcesPathChanged();
-		if (this.selectedSessionId) {
-			this.startInterval(
-				ProjectIntervalTypes.sessionHistory,
-				() => this.displaySessionsHistory(this.selectedSessionId!),
-				this.sessionsLogRefreshRate
-			);
-		}
+		this.enable();
 	}
 
 	onClose() {
