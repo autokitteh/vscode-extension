@@ -47,7 +47,7 @@ export class SessionLogRecord {
 				break;
 		}
 
-		if (!this.dateTime && logRecord.t) {
+		if (logRecordType !== SessionLogRecordType.callAttemptStart) {
 			this.dateTime = convertTimestampToDate(logRecord.t);
 		}
 	}
