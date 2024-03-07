@@ -8,5 +8,8 @@
 	"emptyHistory": "Session history states are empty",
 	"historyResult": "Result",
 	"historyFunction": "Function",
-	"historyPrint": "Print"
+	"historyInitFunction": "Init function",
+	"historyPrint": "Print",
+	"historyTime": "Time",
+	"historyNoOutput": "No output"
 }

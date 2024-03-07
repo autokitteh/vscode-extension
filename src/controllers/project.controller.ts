@@ -1,9 +1,9 @@
 import { vsCommands, namespaces, channels } from "@constants";
 import { getResources } from "@controllers/utilities";
-import { MessageType, ProjectIntervalTypes, SessionStateType } from "@enums";
+import { MessageType, ProjectIntervalTypes } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
-import { SessionState } from "@models";
+import { SessionLogRecord } from "@models";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
 import { Callback } from "@type/interfaces";
@@ -18,7 +18,7 @@ export class ProjectController {
 	public projectId: string;
 	public project?: Project;
 	private sessions?: Session[] = [];
-	private sessionHistoryStates: SessionState[] = [];
+	private sessionHistoryStates: SessionLogRecord[] = [];
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
@@ -131,7 +131,8 @@ export class ProjectController {
 	}
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
-		const { data: sessionHistoryStates, error: sessionsError } = await SessionsService.getHistoryBySessionId(sessionId);
+		const { data: sessionHistoryStates, error: sessionsError } =
+			await SessionsService.getLogRecordsBySessionId(sessionId);
 
 		if (sessionsError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (sessionsError as Error).message);
@@ -150,8 +151,12 @@ export class ProjectController {
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		this.outputSessionLogs(sessionHistoryStates);
 
-		if (sessionHistoryStates[sessionHistoryStates.length - 1].isFinished()) {
-			this.outputSessionFinishDetails(sessionHistoryStates[sessionHistoryStates.length - 1]);
+		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
+		if (lastState.isFinished()) {
+			if (lastState.isError()) {
+				this.outputErrorDetails(lastState);
+				this.outputCallstackDetails(lastState);
+			}
 			this.stopInterval(ProjectIntervalTypes.sessionHistory);
 			return;
 		}
@@ -159,39 +164,34 @@ export class ProjectController {
 		this.sessionHistoryStates = sessionHistoryStates;
 	}
 
-	private outputSessionLogs(sessionStates: SessionState[]) {
+	private outputSessionLogs(sessionStates: SessionLogRecord[]) {
 		const logPrefix = translate().t("sessions.logs");
 		LoggerService.sessionLog(`${logPrefix}:`);
 
-		const hasLogs = sessionStates.some((state) => state.getLogs().length);
+		const hasLogs = sessionStates.some((state) => state.getLogs());
 		if (!hasLogs) {
 			return;
 		}
 		for (let i = 0; i < sessionStates.length; i++) {
-			if (sessionStates[i].type !== SessionStateType.error && sessionStates[i].type !== SessionStateType.completed) {
-				sessionStates[i].getLogs().forEach((logStr) => LoggerService.sessionLog(`	${logStr}`));
+			if (!sessionStates[i].isFinished() && sessionStates[i].getLogs()) {
+				LoggerService.sessionLog(`${sessionStates[i].dateTime?.toISOString()}\t${sessionStates[i].getLogs()}`);
 			}
 		}
 	}
 
-	private outputSessionFinishDetails(lastState: SessionState) {
-		this.outputErrorDetails(lastState);
-		this.outputCallstackDetails(lastState);
-	}
-
-	private outputErrorDetails(state: SessionState) {
+	private outputErrorDetails(state: SessionLogRecord) {
 		LoggerService.sessionLog(`${translate().t("sessions.errors")}:`);
 		const errorMessage = state.isError() ? state.getError() : "";
 		LoggerService.sessionLog(`	${errorMessage}`);
 	}
 
-	private outputCallstackDetails(state: SessionState) {
+	private outputCallstackDetails(state: SessionLogRecord) {
 		LoggerService.sessionLog(`${translate().t("sessions.callstack")}:`);
 		if (!state.getCallstack().length) {
 			return;
 		}
 		state.getCallstack().forEach(({ location: { col, name, path, row } }) => {
-			LoggerService.sessionLog(`	${path}: ${row}.${col}: ${name}`);
+			LoggerService.sessionLog(`\t${path}: ${row}.${col}: ${name}`);
 		});
 	}
 

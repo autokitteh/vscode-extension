@@ -2,7 +2,7 @@ import { SetResourcesResponse } from "@ak-proto-ts/projects/v1/svc_pb";
 import { projectsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { translate } from "@i18n";
-import { convertProjectProtoToModel } from "@models";
+import { convertErrorProtoToModel, convertProjectProtoToModel } from "@models";
 import { DeploymentsService, EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
 import { Project } from "@type/models";
@@ -43,7 +43,10 @@ export class ProjectsService {
 
 		const { buildId, error } = await projectsClient.build({ projectId });
 		if (error) {
-			LoggerService.error(`${namespaces.projectService} - Build`, error.message);
+			LoggerService.error(
+				`${namespaces.projectService} - Build: `,
+				convertErrorProtoToModel(error.value, projectId).message
+			);
 
 			return { data: undefined, error };
 		}

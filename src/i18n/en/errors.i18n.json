@@ -13,7 +13,7 @@
 	"buildFailed": "Build failed",
 	"deploymentFailed": "Deployment failed",
 	"projectEnvironmentsNotFound": "Project environments not found",
-	"unexpectedSessionStateType": "Unexpected session state type",
+	"unexpectedSessionStateType": "Unexpected session state type - {{error}}",
 	"sessionLogMissingErrorMessage": "Session History - Get error from not error state",
 	"sessionLogMissingOnErrorType": "Session History - No error",
 	"missingSessionStateType": "Missing session state type",
@@ -33,5 +33,6 @@
 	"sessionLogFetchFailed": "Couldn't fetch session log",
 	"deploymentsFetchFailed": "Couldn't fetch deployments",
 	"sessionFetchFailed": "Couldn't fetch sessions for deployment",
-	"noResponse": "Connectivity issue, no response from server"
+	"noResponse": "Connectivity issue, no response from server",
+	"errorOccured": "An error occurred"
 }
