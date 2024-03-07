@@ -2,7 +2,6 @@ import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { translate } from "@i18n";
-import * as winattr from "winattr";
 
 async function loadJunkModule() {
 	const { isJunk } = await import("junk");
@@ -47,15 +46,6 @@ const isUnixHiddenPath = function (path: string) {
 	return /(^|\/)\.[^\/\.]/g.test(path);
 };
 
-const isFileHiddenOnWin = (filePath: string): boolean => {
-	try {
-		const attrs = winattr.getSync(filePath);
-		return attrs.hidden;
-	} catch (err) {
-		return true;
-	}
-};
-
 export const readDirectoryRecursive = async (directoryPath: string): Promise<string[]> => {
 	let files: string[] = [];
 	const isWin = process.platform === "win32";
@@ -65,7 +55,7 @@ export const readDirectoryRecursive = async (directoryPath: string): Promise<str
 		fs.readdirSync(dirPath).forEach(async (file) => {
 			const fullPath = path.join(dirPath, file);
 
-			if (isWin && isFileHiddenOnWin(fullPath)) {
+			if (isWin && isJunk(fullPath)) {
 				return;
 			}
 
