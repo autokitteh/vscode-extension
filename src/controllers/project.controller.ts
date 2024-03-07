@@ -131,7 +131,8 @@ export class ProjectController {
 	}
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
-		const { data: sessionHistoryStates, error: sessionsError } = await SessionsService.getHistoryBySessionId(sessionId);
+		const { data: sessionHistoryStates, error: sessionsError } =
+			await SessionsService.getLogRecordsBySessionId(sessionId);
 
 		if (sessionsError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (sessionsError as Error).message);

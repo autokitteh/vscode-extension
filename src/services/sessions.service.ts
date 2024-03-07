@@ -36,7 +36,7 @@ export class SessionsService {
 		}
 	}
 
-	static async getHistoryBySessionId(sessionId: string): Promise<ServiceResponse<Array<SessionLogRecord>>> {
+	static async getLogRecordsBySessionId(sessionId: string): Promise<ServiceResponse<Array<SessionLogRecord>>> {
 		try {
 			const response = await sessionsClient.getLog({ sessionId });
 			const sessionHistory = response.log?.records.map((state: ProtoSessionLogRecord) => new SessionLogRecord(state));

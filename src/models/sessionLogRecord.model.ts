@@ -69,25 +69,25 @@ export class SessionLogRecord {
 		}
 	}
 
-	private handleCallAttemptComplete(session: ProtoSessionLogRecord) {
+	private handleCallAttemptComplete(logRecord: ProtoSessionLogRecord) {
 		this.type = SessionLogRecordType.callAttemptComplete;
 
-		if (session[this.type]?.result?.value?.time) {
+		if (logRecord[this.type]?.result?.value?.time) {
 			this.logs =
 				// eslint-disable-next-line max-len
-				`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${translate().t("sessions.historyTime")} - ${convertTimestampToDate(session[this.type]?.result?.value?.time?.v).toISOString()}`;
+				`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${translate().t("sessions.historyTime")} - ${convertTimestampToDate(logRecord[this.type]?.result?.value?.time?.v).toISOString()}`;
 
 			return;
 		}
-		if (session[this.type]?.result?.value?.nothing) {
+		if (logRecord[this.type]?.result?.value?.nothing) {
 			this.logs =
 				// eslint-disable-next-line max-len
 				`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${translate().t("sessions.historyNoOutput")}`;
 			return;
 		}
 
-		let functionResponse = session[this.type]?.result?.value?.struct?.fields?.body?.string?.v || "";
-		let functionName = session[this.type]?.result?.value?.struct?.ctor?.string?.v || "";
+		let functionResponse = logRecord[this.type]?.result?.value?.struct?.fields?.body?.string?.v || "";
+		let functionName = logRecord[this.type]?.result?.value?.struct?.ctor?.string?.v || "";
 
 		if (!functionName && !functionResponse) {
 			this.logs = undefined;
@@ -98,11 +98,11 @@ export class SessionLogRecord {
 			`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${functionName} - ${functionResponse}`;
 	}
 
-	private handleFuncCall(session: ProtoSessionLogRecord) {
+	private handleFuncCall(logRecord: ProtoSessionLogRecord) {
 		this.type = SessionLogRecordType.callSpec;
 
-		const functionName = session[this.type]?.function?.function?.name || "";
-		const args = (session[this.type]?.args || [])
+		const functionName = logRecord[this.type]?.function?.function?.name || "";
+		const args = (logRecord[this.type]?.args || [])
 			.map((arg: Value) => arg.string?.v)
 			.join(", ")
 			.replace(/, ([^,]*)$/, "");
