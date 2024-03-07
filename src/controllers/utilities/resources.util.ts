@@ -36,7 +36,7 @@ export const getResources = async (
 	}
 	const mappedResources = stats.isFile()
 		? await mapFilesToContentInBytes(resourcesPath, [resourcesPath])
-		: await mapFilesToContentInBytes(resourcesPath, readDirectoryRecursive(resourcesPath));
+		: await mapFilesToContentInBytes(resourcesPath, await readDirectoryRecursive(resourcesPath));
 
 	return { data: mappedResources };
 };
