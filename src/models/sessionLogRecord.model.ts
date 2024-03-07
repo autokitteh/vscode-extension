@@ -3,6 +3,7 @@ import { Value } from "@ak-proto-ts/values/v1/values_pb";
 import { namespaces } from "@constants";
 import { SessionStateType, SessionLogRecordType } from "@enums";
 import { translate } from "@i18n/index";
+import { convertErrorProtoToModel } from "@models/error.model";
 import { LoggerService } from "@services";
 import { Callstack } from "@type/models";
 import { convertTimestampToDate } from "@utilities";
@@ -60,7 +61,10 @@ export class SessionLogRecord {
 			this.logs = functionRunning ? `${translate().t("sessions.historyInitFunction")}: ${functionRunning}` : undefined;
 		}
 		if (this.state === SessionStateType.error) {
-			this.error = logRecord?.state?.error?.error?.message || translate().t("errors.sessionLogMissingOnErrorType");
+			this.error = convertErrorProtoToModel(
+				logRecord.state?.error?.error?.value,
+				translate().t("errors.sessionLogMissingOnErrorType")
+			)?.message;
 			this.callstackTrace = (logRecord?.state?.error?.error?.callstack || []) as Callstack[];
 		}
 	}
