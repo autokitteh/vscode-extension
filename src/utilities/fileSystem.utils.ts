@@ -2,11 +2,8 @@ import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { translate } from "@i18n";
-
-async function loadJunkModule() {
-	const { isJunk } = await import("junk");
-	return isJunk;
-}
+import * as winattr from "winattr";
+const { isJunk } = require("junk");
 
 export const createDirectory = async (outputPath: string): Promise<void> => {
 	try {
@@ -46,16 +43,20 @@ const isUnixHiddenPath = function (path: string) {
 	return /(^|\/)\.[^\/\.]/g.test(path);
 };
 
+const isWinHiddenPath = function (path: string) {
+	const pathAttrs = winattr.getSync(path);
+	return pathAttrs.hidden;
+};
+
 export const readDirectoryRecursive = async (directoryPath: string): Promise<string[]> => {
 	let files: string[] = [];
 	const isWin = process.platform === "win32";
-	const isJunk = await loadJunkModule();
 
 	const readDirSync = (dirPath: string) => {
 		fs.readdirSync(dirPath).forEach(async (file) => {
 			const fullPath = path.join(dirPath, file);
 
-			if (isWin && isJunk(fullPath)) {
+			if (isWin && isWinHiddenPath(fullPath)) {
 				return;
 			}
 
