@@ -51,8 +51,8 @@ export class SidebarController {
 		return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
 	};
 
-	private async startInterval() {
-		this.intervalTimerId = setInterval(async () => this.refreshProjects(), this.refreshRate);
+	private startInterval() {
+		this.intervalTimerId = setInterval(() => this.refreshProjects(), this.refreshRate);
 	}
 
 	private async refreshProjects() {
