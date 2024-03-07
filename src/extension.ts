@@ -98,7 +98,7 @@ export async function activate(context: ExtensionContext) {
 			}
 
 			const serverOptions = () => StarlarkSocketStreamingService.getServerOptionsStreamInfo(host, port);
-			StarlarkLSPService.enableLSPServerBySocket(serverOptions, starlarkLSPPathFromConfig);
+			StarlarkLSPService.connectLSPServerBySocket(serverOptions, starlarkLSPPathFromConfig);
 		} else {
 			const {
 				path: starlarkewPathAfterVersionUpdate,
@@ -147,7 +147,7 @@ export async function activate(context: ExtensionContext) {
 				args: starlarkLocalLSPDefaultArgs,
 			};
 
-			StarlarkLSPService.enableLSPServerLocally(serverOptions, starlarkLSPPathForServer, starlarkLSPVersionForServer);
+			StarlarkLSPService.connectLSPServerLocally(serverOptions, starlarkLSPPathForServer, starlarkLSPVersionForServer);
 		}
 	};
 	initStarlarkLSP();
