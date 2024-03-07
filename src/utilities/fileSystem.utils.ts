@@ -53,8 +53,10 @@ export const readDirectoryRecursive = (directoryPath: string): string[] => {
 };
 
 export const getRelativePath = (basePath: string, fullPath: string): string => {
-	const normalizedBasePath = basePath.endsWith("/") ? basePath : `${basePath}/`;
-	return fullPath.replace(normalizedBasePath, "");
+	const normalizedBasePath = path.normalize(basePath);
+	const normalizedFullPath = path.normalize(fullPath);
+   
+	return path.relative(normalizedBasePath, normalizedFullPath);
 };
 
 export const mapFilesToContentInBytes = async (
