@@ -68,9 +68,6 @@ export class SessionLogRecord {
 	private handleCallAttemptComplete(session: ProtoSessionLogRecord) {
 		this.type = SessionLogRecordType.callAttemptComplete;
 
-		let functionResponse = session[this.type]?.result?.value?.struct?.fields?.body?.string?.v || "";
-		let functionName = session[this.type]?.result?.value?.struct?.ctor?.string?.v || "";
-
 		if (session[this.type]?.result?.value?.time) {
 			this.logs =
 				// eslint-disable-next-line max-len
@@ -84,6 +81,10 @@ export class SessionLogRecord {
 				`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${translate().t("sessions.historyNoOutput")}`;
 			return;
 		}
+
+		let functionResponse = session[this.type]?.result?.value?.struct?.fields?.body?.string?.v || "";
+		let functionName = session[this.type]?.result?.value?.struct?.ctor?.string?.v || "";
+
 		if (!functionName && !functionResponse) {
 			this.logs = undefined;
 			return;
