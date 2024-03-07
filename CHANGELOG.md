@@ -1,3 +1,10 @@
+## [0.8.2-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.1...v0.8.2-dev.2) (2024-03-07)
+
+
+### Bug Fixes
+
+* app-state-handler intervals control ([#179](https://github.com/autokitteh/vscode-extension/issues/179)) ([f0ef601](https://github.com/autokitteh/vscode-extension/commit/f0ef6012c539af2b4f9499af32eae966e2f8ff9a))
+
 ## [0.8.2-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.8.1...v0.8.2-dev.1) (2024-03-07)
 
 
