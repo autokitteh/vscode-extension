@@ -1,5 +1,4 @@
 import { SetResourcesResponse } from "@ak-proto-ts/projects/v1/svc_pb";
-import { Value } from "@ak-proto-ts/values/v1/values_pb";
 import { projectsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { translate } from "@i18n";
