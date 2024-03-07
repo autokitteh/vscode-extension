@@ -276,8 +276,6 @@
 		"@types/tar": "^6.1.11",
 		"@types/tar-fs": "^2.0.4",
 		"@types/vscode": "^1.86.0",
-		"@types/winattr": "^3.0.0",
-		"@typescript-eslint/eslint-plugin": "^7.0.1",
 		"@typescript-eslint/parser": "^7.0.1",
 		"@vscode/vsce": "^2.23.0",
 		"esbuild": "0.20.0",
