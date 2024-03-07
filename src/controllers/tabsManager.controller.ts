@@ -33,15 +33,15 @@ export class TabsManagerController {
 		}
 	}
 
-	public connect() {
+	public enable() {
 		for (const key in this.openWebviews) {
-			this.openWebviews[key].connect();
+			this.openWebviews[key].enable();
 		}
 	}
 
-	public disconnect() {
+	public disable() {
 		for (const key in this.openWebviews) {
-			this.openWebviews[key].disconnect();
+			this.openWebviews[key].disable();
 		}
 	}
 

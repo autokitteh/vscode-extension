@@ -59,7 +59,7 @@ export class ProjectController {
 		});
 	}
 
-	public connect = async () => {
+	public enable = async () => {
 		this.setProjectNameInView();
 		this.startInterval(
 			ProjectIntervalTypes.deployments,
@@ -76,7 +76,7 @@ export class ProjectController {
 		}
 	};
 
-	public disconnect = async () => {
+	public disable = async () => {
 		this.stopInterval(ProjectIntervalTypes.deployments);
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		this.deployments = undefined;
@@ -273,11 +273,11 @@ export class ProjectController {
 	}
 
 	onBlur() {
-		this.disconnect();
+		this.disable();
 	}
 
 	onFocus() {
-		this.connect();
+		this.enable();
 	}
 
 	onClose() {

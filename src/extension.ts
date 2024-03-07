@@ -49,14 +49,14 @@ export async function activate(context: ExtensionContext) {
 	const sidebarController = new SidebarController(sidebarView, sidebarControllerRefreshRate);
 	const tabsManager = new TabsManagerController(context);
 
-	commands.registerCommand(vsCommands.connect, async () => {
-		sidebarController.connect();
-		tabsManager.connect();
+	commands.registerCommand(vsCommands.enable, async () => {
+		sidebarController.enable();
+		tabsManager.enable();
 		await AppStateHandler.set(true);
 	});
-	commands.registerCommand(vsCommands.disconnect, async () => {
-		sidebarController.disconnect();
-		tabsManager.disconnect();
+	commands.registerCommand(vsCommands.disable, async () => {
+		sidebarController.disable();
+		tabsManager.disable();
 		await AppStateHandler.set(false);
 	});
 
@@ -71,7 +71,7 @@ export async function activate(context: ExtensionContext) {
 	const isAppOn = await AppStateHandler.get();
 
 	if (isAppOn) {
-		commands.executeCommand(vsCommands.connect);
+		commands.executeCommand(vsCommands.enable);
 	}
 
 	const initStarlarkLSP = async () => {
@@ -98,7 +98,7 @@ export async function activate(context: ExtensionContext) {
 			}
 
 			const serverOptions = () => StarlarkSocketStreamingService.getServerOptionsStreamInfo(host, port);
-			StarlarkLSPService.connectLSPServerBySocket(serverOptions, starlarkLSPPathFromConfig);
+			StarlarkLSPService.enableLSPServerBySocket(serverOptions, starlarkLSPPathFromConfig);
 		} else {
 			const {
 				path: starlarkewPathAfterVersionUpdate,
@@ -147,7 +147,7 @@ export async function activate(context: ExtensionContext) {
 				args: starlarkLocalLSPDefaultArgs,
 			};
 
-			StarlarkLSPService.connectLSPServerLocally(serverOptions, starlarkLSPPathForServer, starlarkLSPVersionForServer);
+			StarlarkLSPService.enableLSPServerLocally(serverOptions, starlarkLSPPathForServer, starlarkLSPVersionForServer);
 		}
 	};
 	initStarlarkLSP();

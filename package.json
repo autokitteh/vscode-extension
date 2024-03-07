@@ -56,7 +56,7 @@
 				"title": "Build autokitteh"
 			},
 			{
-				"command": "autokitteh.connect",
+				"command": "autokitteh.enable",
 				"icon": "./resources/sidebar/top-panel-connect.svg",
 				"title": "autokitteh: Connect to server"
 			},
@@ -69,7 +69,7 @@
 				"title": "autokitteh: Add connection"
 			},
 			{
-				"command": "autokitteh.disconnect",
+				"command": "autokitteh.disable",
 				"icon": "./resources/sidebar/top-panel-disconnect.svg",
 				"title": "autokitteh: Disconnect from server"
 			},
@@ -149,7 +149,7 @@
 			],
 			"view/title": [
 				{
-					"command": "autokitteh.connect",
+					"command": "autokitteh.enable",
 					"group": "navigation",
 					"when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
 				},
@@ -159,7 +159,7 @@
 					"when": "view == autokittehSidebarTree"
 				},
 				{
-					"command": "autokitteh.disconnect",
+					"command": "autokitteh.disable",
 					"group": "navigation",
 					"when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled"
 				}
@@ -196,7 +196,7 @@
 		},
 		"viewsWelcome": [
 			{
-				"contents": "No connection instance has been found.\n[Connect](command:autokitteh.connect)",
+				"contents": "No connection instance has been found.\n[Connect](command:autokitteh.enable)",
 				"view": "autokittehSidebarTree",
 				"when": "config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
 			},
@@ -225,15 +225,15 @@
 					},
 					{
 						"completionEvents": [
-							"onCommand:autokitteh.connect"
+							"onCommand:autokitteh.enable"
 						],
-						"description": "[Connect](command:autokitteh.connect)",
+						"description": "[Connect](command:autokitteh.enable)",
 						"id": "connectAK",
 						"media": {
 							"altText": "Empty image",
 							"image": "resources/walkthrough/empty.png"
 						},
-						"title": "Now you can connect"
+						"title": "Now you can enable the extension"
 					}
 				],
 				"title": "Welcome to autokitteh"
