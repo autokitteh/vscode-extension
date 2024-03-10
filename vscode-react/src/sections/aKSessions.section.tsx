@@ -16,7 +16,11 @@ import { HandleSessionsIncomingMessages, getTimePassed, sendMessage } from "@rea
 import { Message } from "@type";
 import { Session } from "@type/models";
 
-export const AKSessions = () => {
+export const AKSessions = ({
+	setSessionInputsForExecution,
+}: {
+	setSessionInputsForExecution: (inputs: Record<string, any>) => void;
+}) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
@@ -35,9 +39,6 @@ export const AKSessions = () => {
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogs, sessionId);
 		setSelectedSession(sessionId);
-	};
-	const setSessionExecutionInputs = (data: string) => {
-		sendMessage(MessageType.setSessionExecutionInputs, data);
 	};
 
 	useEffect(() => {
@@ -85,7 +86,7 @@ export const AKSessions = () => {
 							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
 								{session.sessionId}
 							</AKTableCell>
-							<AKTableCell onClick={() => setSessionExecutionInputs(session.sessionId)} classes={["cursor-pointer"]}>
+							<AKTableCell onClick={() => setSessionInputsForExecution(session.inputs)} classes={["cursor-pointer"]}>
 								<div className="codicon codicon-copy"></div>
 							</AKTableCell>
 						</AKTableRow>

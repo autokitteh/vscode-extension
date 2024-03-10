@@ -15,7 +15,7 @@ function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
-
+	const [sessionInputsForExecution, setSessionInputsForExecution] = useState<Record<string, any> | undefined>();
 	const messageHandlers: IIncomingMessagesHandler = {
 		setProjectName,
 		setThemeVisualType,
@@ -67,8 +67,8 @@ function App() {
 							<div className="codicon codicon-folder-opened w-4"></div>
 						</AKButton>
 					</div>
-					<AKDeployments />
-					<AKSessions />
+					<AKDeployments sessionInputsForExecution={sessionInputsForExecution} />
+					<AKSessions setSessionInputsForExecution={setSessionInputsForExecution} />
 				</div>
 			) : (
 				<div className="flex justify-center items-center h-screen w-screen">

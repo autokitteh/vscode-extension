@@ -12,7 +12,6 @@ export enum MessageType {
 	displaySessionLogs = "DISPLAY_SESSION_LOGS",
 	deactivateDeployment = "DEACTIVATE_DEPLOYMENT",
 	activateDeployment = "ACTIVATE_DEPLOYMENT",
-	setSessionExecutionInputs = "SET_SESSION_EXECUTION_INPUTS",
 	runExecution = "RUN_EXECUTION",
 	setEntrypoints = "SET_ENTRYPOINTS",
 	setExecutionInputs = "SET_EXECUTION_INPUTS",

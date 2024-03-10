@@ -11,7 +11,6 @@ export interface IProjectViewDelegate {
 	selectDeployment?: Callback<string>;
 	displaySessionLogs?: Callback<string>;
 	activateDeployment?: Callback<string>;
-	setSessionExecutionInputs?: Callback<string>;
 	deactivateDeployment?: Callback<string>;
 	runExecution?: Callback<SessionExecutionParams>;
 }

@@ -26,7 +26,6 @@ export class ProjectController {
 	private selectedDeploymentId?: string;
 	private selectedSessionId?: string;
 	private hasDisplayedError: Map<ProjectIntervalTypes, boolean> = new Map();
-	private sessionExecutionInputs: Record<string, any> = {};
 
 	constructor(
 		projectView: IProjectView,
@@ -128,7 +127,6 @@ export class ProjectController {
 
 	async selectDeployment(deploymentId: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
-		this.sessionExecutionInputs = {};
 
 		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
 
@@ -398,25 +396,10 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, translate().t("projects.activationSucceed", { id: deploymentId }));
 	}
 
-	async setSessionExecutionInputs(data: string) {
-		const executionInputs = this.sessions?.find((session) => session.sessionId === data)?.inputs;
-		if (executionInputs) {
-			this.sessionExecutionInputs = executionInputs;
-			commands.executeCommand(vsCommands.showInfoMessage, translate().t("sessions.sessionParamsCopySuccess"));
-
-			this.view.update({
-				type: MessageType.setExecutionInputs,
-				payload: executionInputs,
-			});
-			return;
-		}
-		commands.executeCommand(vsCommands.showErrorMessage, translate().t("sessions.sessionParamsCopyFail"));
-	}
-
 	async runExecution(sessionExecutionParams: SessionExecutionParams) {
 		const { data: sessionId, error } = await SessionsService.runExecution(
 			sessionExecutionParams.deploymentId,
-			this.sessionExecutionInputs,
+			sessionExecutionParams.sessionInputs,
 			sessionExecutionParams.triggerFile,
 			sessionExecutionParams.triggerFunction
 		);

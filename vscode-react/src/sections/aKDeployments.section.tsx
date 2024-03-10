@@ -21,7 +21,11 @@ import { Deployment } from "@type/models";
 import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
 import { usePopper } from "react-popper";
 
-export const AKDeployments = () => {
+export const AKDeployments = ({
+	sessionInputsForExecution,
+}: {
+	sessionInputsForExecution: Record<string, any> | undefined;
+}) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
@@ -35,7 +39,6 @@ export const AKDeployments = () => {
 	const [functions, setFunctions] = useState<string[]>();
 	const [selectedFunction, setSelectedFunction] = useState<string>("");
 	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
-	const [executionInputs, setExecutionInputs] = useState<Record<string, string[]>>();
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
 	const [showPopper, setShowPopper] = useState(false);
 
@@ -49,7 +52,6 @@ export const AKDeployments = () => {
 	};
 	const messageHandlers: IIncomingDeploymentsMessagesHandler = {
 		setEntrypoints,
-		setExecutionInputs,
 		setDeploymentsSection,
 		setSelectedDeploymentId,
 	};
@@ -75,17 +77,6 @@ export const AKDeployments = () => {
 			},
 		],
 	});
-	const runExecution = () => {
-		const activeDeployment = deployments?.find((d) => !isDeploymentStateStartable(d.state));
-		const executionProps = {
-			triggerFile: selectedFile,
-			triggerFunction: selectedFunction,
-			deploymentId: activeDeployment?.deploymentId,
-		};
-		sendMessage(MessageType.runExecution, executionProps);
-
-		togglePopper();
-	};
 	const popperClasses = cn(
 		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
 		"border border-gray-300 p-4 rounded-lg shadow-lg",
@@ -160,6 +151,36 @@ export const AKDeployments = () => {
 			setSelectedFunction(functionsForSelectedFile?.[0] || "");
 		}
 	}, [selectedFile]);
+
+	const runExecution = () => {
+		const activeDeployment = deployments?.find((d) => !isDeploymentStateStartable(d.state));
+		if (!activeDeployment) {
+			// Display Error
+			return;
+		}
+		if (!selectedFile) {
+			// Display Error
+			return;
+		}
+		if (!selectedFunction) {
+			// Display Error
+			return;
+		}
+		if (!sessionInputsForExecution) {
+			// display error message
+			return;
+		}
+		const sessionExecutionData = {
+			triggerFile: selectedFile,
+			triggerFunction: selectedFunction,
+			deploymentId: activeDeployment.deploymentId,
+			sessionInputs: sessionInputsForExecution,
+		};
+
+		sendMessage(MessageType.runExecution, sessionExecutionData);
+
+		togglePopper();
+	};
 
 	return (
 		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
@@ -256,6 +277,7 @@ export const AKDeployments = () => {
 													</option>
 												))}
 										</VSCodeDropdown>
+										<div className="text-red-500">Please choose trigger file</div>
 									</div>
 									<div className="mb-3 text-left">
 										<strong className="mb-2">{translate().t("reactApp.deployments.executeEntrypoint")}</strong>
@@ -272,23 +294,24 @@ export const AKDeployments = () => {
 													</option>
 												))}
 										</VSCodeDropdown>
+										<div className="text-red-500">Please choose trigger functionm</div>
 									</div>
 									<div className="mb-3 text-left">
 										<strong className="mb-2">Session parameters</strong>
-										{executionInputs ? (
-											JSON.stringify(executionInputs).length > 5 ? (
+										{sessionInputsForExecution ? (
+											JSON.stringify(sessionInputsForExecution).length > 5 ? (
 												<div
 													onClick={() => setModal(true)}
 													className="flex cursor-pointer bg-vscode-dropdown-background"
 												>
-													{JSON.stringify(executionInputs).substring(0, 6) + "\u2026"}
+													{JSON.stringify(sessionInputsForExecution).substring(0, 6) + "\u2026"}
 												</div>
 											) : (
 												<div
 													onClick={() => setModal(true)}
 													className="flex cursor-pointer bg-vscode-dropdown-background"
 												>
-													{JSON.stringify(executionInputs)}
+													{JSON.stringify(sessionInputsForExecution)}
 												</div>
 											)
 										) : (
@@ -327,7 +350,7 @@ export const AKDeployments = () => {
 							<Editor
 								height="90vh"
 								defaultLanguage="json"
-								defaultValue={executionInputs ? JSON.stringify(executionInputs, null, 2) : ""}
+								defaultValue={sessionInputsForExecution ? JSON.stringify(sessionInputsForExecution, null, 2) : ""}
 								theme="vs-dark"
 								options={{ readOnly: true }}
 							/>
