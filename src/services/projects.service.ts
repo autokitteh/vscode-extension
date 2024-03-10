@@ -15,13 +15,6 @@ export class ProjectsService {
 					name: projectName,
 				},
 			});
-			if (!projectId) {
-				const projectNotCreatedError = translate().t("errors.projectNotCreated", { projectName });
-
-				LoggerService.error(namespaces.projectService, projectNotCreatedError);
-
-				return { data: undefined, error: projectNotCreatedError };
-			}
 			return { data: projectId, error: undefined };
 		} catch (error) {
 			LoggerService.error(
