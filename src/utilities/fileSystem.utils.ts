@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { translate } from "@i18n";
+import * as winattr from "winattr";
 
 export const createDirectory = async (outputPath: string): Promise<void> => {
 	try {
@@ -37,18 +38,41 @@ export const listFilesInDirectory = async (dirPath: string, includeDirectories: 
 	return files;
 };
 
-export const readDirectoryRecursive = (directoryPath: string): string[] => {
+const isUnixHiddenPath = function (path: string) {
+	return /(^|\/)\.[^\/\.]/g.test(path);
+};
+
+const isWinHiddenPath = function (path: string) {
+	const pathAttrs = winattr.getSync(path);
+	return pathAttrs.hidden;
+};
+
+export const readDirectoryRecursive = async (directoryPath: string): Promise<string[]> => {
 	let files: string[] = [];
+	const isWin = process.platform === "win32";
 
-	fs.readdirSync(directoryPath).forEach((file) => {
-		const fullPath = path.join(directoryPath, file);
-		if (fs.statSync(fullPath).isDirectory()) {
-			files = files.concat(readDirectoryRecursive(fullPath));
-		} else {
-			files.push(fullPath);
-		}
-	});
+	const readDirSync = (dirPath: string) => {
+		fs.readdirSync(dirPath).forEach(async (file) => {
+			const fullPath = path.join(dirPath, file);
 
+			if (isWin && isWinHiddenPath(fullPath)) {
+				return;
+			}
+
+			if (!isWin && isUnixHiddenPath(fullPath)) {
+				return;
+			}
+
+			const stats = fs.statSync(fullPath);
+			if (stats.isDirectory()) {
+				files = files.concat(await readDirectoryRecursive(fullPath));
+			} else if (stats.isFile()) {
+				files.push(fullPath);
+			}
+		});
+	};
+
+	readDirSync(directoryPath);
 	return files;
 };
 
@@ -60,8 +84,7 @@ export const mapFilesToContentInBytes = async (
 
 	for (const fullPath of fullPathArray) {
 		const relativePath = path.relative(basePath, fullPath);
-		const contentBytes = fs.readFileSync(fullPath);
-		fileContentMap[relativePath] = contentBytes;
+		fileContentMap[relativePath] = fs.readFileSync(fullPath);
 	}
 
 	return fileContentMap;
