@@ -1,3 +1,10 @@
+## [0.8.2-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.2...v0.8.2-dev.3) (2024-03-10)
+
+
+### Bug Fixes
+
+* fix relative path in filesSystem utils ([#183](https://github.com/autokitteh/vscode-extension/issues/183)) ([15a97b8](https://github.com/autokitteh/vscode-extension/commit/15a97b8acdbeb9520c5b13d7e55e45438dae094c))
+
 ## [0.8.2-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.1...v0.8.2-dev.2) (2024-03-07)
 
 
