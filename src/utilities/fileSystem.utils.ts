@@ -3,7 +3,6 @@ import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { translate } from "@i18n";
 import * as winattr from "winattr";
-const { isJunk } = require("junk");
 
 export const createDirectory = async (outputPath: string): Promise<void> => {
 	try {
@@ -67,7 +66,7 @@ export const readDirectoryRecursive = async (directoryPath: string): Promise<str
 			const stats = fs.statSync(fullPath);
 			if (stats.isDirectory()) {
 				files = files.concat(await readDirectoryRecursive(fullPath));
-			} else if (stats.isFile() && isJunk(fullPath)) {
+			} else if (stats.isFile()) {
 				files.push(fullPath);
 			}
 		});
@@ -85,9 +84,7 @@ export const mapFilesToContentInBytes = async (
 
 	for (const fullPath of fullPathArray) {
 		const relativePath = path.relative(basePath, fullPath);
-		if (!isHiddenFile(fullPath)) {
-			fileContentMap[relativePath] = fs.readFileSync(fullPath);
-		}
+		fileContentMap[relativePath] = fs.readFileSync(fullPath);
 	}
 
 	return fileContentMap;
