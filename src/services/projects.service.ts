@@ -37,8 +37,6 @@ export class ProjectsService {
 		try {
 			const { error: resourcesError } = await this.setResources(projectId, resources);
 			if (resourcesError) {
-				LoggerService.error(`${namespaces.projectService} - Upload resources`, (resourcesError as Error).message);
-
 				return { data: undefined, error: resourcesError };
 			}
 
@@ -124,7 +122,7 @@ export class ProjectsService {
 			});
 			return { data: undefined, error: undefined };
 		} catch (error) {
-			LoggerService.error(namespaces.resourcesService, (error as Error).message);
+			LoggerService.error(namespaces.resourcesService, `Project ID: ${projectId}, error:${(error as Error).message}`);
 			return { data: undefined, error };
 		}
 	}

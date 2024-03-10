@@ -44,21 +44,22 @@ export class DeploymentsService {
 
 	static async listByProjectId(projectId: string): Promise<ServiceResponse<Deployment[]>> {
 		try {
-			const { data: environments, error: environmentsError } = await EnvironmentsService.listByProjectId(projectId);
+			const { data: environments, error: listEnvironmentsError } = await EnvironmentsService.listByProjectId(projectId);
 
-			if (environmentsError) {
-				LoggerService.error(namespaces.deploymentsService, (environmentsError as Error).message);
+			if (listEnvironmentsError) {
+				LoggerService.error(namespaces.deploymentsService, (listEnvironmentsError as Error).message);
 
-				return { data: undefined, error: environmentsError };
+				return { data: undefined, error: listEnvironmentsError };
 			}
 
 			const environmentIds = getIds(environments!, "envId");
-			const { data: projectDeployments, error: deploymentsError } = await this.listByEnvironmentIds(environmentIds);
+			const { data: projectDeployments, error: listDeploymentsByEnvIdsError } =
+				await this.listByEnvironmentIds(environmentIds);
 
-			if (deploymentsError) {
-				LoggerService.error(namespaces.deploymentsService, (deploymentsError as Error).message);
+			if (listDeploymentsByEnvIdsError) {
+				LoggerService.error(namespaces.deploymentsService, (listDeploymentsByEnvIdsError as Error).message);
 
-				return { data: undefined, error: deploymentsError };
+				return { data: undefined, error: listDeploymentsByEnvIdsError };
 			}
 			sortArray(projectDeployments, "createdAt", SortOrder.DESC);
 
