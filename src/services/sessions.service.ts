@@ -60,6 +60,7 @@ export class SessionsService {
 				deploymentId,
 				envId: "",
 				inputs: sessionInputs,
+				eventId: "evt_49b5cvnqkv27q9w48jb17b1h5r",
 				entrypoint: {
 					col: 0,
 					row: 0,
