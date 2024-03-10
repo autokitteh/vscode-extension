@@ -14,7 +14,6 @@ export {
 	createDirectory,
 	listFilesInDirectory,
 	readDirectoryRecursive,
-	getRelativePath,
 	mapFilesToContentInBytes,
 	getDirectoryOfFile,
 } from "@utilities/fileSystem.utils";

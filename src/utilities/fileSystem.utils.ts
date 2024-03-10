@@ -52,13 +52,6 @@ export const readDirectoryRecursive = (directoryPath: string): string[] => {
 	return files;
 };
 
-export const getRelativePath = (basePath: string, fullPath: string): string => {
-	const normalizedBasePath = path.normalize(basePath);
-	const normalizedFullPath = path.normalize(fullPath);
-   
-	return path.relative(normalizedBasePath, normalizedFullPath);
-};
-
 export const mapFilesToContentInBytes = async (
 	basePath: string,
 	fullPathArray: string[]
@@ -66,7 +59,7 @@ export const mapFilesToContentInBytes = async (
 	const fileContentMap: { [key: string]: Buffer } = {};
 
 	for (const fullPath of fullPathArray) {
-		const relativePath = getRelativePath(basePath, fullPath);
+		const relativePath = path.relative(basePath, fullPath);
 		const contentBytes = fs.readFileSync(fullPath);
 		fileContentMap[relativePath] = contentBytes;
 	}
