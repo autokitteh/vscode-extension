@@ -419,16 +419,15 @@ export class ProjectController {
 
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 
+		this.view.update({
+			type: MessageType.selectSession,
+			payload: sessionId,
+		});
 		this.startInterval(
 			ProjectIntervalTypes.sessionHistory,
 			() => this.displaySessionsHistory(sessionId!),
 			this.sessionsLogRefreshRate
 		);
-
-		this.view.update({
-			type: MessageType.selectSession,
-			payload: sessionId,
-		});
 	}
 
 	async deactivateDeployment(deploymentId: string) {

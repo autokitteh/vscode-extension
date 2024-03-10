@@ -51,7 +51,7 @@ export class SessionsService {
 
 	static async runExecution(
 		deploymentId: string,
-		sessionInputs: Record<any, any>,
+		sessionInputs: Record<string, any>,
 		triggerFile: string,
 		triggerFunction: string
 	): Promise<ServiceResponse<string>> {

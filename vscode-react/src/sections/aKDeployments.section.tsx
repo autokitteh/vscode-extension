@@ -154,27 +154,26 @@ export const AKDeployments = ({
 
 	const runExecution = () => {
 		const activeDeployment = deployments?.find((d) => !isDeploymentStateStartable(d.state));
+
 		if (!activeDeployment) {
 			// Display Error
 			return;
 		}
+
 		if (!selectedFile) {
 			// Display Error
 			return;
 		}
+
 		if (!selectedFunction) {
 			// Display Error
-			return;
-		}
-		if (!sessionInputsForExecution) {
-			// display error message
 			return;
 		}
 		const sessionExecutionData = {
 			triggerFile: selectedFile,
 			triggerFunction: selectedFunction,
 			deploymentId: activeDeployment.deploymentId,
-			sessionInputs: sessionInputsForExecution,
+			sessionInputs: sessionInputsForExecution ? sessionInputsForExecution : {},
 		};
 
 		sendMessage(MessageType.runExecution, sessionExecutionData);
