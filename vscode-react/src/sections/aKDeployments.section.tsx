@@ -26,21 +26,25 @@ export const AKDeployments = ({
 }: {
 	sessionInputsForExecution: Record<string, any> | undefined;
 }) => {
+	const [isLoading, setIsLoading] = useState(true);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
-	const [isLoading, setIsLoading] = useState(true);
+
 	const [selectedDeployment, setSelectedDeployment] = useState("");
 	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel | undefined>();
 	const [totalDeployments, setTotalDeployments] = useState<number | undefined>();
 	const [deployments, setDeployments] = useState<Deployment[] | undefined>();
+	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
+
 	const [modal, setModal] = useState(false);
 	const [files, setFiles] = useState<Record<string, string[]>>();
 	const [selectedFile, setSelectedFile] = useState<string>("");
 	const [functions, setFunctions] = useState<string[]>();
 	const [selectedFunction, setSelectedFunction] = useState<string>("");
 	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
-	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
 	const [showPopper, setShowPopper] = useState(false);
+
+	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>();
 
 	const referenceEl = useRef<HTMLDivElement | null>(null);
 	const popperEl = useRef<HTMLDivElement | null>(null);
@@ -155,18 +159,18 @@ export const AKDeployments = ({
 	const runExecution = () => {
 		const activeDeployment = deployments?.find((d) => !isDeploymentStateStartable(d.state));
 
-		if (!activeDeployment) {
-			// Display Error
-			return;
-		}
+		setDisplayedErrors({});
 
-		if (!selectedFile) {
-			// Display Error
-			return;
-		}
-
-		if (!selectedFunction) {
-			// Display Error
+		if (!activeDeployment || !selectedFile || !selectedFunction) {
+			if (!activeDeployment) {
+				setDisplayedErrors({ ...displayedErrors, selectedDeployment: true });
+			}
+			if (!selectedFile) {
+				setDisplayedErrors({ ...displayedErrors, selectedFile: true });
+			}
+			if (!selectedFunction) {
+				setDisplayedErrors({ ...displayedErrors, selectedFunction: true });
+			}
 			return;
 		}
 		const sessionExecutionData = {
@@ -276,7 +280,9 @@ export const AKDeployments = ({
 													</option>
 												))}
 										</VSCodeDropdown>
-										<div className="text-red-500">Please choose trigger file</div>
+										{displayedErrors
+											? ["triggerFile"] && <div className="text-red-500">Please choose trigger file</div>
+											: null}
 									</div>
 									<div className="mb-3 text-left">
 										<strong className="mb-2">{translate().t("reactApp.deployments.executeEntrypoint")}</strong>
@@ -293,7 +299,9 @@ export const AKDeployments = ({
 													</option>
 												))}
 										</VSCodeDropdown>
-										<div className="text-red-500">Please choose trigger functionm</div>
+										{displayedErrors
+											? ["triggerFunction"] && <div className="text-red-500">Please choose trigger functionm</div>
+											: null}
 									</div>
 									<div className="mb-3 text-left">
 										<strong className="mb-2">Session parameters</strong>
@@ -314,7 +322,7 @@ export const AKDeployments = ({
 												</div>
 											)
 										) : (
-											<div>{translate().t("reactApp.deployments.executeMissingParams")}</div>
+											<div>Empty state</div>
 										)}
 									</div>
 									<div className="flex">
