@@ -1,3 +1,10 @@
+## [0.8.2-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.3...v0.8.2-dev.4) (2024-03-10)
+
+
+### Bug Fixes
+
+* skip files in hidden directories on project build ([a3eb1b2](https://github.com/autokitteh/vscode-extension/commit/a3eb1b243e41b91ff07bdcf6af50bdf546ce1db0))
+
 ## [0.8.2-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.2...v0.8.2-dev.3) (2024-03-10)
 
 
