@@ -8,7 +8,7 @@ import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { SessionLogRecord, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
-import { ServiceResponse } from "@type";
+import { ServiceResponse, SessionExecutionParams } from "@type";
 import { Session } from "@type/models";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
@@ -49,17 +49,13 @@ export class SessionsService {
 		}
 	}
 
-	static async runExecution(
-		deploymentId: string,
-		sessionInputs: Record<string, any>,
-		triggerFile: string,
-		triggerFunction: string
-	): Promise<ServiceResponse<string>> {
+	static async runExecution(sessionExecutionParams: SessionExecutionParams): Promise<ServiceResponse<string>> {
 		try {
+			const { deploymentId, triggerFile, triggerFunction } = sessionExecutionParams;
 			const newSession = {
 				deploymentId,
 				envId: "",
-				inputs: sessionInputs,
+				inputs: sessionExecutionParams.sessionInputs,
 				eventId: "evt_49b5cvnqkv27q9w48jb17b1h5r",
 				entrypoint: {
 					col: 0,

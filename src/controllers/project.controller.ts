@@ -397,12 +397,7 @@ export class ProjectController {
 	}
 
 	async runExecution(sessionExecutionParams: SessionExecutionParams) {
-		const { data: sessionId, error } = await SessionsService.runExecution(
-			sessionExecutionParams.deploymentId,
-			sessionExecutionParams.sessionInputs,
-			sessionExecutionParams.triggerFile,
-			sessionExecutionParams.triggerFunction
-		);
+		const { data: sessionId, error } = await SessionsService.runExecution(sessionExecutionParams);
 
 		if (error) {
 			const notification = translate().t("sessions.executionFailed");
