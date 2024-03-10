@@ -15,4 +15,5 @@ export const namespaces = {
 	sessionLogs: "Session Logs",
 	startlarkLSPServer: "Starlark LSP",
 	starlarkLSPExecutable: "Starlkar LSP Executable Download",
+	triggersService: "Triggers Service",
 };

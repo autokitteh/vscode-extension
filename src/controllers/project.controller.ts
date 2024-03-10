@@ -6,9 +6,10 @@ import { IProjectView } from "@interfaces";
 import { SessionLogRecord } from "@models";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
+import { TriggersService } from "@services/triggers.service.";
 import { SessionExecutionParams } from "@type";
 import { Callback } from "@type/interfaces";
-import { Deployment, Project, Session } from "@type/models";
+import { Deployment, Project, Session, Trigger } from "@type/models";
 import isEqual from "lodash/isEqual";
 import { commands, OpenDialogOptions, window } from "vscode";
 
@@ -269,18 +270,23 @@ export class ProjectController {
 				() => this.loadAndDisplayDeployments(),
 				this.deploymentsRefreshRate
 			);
-
-			const entrypointsFromContext = (await commands.executeCommand(
-				vsCommands.getContext,
-				`${this.project.name}-entrypoints`
-			)) as { entrypoints: Record<string, string[]> };
-
-			if (entrypointsFromContext && entrypointsFromContext.entrypoints) {
-				this.view.update({
-					type: MessageType.setEntrypoints,
-					payload: entrypointsFromContext.entrypoints,
-				});
+			const { data: triggers, error: triggersError } = await TriggersService.listByProjectId(this.projectId);
+			if (triggersError) {
+				commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
+				return;
 			}
+			const groupedTriggers = triggers!.reduce((acc: Record<string, string[]>, trigger: Trigger) => {
+				if (!acc[trigger.path]) {
+					acc[trigger.path] = [];
+				}
+				acc[trigger.path].push(trigger.name);
+				return acc;
+			}, {});
+
+			this.view.update({
+				type: MessageType.setEntrypoints,
+				payload: groupedTriggers,
+			});
 
 			return;
 		}
