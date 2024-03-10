@@ -21,9 +21,6 @@ export const HandleDeploymentsIncomingMessages = (
 		case MessageType.setEntrypoints:
 			handlers.setEntrypoints(payload as Record<string, string[]>);
 			break;
-		case MessageType.setExecutionInputs:
-			handlers.setExecutionInputs(payload as Record<string, any>);
-			break;
 		default:
 	}
 };
