@@ -1,3 +1,10 @@
+## [0.8.2-dev.6](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.5...v0.8.2-dev.6) (2024-03-11)
+
+
+### Bug Fixes
+
+* fix missing buttons in the projects list ([#189](https://github.com/autokitteh/vscode-extension/issues/189)) ([7a4f698](https://github.com/autokitteh/vscode-extension/commit/7a4f69857b0352fca673149c4923c798d17f5dd6))
+
 ## [0.8.2-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.4...v0.8.2-dev.5) (2024-03-11)
 
 
