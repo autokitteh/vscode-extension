@@ -298,7 +298,7 @@ export const AKDeployments = ({
 												))}
 										</VSCodeDropdown>
 										{displayedErrors["triggerFunction"] && (
-											<div className="text-red-500">Please choose trigger functionm</div>
+											<div className="text-red-500">Please choose trigger function</div>
 										)}
 									</div>
 									<div className="mb-3 text-left">
