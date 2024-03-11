@@ -506,17 +506,20 @@ export class ProjectController {
 		const { error } = await DeploymentsService.delete(deploymentId);
 
 		if (error) {
-			const notification = translate().t("deployments.deleteFailed");
-			const log = `${translate().t("deployments.deleteFailedId", {
-				id: deploymentId,
+			const errorMessage = `${translate().t("deployments.deleteFailedIdProject", {
+				deploymentId,
+				projectId: this.projectId,
 			})} - ${(error as Error).message}`;
-			commands.executeCommand(vsCommands.showErrorMessage, notification);
-			LoggerService.error(namespaces.projectController, log);
+			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+			LoggerService.error(namespaces.deploymentsService, errorMessage);
 			return;
 		}
-		const successMessage = translate().t("deployments.deleteSucceed");
+		const successMessage = translate().t("deployments.deleteSucceedIdProject", {
+			deploymentId,
+			projectId: this.projectId,
+		});
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
-		LoggerService.info(namespaces.projectController, translate().t("deployments.deleteSucceed", { id: deploymentId }));
+		LoggerService.info(namespaces.projectController, successMessage);
 	}
 }
