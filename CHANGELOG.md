@@ -1,3 +1,10 @@
+## [0.8.2-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.4...v0.8.2-dev.5) (2024-03-11)
+
+
+### Bug Fixes
+
+* add missing try-catch to services ([#186](https://github.com/autokitteh/vscode-extension/issues/186)) ([4372fe5](https://github.com/autokitteh/vscode-extension/commit/4372fe58670e0ce1f0d2fc0d592002e0790058c2))
+
 ## [0.8.2-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.3...v0.8.2-dev.4) (2024-03-10)
 
 
