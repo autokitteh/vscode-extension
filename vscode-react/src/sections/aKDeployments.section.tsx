@@ -71,16 +71,10 @@ export const AKDeployments = ({
 
 	return (
 		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
-			{deployments && !!totalDeployments ? (
-				<div className="flex justify-end mb-2 w-full min-h-[20px] sticky">
-					{`${translate().t("reactApp.general.totalOf")} ${totalDeployments} ${translate().t(
-						"reactApp.general.deployments"
-					)}`}
-				</div>
-			) : (
-				<div className="flex mb-2 w-full min-h-[20px]" />
-			)}
-			<h1 className="text-lg font-extralight mb-2">{translate().t("reactApp.deployments.tableTitle")}</h1>
+			<div className="flex items-baseline">
+				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.deployments.tableTitle")}</h1>
+				<div className="ml-1 text-lg font-extralight">({totalDeployments})</div>
+			</div>
 			<AKTable>
 				<AKTableHeader classes="sticky top-0">
 					<AKTableHeaderCell>{translate().t("reactApp.deployments.time")}</AKTableHeaderCell>
