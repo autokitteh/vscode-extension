@@ -40,16 +40,10 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 
 	return (
 		<div className="mt-4  h-[43vh] overflow-y-auto overflow-x-hidden">
-			{sessions && !!totalSessions ? (
-				<div className="flex justify-end mb-2 w-full min-h-[20px] sticky">
-					{`${translate().t("reactApp.general.totalOf")} ${totalSessions} ${translate().t(
-						"reactApp.general.sessions"
-					)}`}
-				</div>
-			) : (
-				<div className="mb-2 w-full min-h-[20px]" />
-			)}
-			<h1 className="text-lg font-extralight mb-2">{translate().t("reactApp.sessions.tableTitle")}</h1>
+			<div className="flex items-baseline">
+				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.sessions.tableTitle")}</h1>
+				<div className="ml-1 text-lg font-extralight">({totalSessions})</div>
+			</div>
 			<AKTable>
 				<AKTableHeader classes="sticky top-0">
 					<AKTableHeaderCell>{translate().t("reactApp.sessions.time")}</AKTableHeaderCell>
