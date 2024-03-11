@@ -49,6 +49,9 @@ export class ProjectView implements IProjectView {
 					case MessageType.onClickSetResourcesDirectory:
 						this.delegate?.onClickSetResourcesDirectory?.();
 						break;
+					case MessageType.deleteDeployment:
+						this.delegate?.deleteDeployment?.(message.payload as string);
+						break;
 				}
 			},
 			undefined,

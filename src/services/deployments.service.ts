@@ -94,4 +94,14 @@ export class DeploymentsService {
 			return { data: undefined, error };
 		}
 	}
+
+	static async delete(deploymentId: string): Promise<ServiceResponse<undefined>> {
+		try {
+			await deploymentsClient.delete({ deploymentId });
+			return { data: undefined, error: undefined };
+		} catch (error) {
+			LoggerService.error(namespaces.deploymentsService, (error as Error).message);
+			return { data: undefined, error };
+		}
+	}
 }

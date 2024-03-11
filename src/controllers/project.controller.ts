@@ -430,4 +430,22 @@ export class ProjectController {
 		const projectFromContext: { path?: string } = await commands.executeCommand(vsCommands.getContext, this.projectId);
 		return projectFromContext ? projectFromContext.path : undefined;
 	}
+
+	async deleteDeployment(deploymentId: string) {
+		const { error } = await DeploymentsService.delete(deploymentId);
+
+		if (error) {
+			const notification = translate().t("deployments.deleteFailed");
+			const log = `${translate().t("deployments.deleteFailedId", {
+				id: deploymentId,
+			})} - ${(error as Error).message}`;
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.projectController, log);
+			return;
+		}
+		const successMessage = translate().t("deployments.deleteSucceed");
+		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
+
+		LoggerService.info(namespaces.projectController, translate().t("deployments.deleteSucceed", { id: deploymentId }));
+	}
 }

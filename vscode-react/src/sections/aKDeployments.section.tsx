@@ -69,6 +69,10 @@ export const AKDeployments = ({
 		sendMessage(MessageType.activateDeployment, deploymentId);
 	};
 
+	const deleteDeployment = (deploymentId: string) => {
+		sendMessage(MessageType.deleteDeployment, deploymentId);
+	};
+
 	return (
 		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
 			{deployments && !!totalDeployments ? (
@@ -145,6 +149,10 @@ export const AKDeployments = ({
 										onClick={() => deactivateBuild(deployment.deploymentId)}
 									></div>
 								)}
+								<div
+									className="codicon codicon-trash cursor-pointer"
+									onClick={() => deleteDeployment(deployment.deploymentId)}
+								></div>
 							</AKTableCell>
 						</AKTableRow>
 					))}

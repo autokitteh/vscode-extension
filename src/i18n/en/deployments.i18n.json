@@ -7,5 +7,9 @@
 	"activationFailedId": "Deployment activation failed - id: {{id}}",
 	"deactivationSucceedId": "Deployment deactivation succeed - id: {{id}}",
 	"deactivationFailedId": "Deployment deactivation failed - id: {{id}}",
-	"deploymentSelectionFailed": "Deployment selection failed - review the logs"
+	"deploymentSelectionFailed": "Deployment selection failed - review the logs",
+	"deleteSucceedId": "Deployment activation succeed - id: {{id}}",
+	"deleteFailedId": "Deployment activation failed - id: {{id}}",
+	"deleteSucceed": "Deployment activation succeed",
+	"deleteFailed": "Deployment activation failed"
 }
