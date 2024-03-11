@@ -120,6 +120,10 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		setSelectedFunction(event);
 	};
 
+	const deleteDeployment = (deploymentId: string) => {
+		sendMessage(MessageType.deleteDeployment, deploymentId);
+	};
+
 	return (
 		deployments &&
 		deployments.map((deployment: Deployment) => (
@@ -165,6 +169,10 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						></div>
 					)}
 
+					<div
+						className="codicon codicon-trash cursor-pointer"
+						onClick={() => deleteDeployment(deployment.deploymentId)}
+					></div>
 					{displayExecutePopper && (
 						<div className="absolute w-screen h-screen" onClick={() => setDisplayExecutePopper(false)} />
 					)}
