@@ -275,7 +275,8 @@ export class ProjectController {
 				commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
 				return;
 			}
-			const groupedTriggers = triggers!.reduce((acc: Record<string, string[]>, trigger: Trigger) => {
+
+			const triggersObject = triggers!.reduce((acc: Record<string, string[]>, trigger: Trigger) => {
 				if (!acc[trigger.path]) {
 					acc[trigger.path] = [];
 				}
@@ -285,7 +286,7 @@ export class ProjectController {
 
 			this.view.update({
 				type: MessageType.setEntrypoints,
-				payload: groupedTriggers,
+				payload: triggersObject,
 			});
 
 			return;

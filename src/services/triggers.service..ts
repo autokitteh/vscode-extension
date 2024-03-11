@@ -50,14 +50,14 @@ export class TriggersService {
 		}
 
 		const environmentIds = getIds(environments!, "envId");
-		const { data: projectTriggers, error: deploymentsError } = await this.listByEnvironmentIds(environmentIds);
+		const { data: projectTriggers, error: listTriggersError } = await this.listByEnvironmentIds(environmentIds);
 
-		if (deploymentsError) {
-			LoggerService.error(namespaces.triggersService, (deploymentsError as Error).message);
+		if (listTriggersError) {
+			LoggerService.error(namespaces.triggersService, (listTriggersError as Error).message);
 
-			return { data: undefined, error: deploymentsError };
+			return { data: undefined, error: listTriggersError };
 		}
 
-		return { data: projectTriggers!, error: undefined };
+		return { data: projectTriggers, error: undefined };
 	}
 }
