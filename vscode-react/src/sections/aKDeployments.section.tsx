@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
-import { AKDeploymentState } from "@react-components";
+import { AKButton, AKDeploymentState } from "@react-components";
 import {
 	AKTable,
 	AKTableMessage,
@@ -13,7 +13,9 @@ import {
 } from "@react-components/AKTable";
 import { DeploymentState } from "@react-enums";
 import { getTimePassed, sendMessage } from "@react-utilities";
+import { cn } from "@react-utilities/cnClasses.utils";
 import { Deployment } from "@type/models";
+import { usePopper } from "react-popper";
 
 export const AKDeployments = ({
 	deployments,
@@ -24,6 +26,28 @@ export const AKDeployments = ({
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedDeployment, setSelectedDeployment] = useState("");
+
+	const popperEl = useRef<HTMLDivElement | null>(null);
+	const referenceEl = useRef<HTMLDivElement | null>(null);
+	const [showPopper, setShowPopper] = useState(false);
+
+	const { attributes, styles } = usePopper(referenceEl.current, popperEl.current, {
+		placement: "bottom",
+		modifiers: [
+			{
+				name: "offset",
+				options: {
+					offset: [0, 10],
+				},
+			},
+		],
+	});
+	const popperClasses = cn(
+		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
+		"border border-gray-300 p-4 rounded-lg shadow-lg",
+		{ invisible: !showPopper }
+	);
+	const togglePopper = () => setShowPopper(!showPopper);
 
 	useEffect(() => {
 		if (typeof selectedDeploymentId === "string") {
@@ -150,9 +174,31 @@ export const AKDeployments = ({
 									></div>
 								)}
 								<div
-									className="codicon codicon-trash cursor-pointer"
-									onClick={() => deleteDeployment(deployment.deploymentId)}
+									className="codicon codicon-trash cursor-pointer ml-2"
+									onClick={() => togglePopper()}
+									ref={referenceEl}
 								></div>
+
+								<div ref={popperEl} style={styles.popper} {...attributes.popper} className={popperClasses}>
+									<div className="mb-3 text-left">
+										<strong className="mb-2">
+											Are you sure you want to
+											<br /> delete this deployment?
+										</strong>
+									</div>
+									<div className="flex">
+										<AKButton
+											classes="bg-vscode-editor-background text-vscode-foreground"
+											onClick={() => togglePopper()}
+										>
+											{translate().t("reactApp.general.no")}
+										</AKButton>
+										<div className="flex-grow" />
+										<AKButton onClick={() => deleteDeployment(deployment.deploymentId)}>
+											{translate().t("reactApp.general.yes")}
+										</AKButton>
+									</div>
+								</div>
 							</AKTableCell>
 						</AKTableRow>
 					))}
