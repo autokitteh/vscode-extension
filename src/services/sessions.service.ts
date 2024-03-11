@@ -49,7 +49,7 @@ export class SessionsService {
 		}
 	}
 
-	static async runExecution(sessionExecutionParams: SessionExecutionParams): Promise<ServiceResponse<string>> {
+	static async runSessionExecution(sessionExecutionParams: SessionExecutionParams): Promise<ServiceResponse<string>> {
 		try {
 			const { deploymentId, triggerFile, triggerFunction } = sessionExecutionParams;
 			const newSession = {

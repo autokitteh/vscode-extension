@@ -402,8 +402,8 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, translate().t("projects.activationSucceed", { id: deploymentId }));
 	}
 
-	async runExecution(sessionExecutionParams: SessionExecutionParams) {
-		const { data: sessionId, error } = await SessionsService.runExecution(sessionExecutionParams);
+	async runSessionExecution(sessionExecutionParams: SessionExecutionParams) {
+		const { data: sessionId, error } = await SessionsService.runSessionExecution(sessionExecutionParams);
 
 		if (error) {
 			const notification = translate().t("sessions.executionFailed");

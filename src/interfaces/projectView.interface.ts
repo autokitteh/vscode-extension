@@ -12,7 +12,7 @@ export interface IProjectViewDelegate {
 	displaySessionLogs?: Callback<string>;
 	activateDeployment?: Callback<string>;
 	deactivateDeployment?: Callback<string>;
-	runExecution?: Callback<SessionExecutionParams>;
+	runSessionExecution?: Callback<SessionExecutionParams>;
 }
 
 export interface IProjectView {

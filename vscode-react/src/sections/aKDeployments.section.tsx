@@ -156,7 +156,7 @@ export const AKDeployments = ({
 		}
 	}, [selectedFile]);
 
-	const runExecution = () => {
+	const runSessionExecution = () => {
 		const activeDeployment = deployments?.find((d) => !isDeploymentStateStartable(d.state));
 
 		setDisplayedErrors({});
@@ -180,7 +180,7 @@ export const AKDeployments = ({
 			sessionInputs: sessionInputsForExecution ? sessionInputsForExecution : {},
 		};
 
-		sendMessage(MessageType.runExecution, sessionExecutionData);
+		sendMessage(MessageType.runSessionExecution, sessionExecutionData);
 
 		togglePopper();
 	};
@@ -333,7 +333,7 @@ export const AKDeployments = ({
 											{translate().t("reactApp.deployments.dismiss")}
 										</AKButton>
 										<div className="flex-grow" />
-										<AKButton onClick={() => runExecution()}>
+										<AKButton onClick={() => runSessionExecution()}>
 											{translate().t("reactApp.deployments.saveAndRun")}
 										</AKButton>
 									</div>
