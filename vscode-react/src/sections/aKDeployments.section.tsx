@@ -44,7 +44,7 @@ export const AKDeployments = ({
 	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
 	const [showPopper, setShowPopper] = useState(false);
 
-	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>();
+	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
 
 	const referenceEl = useRef<HTMLDivElement | null>(null);
 	const popperEl = useRef<HTMLDivElement | null>(null);
@@ -280,9 +280,7 @@ export const AKDeployments = ({
 													</option>
 												))}
 										</VSCodeDropdown>
-										{displayedErrors
-											? ["triggerFile"] && <div className="text-red-500">Please choose trigger file</div>
-											: null}
+										{displayedErrors["triggerFile"] && <div className="text-red-500">Please choose trigger file</div>}
 									</div>
 									<div className="mb-3 text-left">
 										<strong className="mb-2">{translate().t("reactApp.deployments.executeEntrypoint")}</strong>
@@ -299,9 +297,9 @@ export const AKDeployments = ({
 													</option>
 												))}
 										</VSCodeDropdown>
-										{displayedErrors
-											? ["triggerFunction"] && <div className="text-red-500">Please choose trigger functionm</div>
-											: null}
+										{displayedErrors["triggerFunction"] && (
+											<div className="text-red-500">Please choose trigger functionm</div>
+										)}
 									</div>
 									<div className="mb-3 text-left">
 										<strong className="mb-2">Session parameters</strong>
