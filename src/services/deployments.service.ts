@@ -100,7 +100,6 @@ export class DeploymentsService {
 			await deploymentsClient.delete({ deploymentId });
 			return { data: undefined, error: undefined };
 		} catch (error) {
-			LoggerService.error(namespaces.deploymentsService, (error as Error).message);
 			return { data: undefined, error };
 		}
 	}
