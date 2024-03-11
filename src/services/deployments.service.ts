@@ -53,13 +53,12 @@ export class DeploymentsService {
 			}
 
 			const environmentIds = getIds(environments!, "envId");
-			const { data: projectDeployments, error: listDeploymentsByEnvIdsError } =
-				await this.listByEnvironmentIds(environmentIds);
+			const { data: projectDeployments, error: listDeploymentsError } = await this.listByEnvironmentIds(environmentIds);
 
-			if (listDeploymentsByEnvIdsError) {
-				LoggerService.error(namespaces.deploymentsService, (listDeploymentsByEnvIdsError as Error).message);
+			if (listDeploymentsError) {
+				LoggerService.error(namespaces.deploymentsService, (listDeploymentsError as Error).message);
 
-				return { data: undefined, error: listDeploymentsByEnvIdsError };
+				return { data: undefined, error: listDeploymentsError };
 			}
 			sortArray(projectDeployments, "createdAt", SortOrder.DESC);
 
