@@ -168,12 +168,12 @@
 				{
 					"command": "autokitteh.buildProject",
 					"group": "inline",
-					"when": "view == autokittehSidebarTree && viewItem =~ /p:.*/"
+					"when": "view == autokittehSidebarTree && viewItem =~ /prj.*/"
 				},
 				{
 					"command": "autokitteh.runProject",
 					"group": "inline",
-					"when": "view == autokittehSidebarTree && viewItem =~ /p:.*/"
+					"when": "view == autokittehSidebarTree && viewItem =~ /prj.*/"
 				}
 			]
 		},
