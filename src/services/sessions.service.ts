@@ -51,11 +51,10 @@ export class SessionsService {
 
 	static async runSessionExecution(SessionExecutionData: SessionExecutionData): Promise<ServiceResponse<string>> {
 		try {
-			const { deploymentId, triggerFile, triggerFunction } = SessionExecutionData;
+			const { deploymentId, triggerFile, triggerFunction, sessionInputs } = SessionExecutionData;
 			const newSession = {
 				deploymentId,
-				envId: "",
-				inputs: SessionExecutionData.sessionInputs,
+				inputs: sessionInputs,
 				entrypoint: {
 					col: 0,
 					row: 0,
