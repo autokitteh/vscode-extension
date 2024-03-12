@@ -9,7 +9,7 @@ import { DeploymentsService, ProjectsService, SessionsService, LoggerService } f
 import { TriggersService } from "@services/triggers.service.";
 import { SessionExecutionParams } from "@type";
 import { Callback } from "@type/interfaces";
-import { Deployment, Project, Session, Trigger } from "@type/models";
+import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
 import { commands, OpenDialogOptions, window } from "vscode";
 
@@ -270,19 +270,11 @@ export class ProjectController {
 				() => this.loadAndDisplayDeployments(),
 				this.deploymentsRefreshRate
 			);
-			const { data: triggers, error: triggersError } = await TriggersService.listByProjectId(this.projectId);
+			const { data: triggersObject, error: triggersError } = await TriggersService.listByProjectId(this.projectId);
 			if (triggersError) {
 				commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
 				return;
 			}
-
-			const triggersObject = triggers!.reduce((acc: Record<string, string[]>, trigger: Trigger) => {
-				if (!acc[trigger.path]) {
-					acc[trigger.path] = [];
-				}
-				acc[trigger.path].push(trigger.name);
-				return acc;
-			}, {});
 
 			this.view.update({
 				type: MessageType.setEntrypoints,

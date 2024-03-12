@@ -4,7 +4,7 @@ import { namespaces } from "@constants";
 import { convertTriggerProtoToModel } from "@models/trigger.model";
 import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
-import { Trigger } from "@type/models/trigger.type";
+import { Trigger, TriggerObj } from "@type/models";
 import { flattenArray, getIds } from "@utilities";
 import { get } from "lodash";
 
@@ -40,7 +40,7 @@ export class TriggersService {
 		}
 	}
 
-	static async listByProjectId(projectId: string): Promise<ServiceResponse<Trigger[]>> {
+	static async listByProjectId(projectId: string): Promise<ServiceResponse<TriggerObj>> {
 		const { data: environments, error: environmentsError } = await EnvironmentsService.listByProjectId(projectId);
 
 		if (environmentsError) {
@@ -58,6 +58,17 @@ export class TriggersService {
 			return { data: undefined, error: listTriggersError };
 		}
 
-		return { data: projectTriggers, error: undefined };
+		const projectTriggersReduced = projectTriggers!.reduce(
+			(allTriggers: Record<string, string[]>, trigger: Trigger) => {
+				if (!allTriggers[trigger.path]) {
+					allTriggers[trigger.path] = [];
+				}
+				allTriggers[trigger.path].push(trigger.name);
+				return allTriggers;
+			},
+			{}
+		);
+
+		return { data: projectTriggersReduced, error: undefined };
 	}
 }
