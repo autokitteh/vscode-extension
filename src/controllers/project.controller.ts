@@ -7,7 +7,7 @@ import { SessionLogRecord } from "@models";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
 import { TriggersService } from "@services/triggers.service.";
-import { SessionExecutionParams } from "@type";
+import { SessionExecutionData } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
@@ -395,8 +395,8 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, translate().t("projects.activationSucceed", { id: deploymentId }));
 	}
 
-	async runSessionExecution(sessionExecutionParams: SessionExecutionParams) {
-		const { data: sessionId, error } = await SessionsService.runSessionExecution(sessionExecutionParams);
+	async runSessionExecution(SessionExecutionData: SessionExecutionData) {
+		const { data: sessionId, error } = await SessionsService.runSessionExecution(SessionExecutionData);
 
 		if (error) {
 			const notification = translate().t("sessions.executionFailed");

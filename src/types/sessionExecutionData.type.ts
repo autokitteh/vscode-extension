@@ -1,4 +1,4 @@
-export type SessionExecutionParams = {
+export type SessionExecutionData = {
 	triggerFile: string;
 	triggerFunction: string;
 	deploymentId: string;
