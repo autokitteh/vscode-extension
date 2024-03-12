@@ -13,6 +13,7 @@ import {
 } from "@react-components/AKTable";
 import { IIncomingSessionsMessagesHandler } from "@react-interfaces";
 import { HandleSessionsIncomingMessages, getTimePassed, sendMessage } from "@react-utilities";
+import { cn } from "@react-utilities/cnClasses.utils";
 import { Message } from "@type";
 import { Session } from "@type/models";
 
@@ -26,12 +27,13 @@ export const AKSessions = ({
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
-
 	const { sessions, totalSessions } = sessionsSection || {};
 	const messageHandlers: IIncomingSessionsMessagesHandler = {
 		setSessionsSection,
 		setSelectedSession,
 	};
+	const [highlightedSession, setHighlightedSession] = useState<string | null>(null);
+
 	const handleMessagesFromExtension = useCallback(
 		(event: MessageEvent<Message>) => HandleSessionsIncomingMessages(event, messageHandlers),
 		[]
@@ -61,6 +63,14 @@ export const AKSessions = ({
 		return () => clearInterval(interval);
 	}, []);
 
+	const displaySessionLogsAndUpdateColor = (session: Session) => {
+		setSessionInputsForExecution(session.inputs);
+		setHighlightedSession(session.sessionId);
+		setTimeout(() => {
+			setHighlightedSession(null);
+		}, 1500); // Remove the highlight after 3 seconds
+	};
+
 	return (
 		<div className="mt-4  h-[43vh] overflow-y-auto overflow-x-hidden">
 			<div className="flex items-baseline">
@@ -86,8 +96,16 @@ export const AKSessions = ({
 							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
 								{session.sessionId}
 							</AKTableCell>
-							<AKTableCell onClick={() => setSessionInputsForExecution(session.inputs)} classes={["cursor-pointer"]}>
-								<div className="codicon codicon-copy"></div>
+							<AKTableCell onClick={() => displaySessionLogsAndUpdateColor(session)} classes={["cursor-pointer"]}>
+								<div
+									className={cn([
+										"codicon codicon-clippy",
+										{
+											// eslint-disable-next-line @typescript-eslint/naming-convention
+											"text-green-500": highlightedSession === session.sessionId,
+										},
+									])}
+								></div>{" "}
 							</AKTableCell>
 						</AKTableRow>
 					))}

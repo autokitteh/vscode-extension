@@ -67,7 +67,10 @@ function App() {
 							<div className="codicon codicon-folder-opened w-4"></div>
 						</AKButton>
 					</div>
-					<AKDeployments sessionInputsForExecution={sessionInputsForExecution} />
+					<AKDeployments
+						sessionInputsForExecution={sessionInputsForExecution}
+						setSessionInputsForExecution={setSessionInputsForExecution}
+					/>
 					<AKSessions setSessionInputsForExecution={setSessionInputsForExecution} />
 				</div>
 			) : (

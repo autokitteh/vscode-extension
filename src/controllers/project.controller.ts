@@ -392,7 +392,10 @@ export class ProjectController {
 			return;
 		}
 
-		LoggerService.info(namespaces.projectController, translate().t("projects.activationSucceed", { id: deploymentId }));
+		LoggerService.info(
+			namespaces.projectController,
+			translate().t("deployments.activationSucceed", { id: deploymentId })
+		);
 	}
 
 	async runSessionExecution(SessionExecutionData: SessionExecutionData) {

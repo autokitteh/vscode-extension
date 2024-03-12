@@ -23,8 +23,10 @@ import { usePopper } from "react-popper";
 
 export const AKDeployments = ({
 	sessionInputsForExecution,
+	setSessionInputsForExecution,
 }: {
 	sessionInputsForExecution: Record<string, any> | undefined;
+	setSessionInputsForExecution: (inputs: Record<string, any> | undefined) => void;
 }) => {
 	const [isLoading, setIsLoading] = useState(true);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -303,24 +305,36 @@ export const AKDeployments = ({
 									</div>
 									<div className="mb-3 text-left">
 										<strong className="mb-2">Session parameters</strong>
-										{sessionInputsForExecution ? (
-											JSON.stringify(sessionInputsForExecution).length > 5 ? (
-												<div
-													onClick={() => setModal(true)}
-													className="flex cursor-pointer bg-vscode-dropdown-background"
-												>
-													{JSON.stringify(sessionInputsForExecution).substring(0, 6) + "\u2026"}
+										{sessionInputsForExecution && Object.keys(sessionInputsForExecution).length !== 0 ? (
+											JSON.stringify(sessionInputsForExecution).length > 20 ? (
+												<div className="flex justify-between">
+													<div
+														onClick={() => setModal(true)}
+														className="flex w-5/6 cursor-pointer bg-vscode-dropdown-background"
+													>
+														{JSON.stringify(sessionInputsForExecution).substring(0, 20) + "\u2026"}
+													</div>
+													<div
+														className="flex codicon codicon-clear-all cursor-pointer"
+														onClick={() => setSessionInputsForExecution(undefined)}
+													></div>
 												</div>
 											) : (
-												<div
-													onClick={() => setModal(true)}
-													className="flex cursor-pointer bg-vscode-dropdown-background"
-												>
-													{JSON.stringify(sessionInputsForExecution)}
+												<div className="flex justify-between">
+													<div
+														onClick={() => setModal(true)}
+														className="flex w-5/6 cursor-pointer bg-vscode-dropdown-background"
+													>
+														{JSON.stringify(sessionInputsForExecution)}
+													</div>
+													<div
+														className="flex w-1/6 codicon codicon-clear-all cursor-pointer"
+														onClick={() => setSessionInputsForExecution(undefined)}
+													></div>
 												</div>
 											)
 										) : (
-											<div>Empty state</div>
+											<div className="flex">Empty state</div>
 										)}
 									</div>
 									<div className="flex">
