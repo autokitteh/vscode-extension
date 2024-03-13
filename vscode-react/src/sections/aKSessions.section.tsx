@@ -19,8 +19,10 @@ import { Session } from "@type/models";
 
 export const AKSessions = ({
 	setSessionInputsForExecution,
+	activeDeployment,
 }: {
 	setSessionInputsForExecution: (inputs: Record<string, any>) => void;
+	activeDeployment: string | undefined;
 }) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
@@ -63,12 +65,28 @@ export const AKSessions = ({
 		return () => clearInterval(interval);
 	}, []);
 
-	const displaySessionLogsAndUpdateColor = (session: Session) => {
+	const setSessionInputsAndHighlight = (session: Session) => {
 		setSessionInputsForExecution(session.inputs);
 		setHighlightedSession(session.sessionId);
 		setTimeout(() => {
 			setHighlightedSession(null);
 		}, 1500); // Remove the highlight after 3 seconds
+	};
+
+	const executeSession = (session: Session) => {
+		console.log("activeDeployment", activeDeployment);
+
+		if (!activeDeployment) {
+			// Display Error
+			return;
+		}
+		const sessionExecutionData = {
+			deploymentId: activeDeployment,
+			sessionInputs: session.inputs,
+			entrypoint: session.entrypoint,
+		};
+
+		sendMessage(MessageType.runSessionExecution, sessionExecutionData);
 	};
 
 	return (
@@ -96,16 +114,23 @@ export const AKSessions = ({
 							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
 								{session.sessionId}
 							</AKTableCell>
-							<AKTableCell onClick={() => displaySessionLogsAndUpdateColor(session)} classes={["cursor-pointer"]}>
+							<AKTableCell>
 								<div
+									className="codicon codicon-redo mr-2 cursor-pointer"
+									title="Execute"
+									onClick={() => executeSession(session)}
+								></div>
+								<div
+									onClick={() => setSessionInputsAndHighlight(session)}
 									className={cn([
+										"cursor-pointer",
 										"codicon codicon-clippy",
 										{
 											// eslint-disable-next-line @typescript-eslint/naming-convention
 											"text-green-500": highlightedSession === session.sessionId,
 										},
 									])}
-								></div>{" "}
+								></div>
 							</AKTableCell>
 						</AKTableRow>
 					))}

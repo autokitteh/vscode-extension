@@ -24,9 +24,11 @@ import { usePopper } from "react-popper";
 export const AKDeployments = ({
 	sessionInputsForExecution,
 	setSessionInputsForExecution,
+	setActiveDeployment,
 }: {
 	sessionInputsForExecution: Record<string, any> | undefined;
 	setSessionInputsForExecution: (inputs: Record<string, any> | undefined) => void;
+	setActiveDeployment: (deploymentId: string) => void;
 }) => {
 	const [isLoading, setIsLoading] = useState(true);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -95,6 +97,7 @@ export const AKDeployments = ({
 
 	const activateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.activateDeployment, deploymentId);
+		setActiveDeployment(deploymentId);
 	};
 
 	const togglePopper = () => setShowPopper(!showPopper);
@@ -120,6 +123,8 @@ export const AKDeployments = ({
 	useEffect(() => {
 		if (deployments && isLoading) {
 			setIsLoading(false);
+			const activeDeploymentId = deployments!.find((d) => !isDeploymentStateStartable(d.state))?.deploymentId as string;
+			setActiveDeployment(activeDeploymentId);
 		}
 	}, [deployments]);
 	useEffect(() => {

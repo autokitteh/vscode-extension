@@ -16,6 +16,7 @@ function App() {
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
 	const [sessionInputsForExecution, setSessionInputsForExecution] = useState<Record<string, any> | undefined>();
+	const [activeDeployment, setActiveDeployment] = useState<string | undefined>();
 	const messageHandlers: IIncomingMessagesHandler = {
 		setProjectName,
 		setThemeVisualType,
@@ -70,8 +71,9 @@ function App() {
 					<AKDeployments
 						sessionInputsForExecution={sessionInputsForExecution}
 						setSessionInputsForExecution={setSessionInputsForExecution}
+						setActiveDeployment={setActiveDeployment}
 					/>
-					<AKSessions setSessionInputsForExecution={setSessionInputsForExecution} />
+					<AKSessions setSessionInputsForExecution={setSessionInputsForExecution} activeDeployment={activeDeployment} />
 				</div>
 			) : (
 				<div className="flex justify-center items-center h-screen w-screen">
