@@ -168,8 +168,8 @@ export const AKDeployments = ({
 
 		setDisplayedErrors({});
 
-		if (!activeDeployment || !selectedFile || !selectedFunction) {
-			if (!activeDeployment) {
+		if (!activeDeployment?.deploymentId || !selectedFile || !selectedFunction) {
+			if (!activeDeployment?.deploymentId) {
 				setDisplayedErrors({ ...displayedErrors, selectedDeployment: true });
 			}
 			if (!selectedFile) {
