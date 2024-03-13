@@ -35,6 +35,7 @@ export const AKSessions = ({
 		setSelectedSession,
 	};
 	const [highlightedSession, setHighlightedSession] = useState<string | null>(null);
+	const [deploymentIdForExecution, setDeploymentsIdForExecution] = useState<string | undefined>(activeDeployment);
 
 	const handleMessagesFromExtension = useCallback(
 		(event: MessageEvent<Message>) => HandleSessionsIncomingMessages(event, messageHandlers),
@@ -64,6 +65,9 @@ export const AKSessions = ({
 
 		return () => clearInterval(interval);
 	}, []);
+	useEffect(() => {
+		setDeploymentsIdForExecution(activeDeployment);
+	}, [activeDeployment]);
 
 	const setSessionInputsAndHighlight = (session: Session) => {
 		setSessionInputsForExecution(session.inputs);
@@ -74,14 +78,14 @@ export const AKSessions = ({
 	};
 
 	const executeSession = (session: Session) => {
-		console.log("activeDeployment", activeDeployment);
+		console.log("activeDeployment", deploymentIdForExecution);
 
-		if (!activeDeployment) {
+		if (!deploymentIdForExecution) {
 			// Display Error
 			return;
 		}
 		const sessionExecutionData = {
-			deploymentId: activeDeployment,
+			deploymentId: deploymentIdForExecution,
 			sessionInputs: session.inputs,
 			entrypoint: session.entrypoint,
 		};
