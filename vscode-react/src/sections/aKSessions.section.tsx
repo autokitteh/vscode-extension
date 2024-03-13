@@ -78,8 +78,6 @@ export const AKSessions = ({
 	};
 
 	const executeSession = (session: Session) => {
-		console.log("activeDeployment", deploymentIdForExecution);
-
 		if (!deploymentIdForExecution) {
 			// Display Error
 			return;
@@ -119,11 +117,13 @@ export const AKSessions = ({
 								{session.sessionId}
 							</AKTableCell>
 							<AKTableCell>
-								<div
-									className="codicon codicon-redo mr-2 cursor-pointer"
-									title="Execute"
-									onClick={() => executeSession(session)}
-								></div>
+								{session.deploymentId === deploymentIdForExecution && (
+									<div
+										className="codicon codicon-redo mr-2 cursor-pointer"
+										title="Execute"
+										onClick={() => executeSession(session)}
+									></div>
+								)}
 								<div
 									onClick={() => setSessionInputsAndHighlight(session)}
 									className={cn([
