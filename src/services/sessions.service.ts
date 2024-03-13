@@ -51,16 +51,20 @@ export class SessionsService {
 
 	static async runSessionExecution(SessionExecutionData: SessionExecutionData): Promise<ServiceResponse<string>> {
 		try {
-			const { deploymentId, triggerFile, triggerFunction, sessionInputs } = SessionExecutionData;
+			const { deploymentId, triggerFile, triggerFunction, sessionInputs, entrypoint } = SessionExecutionData;
+			let sessionEntrypoint = {
+				col: 0,
+				row: 0,
+				name: triggerFunction,
+				path: triggerFile,
+			};
+			if (!triggerFunction && !triggerFile) {
+				sessionEntrypoint = entrypoint;
+			}
 			const newSession = {
 				deploymentId,
 				inputs: sessionInputs,
-				entrypoint: {
-					col: 0,
-					row: 0,
-					name: triggerFunction,
-					path: triggerFile,
-				},
+				entrypoint: sessionEntrypoint,
 			};
 			const response = await sessionsClient.start({ session: newSession } as unknown as StartRequest);
 			return { data: response.sessionId, error: undefined };

@@ -4,13 +4,16 @@ export type Session = {
 	state: number;
 	createdAt: Date;
 	inputs: object;
+	entrypoint: SessionEntrypoint;
+};
+
+export type SessionEntrypoint = {
+	col: number;
+	row: number;
+	name: string;
+	path: string;
 };
 
 export type Callstack = {
-	location: {
-		col: number;
-		row: number;
-		name: string;
-		path: string;
-	};
+	location: SessionEntrypoint;
 };
