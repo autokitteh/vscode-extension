@@ -9,3 +9,6 @@ export interface IIncomingMessagesHandler {
 	setSelectedDeploymentId(selectDeploymentId: string | undefined): void;
 	setResourcesDirState(projectFolder: boolean): void;
 }
+export interface IIncomingDeploymentsMessagesHandler {
+	handleProjectDeletedResponse(isDeleted: boolean): void;
+}

@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
+import { Player } from "@lottiefiles/react-lottie-player";
 import { DeploymentSectionViewModel } from "@models";
+import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKButton, AKDeploymentState } from "@react-components";
 import {
 	AKTable,
@@ -12,8 +14,10 @@ import {
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
 import { DeploymentState } from "@react-enums";
-import { getTimePassed, sendMessage } from "@react-utilities";
+import { IIncomingDeploymentsMessagesHandler } from "@react-interfaces";
+import { HandleIncomingDeploymentsMessages, getTimePassed, sendMessage } from "@react-utilities";
 import { cn } from "@react-utilities/cnClasses.utils";
+import { Message } from "@type";
 import { Deployment } from "@type/models";
 import { usePopper } from "react-popper";
 
@@ -26,11 +30,31 @@ export const AKDeployments = ({
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedDeployment, setSelectedDeployment] = useState("");
+	const [isDeletingInProccess, setIsDeletingInProgress] = useState(false);
 
 	const popperEl = useRef<HTMLDivElement | null>(null);
 	const referenceEl = useRef<HTMLDivElement | null>(null);
 	const [showPopper, setShowPopper] = useState(false);
 	const [deleteDeploymentId, setDeleteDeploymentId] = useState("");
+	const handleProjectDeletedResponse = (isDeleted: boolean) => {
+		console.log(isDeleted);
+	};
+
+	const messageHandlers: IIncomingDeploymentsMessagesHandler = {
+		handleProjectDeletedResponse,
+	};
+
+	const handleMessagesFromExtension = useCallback(
+		(event: MessageEvent<Message>) => HandleIncomingDeploymentsMessages(event, messageHandlers),
+		[]
+	);
+
+	useEffect(() => {
+		window.addEventListener("message", handleMessagesFromExtension);
+		return () => {
+			window.removeEventListener("message", handleMessagesFromExtension);
+		};
+	}, [handleMessagesFromExtension]);
 
 	const { attributes, styles } = usePopper(referenceEl.current, popperEl.current, {
 		placement: "bottom",
@@ -104,7 +128,8 @@ export const AKDeployments = ({
 
 	const deleteDeployment = () => {
 		sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
-		setShowPopper(false);
+		setIsDeletingInProgress(true);
+		// setShowPopper(false);
 	};
 
 	return (
@@ -190,21 +215,34 @@ export const AKDeployments = ({
 								></div>
 
 								<div ref={popperEl} style={styles.popper} {...attributes.popper} className={popperClasses}>
-									<div className="mb-3 text-left">
-										<strong className="mb-2">
-											Are you sure you want to
-											<br /> delete this deployment?
-										</strong>
+									<div
+										className={cn("flex justify-center items-center h-full w-full", {
+											visible: isDeletingInProccess,
+										})}
+									>
+										<Player src={loaderAnimation} className="player" loop autoplay />
 									</div>
-									<div className="flex">
-										<AKButton
-											classes="bg-vscode-editor-background text-vscode-foreground"
-											onClick={() => togglePopper(null, "", true)}
-										>
-											{translate().t("reactApp.general.no")}
-										</AKButton>
-										<div className="flex-grow" />
-										<AKButton onClick={() => deleteDeployment()}>{translate().t("reactApp.general.yes")}</AKButton>
+									<div
+										className={cn({
+											visible: isDeletingInProccess,
+										})}
+									>
+										<div className="mb-3 text-left">
+											<strong className="mb-2">
+												Are you sure you want to
+												<br /> delete this deployment?
+											</strong>
+										</div>
+										<div className="flex">
+											<AKButton
+												classes="bg-vscode-editor-background text-vscode-foreground"
+												onClick={() => togglePopper(null, "", true)}
+											>
+												{translate().t("reactApp.general.no")}
+											</AKButton>
+											<div className="flex-grow" />
+											<AKButton onClick={() => deleteDeployment()}>{translate().t("reactApp.general.yes")}</AKButton>
+										</div>
 									</div>
 								</div>
 							</AKTableCell>
