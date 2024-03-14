@@ -188,6 +188,8 @@ export const AKDeployments = ({
 			entrypoint: {
 				name: selectedFunction,
 				path: selectedFile,
+				row: 0,
+				col: 0,
 			},
 		};
 
