@@ -8,6 +8,6 @@
 	"deactivationSucceedId": "Deployment deactivation succeed - id: {{id}}",
 	"deactivationFailedId": "Deployment deactivation failed - id: {{id}}",
 	"deploymentSelectionFailed": "Deployment selection failed - review the logs",
-	"deleteSucceedIdProject": "Deployment deletion succeed - project: {{projectId}}, deployment: {{deployment}}",
-	"deleteFailedIdProject": "Deployment deletion failed - project: {{projectId}}, deployment: {{deployment}}"
+	"deleteSucceedIdProject": "Deployment deletion succeed - project: {{projectId}}, deployment: {{deploymentId}}",
+	"deleteFailedIdProject": "Deployment deletion failed - project: {{projectId}}, deployment: {{deploymentId}}"
 }

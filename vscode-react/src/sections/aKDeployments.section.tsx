@@ -30,6 +30,7 @@ export const AKDeployments = ({
 	const popperEl = useRef<HTMLDivElement | null>(null);
 	const referenceEl = useRef<HTMLDivElement | null>(null);
 	const [showPopper, setShowPopper] = useState(false);
+	const [deleteDeploymentId, setDeleteDeploymentId] = useState("");
 
 	const { attributes, styles } = usePopper(referenceEl.current, popperEl.current, {
 		placement: "bottom",
@@ -47,7 +48,15 @@ export const AKDeployments = ({
 		"border border-gray-300 p-4 rounded-lg shadow-lg",
 		{ invisible: !showPopper }
 	);
-	const togglePopper = () => setShowPopper(!showPopper);
+	const togglePopper = (refElement: HTMLDivElement | null, deploymentId: string, hidePopper?: boolean) => {
+		if (hidePopper) {
+			setShowPopper(false);
+			return;
+		}
+		setDeleteDeploymentId(deploymentId);
+		setShowPopper(!showPopper);
+		referenceEl.current = refElement;
+	};
 
 	useEffect(() => {
 		if (typeof selectedDeploymentId === "string") {
@@ -93,8 +102,9 @@ export const AKDeployments = ({
 		sendMessage(MessageType.activateDeployment, deploymentId);
 	};
 
-	const deleteDeployment = (deploymentId: string) => {
-		sendMessage(MessageType.deleteDeployment, deploymentId);
+	const deleteDeployment = () => {
+		sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
+		setShowPopper(false);
 	};
 
 	return (
@@ -175,7 +185,7 @@ export const AKDeployments = ({
 								)}
 								<div
 									className="codicon codicon-trash cursor-pointer ml-2"
-									onClick={() => togglePopper()}
+									onClick={(e) => togglePopper(e.currentTarget, deployment.deploymentId)}
 									ref={referenceEl}
 								></div>
 
@@ -189,14 +199,12 @@ export const AKDeployments = ({
 									<div className="flex">
 										<AKButton
 											classes="bg-vscode-editor-background text-vscode-foreground"
-											onClick={() => togglePopper()}
+											onClick={() => togglePopper(null, "", true)}
 										>
 											{translate().t("reactApp.general.no")}
 										</AKButton>
 										<div className="flex-grow" />
-										<AKButton onClick={() => deleteDeployment(deployment.deploymentId)}>
-											{translate().t("reactApp.general.yes")}
-										</AKButton>
+										<AKButton onClick={() => deleteDeployment()}>{translate().t("reactApp.general.yes")}</AKButton>
 									</div>
 								</div>
 							</AKTableCell>
