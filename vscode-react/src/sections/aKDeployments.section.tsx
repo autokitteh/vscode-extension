@@ -183,10 +183,12 @@ export const AKDeployments = ({
 			return;
 		}
 		const sessionExecutionData = {
-			triggerFile: selectedFile,
-			triggerFunction: selectedFunction,
 			deploymentId: activeDeployment.deploymentId,
 			sessionInputs: sessionInputsForExecution ? sessionInputsForExecution : {},
+			entrypoint: {
+				name: selectedFunction,
+				path: selectedFile,
+			},
 		};
 
 		sendMessage(MessageType.runSessionExecution, sessionExecutionData);
