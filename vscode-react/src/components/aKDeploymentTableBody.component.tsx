@@ -120,13 +120,10 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		setSelectedFunction(event);
 	};
 
-	const deleteDeployment = (deploymentId: string) => {
-		sendMessage(MessageType.deleteDeployment, deploymentId);
-	};
-
 	const deletePopperEl = useRef<HTMLDivElement | null>(null);
 	const deleteReferenceEl = useRef<HTMLDivElement | null>(null);
 	const [showPopper, setShowPopper] = useState(false);
+	const [deleteDeploymentId, setDeleteDeploymentId] = useState("");
 
 	const { attributes: deleteAttributes, styles: deleteStyles } = usePopper(
 		deleteReferenceEl.current,
@@ -148,7 +145,21 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		"border border-gray-300 p-4 rounded-lg shadow-lg",
 		{ invisible: !showPopper }
 	);
-	const toggleDeletePopper = () => setShowPopper(!showPopper);
+
+	const toggleDeletePopper = (refElement: HTMLDivElement | null, deploymentId: string, hidePopper?: boolean) => {
+		if (hidePopper) {
+			setShowPopper(false);
+			return;
+		}
+		setDeleteDeploymentId(deploymentId);
+		setShowPopper(!showPopper);
+		referenceEl.current = refElement;
+	};
+
+	const deleteDeployment = () => {
+		sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
+		setShowPopper(false);
+	};
 
 	return (
 		deployments &&
@@ -197,8 +208,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 					<div
 						className="codicon codicon-trash cursor-pointer ml-2"
-						onClick={() => toggleDeletePopper()}
-						ref={deleteReferenceEl}
+						onClick={(e) => toggleDeletePopper(e.currentTarget, deployment.deploymentId)}
+						ref={referenceEl}
 					></div>
 
 					<div
@@ -214,13 +225,14 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 							</strong>
 						</div>
 						<div className="flex">
-							<AKButton classes="bg-vscode-editor-background text-vscode-foreground" onClick={() => togglePopper()}>
+							<AKButton
+								classes="bg-vscode-editor-background text-vscode-foreground"
+								onClick={() => toggleDeletePopper(null, "", true)}
+							>
 								{translate().t("reactApp.general.no")}
 							</AKButton>
 							<div className="flex-grow" />
-							<AKButton onClick={() => deleteDeployment(deployment.deploymentId)}>
-								{translate().t("reactApp.general.yes")}
-							</AKButton>
+							<AKButton onClick={() => deleteDeployment()}>{translate().t("reactApp.general.yes")}</AKButton>
 						</div>
 					</div>
 					{displayExecutePopper && (

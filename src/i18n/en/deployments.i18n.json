@@ -14,5 +14,5 @@
 	"deleteSucceed": "Deployment activation succeed",
 	"deleteFailed": "Deployment activation failed",
 	"deleteSucceedIdProject": "Deployment deletion succeed - project: {{projectId}}, deployment: {{deployment}}",
-	"deleteFailedIdProject": "Deployment deletion failed - project: {{projectId}}, deployment: {{deployment}}"
+	"deleteFailedIdProject": "Deployment deletion failed - project: {{projectId}}, deployment: {{deploymentId}}"
 }
