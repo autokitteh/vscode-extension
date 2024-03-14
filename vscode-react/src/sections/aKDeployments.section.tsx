@@ -46,9 +46,9 @@ export const AKDeployments = ({
 	const [functions, setFunctions] = useState<string[]>();
 	const [selectedFunction, setSelectedFunction] = useState<string>("");
 	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
-	const [showPopper, setShowPopper] = useState(false);
 
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
+	const [displayExecutePopper, setDisplayExecutePopper] = useState<boolean>(false);
 
 	const referenceEl = useRef<HTMLDivElement | null>(null);
 	const popperEl = useRef<HTMLDivElement | null>(null);
@@ -85,10 +85,10 @@ export const AKDeployments = ({
 			},
 		],
 	});
+
 	const popperClasses = cn(
 		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
-		"border border-gray-300 p-4 rounded-lg shadow-lg",
-		{ invisible: !showPopper }
+		"border border-gray-300 p-4 rounded-lg shadow-lg"
 	);
 
 	const deactivateBuild = (deploymentId: string) => {
@@ -100,7 +100,9 @@ export const AKDeployments = ({
 		setActiveDeployment(deploymentId);
 	};
 
-	const togglePopper = () => setShowPopper(!showPopper);
+	const togglePopper = () => {
+		setDisplayExecutePopper(true);
+	};
 
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -189,7 +191,7 @@ export const AKDeployments = ({
 
 		sendMessage(MessageType.runSessionExecution, sessionExecutionData);
 
-		togglePopper();
+		setDisplayExecutePopper(false);
 	};
 
 	return (
@@ -262,7 +264,7 @@ export const AKDeployments = ({
 											className="codicon codicon-redo mr-2 cursor-pointer"
 											ref={referenceEl}
 											title="Execute"
-											onClick={togglePopper}
+											onClick={() => togglePopper()}
 										></div>
 										<div
 											className="codicon codicon-debug-stop cursor-pointer text-red-500"
@@ -271,7 +273,12 @@ export const AKDeployments = ({
 									</div>
 								)}
 
-								<div ref={popperEl} style={styles.popper} {...attributes.popper} className={popperClasses}>
+								<div
+									ref={popperEl}
+									style={styles.popper}
+									{...attributes.popper}
+									className={cn(popperClasses, [{ invisible: !displayExecutePopper }])}
+								>
 									<div className="mb-3 text-left">
 										<strong className="mb-2">{translate().t("reactApp.deployments.executeFile")}</strong>
 										<VSCodeDropdown
@@ -345,7 +352,7 @@ export const AKDeployments = ({
 									<div className="flex">
 										<AKButton
 											classes="bg-vscode-editor-background text-vscode-foreground"
-											onClick={() => togglePopper()}
+											onClick={() => setDisplayExecutePopper(false)}
 										>
 											{translate().t("reactApp.deployments.dismiss")}
 										</AKButton>
