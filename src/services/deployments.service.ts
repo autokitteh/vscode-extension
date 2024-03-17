@@ -2,6 +2,7 @@ import { ActivateResponse, ListResponse } from "@ak-proto-ts/deployments/v1/svc_
 import { deploymentsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { SortOrder } from "@enums";
+import { translate } from "@i18n";
 import { convertDeploymentProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
@@ -100,7 +101,12 @@ export class DeploymentsService {
 			await deploymentsClient.delete({ deploymentId });
 			return { data: undefined, error: undefined };
 		} catch (error) {
-			return { data: undefined, error };
+			const errorMessage = `${translate().t("deployments.deleteFailedIdProject", {
+				deploymentId,
+			})} - ${(error as Error).message}`;
+			LoggerService.error(namespaces.deploymentsService, errorMessage);
+
+			return { data: undefined, error: errorMessage };
 		}
 	}
 }
