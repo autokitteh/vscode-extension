@@ -402,10 +402,10 @@ export class ProjectController {
 		const { data: sessionId, error } = await SessionsService.runSessionExecution(SessionExecutionData);
 
 		if (error) {
-			const notification = translate().t("sessions.executionFailed");
+			const notification = `${translate().t("sessions.executionFailed")} for project ${this.projectId}`;
 			const log = `${translate().t("sessions.executionFailedError", {
 				error,
-			})}`;
+			})} for project ${this.projectId}`;
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
 			LoggerService.error(namespaces.projectController, log);
 			return;
