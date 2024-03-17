@@ -410,7 +410,7 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
-		const successMessage = translate().t("sessions.executionSucceed");
+		const successMessage = `${translate().t("sessions.executionSucceed")} for project ${this.projectId}`;
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 		LoggerService.info(namespaces.projectController, successMessage);
 
