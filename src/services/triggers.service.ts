@@ -44,9 +44,10 @@ export class TriggersService {
 		const { data: environments, error: environmentsError } = await EnvironmentsService.listByProjectId(projectId);
 
 		if (environmentsError) {
-			LoggerService.error(namespaces.triggersService, (environmentsError as Error).message);
+			const log = `Error occured for project id: ${projectId} - ${(environmentsError as Error).message}`;
+			LoggerService.error(namespaces.triggersService, log);
 
-			return { data: undefined, error: environmentsError };
+			return { data: undefined, error: log };
 		}
 
 		const environmentIds = getIds(environments!, "envId");
