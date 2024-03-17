@@ -6,7 +6,7 @@ import { IProjectView } from "@interfaces";
 import { SessionLogRecord } from "@models";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
-import { TriggersService } from "@services/triggers.service.";
+import { TriggersService } from "@services";
 import { SessionExecutionData } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";

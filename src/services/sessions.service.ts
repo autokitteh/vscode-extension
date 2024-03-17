@@ -60,8 +60,10 @@ export class SessionsService {
 			const response = await sessionsClient.start({ session: newSession } as unknown as StartRequest);
 			return { data: response.sessionId, error: undefined };
 		} catch (error) {
-			LoggerService.error(namespaces.sessionsService, (error as Error).message);
-			return { data: undefined, error };
+			// eslint-disable-next-line max-len
+			const log = `Error running session execution: ${(error as Error).message} for deployment id: ${sessionExecutionData.deploymentId}`;
+			LoggerService.error(namespaces.sessionsService, log);
+			return { data: undefined, error: log };
 		}
 	}
 
