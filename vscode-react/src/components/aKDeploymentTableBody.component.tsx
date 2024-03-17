@@ -151,11 +151,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		[]
 	);
 
-	const deleteDeployment = () => {
-		sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
-		setIsDeletingInProgress(true);
-	};
-
 	useEffect(() => {
 		window.addEventListener("message", handleMessagesFromExtension);
 		return () => {
@@ -163,16 +158,48 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		};
 	}, [handleMessagesFromExtension]);
 
-	const toggleDeletePopper = (refElement: HTMLDivElement | null, deploymentId: string, hidePopper?: boolean) => {
-		if (hidePopper) {
-			setShowPopper(false);
-			return;
+	const { attributes: deleteAttributes, styles: deleteStyles } = usePopper(
+		deleteReferenceEl.current,
+		deletePopperEl.current,
+		{
+			placement: "bottom",
+			modifiers: [
+				{
+					name: "offset",
+					options: {
+						offset: [0, 10],
+					},
+				},
+			],
 		}
+	);
+	const deletePopperClasses = cn(
+		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
+		"border border-gray-300 p-4 rounded-lg shadow-lg",
+		{ invisible: !showPopper }
+	);
+	const toggleDeletePopper = (refElement: HTMLDivElement | null, deploymentId: string) => {
 		setDeleteDeploymentId(deploymentId);
 		setShowPopper(!showPopper);
 		referenceEl.current = refElement;
 	};
 
+	useEffect(() => {
+		if (typeof selectedDeploymentId === "string") {
+			setSelectedDeployment(selectedDeploymentId);
+		}
+	}, [selectedDeploymentId]);
+
+	const deleteDeploymentAction = (isApproved: boolean) => {
+		if (isApproved) {
+			sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
+			setIsDeletingInProgress(true);
+			return;
+		}
+		setIsDeletingInProgress(false);
+		setDeletedDeploymentError(false);
+		setShowPopper(false);
+	};
 	return (
 		deployments &&
 		deployments.map((deployment: Deployment) => (
@@ -225,9 +252,9 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 					<div
 						ref={deletePopperEl}
-						style={{ ...styles.popper, width: "25%" }}
-						{...attributes.popper}
-						className={popperClasses}
+						style={{ ...deleteStyles.popper, width: "25%" }}
+						{...deleteAttributes.popper}
+						className={deletePopperClasses}
 					>
 						<div
 							className={cn("flex justify-center items-center h-full w-full", {
@@ -254,12 +281,14 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 							<div className="flex">
 								<AKButton
 									classes="bg-vscode-editor-background text-vscode-foreground"
-									onClick={() => toggleDeletePopper(null, "", true)}
+									onClick={() => deleteDeploymentAction(false)}
 								>
 									{translate().t("reactApp.general.no")}
 								</AKButton>
 								<div className="flex-grow" />
-								<AKButton onClick={() => deleteDeployment()}>{translate().t("reactApp.general.yes")}</AKButton>
+								<AKButton onClick={() => deleteDeploymentAction(true)}>
+									{translate().t("reactApp.general.yes")}
+								</AKButton>
 							</div>
 						</div>
 					</div>
