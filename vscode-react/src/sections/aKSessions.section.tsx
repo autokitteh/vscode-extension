@@ -23,7 +23,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 	const [selectedSession, setSelectedSession] = useState("");
 	const deleteSessionPopperElement = useRef<HTMLDivElement | null>(null);
 	const deleteSessionRefElement = useRef<HTMLDivElement | null>(null);
-	const [showSessionDeletePopper, setShowSessionDelete] = useState(false);
+	const [showSessionDeletePopper, setShowSessionDeletePopper] = useState(false);
 
 	useEffect(() => {
 		if (isLoading) {
@@ -45,7 +45,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 
 	const deleteSession = (sessionId: string) => {
 		sendMessage(MessageType.deleteSession, sessionId);
-		setShowSessionDelete(false);
+		setShowSessionDeletePopper(false);
 	};
 
 	const { attributes, styles } = usePopper(deleteSessionRefElement.current, deleteSessionPopperElement.current, {
@@ -94,7 +94,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 								<div className="codicon codicon-output" onClick={() => displaySessionLogs(session.sessionId)}></div>
 								<div
 									className="codicon codicon-trash"
-									onClick={() => setShowSessionDelete(true)}
+									onClick={() => setShowSessionDeletePopper(true)}
 									ref={deleteSessionRefElement}
 								></div>
 
@@ -110,7 +110,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 									<div className="flex">
 										<AKButton
 											classes="bg-vscode-editor-background text-vscode-foreground"
-											onClick={() => setShowSessionDelete(!false)}
+											onClick={() => setShowSessionDeletePopper(!false)}
 										>
 											{translate().t("reactApp.general.no")}
 										</AKButton>
