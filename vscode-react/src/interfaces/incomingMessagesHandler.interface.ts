@@ -10,5 +10,5 @@ export interface IIncomingMessagesHandler {
 	setResourcesDirState(projectFolder: boolean): void;
 }
 export interface IIncomingDeploymentsMessagesHandler {
-	handleProjectDeletedResponse(isDeleted: boolean): void;
+	handleDeploymentDeletedResponse(isDeleted: boolean): void;
 }

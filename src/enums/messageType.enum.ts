@@ -12,6 +12,6 @@ export enum MessageType {
 	deactivateDeployment = "DEACTIVATE_DEPLOYMENT",
 	activateDeployment = "ACTIVATE_DEPLOYMENT",
 	deleteDeployment = "DELETE_DEPLOYMENT",
-	projectDeleted = "PROJECT_DELETED",
-	projectDeletedResponse = "PROJECT_DELETED_RESPONSE",
+	deploymentDeleted = "DEPLOYMENT_DELETED",
+	deploymentDeletedResponse = "DEPLOYMENT_DELETED_RESPONSE",
 }

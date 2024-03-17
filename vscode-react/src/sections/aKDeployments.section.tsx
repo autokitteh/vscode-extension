@@ -36,12 +36,20 @@ export const AKDeployments = ({
 	const referenceEl = useRef<HTMLDivElement | null>(null);
 	const [showPopper, setShowPopper] = useState(false);
 	const [deleteDeploymentId, setDeleteDeploymentId] = useState("");
-	const handleProjectDeletedResponse = (isDeleted: boolean) => {
-		console.log(isDeleted);
+	const [deletedDeploymentError, setDeletedDeploymentError] = useState(false);
+
+	const handleDeploymentDeletedResponse = (isDeleted: boolean) => {
+		if (isDeleted) {
+			setShowPopper(false);
+			setIsDeletingInProgress(false);
+			return;
+		}
+		setDeletedDeploymentError(true);
+		setIsDeletingInProgress(false);
 	};
 
 	const messageHandlers: IIncomingDeploymentsMessagesHandler = {
-		handleProjectDeletedResponse,
+		handleDeploymentDeletedResponse,
 	};
 
 	const handleMessagesFromExtension = useCallback(
@@ -98,7 +106,7 @@ export const AKDeployments = ({
 		const interval = setInterval(() => {
 			setRerender((rerender) => rerender + 1);
 		}, 1000);
-
+		setIsDeletingInProgress(false);
 		return () => clearInterval(interval);
 	}, []);
 
@@ -129,7 +137,6 @@ export const AKDeployments = ({
 	const deleteDeployment = () => {
 		sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
 		setIsDeletingInProgress(true);
-		// setShowPopper(false);
 	};
 
 	return (
@@ -214,25 +221,34 @@ export const AKDeployments = ({
 									ref={referenceEl}
 								></div>
 
-								<div ref={popperEl} style={styles.popper} {...attributes.popper} className={popperClasses}>
+								<div
+									ref={popperEl}
+									style={{ ...styles.popper, width: "25%" }}
+									{...attributes.popper}
+									className={popperClasses}
+								>
 									<div
 										className={cn("flex justify-center items-center h-full w-full", {
-											visible: isDeletingInProccess,
+											hidden: !isDeletingInProccess,
 										})}
 									>
 										<Player src={loaderAnimation} className="player" loop autoplay />
 									</div>
 									<div
 										className={cn({
-											visible: isDeletingInProccess,
+											hidden: isDeletingInProccess,
 										})}
 									>
 										<div className="mb-3 text-left">
-											<strong className="mb-2">
-												Are you sure you want to
-												<br /> delete this deployment?
-											</strong>
+											<strong className="mb-2">{translate().t("reactApp.deployments.deletionApprovalQuestion")}</strong>
 										</div>
+										{deletedDeploymentError && (
+											<div className="text-red-500 text-left">
+												{translate().t("reactApp.deployments.errorDeletingDeploymentLine1")}
+												<br />
+												{translate().t("reactApp.deployments.errorDeletingDeploymentLine2")}
+											</div>
+										)}
 										<div className="flex">
 											<AKButton
 												classes="bg-vscode-editor-background text-vscode-foreground"
