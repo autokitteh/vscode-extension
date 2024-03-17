@@ -110,7 +110,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 									<div className="flex">
 										<AKButton
 											classes="bg-vscode-editor-background text-vscode-foreground"
-											onClick={() => setShowSessionDeletePopper(!false)}
+											onClick={() => setShowSessionDeletePopper(true)}
 										>
 											{translate().t("reactApp.general.no")}
 										</AKButton>
