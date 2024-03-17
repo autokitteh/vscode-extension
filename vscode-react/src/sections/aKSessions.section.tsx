@@ -22,7 +22,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSession, setSelectedSession] = useState("");
 	const deleteSessionPopperElement = useRef<HTMLDivElement | null>(null);
-	const referenceEl = useRef<HTMLDivElement | null>(null);
+	const deleteSessionRefElement = useRef<HTMLDivElement | null>(null);
 	const [showSessionDeletePopper, setShowSessionDelete] = useState(false);
 
 	useEffect(() => {
@@ -48,7 +48,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 		setShowSessionDelete(false);
 	};
 
-	const { attributes, styles } = usePopper(referenceEl.current, deleteSessionPopperElement.current, {
+	const { attributes, styles } = usePopper(deleteSessionRefElement.current, deleteSessionPopperElement.current, {
 		placement: "bottom",
 		modifiers: [
 			{
@@ -95,7 +95,7 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 								<div
 									className="codicon codicon-trash"
 									onClick={() => setShowSessionDelete(true)}
-									ref={referenceEl}
+									ref={deleteSessionRefElement}
 								></div>
 
 								<div
