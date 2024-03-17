@@ -11,6 +11,7 @@ export interface IProjectViewDelegate {
 	displaySessionLogs?: Callback<string>;
 	activateDeployment?: Callback<string>;
 	deactivateDeployment?: Callback<string>;
+	deleteSession?: Callback<string>;
 }
 
 export interface IProjectView {

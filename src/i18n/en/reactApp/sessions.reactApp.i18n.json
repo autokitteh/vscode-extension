@@ -12,5 +12,6 @@
 		"unspecified": "Unspecified",
 		"error": "Error",
 		"completed": "Completed"
-	}
+	},
+	"deletionApprovalQuestion": "Are you sure you want to delete this session?"
 }

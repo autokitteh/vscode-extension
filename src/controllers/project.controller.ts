@@ -430,4 +430,14 @@ export class ProjectController {
 		const projectFromContext: { path?: string } = await commands.executeCommand(vsCommands.getContext, this.projectId);
 		return projectFromContext ? projectFromContext.path : undefined;
 	}
+
+	async deleteSession(sessionId: string) {
+		const { error } = await SessionsService.deleteSession(sessionId);
+		if (error) {
+			const errorMessage = translate().t("sessions.sessionDeleteError", { error: (error as Error).message });
+			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+			return;
+		}
+		commands.executeCommand(vsCommands.showInfoMessage, translate().t("sessions.sessionDeleteSuccess"));
+	}
 }

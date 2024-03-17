@@ -11,5 +11,7 @@
 	"historyInitFunction": "Init function",
 	"historyPrint": "Print",
 	"historyTime": "Time",
-	"historyNoOutput": "No output"
+	"historyNoOutput": "No output",
+	"sessionDeleteSuccess": "Session deleted successfully",
+	"sessionDeleteError": "Error deleting session {{error}}"
 }

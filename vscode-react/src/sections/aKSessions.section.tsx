@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
-import { AKSessionState } from "@react-components";
+import { AKButton, AKSessionState } from "@react-components";
 import {
 	AKTable,
 	AKTableMessage,
@@ -12,13 +12,18 @@ import {
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
 import { getTimePassed, sendMessage } from "@react-utilities";
+import { cn } from "@react-utilities/cnClasses.utils";
 import { Session } from "@type/models";
+import { usePopper } from "react-popper";
 
 export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewModel) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSession, setSelectedSession] = useState("");
+	const deleteSessionPopperElement = useRef<HTMLDivElement | null>(null);
+	const referenceEl = useRef<HTMLDivElement | null>(null);
+	const [showSessionDeletePopper, setShowSessionDelete] = useState(false);
 
 	useEffect(() => {
 		if (isLoading) {
@@ -37,6 +42,28 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 		sendMessage(MessageType.displaySessionLogs, sessionId);
 		setSelectedSession(sessionId);
 	};
+
+	const deleteSession = (sessionId: string) => {
+		sendMessage(MessageType.deleteSession, sessionId);
+		setShowSessionDelete(false);
+	};
+
+	const { attributes, styles } = usePopper(referenceEl.current, deleteSessionPopperElement.current, {
+		placement: "bottom",
+		modifiers: [
+			{
+				name: "offset",
+				options: {
+					offset: [0, 10],
+				},
+			},
+		],
+	});
+	const popperClasses = cn(
+		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
+		"border border-gray-300 p-4 rounded-lg shadow-lg",
+		{ invisible: !showSessionDeletePopper }
+	);
 
 	return (
 		<div className="mt-4  h-[43vh] overflow-y-auto overflow-x-hidden">
@@ -63,8 +90,36 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
 								{session.sessionId}
 							</AKTableCell>
-							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
+							<AKTableCell classes={["cursor-pointer"]}>
 								<div className="codicon codicon-output" onClick={() => displaySessionLogs(session.sessionId)}></div>
+								<div
+									className="codicon codicon-trash"
+									onClick={() => setShowSessionDelete(true)}
+									ref={referenceEl}
+								></div>
+
+								<div
+									ref={deleteSessionPopperElement}
+									style={styles.popper}
+									{...attributes.popper}
+									className={popperClasses}
+								>
+									<div className="mb-3 text-left">
+										<strong className="mb-2">{translate().t("reactApp.sessions.deletionApprovalQuestion")}</strong>
+									</div>
+									<div className="flex">
+										<AKButton
+											classes="bg-vscode-editor-background text-vscode-foreground"
+											onClick={() => setShowSessionDelete(!false)}
+										>
+											{translate().t("reactApp.general.no")}
+										</AKButton>
+										<div className="flex-grow" />
+										<AKButton onClick={() => deleteSession(session.sessionId)}>
+											{translate().t("reactApp.general.yes")}
+										</AKButton>
+									</div>
+								</div>
 							</AKTableCell>
 						</AKTableRow>
 					))}

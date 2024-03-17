@@ -48,6 +48,17 @@ export class SessionsService {
 		}
 	}
 
+	static async deleteSession(sessionId: string): Promise<ServiceResponse<void>> {
+		try {
+			await sessionsClient.delete({ sessionId });
+			return { data: undefined, error: undefined };
+		} catch (error) {
+			LoggerService.error(namespaces.sessionsService, `Session - ${sessionId}: ${(error as Error).message}`);
+
+			return { data: undefined, error };
+		}
+	}
+
 	static async listByProjectId(projectId: string): Promise<ServiceResponse<Session[]>> {
 		try {
 			const { data: projectEnvironments, error: environmentsError } =
