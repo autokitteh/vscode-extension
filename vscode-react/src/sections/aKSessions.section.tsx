@@ -13,17 +13,10 @@ import {
 } from "@react-components/AKTable";
 import { IIncomingSessionsMessagesHandler } from "@react-interfaces";
 import { HandleSessionsIncomingMessages, getTimePassed, sendMessage } from "@react-utilities";
-import { cn } from "@react-utilities/cnClasses.utils";
 import { Message } from "@type";
 import { Session } from "@type/models";
 
-export const AKSessions = ({
-	setSessionInputsForExecution,
-	activeDeployment,
-}: {
-	setSessionInputsForExecution: (inputs: Record<string, any>) => void;
-	activeDeployment: string | undefined;
-}) => {
+export const AKSessions = ({ activeDeployment }: { activeDeployment: string | undefined }) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +27,6 @@ export const AKSessions = ({
 		setSessionsSection,
 		setSelectedSession,
 	};
-	const [highlightedSession, setHighlightedSession] = useState<string | null>(null);
 	const [deploymentIdForExecution, setDeploymentsIdForExecution] = useState<string | undefined>(activeDeployment);
 
 	const handleMessagesFromExtension = useCallback(
@@ -68,14 +60,6 @@ export const AKSessions = ({
 	useEffect(() => {
 		setDeploymentsIdForExecution(activeDeployment);
 	}, [activeDeployment]);
-
-	const setSessionInputsAndHighlight = (session: Session) => {
-		setSessionInputsForExecution(session.inputs);
-		setHighlightedSession(session.sessionId);
-		setTimeout(() => {
-			setHighlightedSession(null);
-		}, 1500); // Remove the highlight after 3 seconds
-	};
 
 	const executeSession = (session: Session) => {
 		if (!deploymentIdForExecution) {
@@ -124,17 +108,6 @@ export const AKSessions = ({
 										onClick={() => executeSession(session)}
 									></div>
 								)}
-								<div
-									onClick={() => setSessionInputsAndHighlight(session)}
-									className={cn([
-										"cursor-pointer",
-										"codicon codicon-clippy",
-										{
-											// eslint-disable-next-line @typescript-eslint/naming-convention
-											"text-green-500": highlightedSession === session.sessionId,
-										},
-									])}
-								></div>
 							</AKTableCell>
 						</AKTableRow>
 					))}

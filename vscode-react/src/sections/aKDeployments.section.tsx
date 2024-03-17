@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MessageType, SessionStateType } from "@enums";
+import { DeploymentState } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
 import { Editor } from "@monaco-editor/react";
@@ -12,24 +13,15 @@ import {
 	AKTableRow,
 	AKTableHeaderCell,
 } from "@react-components/AKTable";
-import { DeploymentState } from "@react-enums";
 import { IIncomingDeploymentsMessagesHandler } from "@react-interfaces";
 import { HandleDeploymentsIncomingMessages, getTimePassed, sendMessage } from "@react-utilities";
 import { cn } from "@react-utilities/cnClasses.utils";
 import { Message } from "@type";
-import { Deployment } from "@type/models";
+import { Deployment, EntrypointTrigger, SessionEntrypoint } from "@type/models";
 import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
 import { usePopper } from "react-popper";
 
-export const AKDeployments = ({
-	sessionInputsForExecution,
-	setSessionInputsForExecution,
-	setActiveDeployment,
-}: {
-	sessionInputsForExecution: Record<string, any> | undefined;
-	setSessionInputsForExecution: (inputs: Record<string, any> | undefined) => void;
-	setActiveDeployment: (deploymentId: string) => void;
-}) => {
+export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (deploymentId: string) => void }) => {
 	const [isLoading, setIsLoading] = useState(true);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
@@ -41,11 +33,12 @@ export const AKDeployments = ({
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
 
 	const [modal, setModal] = useState(false);
-	const [files, setFiles] = useState<Record<string, string[]>>();
+	const [files, setFiles] = useState<Record<string, SessionEntrypoint>>();
 	const [selectedFile, setSelectedFile] = useState<string>("");
 	const [functions, setFunctions] = useState<string[]>();
 	const [selectedFunction, setSelectedFunction] = useState<string>("");
-	const [entrypoints, setEntrypoints] = useState<Record<string, string[]> | undefined>();
+	const [selectedEntrypoint, setSelectedEntrypoint] = useState<SessionEntrypoint>();
+	const [entrypoints, setEntrypoints] = useState<EntrypointTrigger | undefined>();
 
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
 	const [displayExecutePopper, setDisplayExecutePopper] = useState<boolean>(false);
@@ -129,6 +122,7 @@ export const AKDeployments = ({
 			setActiveDeployment(activeDeploymentId);
 		}
 	}, [deployments]);
+
 	useEffect(() => {
 		if (deploymentsSection) {
 			setTotalDeployments(deploymentsSection.totalDeployments);
@@ -150,18 +144,41 @@ export const AKDeployments = ({
 	}, [handleMessagesFromExtension]);
 
 	useEffect(() => {
-		if (entrypoints) {
-			setFiles(entrypoints);
-			setSelectedFile(Object.keys(entrypoints)[0]);
-			setFunctions(entrypoints[Object.keys(entrypoints)[0]]);
+		if (entrypoints && Object.keys(entrypoints).length > 0) {
+			const filesWithFunctions = Object.keys(entrypoints).reduce((acc, currentKey) => {
+				acc[currentKey] = entrypoints[currentKey];
+				return acc;
+			}, {});
+
+			console.log("filesWithFunctions", filesWithFunctions);
+
+			setFiles(filesWithFunctions);
+
+			const firstFileName = Object.keys(filesWithFunctions)[0];
+			setSelectedFile(firstFileName);
+			const fileFunctions = filesWithFunctions[firstFileName];
+
+			setFunctions(fileFunctions);
+			setSelectedFunction(JSON.stringify(fileFunctions[0]));
+
+			setSelectedEntrypoint({
+				name: fileFunctions[0].name,
+				...fileFunctions[0].location,
+			});
 		}
 	}, [entrypoints]);
 
 	useEffect(() => {
 		if (files) {
-			const functionsForSelectedFile = files[selectedFile];
-			setFunctions(functionsForSelectedFile || []);
-			setSelectedFunction(functionsForSelectedFile?.[0] || "");
+			const firstFileName = Object.keys(files)[0];
+			const fileFunctions = files[firstFileName];
+
+			setFunctions(fileFunctions);
+
+			setSelectedEntrypoint({
+				name: fileFunctions[0].name,
+				...fileFunctions[0].location,
+			});
 		}
 	}, [selectedFile]);
 
@@ -184,18 +201,22 @@ export const AKDeployments = ({
 		}
 		const sessionExecutionData = {
 			deploymentId: activeDeployment.deploymentId,
-			sessionInputs: sessionInputsForExecution ? sessionInputsForExecution : {},
-			entrypoint: {
-				name: selectedFunction,
-				path: selectedFile,
-				row: 0,
-				col: 0,
-			},
+			sessionInputs: {},
+			entrypoint: selectedEntrypoint,
 		};
 
 		sendMessage(MessageType.runSessionExecution, sessionExecutionData);
 
 		setDisplayExecutePopper(false);
+	};
+
+	const handleFunctionChange = (event: string) => {
+		const triggerFunction = JSON.parse(event);
+		setSelectedEntrypoint({
+			name: triggerFunction.symbol,
+			...triggerFunction.location,
+		});
+		setSelectedFunction(event);
 	};
 
 	return (
@@ -288,7 +309,6 @@ export const AKDeployments = ({
 										<VSCodeDropdown
 											value={selectedFile}
 											onChange={(e: any) => setSelectedFile(e.target.value)}
-											disabled={files !== undefined && Object.keys(files).length <= 1}
 											className="flex"
 										>
 											{files &&
@@ -304,53 +324,19 @@ export const AKDeployments = ({
 										<strong className="mb-2">{translate().t("reactApp.deployments.executeEntrypoint")}</strong>
 										<VSCodeDropdown
 											value={selectedFunction}
-											onChange={(e: any) => setSelectedFunction(e.target.value)}
+											onChange={(e: any) => handleFunctionChange(e.target.value)}
 											disabled={functions !== undefined && functions.length <= 1}
 											className="flex"
 										>
 											{functions &&
 												functions.map((func) => (
-													<option key={func} value={func}>
-														{func}
+													<option key={func.symbol} value={JSON.stringify(func)}>
+														{func.symbol}
 													</option>
 												))}
 										</VSCodeDropdown>
 										{displayedErrors["triggerFunction"] && (
 											<div className="text-red-500">Please choose trigger function</div>
-										)}
-									</div>
-									<div className="mb-3 text-left">
-										<strong className="mb-2">Session parameters</strong>
-										{sessionInputsForExecution && Object.keys(sessionInputsForExecution).length !== 0 ? (
-											JSON.stringify(sessionInputsForExecution).length > 20 ? (
-												<div className="flex justify-between">
-													<div
-														onClick={() => setModal(true)}
-														className="flex w-5/6 cursor-pointer bg-vscode-dropdown-background"
-													>
-														{JSON.stringify(sessionInputsForExecution).substring(0, 20) + "\u2026"}
-													</div>
-													<div
-														className="flex codicon codicon-clear-all cursor-pointer"
-														onClick={() => setSessionInputsForExecution(undefined)}
-													></div>
-												</div>
-											) : (
-												<div className="flex justify-between">
-													<div
-														onClick={() => setModal(true)}
-														className="flex w-5/6 cursor-pointer bg-vscode-dropdown-background"
-													>
-														{JSON.stringify(sessionInputsForExecution)}
-													</div>
-													<div
-														className="flex w-1/6 codicon codicon-clear-all cursor-pointer"
-														onClick={() => setSessionInputsForExecution(undefined)}
-													></div>
-												</div>
-											)
-										) : (
-											<div className="flex">Empty state</div>
 										)}
 									</div>
 									<div className="flex">

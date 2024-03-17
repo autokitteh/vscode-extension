@@ -4,13 +4,18 @@ export type Session = {
 	state: number;
 	createdAt: Date;
 	inputs: object;
-	entrypoint: SessionEntrypoint;
+	entrypoint: EntrypointTrigger;
+};
+
+export type EntrypointTrigger = {
+	symbol: string;
+	location: SessionEntrypoint;
 };
 
 export type SessionEntrypoint = {
 	col: number;
 	row: number;
-	name: string;
+	name?: string;
 	path: string;
 };
 

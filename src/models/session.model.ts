@@ -1,5 +1,5 @@
 import { Session as ProtoSession } from "@ak-proto-ts/sessions/v1/session_pb";
-import { Session, SessionEntrypoint } from "@type/models";
+import { Session, EntrypointTrigger } from "@type/models";
 import { convertTimestampToDate } from "@utilities";
 
 /**
@@ -14,6 +14,6 @@ export function convertSessionProtoToModel(protoSession: ProtoSession): Session 
 		state: protoSession.state,
 		createdAt: convertTimestampToDate(protoSession.createdAt!),
 		inputs: protoSession.inputs,
-		entrypoint: protoSession.entrypoint as unknown as SessionEntrypoint,
+		entrypoint: protoSession.entrypoint as unknown as EntrypointTrigger,
 	};
 }

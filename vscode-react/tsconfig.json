@@ -61,5 +61,5 @@
 		"types": ["vite-plugin-svgr/client"],
 		"useDefineForClassFields": true
 	},
-	"include": ["./src", "./tests/**/*.test.ts"]
+	"include": ["./src", "./tests/**/*.test.ts", "../src/enums/projectDeployment.enum.ts"]
 }

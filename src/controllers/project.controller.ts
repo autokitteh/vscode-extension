@@ -1,12 +1,12 @@
 import { vsCommands, namespaces, channels } from "@constants";
 import { getResources } from "@controllers/utilities";
-import { MessageType, ProjectIntervalTypes } from "@enums";
+import { DeploymentState, MessageType, ProjectIntervalTypes } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { SessionLogRecord } from "@models";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
-import { TriggersService } from "@services";
+import { BuildsService } from "@services";
 import { SessionExecutionData } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
@@ -120,6 +120,45 @@ export class ProjectController {
 		};
 
 		this.view.update({ type: MessageType.setSessionsSection, payload: sessionsViewObject });
+
+		const activeDeployment = deployments?.find((deployment) => deployment.state === DeploymentState.ACTIVE_DEPLOYMENT);
+
+		if (activeDeployment) {
+			const { data: buildDescription, error: buildDescriptionError } = await BuildsService.getBuildDescription(
+				activeDeployment?.buildId
+			);
+
+			if (buildDescriptionError) {
+				commands.executeCommand(vsCommands.showErrorMessage, (buildDescriptionError as Error).message);
+				return;
+			}
+
+			const buildInfo = JSON.parse(buildDescription!.descriptionJson);
+			let triggers = {} as Record<string, string[]>;
+			for (let i = 0; i < buildInfo.runtimes.length; i++) {
+				if (buildInfo.runtimes[i].info.name !== "config") {
+					const fileName = Object.keys(buildInfo.runtimes[i].artifact.compiled_data)[0];
+					if (triggers[fileName]) {
+						for (let j = 0; j < buildInfo.runtimes[i].artifact.exports.length; j++) {
+							triggers[fileName].push(buildInfo.runtimes[i].artifact.exports[j].symbol);
+						}
+					} else {
+						triggers[fileName] = [];
+
+						for (let j = 0; j < buildInfo.runtimes[i].artifact.exports.length; j++) {
+							triggers[fileName].push(buildInfo.runtimes[i].artifact.exports[j]);
+						}
+					}
+				}
+			}
+
+			console.log("buildInfo", buildInfo);
+
+			this.view.update({
+				type: MessageType.setEntrypoints,
+				payload: triggers,
+			});
+		}
 
 		if (this.selectedDeploymentId) {
 			await this.selectDeployment(this.selectedDeploymentId);
@@ -270,17 +309,6 @@ export class ProjectController {
 				() => this.loadAndDisplayDeployments(),
 				this.deploymentsRefreshRate
 			);
-			const { data: triggersObject, error: triggersError } = await TriggersService.listByProjectId(this.projectId);
-			if (triggersError) {
-				commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
-				return;
-			}
-
-			this.view.update({
-				type: MessageType.setEntrypoints,
-				payload: triggersObject,
-			});
-
 			return;
 		}
 		LoggerService.error(namespaces.projectController, log);
@@ -398,8 +426,8 @@ export class ProjectController {
 		);
 	}
 
-	async runSessionExecution(SessionExecutionData: SessionExecutionData) {
-		const { data: sessionId, error } = await SessionsService.runSessionExecution(SessionExecutionData);
+	async runSessionExecution(sessionExecutionData: SessionExecutionData) {
+		const { data: sessionId, error } = await SessionsService.runSessionExecution(sessionExecutionData);
 
 		if (error) {
 			const notification = `${translate().t("sessions.executionFailed")} for project ${this.projectId}`;

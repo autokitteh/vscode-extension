@@ -51,13 +51,8 @@ export class SessionsService {
 
 	static async runSessionExecution(sessionExecutionData: SessionExecutionData): Promise<ServiceResponse<string>> {
 		try {
-			const { deploymentId, sessionInputs, entrypoint } = sessionExecutionData;
-			const newSession = {
-				deploymentId,
-				inputs: sessionInputs,
-				entrypoint: entrypoint,
-			};
-			const response = await sessionsClient.start({ session: newSession } as unknown as StartRequest);
+			const sessionAsStartRequest = { session: sessionExecutionData } as unknown as StartRequest;
+			const response = await sessionsClient.start(sessionAsStartRequest);
 			return { data: response.sessionId, error: undefined };
 		} catch (error) {
 			// eslint-disable-next-line max-len
