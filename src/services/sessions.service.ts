@@ -53,9 +53,10 @@ export class SessionsService {
 			await sessionsClient.delete({ sessionId });
 			return { data: undefined, error: undefined };
 		} catch (error) {
-			LoggerService.error(namespaces.sessionsService, `Session - ${sessionId}: ${(error as Error).message}`);
+			const log = `Session - ${sessionId}: ${(error as Error).message}`;
+			LoggerService.error(namespaces.sessionsService, log);
 
-			return { data: undefined, error };
+			return { data: undefined, error: log };
 		}
 	}
 

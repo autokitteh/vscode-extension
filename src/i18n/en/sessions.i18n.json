@@ -13,5 +13,5 @@
 	"historyTime": "Time",
 	"historyNoOutput": "No output",
 	"sessionDeleteSuccess": "Session deleted successfully",
-	"sessionDeleteError": "Error deleting session {{error}}"
+	"sessionDeleteError": "Error deleting {{error}}"
 }
