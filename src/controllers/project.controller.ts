@@ -9,7 +9,7 @@ import { DeploymentsService, ProjectsService, SessionsService, LoggerService } f
 import { BuildsService } from "@services";
 import { SessionExecutionData } from "@type";
 import { Callback } from "@type/interfaces";
-import { Deployment, Project, Session, SessionEntrypoint } from "@type/models";
+import { Deployment, EntrypointTrigger, Project, Session, SessionEntrypoint } from "@type/models";
 import isEqual from "lodash/isEqual";
 import { commands, OpenDialogOptions, window } from "vscode";
 
@@ -143,12 +143,12 @@ export class ProjectController {
 
 					triggers[fileName] = triggers[fileName] || [];
 
-					for (const entrypoint of runtime.artifact.exports) {
-						triggers[fileName].push({
-							name: entrypoint.symbol,
-							...entrypoint.location,
-						});
-					}
+					const sessionEntrypoints = runtime.artifact.exports.map((entrypoint: EntrypointTrigger) => ({
+						...entrypoint.location,
+						name: entrypoint.symbol,
+					}));
+
+					triggers[fileName].push(...sessionEntrypoints);
 				}
 			}
 
