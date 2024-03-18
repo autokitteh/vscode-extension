@@ -129,7 +129,13 @@ export class ProjectController {
 			);
 
 			if (buildDescriptionError) {
-				commands.executeCommand(vsCommands.showErrorMessage, (buildDescriptionError as Error).message);
+				commands.executeCommand(
+					vsCommands.showErrorMessage,
+					`${translate().t("errors.buildInfoFetchFailedForBuild", {
+						buildId: activeDeployment?.buildId,
+						error: (buildDescriptionError as Error).message,
+					})}`
+				);
 				return;
 			}
 

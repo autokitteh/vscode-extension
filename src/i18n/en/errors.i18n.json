@@ -34,5 +34,6 @@
 	"deploymentsFetchFailed": "Couldn't fetch deployments",
 	"sessionFetchFailed": "Couldn't fetch sessions for deployment",
 	"noResponse": "Connectivity issue, no response from server",
-	"errorOccured": "An error occurred"
+	"errorOccured": "An error occurred",
+	"buildInfoFetchFailedForBuild": "Couldn't fetch build info for build {{buildId}}, error: {{error}}"
 }
