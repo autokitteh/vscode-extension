@@ -3,8 +3,7 @@ import { MessageType, SessionStateType } from "@enums";
 import { DeploymentState } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
-import { Editor } from "@monaco-editor/react";
-import { AKButton, AKDeploymentState, AKModal } from "@react-components";
+import { AKButton, AKDeploymentState } from "@react-components";
 import {
 	AKTable,
 	AKTableMessage,
@@ -33,7 +32,6 @@ export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (d
 	const [deployments, setDeployments] = useState<Deployment[] | undefined>();
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
 
-	const [modal, setModal] = useState(false);
 	const [files, setFiles] = useState<Record<string, SessionEntrypoint[]>>();
 	const [selectedFile, setSelectedFile] = useState<string>("");
 	const [functions, setFunctions] = useState<SessionEntrypoint[]>();
@@ -99,19 +97,11 @@ export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (d
 	};
 
 	useEffect(() => {
-		const handleKeyDown = (event: KeyboardEvent) => {
-			if (event.key === "Escape") {
-				setModal(false);
-			}
-		};
-		window.addEventListener("keydown", handleKeyDown);
-
 		const interval = setInterval(() => {
 			setRerender((rerender) => rerender + 1);
 		}, 1000);
 
 		return () => {
-			window.removeEventListener("keydown", handleKeyDown);
 			clearInterval(interval);
 		};
 	}, []);
@@ -330,30 +320,6 @@ export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (d
 			{deployments && deployments.length === 0 && (
 				<AKTableMessage>{translate().t("reactApp.deployments.noDeployments")}</AKTableMessage>
 			)}
-
-			{/* {modal && (
-				<AKModal>
-					<div className="flex justify-end cursor-pointer" onClick={() => setModal(false)}>
-						X
-					</div>
-					<div className="m-auto">
-						<div className="flex w-full justify-end mt-2">
-							<Editor
-								height="90vh"
-								defaultLanguage="json"
-								defaultValue={sessionInputsForExecution ? JSON.stringify(sessionInputsForExecution, null, 2) : ""}
-								theme="vs-dark"
-								options={{ readOnly: true }}
-							/>
-						</div>
-						<div className="flex w-full justify-end mt-2">
-							<AKButton classes="ml-2" onClick={() => setModal(false)}>
-								{translate().t("reactApp.deployments.closeModalButton")}
-							</AKButton>
-						</div>
-					</div>
-				</AKModal>
-			)} */}
 		</div>
 	);
 };

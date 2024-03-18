@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
-import { AKSessionState } from "@react-components";
+import { Editor } from "@monaco-editor/react";
+import { AKButton, AKModal, AKSessionState } from "@react-components";
 import {
 	AKTable,
 	AKTableMessage,
@@ -19,6 +20,8 @@ import { Session } from "@type/models";
 export const AKSessions = ({ activeDeployment }: { activeDeployment: string | undefined }) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
+	const [modal, setModal] = useState(false);
+
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
@@ -28,6 +31,7 @@ export const AKSessions = ({ activeDeployment }: { activeDeployment: string | un
 		setSelectedSession,
 	};
 	const [deploymentIdForExecution, setDeploymentsIdForExecution] = useState<string | undefined>(activeDeployment);
+	const [sessionInputs, setSessionInputs] = useState<string>();
 
 	const handleMessagesFromExtension = useCallback(
 		(event: MessageEvent<Message>) => HandleSessionsIncomingMessages(event, messageHandlers),
@@ -51,11 +55,20 @@ export const AKSessions = ({ activeDeployment }: { activeDeployment: string | un
 		}
 	}, [sessions]);
 	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") {
+				setModal(false);
+			}
+		};
+		window.addEventListener("keydown", handleKeyDown);
 		const interval = setInterval(() => {
 			setRerender((rerender) => rerender + 1);
 		}, 1000);
 
-		return () => clearInterval(interval);
+		return () => {
+			clearInterval(interval);
+			window.removeEventListener("keydown", handleKeyDown);
+		};
 	}, []);
 	useEffect(() => {
 		setDeploymentsIdForExecution(activeDeployment);
@@ -73,6 +86,11 @@ export const AKSessions = ({ activeDeployment }: { activeDeployment: string | un
 		};
 
 		sendMessage(MessageType.runSessionExecution, sessionExecutionData);
+	};
+
+	const displayInputsModal = (sessionInputs: string) => {
+		setSessionInputs(JSON.parse(sessionInputs));
+		setModal(true);
 	};
 
 	return (
@@ -102,11 +120,18 @@ export const AKSessions = ({ activeDeployment }: { activeDeployment: string | un
 							</AKTableCell>
 							<AKTableCell>
 								{session.deploymentId === deploymentIdForExecution && (
-									<div
-										className="codicon codicon-redo mr-2 cursor-pointer"
-										title="Execute"
-										onClick={() => executeSession(session)}
-									></div>
+									<div>
+										<div
+											className="codicon codicon-redo mr-2 cursor-pointer"
+											title="Execute"
+											onClick={() => executeSession(session)}
+										></div>
+										<div
+											className="codicon codicon-symbol-namespace mr-2 cursor-pointer"
+											title="Execute"
+											onClick={() => displayInputsModal(JSON.stringify(session.inputs))}
+										></div>
+									</div>
 								)}
 							</AKTableCell>
 						</AKTableRow>
@@ -118,6 +143,30 @@ export const AKSessions = ({ activeDeployment }: { activeDeployment: string | un
 			)}
 			{sessions && sessions.length === 0 && (
 				<AKTableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</AKTableMessage>
+			)}
+
+			{modal && (
+				<AKModal>
+					<div className="flex justify-end cursor-pointer" onClick={() => setModal(false)}>
+						X
+					</div>
+					<div className="m-auto">
+						<div className="flex w-full justify-end mt-2">
+							<Editor
+								height="90vh"
+								defaultLanguage="json"
+								defaultValue={sessionInputs ? JSON.stringify(sessionInputs, null, 2) : ""}
+								theme="vs-dark"
+								options={{ readOnly: true }}
+							/>
+						</div>
+						<div className="flex w-full justify-end mt-2">
+							<AKButton classes="ml-2" onClick={() => setModal(false)}>
+								{translate().t("reactApp.deployments.closeModalButton")}
+							</AKButton>
+						</div>
+					</div>
+				</AKModal>
 			)}
 		</div>
 	);
