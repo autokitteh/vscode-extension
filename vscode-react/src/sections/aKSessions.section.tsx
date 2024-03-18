@@ -17,7 +17,7 @@ import { HandleSessionsIncomingMessages, getTimePassed, sendMessage } from "@rea
 import { Message } from "@type";
 import { Session } from "@type/models";
 
-export const AKSessions = ({ activeDeployment }: { activeDeployment: string | undefined }) => {
+export const AKSessions = ({ activeDeployment }: { activeDeployment?: string }) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
 	const [modal, setModal] = useState(false);

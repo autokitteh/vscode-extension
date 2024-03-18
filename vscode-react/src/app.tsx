@@ -15,7 +15,7 @@ function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
-	const [activeDeployment, setActiveDeployment] = useState<string | undefined>();
+	const [activeDeployment, setActiveDeployment] = useState<string>();
 	const messageHandlers: IIncomingMessagesHandler = {
 		setProjectName,
 		setThemeVisualType,
