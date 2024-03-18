@@ -17,7 +17,8 @@ import { IIncomingDeploymentsMessagesHandler } from "@react-interfaces";
 import { HandleDeploymentsIncomingMessages, getTimePassed, sendMessage } from "@react-utilities";
 import { cn } from "@react-utilities/cnClasses.utils";
 import { Message } from "@type";
-import { Deployment, EntrypointTrigger, SessionEntrypoint } from "@type/models";
+import { Deployment, SessionEntrypoint } from "@type/models";
+import { SessionExecutionForView } from "@type/views";
 import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
 import { usePopper } from "react-popper";
 
@@ -33,12 +34,12 @@ export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (d
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
 
 	const [modal, setModal] = useState(false);
-	const [files, setFiles] = useState<Record<string, SessionEntrypoint>>();
+	const [files, setFiles] = useState<Record<string, SessionEntrypoint[]>>();
 	const [selectedFile, setSelectedFile] = useState<string>("");
-	const [functions, setFunctions] = useState<string[]>();
+	const [functions, setFunctions] = useState<SessionEntrypoint[]>();
 	const [selectedFunction, setSelectedFunction] = useState<string>("");
 	const [selectedEntrypoint, setSelectedEntrypoint] = useState<SessionEntrypoint>();
-	const [entrypoints, setEntrypoints] = useState<EntrypointTrigger | undefined>();
+	const [entrypoints, setEntrypoints] = useState<SessionExecutionForView>();
 
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
 	const [displayExecutePopper, setDisplayExecutePopper] = useState<boolean>(false);
@@ -144,43 +145,16 @@ export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (d
 	}, [handleMessagesFromExtension]);
 
 	useEffect(() => {
-		if (entrypoints && Object.keys(entrypoints).length > 0) {
-			const filesWithFunctions = Object.keys(entrypoints).reduce((acc, currentKey) => {
-				acc[currentKey] = entrypoints[currentKey];
-				return acc;
-			}, {});
+		console.log("entrypoints", entrypoints);
 
-			console.log("filesWithFunctions", filesWithFunctions);
-
-			setFiles(filesWithFunctions);
-
-			const firstFileName = Object.keys(filesWithFunctions)[0];
-			setSelectedFile(firstFileName);
-			const fileFunctions = filesWithFunctions[firstFileName];
-
-			setFunctions(fileFunctions);
-			setSelectedFunction(JSON.stringify(fileFunctions[0]));
-
-			setSelectedEntrypoint({
-				name: fileFunctions[0].name,
-				...fileFunctions[0].location,
-			});
+		if (entrypoints && Object.keys(entrypoints.filesWithFunctions).length) {
+			setFiles(entrypoints.filesWithFunctions);
+			setSelectedFile(entrypoints.firstFileName);
+			setFunctions(entrypoints.firstFileFunctions);
+			setSelectedFunction(entrypoints.firstFunctionValue);
+			setSelectedEntrypoint(entrypoints.firstEntrypoint);
 		}
 	}, [entrypoints]);
-
-	useEffect(() => {
-		if (files) {
-			const firstFileName = Object.keys(files)[0];
-			const fileFunctions = files[firstFileName];
-
-			setFunctions(fileFunctions);
-
-			setSelectedEntrypoint({
-				name: fileFunctions[0].name,
-				...fileFunctions[0].location,
-			});
-		}
-	}, [selectedFile]);
 
 	const runSessionExecution = () => {
 		const activeDeployment = deployments?.find((d) => !isDeploymentStateStartable(d.state));
@@ -211,11 +185,7 @@ export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (d
 	};
 
 	const handleFunctionChange = (event: string) => {
-		const triggerFunction = JSON.parse(event);
-		setSelectedEntrypoint({
-			name: triggerFunction.symbol,
-			...triggerFunction.location,
-		});
+		setSelectedEntrypoint(JSON.parse(event));
 		setSelectedFunction(event);
 	};
 
@@ -330,8 +300,8 @@ export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (d
 										>
 											{functions &&
 												functions.map((func) => (
-													<option key={func.symbol} value={JSON.stringify(func)}>
-														{func.symbol}
+													<option key={func.name} value={JSON.stringify(func)}>
+														{func.name}
 													</option>
 												))}
 										</VSCodeDropdown>
@@ -361,7 +331,7 @@ export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (d
 				<AKTableMessage>{translate().t("reactApp.deployments.noDeployments")}</AKTableMessage>
 			)}
 
-			{modal && (
+			{/* {modal && (
 				<AKModal>
 					<div className="flex justify-end cursor-pointer" onClick={() => setModal(false)}>
 						X
@@ -383,7 +353,7 @@ export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (d
 						</div>
 					</div>
 				</AKModal>
-			)}
+			)} */}
 		</div>
 	);
 };

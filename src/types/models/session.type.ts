@@ -15,7 +15,7 @@ export type EntrypointTrigger = {
 export type SessionEntrypoint = {
 	col: number;
 	row: number;
-	name?: string;
+	name: string;
 	path: string;
 };
 

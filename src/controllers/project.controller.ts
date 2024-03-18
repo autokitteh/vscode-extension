@@ -9,7 +9,7 @@ import { DeploymentsService, ProjectsService, SessionsService, LoggerService } f
 import { BuildsService } from "@services";
 import { SessionExecutionData } from "@type";
 import { Callback } from "@type/interfaces";
-import { Deployment, Project, Session } from "@type/models";
+import { Deployment, Project, Session, SessionEntrypoint } from "@type/models";
 import isEqual from "lodash/isEqual";
 import { commands, OpenDialogOptions, window } from "vscode";
 
@@ -134,29 +134,35 @@ export class ProjectController {
 			}
 
 			const buildInfo = JSON.parse(buildDescription!.descriptionJson);
-			let triggers = {} as Record<string, string[]>;
-			for (let i = 0; i < buildInfo.runtimes.length; i++) {
-				if (buildInfo.runtimes[i].info.name !== "config") {
-					const fileName = Object.keys(buildInfo.runtimes[i].artifact.compiled_data)[0];
-					if (triggers[fileName]) {
-						for (let j = 0; j < buildInfo.runtimes[i].artifact.exports.length; j++) {
-							triggers[fileName].push(buildInfo.runtimes[i].artifact.exports[j].symbol);
-						}
-					} else {
-						triggers[fileName] = [];
 
-						for (let j = 0; j < buildInfo.runtimes[i].artifact.exports.length; j++) {
-							triggers[fileName].push(buildInfo.runtimes[i].artifact.exports[j]);
-						}
+			let triggers: Record<string, SessionEntrypoint[]> = {};
+
+			for (const runtime of buildInfo.runtimes) {
+				if (runtime.info.name !== "config") {
+					const [fileName] = Object.keys(runtime.artifact.compiled_data);
+
+					triggers[fileName] = triggers[fileName] || [];
+
+					for (const entrypoint of runtime.artifact.exports) {
+						triggers[fileName].push({
+							name: entrypoint.symbol,
+							...entrypoint.location,
+						});
 					}
 				}
 			}
 
-			console.log("buildInfo", buildInfo);
-
+			const firstEntrypoint = triggers[Object.keys(triggers)[0]][0];
+			const firstFileFunctions = triggers[Object.keys(triggers)[0]];
 			this.view.update({
 				type: MessageType.setEntrypoints,
-				payload: triggers,
+				payload: {
+					filesWithFunctions: triggers,
+					firstFileFunctions,
+					firstFileName: Object.keys(triggers)[0],
+					firstFunctionValue: JSON.stringify(firstFileFunctions[0]),
+					firstEntrypoint,
+				},
 			});
 		}
 
