@@ -135,7 +135,7 @@ export class ProjectController {
 
 			const buildInfo = JSON.parse(buildDescription!.descriptionJson);
 
-			let triggers: Record<string, SessionEntrypoint[]> = {};
+			const triggers: Record<string, SessionEntrypoint[]> = {};
 
 			for (const runtime of buildInfo.runtimes) {
 				if (runtime.info.name !== "config") {
