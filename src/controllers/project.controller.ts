@@ -436,15 +436,15 @@ export class ProjectController {
 		const { data: sessionId, error } = await SessionsService.runSessionExecution(sessionExecutionData);
 
 		if (error) {
-			const notification = `${translate().t("sessions.executionFailed")} for project ${this.projectId}`;
+			const notification = `${translate().t("sessions.executionFailed")} for session ${sessionId}`;
 			const log = `${translate().t("sessions.executionFailedError", {
 				error,
-			})} for project ${this.projectId}`;
+			})} for project ${this.projectId}, session: ${sessionId}`;
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
-		const successMessage = `${translate().t("sessions.executionSucceed")} for project ${this.projectId}`;
+		const successMessage = `${translate().t("sessions.executionSucceed")} for session ${sessionId}`;
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 		LoggerService.info(namespaces.projectController, successMessage);
 
