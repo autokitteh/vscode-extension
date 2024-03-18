@@ -80,8 +80,8 @@ export const AKSessions = ({ activeDeployment }: { activeDeployment: string | un
 			return;
 		}
 		const sessionExecutionData = {
+			sessionId: session.sessionId,
 			deploymentId: deploymentIdForExecution,
-			sessionInputs: session.inputs,
 			entrypoint: session.entrypoint,
 		};
 
@@ -94,7 +94,7 @@ export const AKSessions = ({ activeDeployment }: { activeDeployment: string | un
 	};
 
 	return (
-		<div className="mt-4  h-[43vh] overflow-y-auto overflow-x-hidden">
+		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
 			<div className="flex items-baseline">
 				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.sessions.tableTitle")}</h1>
 				<div className="ml-1 text-lg font-extralight">({totalSessions})</div>
