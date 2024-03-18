@@ -181,6 +181,9 @@ export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (d
 
 	return (
 		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
+			{displayExecutePopper && (
+				<div className="absolute w-screen h-screen " onClick={() => setDisplayExecutePopper(false)} />
+			)}
 			<div className="flex items-baseline">
 				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.deployments.tableTitle")}</h1>
 				<div className="ml-1 text-lg font-extralight">({totalDeployments})</div>
