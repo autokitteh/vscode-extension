@@ -14,6 +14,4 @@ export enum MessageType {
 	activateDeployment = "ACTIVATE_DEPLOYMENT",
 	runSessionExecution = "RUN_SESSION_EXECUTION",
 	setEntrypoints = "SET_ENTRYPOINTS",
-	setExecutionInputs = "SET_EXECUTION_INPUTS",
-	saveExecutionProps = "SAVE_EXECUTION_PROPS",
 }
