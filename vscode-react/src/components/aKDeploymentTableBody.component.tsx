@@ -5,6 +5,7 @@ import { AKDeploymentState } from "@react-components";
 import { AKButton } from "@react-components/aKButton.component";
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
 import { useDeployments } from "@react-hooks";
+import { useModals } from "@react-stores/useModals";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { cn } from "@react-utilities/cnClasses.utils";
 import { Deployment, SessionEntrypoint } from "@type/models";
@@ -25,6 +26,10 @@ export const AKDeploymentTableBody = ({
 			setSelectedDeployment(selectedDeploymentId);
 		}
 	}, [selectedDeploymentId]);
+
+	const executeDeploymentPopperState = useModals((state) => state.modals["executeDeploymentPopper"]);
+	const hideModal = useModals((state) => state.hideModal);
+	const showModal = useModals((state) => state.showModal);
 
 	const referenceEl = useRef<HTMLDivElement | null>(null);
 	const popperEl = useRef<HTMLDivElement | null>(null);
@@ -71,7 +76,7 @@ export const AKDeploymentTableBody = ({
 	};
 
 	const togglePopper = () => {
-		setDisplayExecutePopper(true);
+		showModal("executeDeploymentPopper");
 	};
 	const getSessionsByDeploymentId = (deploymentId: string) => {
 		sendMessage(MessageType.selectDeployment, deploymentId);
@@ -79,7 +84,6 @@ export const AKDeploymentTableBody = ({
 	};
 
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
-	const [displayExecutePopper, setDisplayExecutePopper] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (entrypoints && Object.keys(entrypoints.filesWithFunctions).length) {
@@ -116,7 +120,7 @@ export const AKDeploymentTableBody = ({
 
 		sendMessage(MessageType.runSessionExecution, sessionExecutionData);
 
-		setDisplayExecutePopper(false);
+		hideModal("executeDeploymentPopper");
 	};
 
 	const handleFunctionChange = (event: string) => {
@@ -173,7 +177,7 @@ export const AKDeploymentTableBody = ({
 						ref={popperEl}
 						style={styles.popper}
 						{...attributes.popper}
-						className={cn(popperClasses, [{ invisible: !displayExecutePopper }])}
+						className={cn(popperClasses, [{ invisible: !executeDeploymentPopperState }])}
 					>
 						<div className="mb-3 text-left">
 							<strong className="mb-2">{translate().t("reactApp.deployments.executeFile")}</strong>
@@ -211,7 +215,7 @@ export const AKDeploymentTableBody = ({
 						<div className="flex">
 							<AKButton
 								classes="bg-vscode-editor-background text-vscode-foreground"
-								onClick={() => setDisplayExecutePopper(false)}
+								onClick={() => hideModal("executeDeploymentPopper")}
 							>
 								{translate().t("reactApp.deployments.dismiss")}
 							</AKButton>

@@ -36,6 +36,8 @@
 			"@react-enums/*": ["src/enums/*"],
 			"@react-hooks": ["src/hooks/index"],
 			"@react-hooks/*": ["src/hooks/*"],
+			"@react-stores": ["src/stores/index"],
+			"@react-stores/*": ["src/stores/*"],
 			"@react-interfaces": ["src/interfaces/index"],
 			"@react-interfaces/*": ["src/interfaces/*"],
 			"@react-sections": ["src/sections/index"],

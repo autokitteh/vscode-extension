@@ -4,6 +4,7 @@ import { translate } from "@i18n";
 import { AKDeploymentTableBody, AKDeploymentTableHeader } from "@react-components";
 import { AKTable, AKTableMessage } from "@react-components/AKTable";
 import { useDeployments } from "@react-hooks";
+import { useModals } from "@react-stores/useModals";
 import { Deployment } from "@type/models";
 
 export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (deploymentId: string) => void }) => {
@@ -12,6 +13,8 @@ export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (d
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [rerender, setRerender] = useState(0);
 
+	const executeDeploymentPopperState = useModals((state) => state.modals["executeDeploymentPopper"]);
+	const hideModal = useModals((state) => state.hideModal);
 	const [totalDeployments, setTotalDeployments] = useState<number>();
 	const [deployments, setDeployments] = useState<Deployment[]>();
 
@@ -51,9 +54,9 @@ export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (d
 				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.deployments.tableTitle")}</h1>
 				<div className="ml-1 text-lg font-extralight">({totalDeployments})</div>
 			</div>
-			{/* {displayExecutePopper && (
-				<div className="absolute w-screen h-screen" onClick={() => setDisplayExecutePopper(false)} />
-			)} */}
+			{executeDeploymentPopperState && (
+				<div className="absolute w-screen h-screen" onClick={() => hideModal("executeDeploymentPopper")} />
+			)}
 			<AKTable>
 				<AKDeploymentTableHeader />
 				<AKDeploymentTableBody deployments={deployments} setActiveDeployment={setActiveDeployment} />
