@@ -1,3 +1,10 @@
+## [0.8.2-dev.7](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.6...v0.8.2-dev.7) (2024-03-19)
+
+
+### Bug Fixes
+
+* paths issue on windows ([#191](https://github.com/autokitteh/vscode-extension/issues/191)) ([7298668](https://github.com/autokitteh/vscode-extension/commit/7298668326b90d7372152b8d3f7e8fd5b3440e7a))
+
 ## [0.8.2-dev.6](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.5...v0.8.2-dev.6) (2024-03-11)
 
 
