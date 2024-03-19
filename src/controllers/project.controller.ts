@@ -123,58 +123,59 @@ export class ProjectController {
 
 		const activeDeployment = deployments?.find((deployment) => deployment.state === DeploymentState.ACTIVE_DEPLOYMENT);
 
-		if (activeDeployment) {
-			const { data: buildDescription, error: buildDescriptionError } = await BuildsService.getBuildDescription(
-				activeDeployment?.buildId
-			);
-
-			if (buildDescriptionError) {
-				commands.executeCommand(
-					vsCommands.showErrorMessage,
-					`${translate().t("errors.buildInfoFetchFailedForBuild", {
-						buildId: activeDeployment?.buildId,
-						error: (buildDescriptionError as Error).message,
-					})}`
-				);
-				return;
-			}
-
-			const buildInfo = JSON.parse(buildDescription!.descriptionJson);
-
-			const triggers: Record<string, SessionEntrypoint[]> = {};
-
-			for (const runtime of buildInfo.runtimes) {
-				if (runtime.info.name !== "config") {
-					const [fileName] = Object.keys(runtime.artifact.compiled_data);
-
-					triggers[fileName] = triggers[fileName] || [];
-
-					const sessionEntrypoints = runtime.artifact.exports.map((entrypoint: EntrypointTrigger) => ({
-						...entrypoint.location,
-						name: entrypoint.symbol,
-					}));
-
-					triggers[fileName].push(...sessionEntrypoints);
-				}
-			}
-
-			const firstEntrypoint = triggers[Object.keys(triggers)[0]][0];
-			const firstFileFunctions = triggers[Object.keys(triggers)[0]];
-			this.view.update({
-				type: MessageType.setEntrypoints,
-				payload: {
-					filesWithFunctions: triggers,
-					firstFileFunctions,
-					firstFileName: Object.keys(triggers)[0],
-					firstFunctionValue: JSON.stringify(firstFileFunctions[0]),
-					firstEntrypoint,
-				},
-			});
-		}
-
 		if (this.selectedDeploymentId) {
 			await this.selectDeployment(this.selectedDeploymentId);
 		}
+
+		if (!activeDeployment) {
+			return;
+		}
+		const { data: buildDescription, error: buildDescriptionError } = await BuildsService.getBuildDescription(
+			activeDeployment?.buildId
+		);
+
+		if (buildDescriptionError) {
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				`${translate().t("errors.buildInfoFetchFailedForBuild", {
+					buildId: activeDeployment?.buildId,
+					error: (buildDescriptionError as Error).message,
+				})}`
+			);
+			return;
+		}
+
+		const buildInfo = JSON.parse(buildDescription!.descriptionJson);
+
+		const triggers: Record<string, SessionEntrypoint[]> = {};
+
+		for (const runtime of buildInfo.runtimes) {
+			if (runtime.info.name !== "config") {
+				const [fileName] = Object.keys(runtime.artifact.compiled_data);
+
+				triggers[fileName] = triggers[fileName] || [];
+
+				const sessionEntrypoints = runtime.artifact.exports.map((entrypoint: EntrypointTrigger) => ({
+					...entrypoint.location,
+					name: entrypoint.symbol,
+				}));
+
+				triggers[fileName].push(...sessionEntrypoints);
+			}
+		}
+
+		const firstEntrypoint = triggers[Object.keys(triggers)[0]][0];
+		const firstFileFunctions = triggers[Object.keys(triggers)[0]];
+		this.view.update({
+			type: MessageType.setEntrypoints,
+			payload: {
+				filesWithFunctions: triggers,
+				firstFileFunctions,
+				firstFileName: Object.keys(triggers)[0],
+				firstFunctionValue: JSON.stringify(firstFileFunctions[0]),
+				firstEntrypoint,
+			},
+		});
 	}
 
 	async selectDeployment(deploymentId: string): Promise<void> {
@@ -207,6 +208,19 @@ export class ProjectController {
 			type: MessageType.selectDeployment,
 			payload: deploymentId,
 		});
+
+		if (this.sessions?.length) {
+			this.view.update({
+				type: MessageType.selectSession,
+				payload: this.sessions[0].sessionId,
+			});
+
+			this.startInterval(
+				ProjectIntervalTypes.sessionHistory,
+				() => this.displaySessionsHistory(this.sessions![0].sessionId!),
+				this.sessionsLogRefreshRate
+			);
+		}
 	}
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
