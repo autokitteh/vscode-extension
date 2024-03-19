@@ -467,7 +467,6 @@ export class ProjectController {
 			return;
 		}
 		const successMessage = `${translate().t("sessions.executionSucceed")} for session ${sessionId}`;
-		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 		LoggerService.info(namespaces.projectController, successMessage);
 
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);

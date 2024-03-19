@@ -13,6 +13,5 @@
 	"historyNoOutput": "No output",
 	"historyPrint": "Print",
 	"executionFailed": "Session execution failed",
-	"executionSucceed": "Session execution succeed",
 	"executionFailedError": "Session execution failed - {{error}}"
 }

@@ -4,13 +4,12 @@ import { SessionSectionViewModel } from "@models/views";
 import { AKMonacoEditorModal, AKSessionsTableHeader } from "@react-components";
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
 import { AKTable, AKTableMessage } from "@react-components/AKTable";
+import { useCloseOnEscape, useForceRerender } from "@react-hooks";
 import { IIncomingSessionsMessagesHandler } from "@react-interfaces";
 import { HandleSessionsIncomingMessages } from "@react-utilities";
 import { Message } from "@type";
 
 export const AKSessions = ({ activeDeployment }: { activeDeployment?: string }) => {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [rerender, setRerender] = useState(0);
 	const [modal, setModal] = useState(false);
 
 	const [isLoading, setIsLoading] = useState(true);
@@ -36,27 +35,16 @@ export const AKSessions = ({ activeDeployment }: { activeDeployment?: string }) 
 			window.removeEventListener("message", handleMessagesFromExtension);
 		};
 	}, [handleMessagesFromExtension]);
+
 	useEffect(() => {
 		if (isLoading) {
 			setIsLoading(false);
 		}
 	}, [sessions]);
-	useEffect(() => {
-		const handleKeyDown = (event: KeyboardEvent) => {
-			if (event.key === "Escape") {
-				setModal(false);
-			}
-		};
-		window.addEventListener("keydown", handleKeyDown);
-		const interval = setInterval(() => {
-			setRerender((rerender) => rerender + 1);
-		}, 1000);
 
-		return () => {
-			clearInterval(interval);
-			window.removeEventListener("keydown", handleKeyDown);
-		};
-	}, []);
+	useCloseOnEscape(() => setModal(false));
+	useForceRerender();
+
 	useEffect(() => {
 		setDeploymentsIdForExecution(activeDeployment);
 	}, [activeDeployment]);

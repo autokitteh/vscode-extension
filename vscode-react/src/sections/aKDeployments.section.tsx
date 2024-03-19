@@ -3,27 +3,16 @@ import { DeploymentState } from "@enums";
 import { translate } from "@i18n";
 import { AKDeploymentTableBody, AKDeploymentTableHeader } from "@react-components";
 import { AKTable, AKTableMessage } from "@react-components/AKTable";
-import { useDeployments } from "@react-hooks";
+import { useDeployments, useForceRerender } from "@react-hooks";
 import { Deployment } from "@type/models";
 
 export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (deploymentId: string) => void }) => {
+	useForceRerender();
+
 	const { deploymentsSection } = useDeployments();
 	const [isLoading, setIsLoading] = useState(true);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [rerender, setRerender] = useState(0);
-
 	const [totalDeployments, setTotalDeployments] = useState<number>();
 	const [deployments, setDeployments] = useState<Deployment[]>();
-
-	useEffect(() => {
-		const interval = setInterval(() => {
-			setRerender((rerender) => rerender + 1);
-		}, 1000);
-
-		return () => {
-			clearInterval(interval);
-		};
-	}, []);
 
 	const isDeploymentStateStartable = (deploymentState: number) =>
 		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
