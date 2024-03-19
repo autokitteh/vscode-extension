@@ -460,6 +460,12 @@ export class ProjectController {
 			type: MessageType.selectSession,
 			payload: sessionId,
 		});
+
+		this.selectedDeploymentId = sessionExecutionData.deploymentId;
+		this.view.update({
+			type: MessageType.selectDeployment,
+			payload: sessionExecutionData.deploymentId,
+		});
 		this.startInterval(
 			ProjectIntervalTypes.sessionHistory,
 			() => this.displaySessionsHistory(sessionId!),
