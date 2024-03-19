@@ -144,7 +144,8 @@ export class ProjectController {
 		const triggers: Record<string, SessionEntrypoint[]> = {};
 
 		for (const runtime of buildInfo.runtimes) {
-			if (runtime.info.name !== "config") {
+			// TODO: If we add support for other languages, we should add a switch here
+			if (runtime.info.name === "starlark") {
 				const [fileName] = Object.keys(runtime.artifact.compiled_data);
 
 				triggers[fileName] = triggers[fileName] || [];
