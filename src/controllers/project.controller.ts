@@ -166,13 +166,15 @@ export class ProjectController {
 
 		const firstEntrypoint = triggers[Object.keys(triggers)[0]][0];
 		const firstFileFunctions = triggers[Object.keys(triggers)[0]];
+		const firstDisplayedFileName = Object.keys(triggers)[0];
+		const firstDisplayedFunctionValue = JSON.stringify(firstFileFunctions[0]);
 		this.view.update({
 			type: MessageType.setEntrypoints,
 			payload: {
 				filesWithFunctions: triggers,
 				firstFileFunctions,
-				firstFileName: Object.keys(triggers)[0],
-				firstFunctionValue: JSON.stringify(firstFileFunctions[0]),
+				firstFileName: firstDisplayedFileName,
+				firstFunctionValue: firstDisplayedFunctionValue,
 				firstEntrypoint,
 			},
 		});
