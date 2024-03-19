@@ -23,8 +23,7 @@
 		"react-dom": "^18.2.0",
 		"react-popper": "^2.3.0",
 		"tailwind-merge": "^2.2.1",
-		"vite-plugin-svgr": "^4.2.0",
-		"zustand": "^4.5.2"
+		"vite-plugin-svgr": "^4.2.0"
 	},
 	"devDependencies": {
 		"@types/react": "^18.2.39",
