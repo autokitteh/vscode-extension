@@ -131,7 +131,7 @@ export class ProjectController {
 			return;
 		}
 		const { data: buildDescription, error: buildDescriptionError } = await BuildsService.getBuildDescription(
-			activeDeployment?.buildId
+			activeDeployment.buildId
 		);
 
 		if (buildDescriptionError) {
