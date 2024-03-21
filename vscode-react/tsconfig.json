@@ -32,6 +32,8 @@
 			"@react-components/*": ["src/components/*"],
 			"@react-constants": ["src/constants/index"],
 			"@react-constants/*": ["src/constants/*"],
+			"@react-context": ["src/context/index"],
+			"@react-context/*": ["src/context/*"],
 			"@react-enums": ["src/enums/index"],
 			"@react-enums/*": ["src/enums/*"],
 			"@react-hooks": ["src/hooks/index"],

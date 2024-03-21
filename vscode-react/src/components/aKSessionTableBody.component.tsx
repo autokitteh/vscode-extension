@@ -1,31 +1,28 @@
-import React from "react";
+import React, { useContext } from "react";
 import { MessageType } from "@enums";
 import { AKSessionState } from "@react-components";
 import { AKTableRow, AKTableCell } from "@react-components/AKTable";
+import { ExecutionDeploymentContext } from "@react-context";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
 
 export const AKSessionsTableBody = ({
 	sessions,
 	displayInputsModal,
-	deploymentIdForExecution,
 	selectedSession,
 	setSelectedSession,
 }: {
 	sessions?: Session[];
 	displayInputsModal: (sessionInputs: string) => void;
-	deploymentIdForExecution?: string;
 	selectedSession?: string;
 	setSelectedSession: (sessionId: string) => void;
 }) => {
+	const { lastDeployment } = useContext(ExecutionDeploymentContext);
+
 	const executeSession = (session: Session) => {
-		if (!deploymentIdForExecution) {
-			// Display Error
-			return;
-		}
 		const sessionExecutionData = {
 			sessionId: session.sessionId,
-			deploymentId: deploymentIdForExecution,
+			deploymentId: lastDeployment,
 			entrypoint: session.entrypoint,
 		};
 
@@ -51,7 +48,7 @@ export const AKSessionsTableBody = ({
 							{session.sessionId}
 						</AKTableCell>
 						<AKTableCell>
-							{session.deploymentId === deploymentIdForExecution && (
+							{session.deploymentId === lastDeployment && (
 								<div>
 									<div
 										className="codicon codicon-redo mr-2 cursor-pointer"

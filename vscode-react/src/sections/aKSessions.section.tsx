@@ -9,11 +9,10 @@ import { IIncomingSessionsMessagesHandler } from "@react-interfaces";
 import { HandleSessionsIncomingMessages } from "@react-utilities";
 import { Message } from "@type";
 
-export const AKSessions = ({ activeDeployment }: { activeDeployment?: string }) => {
+export const AKSessions = () => {
 	const [modal, setModal] = useState(false);
 
 	const [isLoading, setIsLoading] = useState(true);
-	const [deploymentIdForExecution, setDeploymentsIdForExecution] = useState<string | undefined>(activeDeployment);
 	const [sessionInputs, setSessionInputs] = useState<string>();
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
@@ -45,10 +44,6 @@ export const AKSessions = ({ activeDeployment }: { activeDeployment?: string }) 
 	useCloseOnEscape(() => setModal(false));
 	useForceRerender();
 
-	useEffect(() => {
-		setDeploymentsIdForExecution(activeDeployment);
-	}, [activeDeployment]);
-
 	return (
 		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
 			<div className="flex items-baseline">
@@ -60,7 +55,6 @@ export const AKSessions = ({ activeDeployment }: { activeDeployment?: string }) 
 				<AKSessionsTableBody
 					displayInputsModal={setSessionInputs}
 					sessions={sessions}
-					deploymentIdForExecution={deploymentIdForExecution}
 					selectedSession={selectedSession}
 					setSelectedSession={setSelectedSession}
 				/>

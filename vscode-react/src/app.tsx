@@ -4,6 +4,7 @@ import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKButton, AKLogo } from "@react-components";
+import { ExecutionDeploymentContext } from "@react-context";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { HandleIncomingMessages, sendMessage } from "@react-utilities";
@@ -15,7 +16,7 @@ function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
-	const [activeDeployment, setActiveDeployment] = useState<string>();
+	const [lastDeployment, setLastDeployment] = useState<string>();
 	const messageHandlers: IIncomingMessagesHandler = {
 		setProjectName,
 		setThemeVisualType,
@@ -67,8 +68,10 @@ function App() {
 							<div className="codicon codicon-folder-opened w-4"></div>
 						</AKButton>
 					</div>
-					<AKDeployments setActiveDeployment={setActiveDeployment} />
-					<AKSessions activeDeployment={activeDeployment} />
+					<ExecutionDeploymentContext.Provider value={{ lastDeployment, setLastDeployment }}>
+						<AKDeployments />
+						<AKSessions />
+					</ExecutionDeploymentContext.Provider>
 				</div>
 			) : (
 				<div className="flex justify-center items-center h-screen w-screen">

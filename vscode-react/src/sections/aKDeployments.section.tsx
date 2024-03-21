@@ -1,26 +1,23 @@
-import { useEffect, useState } from "react";
-import { DeploymentState } from "@enums";
+import { useContext, useEffect, useState } from "react";
 import { translate } from "@i18n";
 import { AKDeploymentTableBody, AKDeploymentTableHeader } from "@react-components";
 import { AKTable, AKTableMessage } from "@react-components/AKTable";
+import { ExecutionDeploymentContext } from "@react-context";
 import { useDeployments, useForceRerender } from "@react-hooks";
 import { Deployment } from "@type/models";
 
-export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (deploymentId: string) => void }) => {
+export const AKDeployments = () => {
 	useForceRerender();
 
 	const { deploymentsSection } = useDeployments();
 	const [isLoading, setIsLoading] = useState(true);
 	const [totalDeployments, setTotalDeployments] = useState<number>();
 	const [deployments, setDeployments] = useState<Deployment[]>();
+	const { setLastDeployment } = useContext(ExecutionDeploymentContext);
 
-	const isDeploymentStateStartable = (deploymentState: number) =>
-		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
 	useEffect(() => {
 		if (deployments) {
-			const activeDeploymentId = deployments!.find((d) => !isDeploymentStateStartable(d.state))?.deploymentId as string;
-
-			setActiveDeployment(activeDeploymentId);
+			setLastDeployment(deployments[deployments.length - 1].deploymentId);
 		}
 		if (deployments && isLoading) {
 			setIsLoading(false);
@@ -42,7 +39,7 @@ export const AKDeployments = ({ setActiveDeployment }: { setActiveDeployment: (d
 			</div>
 			<AKTable>
 				<AKDeploymentTableHeader />
-				<AKDeploymentTableBody deployments={deployments} setActiveDeployment={setActiveDeployment} />
+				<AKDeploymentTableBody deployments={deployments} setActiveDeployment={setLastDeployment} />
 			</AKTable>
 			{(isLoading || !deployments) && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
 			{deployments && deployments.length === 0 && (
