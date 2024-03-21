@@ -1,6 +1,6 @@
 import { vsCommands, namespaces, channels } from "@constants";
-import { getResources } from "@controllers/utilities";
-import { DeploymentState, MessageType, ProjectIntervalTypes } from "@enums";
+import { convertBuildRuntimesToViewTriggers, getResources } from "@controllers/utilities";
+import { MessageType, ProjectIntervalTypes } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { SessionLogRecord } from "@models";
@@ -9,7 +9,7 @@ import { DeploymentsService, ProjectsService, SessionsService, LoggerService } f
 import { BuildsService } from "@services";
 import { SessionExecutionData } from "@type";
 import { Callback } from "@type/interfaces";
-import { Deployment, EntrypointTrigger, Project, Session, SessionEntrypoint } from "@type/models";
+import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
 import { commands, OpenDialogOptions, window } from "vscode";
 
@@ -121,17 +121,18 @@ export class ProjectController {
 
 		this.view.update({ type: MessageType.setSessionsSection, payload: sessionsViewObject });
 
-		const activeDeployment = deployments?.find((deployment) => deployment.state === DeploymentState.ACTIVE_DEPLOYMENT);
-
 		if (this.selectedDeploymentId) {
 			await this.selectDeployment(this.selectedDeploymentId);
 		}
 
-		if (!activeDeployment) {
+		const lastDeployment = deployments ? deployments[deployments?.length - 1] : null;
+
+		if (!lastDeployment) {
 			return;
 		}
+
 		const { data: buildDescription, error: buildDescriptionError } = await BuildsService.getBuildDescription(
-			activeDeployment.buildId
+			lastDeployment.buildId
 		);
 
 		if (buildDescriptionError) {
@@ -141,37 +142,9 @@ export class ProjectController {
 
 		const buildInfo = JSON.parse(buildDescription!.descriptionJson);
 
-		const triggers: Record<string, SessionEntrypoint[]> = {};
-
-		for (const runtime of buildInfo.runtimes) {
-			// TODO: If we add support for other languages, we should add a switch here
-			if (runtime.info.name === "starlark") {
-				const [fileName] = Object.keys(runtime.artifact.compiled_data);
-
-				triggers[fileName] = triggers[fileName] || [];
-
-				const sessionEntrypoints = runtime.artifact.exports.map((entrypoint: EntrypointTrigger) => ({
-					...entrypoint.location,
-					name: entrypoint.symbol,
-				}));
-
-				triggers[fileName].push(...sessionEntrypoints);
-			}
-		}
-
-		const firstEntrypoint = triggers[Object.keys(triggers)[0]][0];
-		const firstFileFunctions = triggers[Object.keys(triggers)[0]];
-		const firstDisplayedFileName = Object.keys(triggers)[0];
-		const firstDisplayedFunctionValue = JSON.stringify(firstFileFunctions[0]);
 		this.view.update({
 			type: MessageType.setEntrypoints,
-			payload: {
-				filesWithFunctions: triggers,
-				firstFileFunctions,
-				firstFileName: firstDisplayedFileName,
-				firstFunctionValue: firstDisplayedFunctionValue,
-				firstEntrypoint,
-			},
+			payload: convertBuildRuntimesToViewTriggers(buildInfo.runtimes),
 		});
 	}
 
