@@ -8,7 +8,7 @@ export class WorkspaceConfig {
 	}
 
 	public static setToWorkspace<T>(section: string, value: T): void {
-		const configuration: WorkspaceConfiguration = workspace.getConfiguration();
+		const configuration: WorkspaceConfiguration = workspace.getConfiguration("autokitteh");
 		configuration.update(section, value, ConfigurationTarget.Global);
 	}
 }
