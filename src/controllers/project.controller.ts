@@ -179,18 +179,12 @@ export class ProjectController {
 		});
 
 		if (sessions?.length) {
-			this.stopInterval(ProjectIntervalTypes.sessionHistory);
-
 			this.view.update({
 				type: MessageType.selectSession,
 				payload: sessions[0].sessionId,
 			});
 
-			this.startInterval(
-				ProjectIntervalTypes.sessionHistory,
-				() => this.displaySessionsHistory(sessions![0].sessionId!),
-				this.sessionsLogRefreshRate
-			);
+			this.displaySessionLogs(sessions![0].sessionId);
 		}
 	}
 
@@ -438,8 +432,6 @@ export class ProjectController {
 		const successMessage = `${translate().t("sessions.executionSucceed")} for session ${sessionId}`;
 		LoggerService.info(namespaces.projectController, successMessage);
 
-		this.stopInterval(ProjectIntervalTypes.sessionHistory);
-
 		this.view.update({
 			type: MessageType.selectSession,
 			payload: sessionId,
@@ -450,11 +442,7 @@ export class ProjectController {
 			type: MessageType.selectDeployment,
 			payload: sessionExecutionData.deploymentId,
 		});
-		this.startInterval(
-			ProjectIntervalTypes.sessionHistory,
-			() => this.displaySessionsHistory(sessionId!),
-			this.sessionsLogRefreshRate
-		);
+		this.displaySessionLogs(sessionId!);
 	}
 
 	async deactivateDeployment(deploymentId: string) {
