@@ -179,6 +179,8 @@ export class ProjectController {
 		});
 
 		if (sessions?.length) {
+			this.stopInterval(ProjectIntervalTypes.sessionHistory);
+
 			this.view.update({
 				type: MessageType.selectSession,
 				payload: sessions[0].sessionId,
