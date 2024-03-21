@@ -66,7 +66,10 @@ export class SessionsService {
 		try {
 			const sessionFromServer: { inputs?: any } = {};
 			if (sessionExecutionData.sessionId) {
-				const { data: session } = await this.getById(sessionExecutionData.sessionId);
+				const { data: session, error } = await this.getById(sessionExecutionData.sessionId);
+				if (error) {
+					return { data: undefined, error };
+				}
 				sessionFromServer.inputs = session!.inputs;
 				delete sessionExecutionData.sessionId;
 			}

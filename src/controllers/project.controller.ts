@@ -394,7 +394,7 @@ export class ProjectController {
 		const { data: sessionId, error } = await SessionsService.runSessionExecution(sessionExecutionData);
 
 		if (error) {
-			const notification = `${translate().t("sessions.executionFailed")} for session ${sessionId}`;
+			const notification = `${translate().t("sessions.executionFailed")} `;
 			const log = `${translate().t("sessions.executionFailedError", {
 				error,
 			})} for project ${this.projectId}, session: ${sessionId}`;
