@@ -1,10 +1,10 @@
 import { vsCommands, namespaces, channels } from "@constants";
-import { convertBuildRuntimesToViewTriggers, getResources } from "@controllers/utilities";
+import { convertBuildRuntimesToViewTriggers, getResources, selectDeploymentUpdateView } from "@controllers/utilities";
+import { displayDeploymentsUpdateView } from "@controllers/utilities";
 import { MessageType, ProjectIntervalTypes } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { SessionLogRecord } from "@models";
-import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
 import { BuildsService } from "@services";
 import { SessionExecutionData } from "@type";
@@ -104,22 +104,8 @@ export class ProjectController {
 			return;
 		}
 		this.deployments = deployments;
-		const deploymentsViewObject: DeploymentSectionViewModel = {
-			deployments,
-			totalDeployments: deployments?.length || 0,
-		};
 
-		this.view.update({
-			type: MessageType.setDeployments,
-			payload: deploymentsViewObject,
-		});
-
-		const sessionsViewObject: SessionSectionViewModel = {
-			sessions: this.sessions,
-			totalSessions: this.sessions?.length || 0,
-		};
-
-		this.view.update({ type: MessageType.setSessionsSection, payload: sessionsViewObject });
+		displayDeploymentsUpdateView(this.view, this.deployments, this.sessions);
 
 		if (this.selectedDeploymentId) {
 			await this.selectDeployment(this.selectedDeploymentId);
@@ -164,33 +150,15 @@ export class ProjectController {
 		}
 
 		this.sessions = sessions;
-		const sessionsViewObject: SessionSectionViewModel = {
-			sessions,
-			totalSessions: sessions?.length || 0,
-		};
 
-		this.view.update({
-			type: MessageType.setSessionsSection,
-			payload: sessionsViewObject,
-		});
-
-		this.view.update({
-			type: MessageType.selectDeployment,
-			payload: deploymentId,
-		});
-
-		if (this.sessions?.length) {
-			this.view.update({
-				type: MessageType.selectSession,
-				payload: this.sessions[0].sessionId,
-			});
-
-			this.startInterval(
-				ProjectIntervalTypes.sessionHistory,
-				() => this.displaySessionsHistory(this.sessions![0].sessionId!),
-				this.sessionsLogRefreshRate
-			);
-		}
+		selectDeploymentUpdateView(
+			this.view,
+			this.selectedDeploymentId,
+			this.startInterval,
+			this.displaySessionsHistory,
+			this.sessionsLogRefreshRate,
+			this.sessions
+		);
 	}
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
