@@ -81,8 +81,6 @@ export const AKDeploymentTableBody = ({
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
 
 	useEffect(() => {
-		console.log("entrypoints", entrypoints);
-
 		if (entrypoints && Object.keys(entrypoints).length) {
 			setFiles(entrypoints);
 			setSelectedFile(Object.keys(entrypoints)[0]);
@@ -113,8 +111,6 @@ export const AKDeploymentTableBody = ({
 			deploymentId: activeDeployment.deploymentId,
 			entrypoint: selectedEntrypoint,
 		};
-
-		console.log("startSessionArgs", startSessionArgs);
 
 		sendMessage(MessageType.startSession, startSessionArgs);
 
