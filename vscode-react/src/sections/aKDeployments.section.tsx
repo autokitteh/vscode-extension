@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { translate } from "@i18n";
 import { AKDeploymentTableBody, AKDeploymentTableHeader } from "@react-components";
 import { AKTable, AKTableMessage } from "@react-components/AKTable";
-import { ExecutionDeploymentContext } from "@react-context";
+import { SessionStartContext } from "@react-context";
 import { useDeployments, useForceRerender } from "@react-hooks";
 import { Deployment } from "@type/models";
 
@@ -13,11 +13,12 @@ export const AKDeployments = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [totalDeployments, setTotalDeployments] = useState<number>();
 	const [deployments, setDeployments] = useState<Deployment[]>();
-	const { setLastDeployment } = useContext(ExecutionDeploymentContext);
+	const { setLastDeployment } = useContext(SessionStartContext);
 
 	useEffect(() => {
 		if (deployments && deployments.length) {
-			setLastDeployment(deployments[deployments.length - 1].deploymentId);
+			const lastDeploymentId = deployments[0].deploymentId;
+			setLastDeployment(lastDeploymentId);
 		}
 		if (deployments && isLoading) {
 			setIsLoading(false);
@@ -39,7 +40,7 @@ export const AKDeployments = () => {
 			</div>
 			<AKTable>
 				<AKDeploymentTableHeader />
-				<AKDeploymentTableBody deployments={deployments} setActiveDeployment={setLastDeployment} />
+				<AKDeploymentTableBody deployments={deployments} />
 			</AKTable>
 			{(isLoading || !deployments) && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
 			{deployments && deployments.length === 0 && (

@@ -11,13 +11,7 @@ import { Deployment, SessionEntrypoint } from "@type/models";
 import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
 import { usePopper } from "react-popper";
 
-export const AKDeploymentTableBody = ({
-	deployments,
-	setActiveDeployment,
-}: {
-	deployments?: Deployment[];
-	setActiveDeployment: (deploymentId: string) => void;
-}) => {
+export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
 	const { selectedDeploymentId, entrypoints } = useDeployments();
 
 	useEffect(() => {
@@ -67,7 +61,6 @@ export const AKDeploymentTableBody = ({
 
 	const activateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.activateDeployment, deploymentId);
-		setActiveDeployment(deploymentId);
 	};
 
 	const togglePopper = () => {

@@ -4,7 +4,7 @@ import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKButton, AKLogo } from "@react-components";
-import { ExecutionDeploymentContext } from "@react-context";
+import { SessionStartContext } from "@react-context";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { HandleIncomingMessages, sendMessage } from "@react-utilities";
@@ -68,10 +68,10 @@ function App() {
 							<div className="codicon codicon-folder-opened w-4"></div>
 						</AKButton>
 					</div>
-					<ExecutionDeploymentContext.Provider value={{ lastDeployment, setLastDeployment }}>
+					<SessionStartContext.Provider value={{ lastDeployment, setLastDeployment }}>
 						<AKDeployments />
 						<AKSessions />
-					</ExecutionDeploymentContext.Provider>
+					</SessionStartContext.Provider>
 				</div>
 			) : (
 				<div className="flex justify-center items-center h-screen w-screen">

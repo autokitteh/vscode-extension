@@ -1,17 +1,6 @@
 import { namespaces } from "@constants";
 import { LoggerService } from "@services";
-import { EntrypointTrigger, SessionEntrypoint } from "@type/models";
-
-type BuildInfoRuntimes = {
-	info: {
-		name: string;
-	};
-	artifact: {
-		exports: EntrypointTrigger[];
-		// eslint-disable-next-line @typescript-eslint/naming-convention
-		compiled_data: string;
-	};
-};
+import { BuildInfoRuntimes, EntrypointTrigger, SessionEntrypoint } from "@type/models";
 
 export const convertBuildRuntimesToViewTriggers = (
 	runtimes: BuildInfoRuntimes[]

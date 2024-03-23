@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { MessageType } from "@enums";
 import { AKSessionState } from "@react-components";
 import { AKTableRow, AKTableCell } from "@react-components/AKTable";
-import { ExecutionDeploymentContext } from "@react-context";
+import { SessionStartContext } from "@react-context";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
 
@@ -17,9 +17,9 @@ export const AKSessionsTableBody = ({
 	selectedSession?: string;
 	setSelectedSession: (sessionId: string) => void;
 }) => {
-	const { lastDeployment } = useContext(ExecutionDeploymentContext);
+	const { lastDeployment } = useContext(SessionStartContext);
 
-	const executeSession = (session: Session) => {
+	const startSession = (session: Session) => {
 		const startSessionArgs = {
 			sessionId: session.sessionId,
 			deploymentId: lastDeployment,
@@ -53,7 +53,7 @@ export const AKSessionsTableBody = ({
 									<div
 										className="codicon codicon-redo mr-2 cursor-pointer"
 										title="Execute"
-										onClick={() => executeSession(session)}
+										onClick={() => startSession(session)}
 									></div>
 									<div
 										className="codicon codicon-symbol-namespace mr-2 cursor-pointer"
