@@ -2,7 +2,7 @@ import { MessageType } from "@enums";
 import { DeploymentSectionViewModel } from "@models";
 import { IIncomingDeploymentsMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
-import { SessionExecutionForView } from "@type/views";
+import { SessionEntrypoint } from "@type/models";
 
 export const HandleDeploymentsIncomingMessages = (
 	event: MessageEvent<Message>,
@@ -20,7 +20,7 @@ export const HandleDeploymentsIncomingMessages = (
 			handlers.setSelectedDeploymentId(payload as string);
 			break;
 		case MessageType.setEntrypoints:
-			handlers.setEntrypoints(payload as SessionExecutionForView);
+			handlers.setEntrypoints(payload as Record<string, SessionEntrypoint[]>);
 			break;
 		default:
 	}

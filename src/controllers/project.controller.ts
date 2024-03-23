@@ -425,7 +425,16 @@ export class ProjectController {
 	}
 
 	async startSession(startSessionArgs: StartSessionArgsType) {
-		const { data: sessionId, error } = await SessionsService.startSession(startSessionArgs);
+		const sessionInputs = this.sessions?.find(
+			(session: Session) => session.sessionId === startSessionArgs.sessionId
+		)?.inputs;
+
+		const enrichedSessionArgs = {
+			...startSessionArgs,
+			sessionId: undefined,
+			inputs: sessionInputs,
+		};
+		const { data: sessionId, error } = await SessionsService.startSession(enrichedSessionArgs);
 
 		if (error) {
 			const notification = `${translate().t("sessions.executionFailed")} `;

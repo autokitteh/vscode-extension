@@ -81,16 +81,18 @@ export const AKDeploymentTableBody = ({
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
 
 	useEffect(() => {
-		if (entrypoints && Object.keys(entrypoints.filesWithFunctions).length) {
-			setFiles(entrypoints.filesWithFunctions);
-			setSelectedFile(entrypoints.firstFileName);
-			setFunctions(entrypoints.firstFileFunctions);
-			setSelectedFunction(entrypoints.firstFunctionValue);
-			setSelectedEntrypoint(entrypoints.firstEntrypoint);
+		console.log("entrypoints", entrypoints);
+
+		if (entrypoints && Object.keys(entrypoints).length) {
+			setFiles(entrypoints);
+			setSelectedFile(Object.keys(entrypoints)[0]);
+			setFunctions(entrypoints[Object.keys(entrypoints)[0]]);
+			setSelectedFunction(JSON.stringify(entrypoints[Object.keys(entrypoints)[0]][0]));
+			setSelectedEntrypoint(entrypoints[Object.keys(entrypoints)[0]][0]);
 		}
 	}, [entrypoints]);
 
-	const runSessionExecution = () => {
+	const startSession = () => {
 		const activeDeployment = deployments?.find((d) => !isDeploymentStateStartable(d.state));
 
 		setDisplayedErrors({});
@@ -109,11 +111,12 @@ export const AKDeploymentTableBody = ({
 		}
 		const startSessionArgs = {
 			deploymentId: activeDeployment.deploymentId,
-			sessionInputs: {},
 			entrypoint: selectedEntrypoint,
 		};
 
-		sendMessage(MessageType.runSessionExecution, startSessionArgs);
+		console.log("startSessionArgs", startSessionArgs);
+
+		sendMessage(MessageType.startSession, startSessionArgs);
 
 		setDisplayExecutePopper(false);
 	};
@@ -218,9 +221,7 @@ export const AKDeploymentTableBody = ({
 								{translate().t("reactApp.deployments.dismiss")}
 							</AKButton>
 							<div className="flex-grow" />
-							<AKButton onClick={() => runSessionExecution()}>
-								{translate().t("reactApp.deployments.saveAndRun")}
-							</AKButton>
+							<AKButton onClick={() => startSession()}>{translate().t("reactApp.deployments.saveAndRun")}</AKButton>
 						</div>
 					</div>
 				</AKTableCell>

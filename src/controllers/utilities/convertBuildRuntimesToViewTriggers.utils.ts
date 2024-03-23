@@ -13,41 +13,27 @@ type BuildInfoRuntimes = {
 
 export const convertBuildRuntimesToViewTriggers = (
 	runtimes: BuildInfoRuntimes[]
-): {
-	filesWithFunctions: Record<string, SessionEntrypoint[]>;
-	firstFileFunctions: SessionEntrypoint[];
-	firstFileName: string;
-	firstFunctionValue: string;
-	firstEntrypoint: SessionEntrypoint;
-} => {
+): Record<string, SessionEntrypoint[]> => {
 	const resultTriggers: Record<string, SessionEntrypoint[]> = {};
 
 	for (const runtime of runtimes) {
 		// TODO: If we add support for other languages, we should add a switch here
 		if (runtime.info.name === "starlark") {
-			const [fileName] = Object.keys(runtime.artifact.compiled_data);
+			const filesNames = Object.keys(runtime.artifact.compiled_data);
+			for (let i = 0; i < filesNames.length; i++) {
+				resultTriggers[filesNames[i]] = resultTriggers[filesNames[i]] || [];
 
-			resultTriggers[fileName] = resultTriggers[fileName] || [];
+				const sessionEntrypoints = runtime.artifact.exports
+					.filter((entrypoint: EntrypointTrigger) => entrypoint.location.path === filesNames[i])
+					.map((entrypoint: EntrypointTrigger) => ({
+						...entrypoint.location,
+						name: entrypoint.symbol,
+					}));
 
-			const sessionEntrypoints = runtime.artifact.exports.map((entrypoint: EntrypointTrigger) => ({
-				...entrypoint.location,
-				name: entrypoint.symbol,
-			}));
-
-			resultTriggers[fileName].push(...sessionEntrypoints);
+				resultTriggers[filesNames[i]].push(...sessionEntrypoints);
+			}
 		}
 	}
 
-	const firstEntrypoint = resultTriggers[Object.keys(resultTriggers)[0]][0];
-	const firstFileFunctions = resultTriggers[Object.keys(resultTriggers)[0]];
-	const firstDisplayedFileName = Object.keys(resultTriggers)[0];
-	const firstDisplayedFunctionValue = JSON.stringify(firstFileFunctions[0]);
-
-	return {
-		filesWithFunctions: resultTriggers,
-		firstFileFunctions,
-		firstFileName: firstDisplayedFileName,
-		firstFunctionValue: firstDisplayedFunctionValue,
-		firstEntrypoint,
-	};
+	return resultTriggers;
 };

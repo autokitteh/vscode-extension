@@ -64,17 +64,8 @@ export class SessionsService {
 
 	static async startSession(startSessionArgs: StartSessionArgsType): Promise<ServiceResponse<string>> {
 		try {
-			const sessionFromServer: { inputs?: any } = {};
-			if (startSessionArgs.sessionId) {
-				const { data: session, error } = await this.getById(startSessionArgs.sessionId);
-				if (error) {
-					return { data: undefined, error };
-				}
-				sessionFromServer.inputs = session!.inputs;
-				delete startSessionArgs.sessionId;
-			}
 			const sessionAsStartRequest = {
-				session: { ...startSessionArgs, inputs: sessionFromServer.inputs },
+				session: startSessionArgs,
 			} as unknown as StartRequest;
 			const response = await sessionsClient.start(sessionAsStartRequest);
 			return { data: response.sessionId, error: undefined };

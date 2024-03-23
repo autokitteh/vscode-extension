@@ -48,8 +48,8 @@ export class ProjectView implements IProjectView {
 						break;
 					case MessageType.onClickSetResourcesDirectory:
 						this.delegate?.onClickSetResourcesDirectory?.();
-					case MessageType.runSessionExecution:
-						this.delegate?.runSessionExecution?.(message.payload as StartSessionArgsType);
+					case MessageType.startSession:
+						this.delegate?.startSession?.(message.payload as StartSessionArgsType);
 						break;
 					default:
 				}

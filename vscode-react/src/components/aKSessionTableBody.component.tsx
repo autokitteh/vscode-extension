@@ -26,7 +26,7 @@ export const AKSessionsTableBody = ({
 			entrypoint: session.entrypoint,
 		};
 
-		sendMessage(MessageType.runSessionExecution, startSessionArgs);
+		sendMessage(MessageType.startSession, startSessionArgs);
 	};
 
 	const displaySessionLogs = (sessionId: string) => {
