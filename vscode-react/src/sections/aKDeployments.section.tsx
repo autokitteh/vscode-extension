@@ -16,7 +16,7 @@ export const AKDeployments = () => {
 	const { setLastDeployment } = useContext(ExecutionDeploymentContext);
 
 	useEffect(() => {
-		if (deployments) {
+		if (deployments && deployments.length) {
 			setLastDeployment(deployments[deployments.length - 1].deploymentId);
 		}
 		if (deployments && isLoading) {
