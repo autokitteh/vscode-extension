@@ -1,6 +1,6 @@
 import { SessionEntrypoint } from "@type/models";
 
-export type SessionExecutionData = {
+export type StartSessionArgsType = {
 	sessionId?: string;
 	deploymentId: string;
 	entrypoint: SessionEntrypoint;

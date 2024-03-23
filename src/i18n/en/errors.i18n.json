@@ -35,6 +35,7 @@
 	"sessionFetchFailed": "Couldn't fetch sessions for deployment",
 	"noResponse": "Connectivity issue, no response from server",
 	"errorOccured": "An error occurred",
-	"sessionStartFailed": "Session start failed",
+	"buildInformationForSingleshotNotLoaded": "Couldn't load build information for singleshot",
+	"buildInformationForSingleshotNotParsed": "Couldn't parse build information for singleshot",
 	"buildInfoFetchFailedForBuild": "Couldn't fetch build info for build {{buildId}}, error: {{error}}"
 }

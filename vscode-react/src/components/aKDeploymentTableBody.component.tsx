@@ -107,13 +107,13 @@ export const AKDeploymentTableBody = ({
 			}
 			return;
 		}
-		const sessionExecutionData = {
+		const startSessionArgs = {
 			deploymentId: activeDeployment.deploymentId,
 			sessionInputs: {},
 			entrypoint: selectedEntrypoint,
 		};
 
-		sendMessage(MessageType.runSessionExecution, sessionExecutionData);
+		sendMessage(MessageType.runSessionExecution, startSessionArgs);
 
 		setDisplayExecutePopper(false);
 	};

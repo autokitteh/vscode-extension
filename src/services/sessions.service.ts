@@ -8,7 +8,7 @@ import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { SessionLogRecord, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
-import { ServiceResponse, SessionExecutionData } from "@type";
+import { ServiceResponse, StartSessionArgsType } from "@type";
 import { Session } from "@type/models";
 import { flattenArray } from "@utilities";
 import { get } from "lodash";
@@ -62,25 +62,25 @@ export class SessionsService {
 		}
 	}
 
-	static async runSessionExecution(sessionExecutionData: SessionExecutionData): Promise<ServiceResponse<string>> {
+	static async startSession(startSessionArgs: StartSessionArgsType): Promise<ServiceResponse<string>> {
 		try {
 			const sessionFromServer: { inputs?: any } = {};
-			if (sessionExecutionData.sessionId) {
-				const { data: session, error } = await this.getById(sessionExecutionData.sessionId);
+			if (startSessionArgs.sessionId) {
+				const { data: session, error } = await this.getById(startSessionArgs.sessionId);
 				if (error) {
 					return { data: undefined, error };
 				}
 				sessionFromServer.inputs = session!.inputs;
-				delete sessionExecutionData.sessionId;
+				delete startSessionArgs.sessionId;
 			}
 			const sessionAsStartRequest = {
-				session: { ...sessionExecutionData, inputs: sessionFromServer.inputs },
+				session: { ...startSessionArgs, inputs: sessionFromServer.inputs },
 			} as unknown as StartRequest;
 			const response = await sessionsClient.start(sessionAsStartRequest);
 			return { data: response.sessionId, error: undefined };
 		} catch (error) {
 			// eslint-disable-next-line max-len
-			const log = `Error running session execution: ${(error as Error).message} for deployment id: ${sessionExecutionData.deploymentId}`;
+			const log = `Error running session execution: ${(error as Error).message} for deployment id: ${startSessionArgs.deploymentId}`;
 			LoggerService.error(namespaces.sessionsService, log);
 			return { data: undefined, error: log };
 		}

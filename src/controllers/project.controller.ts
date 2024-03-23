@@ -6,7 +6,7 @@ import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
 import { BuildsService } from "@services";
-import { SessionExecutionData } from "@type";
+import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
@@ -122,8 +122,11 @@ export class ProjectController {
 		if (this.selectedDeploymentId) {
 			await this.selectDeployment(this.selectedDeploymentId);
 		}
+		this.loadSingleshotArgs();
+	}
 
-		const lastDeployment = deployments ? deployments[deployments?.length - 1] : null;
+	async loadSingleshotArgs() {
+		const lastDeployment = this.deployments ? this.deployments[this.deployments?.length - 1] : null;
 
 		if (!lastDeployment) {
 			return;
@@ -134,12 +137,16 @@ export class ProjectController {
 		);
 
 		if (buildDescriptionError) {
-			commands.executeCommand(vsCommands.showErrorMessage, `${translate().t("errors.sessionStartFailed")}`);
+			LoggerService.error(namespaces.projectController, translate().t("errors.buildInformationForSingleshotNotLoaded"));
 			return;
 		}
-
-		const buildInfo = JSON.parse(buildDescription!.descriptionJson);
-
+		let buildInfo;
+		try {
+			buildInfo = JSON.parse(buildDescription!.descriptionJson);
+		} catch (error) {
+			LoggerService.error(namespaces.projectController, translate().t("errors.buildInformationForSingleshotNotParsed"));
+			return;
+		}
 		this.view.update({
 			type: MessageType.setEntrypoints,
 			payload: convertBuildRuntimesToViewTriggers(buildInfo.runtimes),
@@ -413,12 +420,12 @@ export class ProjectController {
 
 		LoggerService.info(
 			namespaces.projectController,
-			translate().t("deployments.activationSucceed", { id: deploymentId })
+			translate().t("deployments.activationSucceedId", { id: deploymentId })
 		);
 	}
 
-	async runSessionExecution(sessionExecutionData: SessionExecutionData) {
-		const { data: sessionId, error } = await SessionsService.runSessionExecution(sessionExecutionData);
+	async startSession(startSessionArgs: StartSessionArgsType) {
+		const { data: sessionId, error } = await SessionsService.startSession(startSessionArgs);
 
 		if (error) {
 			const notification = `${translate().t("sessions.executionFailed")} `;
@@ -437,10 +444,10 @@ export class ProjectController {
 			payload: sessionId,
 		});
 
-		this.selectedDeploymentId = sessionExecutionData.deploymentId;
+		this.selectedDeploymentId = startSessionArgs.deploymentId;
 		this.view.update({
 			type: MessageType.selectDeployment,
-			payload: sessionExecutionData.deploymentId,
+			payload: startSessionArgs.deploymentId,
 		});
 		this.displaySessionLogs(sessionId!);
 	}

@@ -1,4 +1,4 @@
-import { SessionExecutionData } from "@type";
+import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 
 export interface IProjectViewDelegate {
@@ -12,7 +12,7 @@ export interface IProjectViewDelegate {
 	displaySessionLogs?: Callback<string>;
 	activateDeployment?: Callback<string>;
 	deactivateDeployment?: Callback<string>;
-	runSessionExecution?: Callback<SessionExecutionData>;
+	runSessionExecution?: Callback<StartSessionArgsType>;
 }
 
 export interface IProjectView {

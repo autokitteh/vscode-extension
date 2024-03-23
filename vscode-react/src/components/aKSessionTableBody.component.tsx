@@ -20,13 +20,13 @@ export const AKSessionsTableBody = ({
 	const { lastDeployment } = useContext(ExecutionDeploymentContext);
 
 	const executeSession = (session: Session) => {
-		const sessionExecutionData = {
+		const startSessionArgs = {
 			sessionId: session.sessionId,
 			deploymentId: lastDeployment,
 			entrypoint: session.entrypoint,
 		};
 
-		sendMessage(MessageType.runSessionExecution, sessionExecutionData);
+		sendMessage(MessageType.runSessionExecution, startSessionArgs);
 	};
 
 	const displaySessionLogs = (sessionId: string) => {

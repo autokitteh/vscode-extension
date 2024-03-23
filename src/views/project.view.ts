@@ -1,7 +1,7 @@
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n/translation.i18n";
 import { IProjectView, IProjectViewDelegate } from "@interfaces";
-import { SessionExecutionData, Message } from "@type";
+import { StartSessionArgsType, Message } from "@type";
 import { getNonce } from "@utilities";
 import { getUri } from "@utilities/getUri.utils";
 import * as vscode from "vscode";
@@ -49,7 +49,7 @@ export class ProjectView implements IProjectView {
 					case MessageType.onClickSetResourcesDirectory:
 						this.delegate?.onClickSetResourcesDirectory?.();
 					case MessageType.runSessionExecution:
-						this.delegate?.runSessionExecution?.(message.payload as SessionExecutionData);
+						this.delegate?.runSessionExecution?.(message.payload as StartSessionArgsType);
 						break;
 					default:
 				}
