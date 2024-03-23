@@ -49,19 +49,6 @@ export class SessionsService {
 		}
 	}
 
-	static async getById(sessionId: string): Promise<ServiceResponse<Session>> {
-		try {
-			const sessionResponse = await sessionsClient.get({ sessionId });
-			const session = sessionResponse.session as ProtoSession;
-			return { data: convertSessionProtoToModel(session), error: undefined };
-		} catch (error) {
-			// eslint-disable-next-line max-len
-			const log = `Error running getting session: ${(error as Error).message} for session id: ${sessionId}`;
-			LoggerService.error(namespaces.sessionsService, log);
-			return { data: undefined, error: log };
-		}
-	}
-
 	static async startSession(startSessionArgs: StartSessionArgsType): Promise<ServiceResponse<string>> {
 		try {
 			const sessionAsStartRequest = {
