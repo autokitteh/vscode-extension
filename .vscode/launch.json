@@ -17,15 +17,6 @@
 			}
 		},
 		{
-			"type": "node",
-			"request": "launch",
-			"name": "Run Vitest",
-			"program": "${workspaceFolder}/node_modules/vitest/vitest.mjs",
-			"args": ["run", "--run", "--environment", "node"],
-			"console": "integratedTerminal",
-			"internalConsoleOptions": "neverOpen"
-		},
-		{
 			"name": "Extension Tests",
 			"type": "extensionHost",
 			"request": "launch",

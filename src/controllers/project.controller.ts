@@ -19,7 +19,7 @@ export class ProjectController {
 	public project?: Project;
 	private sessions?: Session[] = [];
 	private sessionHistoryStates: SessionLogRecord[] = [];
-	private deployments?: Deployment[];
+	public deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
