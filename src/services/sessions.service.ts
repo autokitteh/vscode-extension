@@ -16,8 +16,8 @@ import { get } from "lodash";
 export class SessionsService {
 	static async listByEnvironmentId(environmentId: string): Promise<ServiceResponse<Session[]>> {
 		try {
-			const response = await sessionsClient.list({ envId: environmentId });
-			const sessions = response.sessions.map(convertSessionProtoToModel);
+			const { sessions: sessionsResponse } = await sessionsClient.list({ envId: environmentId });
+			const sessions = sessionsResponse.map(convertSessionProtoToModel);
 			return { data: sessions, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.sessionsService, (error as Error).message);
@@ -27,8 +27,8 @@ export class SessionsService {
 
 	static async listByDeploymentId(deploymentId: string): Promise<ServiceResponse<Session[]>> {
 		try {
-			const response = await sessionsClient.list({ deploymentId });
-			const sessions = response.sessions.map((session: ProtoSession) => convertSessionProtoToModel(session));
+			const { sessions: sessionsResponse } = await sessionsClient.list({ deploymentId });
+			const sessions = sessionsResponse.map((session: ProtoSession) => convertSessionProtoToModel(session));
 			return { data: sessions, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.sessionsService, (error as Error).message);
@@ -54,8 +54,8 @@ export class SessionsService {
 			const sessionAsStartRequest = {
 				session: startSessionArgs,
 			} as unknown as StartRequest;
-			const response = await sessionsClient.start(sessionAsStartRequest);
-			return { data: response.sessionId, error: undefined };
+			const { sessionId } = await sessionsClient.start(sessionAsStartRequest);
+			return { data: sessionId, error: undefined };
 		} catch (error) {
 			// eslint-disable-next-line max-len
 			const log = `Error running session execution: ${(error as Error).message} for deployment id: ${startSessionArgs.deploymentId}`;
