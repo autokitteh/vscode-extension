@@ -5,6 +5,7 @@ import {
 } from "@ak-proto-ts/sessions/v1/session_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
+import { translate } from "@i18n/index";
 import { SessionLogRecord, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
@@ -53,7 +54,7 @@ export class SessionsService {
 			await sessionsClient.delete({ sessionId });
 			return { data: undefined, error: undefined };
 		} catch (error) {
-			const log = `Session - ${sessionId}: ${(error as Error).message}`;
+			const log = translate().t("sessions.sessionDeleteError", { sessionId, error: (error as Error).message });
 			LoggerService.error(namespaces.sessionsService, log);
 
 			return { data: undefined, error: log };

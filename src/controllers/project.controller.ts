@@ -434,7 +434,7 @@ export class ProjectController {
 	async deleteSession(sessionId: string) {
 		const { error } = await SessionsService.deleteSession(sessionId);
 		if (error) {
-			const errorMessage = translate().t("sessions.sessionDeleteError", { error: (error as Error).message });
+			const errorMessage = translate().t("sessions.sessionDeleteFail", { error: (error as Error).message });
 			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
 			return;
 		}
