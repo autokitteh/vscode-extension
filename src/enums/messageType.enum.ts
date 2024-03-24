@@ -12,4 +12,5 @@ export enum MessageType {
 	deleteSession = "DELETE_SESSION",
 	deactivateDeployment = "DEACTIVATE_DEPLOYMENT",
 	activateDeployment = "ACTIVATE_DEPLOYMENT",
+	deleteSessionResponse = "DELETE_SESSION_RESPONSE",
 }

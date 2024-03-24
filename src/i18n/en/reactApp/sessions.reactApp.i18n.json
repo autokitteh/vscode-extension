@@ -14,5 +14,7 @@
 		"completed": "Completed"
 	},
 	"deletionApprovalQuestion": "Delete this session?",
-	"deletionApprovalQuestionSubtitle": "You will not be able to recover it"
+	"deletionApprovalQuestionSubtitle": "You will not be able to recover it",
+	"errorDeletingLine1": "Oops! Something went wrong.",
+	"errorDeletingLine2": "Review the logs for more details"
 }

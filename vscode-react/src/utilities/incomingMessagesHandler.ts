@@ -1,6 +1,6 @@
 import { MessageType, Theme } from "@enums";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
-import { IIncomingMessagesHandler } from "@react-interfaces";
+import { IIncomingMessagesHandler, IIncomingSessionMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
 
 export const HandleIncomingMessages = (event: MessageEvent<Message>, handlers: IIncomingMessagesHandler) => {
@@ -22,6 +22,19 @@ export const HandleIncomingMessages = (event: MessageEvent<Message>, handlers: I
 			handlers.setSelectedDeploymentId(payload as string);
 		case MessageType.setResourcesDirState:
 			handlers.setResourcesDirState(payload as boolean);
+		default:
+	}
+};
+
+export const HandleIncomingSessionsMessages = (
+	event: MessageEvent<Message>,
+	handlers: IIncomingSessionMessagesHandler
+) => {
+	const { payload } = event.data as Message;
+	switch (event.data.type) {
+		case MessageType.deleteSessionResponse:
+			handlers.setSessionDeletedResponse(payload as boolean);
+			break;
 		default:
 	}
 };

@@ -9,3 +9,7 @@ export interface IIncomingMessagesHandler {
 	setSelectedDeploymentId(selectDeploymentId: string | undefined): void;
 	setResourcesDirState(projectFolder: boolean): void;
 }
+
+export interface IIncomingSessionMessagesHandler {
+	setSessionDeletedResponse(value: boolean): void;
+}

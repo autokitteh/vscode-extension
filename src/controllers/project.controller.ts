@@ -436,8 +436,18 @@ export class ProjectController {
 		if (error) {
 			const errorMessage = translate().t("sessions.sessionDeleteFail");
 			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+			this.view.update({
+				type: MessageType.deleteSessionResponse,
+				payload: false,
+			});
+
 			return;
 		}
 		commands.executeCommand(vsCommands.showInfoMessage, translate().t("sessions.sessionDeleteSuccess"));
+
+		this.view.update({
+			type: MessageType.deleteSessionResponse,
+			payload: true,
+		});
 	}
 }
