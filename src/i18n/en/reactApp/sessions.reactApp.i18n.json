@@ -13,5 +13,6 @@
 		"error": "Error",
 		"completed": "Completed"
 	},
-	"deletionApprovalQuestion": "Are you sure you want to delete this session?"
+	"deletionApprovalQuestion": "Delete this session?",
+	"deletionApprovalQuestionSubtitle": "You will not be able to recover it"
 }

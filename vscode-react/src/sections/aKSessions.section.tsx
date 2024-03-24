@@ -106,6 +106,8 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 								>
 									<div className="mb-3 text-left">
 										<strong className="mb-2">{translate().t("reactApp.sessions.deletionApprovalQuestion")}</strong>
+										<br />
+										<div className="mb-2">{translate().t("reactApp.sessions.deletionApprovalQuestionSubtitle")}</div>
 									</div>
 									<div className="flex">
 										<AKButton
