@@ -39,13 +39,13 @@ export const AKDeployments = ({
 	const [deletedDeploymentError, setDeletedDeploymentError] = useState(false);
 
 	const handleDeploymentDeletedResponse = (isDeleted: boolean) => {
+		setIsDeletingInProgress(false);
 		if (isDeleted) {
 			setShowPopper(false);
-			setIsDeletingInProgress(false);
+			setDeletedDeploymentError(false);
 			return;
 		}
 		setDeletedDeploymentError(true);
-		setIsDeletingInProgress(false);
 	};
 
 	const messageHandlers: IIncomingDeploymentsMessagesHandler = {
@@ -56,6 +56,12 @@ export const AKDeployments = ({
 		(event: MessageEvent<Message>) => HandleIncomingDeploymentsMessages(event, messageHandlers),
 		[]
 	);
+
+	const hideDeletePopper = () => {
+		setIsDeletingInProgress(false);
+		setDeleteDeploymentId("");
+		setShowPopper(false);
+	};
 
 	useEffect(() => {
 		window.addEventListener("message", handleMessagesFromExtension);
@@ -232,6 +238,9 @@ export const AKDeployments = ({
 									ref={referenceEl}
 								></div>
 
+								{showPopper && (
+									<div className="absolute h-screen w-screen top-0 left-0" onClick={() => hideDeletePopper()}></div>
+								)}
 								<div
 									ref={popperEl}
 									style={{ ...styles.popper, width: "10%" }}
