@@ -16,5 +16,6 @@
 	"noDeployments": "No deployments found",
 	"errorDeletingDeploymentLine1": "Oops! Something went wrong.",
 	"errorDeletingDeploymentLine2": "Review the logs for more details",
-	"deletionApprovalQuestion": "Are you sure you want to delete this deployment?"
+	"deletionApprovalQuestion": "Delete this deployment?",
+	"deletionApprovalQuestionSubtitle": "You will not be able to recover it"
 }

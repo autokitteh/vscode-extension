@@ -31,11 +31,11 @@ export const AKDeployments = ({
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedDeployment, setSelectedDeployment] = useState("");
 	const [isDeletingInProccess, setIsDeletingInProgress] = useState(false);
+	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
 
 	const popperEl = useRef<HTMLDivElement | null>(null);
 	const referenceEl = useRef<HTMLDivElement | null>(null);
 	const [showPopper, setShowPopper] = useState(false);
-	const [deleteDeploymentId, setDeleteDeploymentId] = useState("");
 	const [deletedDeploymentError, setDeletedDeploymentError] = useState(false);
 
 	const handleDeploymentDeletedResponse = (isDeleted: boolean) => {
@@ -75,15 +75,20 @@ export const AKDeployments = ({
 			},
 		],
 	});
+
 	const popperClasses = cn(
 		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
 		"border border-gray-300 p-4 rounded-lg shadow-lg",
 		{ invisible: !showPopper }
 	);
-	const toggleDeletePopper = (refElement: HTMLDivElement | null, deploymentId: string) => {
-		setDeleteDeploymentId(deploymentId);
-		setShowPopper(!showPopper);
-		referenceEl.current = refElement;
+	const toggleDeletePopper = (deploymentId: string) => {
+		if (deleteDeploymentId === deploymentId) {
+			setDeleteDeploymentId(null);
+			setShowPopper(false);
+		} else {
+			setDeleteDeploymentId(deploymentId);
+			setShowPopper(true);
+		}
 	};
 
 	useEffect(() => {
@@ -219,13 +224,17 @@ export const AKDeployments = ({
 								)}
 								<div
 									className="codicon codicon-trash cursor-pointer ml-2"
-									onClick={(e) => toggleDeletePopper(e.currentTarget, deployment.deploymentId)}
+									onClick={(e) => {
+										const refElement = e.currentTarget;
+										toggleDeletePopper(deployment.deploymentId);
+										referenceEl.current = refElement;
+									}}
 									ref={referenceEl}
 								></div>
 
 								<div
 									ref={popperEl}
-									style={{ ...styles.popper, width: "25%" }}
+									style={{ ...styles.popper, width: "10%" }}
 									{...attributes.popper}
 									className={popperClasses}
 								>
@@ -243,6 +252,9 @@ export const AKDeployments = ({
 									>
 										<div className="mb-3 text-left">
 											<strong className="mb-2">{translate().t("reactApp.deployments.deletionApprovalQuestion")}</strong>
+											<div className="mb-2">
+												{translate().t("reactApp.deployments.deletionApprovalQuestionSubtitle")}
+											</div>
 										</div>
 										{deletedDeploymentError && (
 											<div className="text-red-500 text-left">
