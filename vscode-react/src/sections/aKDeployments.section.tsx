@@ -229,7 +229,7 @@ export const AKDeployments = ({
 									></div>
 								)}
 								<div
-									className="codicon codicon-trash cursor-pointer ml-2"
+									className="relative codicon codicon-trash cursor-pointer ml-2 z-20"
 									onClick={(e) => {
 										const refElement = e.currentTarget;
 										toggleDeletePopper(deployment.deploymentId);
@@ -239,7 +239,10 @@ export const AKDeployments = ({
 								></div>
 
 								{showPopper && (
-									<div className="absolute h-screen w-screen top-0 left-0" onClick={() => hideDeletePopper()}></div>
+									<div
+										className="absolute h-screen w-screen top-0 left-0 z-10"
+										onClick={() => hideDeletePopper()}
+									></div>
 								)}
 								<div
 									ref={popperEl}
