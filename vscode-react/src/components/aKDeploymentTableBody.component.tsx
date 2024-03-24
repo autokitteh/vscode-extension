@@ -125,11 +125,11 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	};
 
 	const [isDeletingInProccess, setIsDeletingInProgress] = useState(false);
+	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
 
 	const deletePopperEl = useRef<HTMLDivElement | null>(null);
 	const deleteReferenceEl = useRef<HTMLDivElement | null>(null);
 	const [showPopper, setShowPopper] = useState(false);
-	const [deleteDeploymentId, setDeleteDeploymentId] = useState("");
 	const [deletedDeploymentError, setDeletedDeploymentError] = useState(false);
 
 	const handleDeploymentDeletedResponse = (isDeleted: boolean) => {
@@ -158,30 +158,31 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		};
 	}, [handleMessagesFromExtension]);
 
-	const { attributes: deleteAttributes, styles: deleteStyles } = usePopper(
-		deleteReferenceEl.current,
-		deletePopperEl.current,
-		{
-			placement: "bottom",
-			modifiers: [
-				{
-					name: "offset",
-					options: {
-						offset: [0, 10],
-					},
+	const { attributes: deleteAttributes, styles: deleteStyles } = usePopper(referenceEl.current, popperEl.current, {
+		placement: "bottom",
+		modifiers: [
+			{
+				name: "offset",
+				options: {
+					offset: [0, 10],
 				},
-			],
-		}
-	);
+			},
+		],
+	});
+
 	const deletePopperClasses = cn(
 		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
 		"border border-gray-300 p-4 rounded-lg shadow-lg",
 		{ invisible: !showPopper }
 	);
-	const toggleDeletePopper = (refElement: HTMLDivElement | null, deploymentId: string) => {
-		setDeleteDeploymentId(deploymentId);
-		setShowPopper(!showPopper);
-		referenceEl.current = refElement;
+	const toggleDeletePopper = (deploymentId: string) => {
+		if (deleteDeploymentId === deploymentId) {
+			setDeleteDeploymentId(null);
+			setShowPopper(false);
+		} else {
+			setDeleteDeploymentId(deploymentId);
+			setShowPopper(true);
+		}
 	};
 
 	useEffect(() => {
@@ -200,6 +201,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		setDeletedDeploymentError(false);
 		setShowPopper(false);
 	};
+
 	return (
 		deployments &&
 		deployments.map((deployment: Deployment) => (
@@ -246,13 +248,17 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					)}
 					<div
 						className="codicon codicon-trash cursor-pointer ml-2"
-						onClick={(e) => toggleDeletePopper(e.currentTarget, deployment.deploymentId)}
+						onClick={(e) => {
+							const refElement = e.currentTarget;
+							toggleDeletePopper(deployment.deploymentId);
+							deleteReferenceEl.current = refElement;
+						}}
 						ref={deleteReferenceEl}
 					></div>
 
 					<div
 						ref={deletePopperEl}
-						style={{ ...deleteStyles.popper, width: "25%" }}
+						style={{ ...deleteStyles.popper, width: "10%" }}
 						{...deleteAttributes.popper}
 						className={deletePopperClasses}
 					>
@@ -270,6 +276,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						>
 							<div className="mb-3 text-left">
 								<strong className="mb-2">{translate().t("reactApp.deployments.deletionApprovalQuestion")}</strong>
+								<div className="mb-2">{translate().t("reactApp.deployments.deletionApprovalQuestionSubtitle")}</div>
 							</div>
 							{deletedDeploymentError && (
 								<div className="text-red-500 text-left">
