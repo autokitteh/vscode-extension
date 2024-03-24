@@ -83,15 +83,10 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		}
 	}, [entrypoints]);
 
-	const startSession = () => {
-		const activeDeployment = deployments?.find((d) => !isDeploymentStateStartable(d.state));
-
+	const startSession = (deploymentId: string) => {
 		setDisplayedErrors({});
 
-		if (!activeDeployment?.deploymentId || !selectedFile || !selectedFunction) {
-			if (!activeDeployment?.deploymentId) {
-				setDisplayedErrors({ ...displayedErrors, selectedDeployment: true });
-			}
+		if (!selectedFile || !selectedFunction) {
 			if (!selectedFile) {
 				setDisplayedErrors({ ...displayedErrors, selectedFile: true });
 			}
@@ -100,8 +95,9 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 			}
 			return;
 		}
+
 		const startSessionArgs = {
-			deploymentId: activeDeployment.deploymentId,
+			deploymentId: deploymentId,
 			entrypoint: selectedEntrypoint,
 		};
 
@@ -111,7 +107,13 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	};
 
 	const handleFunctionChange = (event: string) => {
-		setSelectedEntrypoint(JSON.parse(event));
+		let entrypointForFunction;
+		try {
+			entrypointForFunction = JSON.parse(event);
+		} catch (error) {
+			console.error(error);
+		}
+		setSelectedEntrypoint(entrypointForFunction);
 		setSelectedFunction(event);
 	};
 
@@ -210,7 +212,9 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 								{translate().t("reactApp.deployments.dismiss")}
 							</AKButton>
 							<div className="flex-grow" />
-							<AKButton onClick={() => startSession()}>{translate().t("reactApp.deployments.saveAndRun")}</AKButton>
+							<AKButton onClick={() => startSession(deployment.deploymentId)}>
+								{translate().t("reactApp.deployments.saveAndRun")}
+							</AKButton>
 						</div>
 					</div>
 				</AKTableCell>
