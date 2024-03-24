@@ -39,6 +39,12 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 		setShowDeletePopper(false);
 	};
 
+	const hideDeletePopper = () => {
+		setDeletedError(false);
+		setIsDeleting(false);
+		setShowDeletePopper(false);
+	};
+
 	const handleDeploymentDeletedResponse = (isDeleted: boolean) => {
 		if (isDeleted) {
 			setShowDeletePopper(false);
@@ -154,7 +160,9 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 									}}
 									ref={deleteRefElement}
 								></div>
-
+								{showDeletePopper && (
+									<div className="h-screen w-screen absolute top-0 left-0" onClick={() => hideDeletePopper()}></div>
+								)}
 								<div ref={deletePopperElement} style={styles.popper} {...attributes.popper} className={popperClasses}>
 									<div
 										className={cn("flex justify-center items-center h-full w-full", {
