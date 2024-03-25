@@ -1,9 +1,10 @@
 // DeploymentContext.ts
 import { createContext, Dispatch, SetStateAction } from "react";
+import { Deployment } from "@type/models";
 
 type SessionStartContextType = {
-	lastDeployment: string | undefined;
-	setLastDeployment: Dispatch<SetStateAction<string | undefined>>;
+	lastDeployment: Deployment | undefined;
+	setLastDeployment: Dispatch<SetStateAction<Deployment | undefined>>;
 };
 
 // Define an initial value. This value should match the type `SessionStartContextType`.

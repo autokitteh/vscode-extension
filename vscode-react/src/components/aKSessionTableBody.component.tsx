@@ -22,7 +22,8 @@ export const AKSessionsTableBody = ({
 	const startSession = (session: Session) => {
 		const startSessionArgs = {
 			sessionId: session.sessionId,
-			deploymentId: lastDeployment,
+			buildId: lastDeployment?.buildId,
+			deploymentId: lastDeployment?.deploymentId,
 			entrypoint: session.entrypoint,
 		};
 
@@ -48,7 +49,7 @@ export const AKSessionsTableBody = ({
 							{session.sessionId}
 						</AKTableCell>
 						<AKTableCell>
-							{session.deploymentId === lastDeployment && (
+							{session.deploymentId === lastDeployment?.deploymentId && (
 								<div>
 									<div
 										className="codicon codicon-redo mr-2 cursor-pointer"

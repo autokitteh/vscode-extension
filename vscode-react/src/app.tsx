@@ -11,12 +11,13 @@ import { HandleIncomingMessages, sendMessage } from "@react-utilities";
 import { cn } from "@react-utilities/cnClasses.utils";
 import { Message } from "@type";
 import "./app.css";
+import { Deployment } from "@type/models";
 
 function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
-	const [lastDeployment, setLastDeployment] = useState<string>();
+	const [lastDeployment, setLastDeployment] = useState<Deployment>();
 	const messageHandlers: IIncomingMessagesHandler = {
 		setProjectName,
 		setThemeVisualType,

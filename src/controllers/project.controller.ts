@@ -431,10 +431,10 @@ export class ProjectController {
 
 		const enrichedSessionArgs = {
 			...startSessionArgs,
-			sessionId: undefined,
 			inputs: sessionInputs,
 		};
-		const { data: sessionId, error } = await SessionsService.startSession(enrichedSessionArgs);
+		delete enrichedSessionArgs.sessionId;
+		const { data: sessionId, error } = await SessionsService.startSession(enrichedSessionArgs, this.projectId);
 
 		if (error) {
 			const notification = `${translate().t("sessions.executionFailed")} `;

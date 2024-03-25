@@ -6,6 +6,7 @@ import {
 import { StartRequest } from "@ak-proto-ts/sessions/v1/svc_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
+import { translate } from "@i18n";
 import { SessionLogRecord, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse, StartSessionArgsType } from "@type";
@@ -49,16 +50,32 @@ export class SessionsService {
 		}
 	}
 
-	static async startSession(startSessionArgs: StartSessionArgsType): Promise<ServiceResponse<string>> {
+	static async startSession(
+		startSessionArgs: StartSessionArgsType,
+		projectId: string
+	): Promise<ServiceResponse<string>> {
 		try {
+			const { data: environments, error: envError } = await EnvironmentsService.listByProjectId(projectId);
+			if (envError) {
+				return { data: undefined, error: envError };
+			}
+
+			if (!environments?.length) {
+				const errorMessage = translate().t("errors.defaultEnvironmentNotFound");
+				LoggerService.error(namespaces.projectService, errorMessage);
+				return { data: undefined, error: new Error(errorMessage) };
+			}
+
+			const environment = environments[0];
+
 			const sessionAsStartRequest = {
-				session: startSessionArgs,
+				session: { ...startSessionArgs, envId: environment.envId },
 			} as unknown as StartRequest;
 			const { sessionId } = await sessionsClient.start(sessionAsStartRequest);
 			return { data: sessionId, error: undefined };
 		} catch (error) {
 			// eslint-disable-next-line max-len
-			const log = `Error running session execution: ${(error as Error).message} for deployment id: ${startSessionArgs.deploymentId}`;
+			const log = `Error running session execution: ${(error as Error).message} for deployment id: ${startSessionArgs.buildId}`;
 			LoggerService.error(namespaces.sessionsService, log);
 			return { data: undefined, error: log };
 		}

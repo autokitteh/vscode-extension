@@ -83,7 +83,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		}
 	}, [entrypoints]);
 
-	const startSession = (deploymentId: string) => {
+	const startSession = (deployment: Deployment) => {
 		setDisplayedErrors({});
 
 		if (!selectedFile || !selectedFunction) {
@@ -97,7 +97,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		}
 
 		const startSessionArgs = {
-			deploymentId: deploymentId,
+			buildId: deployment.buildId,
+			deploymentId: deployment.deploymentId,
 			entrypoint: selectedEntrypoint,
 		};
 
@@ -212,7 +213,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 								{translate().t("reactApp.deployments.dismiss")}
 							</AKButton>
 							<div className="flex-grow" />
-							<AKButton onClick={() => startSession(deployment.deploymentId)}>
+							<AKButton onClick={() => startSession(deployment)}>
 								{translate().t("reactApp.deployments.saveAndRun")}
 							</AKButton>
 						</div>
