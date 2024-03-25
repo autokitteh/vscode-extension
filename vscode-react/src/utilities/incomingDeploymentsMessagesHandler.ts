@@ -31,8 +31,8 @@ export const HandleIncomingDeploymentsMessages = (
 ) => {
 	const { payload } = event.data as Message;
 	switch (event.data.type) {
-		case MessageType.projectDeletedResponse:
-			handlers.handleProjectDeletedResponse(payload as boolean);
+		case MessageType.deploymentDeletedResponse:
+			handlers.handleDeploymentDeletedResponse(payload as boolean);
 			break;
 		default:
 	}

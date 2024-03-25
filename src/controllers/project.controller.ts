@@ -514,14 +514,14 @@ export class ProjectController {
 			LoggerService.error(namespaces.deploymentsService, errorMessage);
 
 			this.view.update({
-				type: MessageType.projectDeleted,
+				type: MessageType.deploymentDeletedResponse,
 				payload: false,
 			});
 			return;
 		}
 
 		this.view.update({
-			type: MessageType.projectDeleted,
+			type: MessageType.deploymentDeletedResponse,
 			payload: true,
 		});
 
