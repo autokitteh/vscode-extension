@@ -208,15 +208,15 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						className="relative codicon codicon-trash cursor-pointer ml-2 z-20"
 						onClick={(e) => {
 							const refElement = e.currentTarget;
-							togglePopperVisibility("delete");
+							setPopperVisibility("delete", true);
 							deletePopperElementRef.current = refElement;
+							setDeleteDeploymentId(deployment.deploymentId);
 						}}
 					></div>
 
-					{visiblePoppers["delete"] ||
-						(visiblePoppers["execute"] && (
-							<div className="absolute h-screen w-screen top-0 left-0 z-10" onClick={() => hideAllPoppers()}></div>
-						))}
+					{(visiblePoppers["delete"] || visiblePoppers["execute"]) && (
+						<div className="absolute h-screen w-screen top-0 left-0 z-10" onClick={() => hideAllPoppers()}></div>
+					)}
 
 					<PopperComponent visible={visiblePoppers["delete"]} referenceRef={deletePopperElementRef}>
 						<div
