@@ -1,7 +1,7 @@
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n/translation.i18n";
 import { IProjectView, IProjectViewDelegate } from "@interfaces";
-import { Message } from "@type";
+import { StartSessionArgsType, Message } from "@type";
 import { getNonce } from "@utilities";
 import { getUri } from "@utilities/getUri.utils";
 import * as vscode from "vscode";
@@ -48,7 +48,10 @@ export class ProjectView implements IProjectView {
 						break;
 					case MessageType.onClickSetResourcesDirectory:
 						this.delegate?.onClickSetResourcesDirectory?.();
+					case MessageType.startSession:
+						this.delegate?.startSession?.(message.payload as StartSessionArgsType);
 						break;
+					default:
 				}
 			},
 			undefined,
@@ -165,10 +168,14 @@ export class ProjectView implements IProjectView {
 			  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 			  <meta
 				http-equiv="Content-Security-Policy"
-				content="default-src 'none'; font-src ${this.panel.webview.cspSource}; 
-				style-src vscode-resource: 'self' 'unsafe-inline';
-				script-src 'nonce-${nonce}';">
-							  
+				content="default-src 'none'; 
+				font-src ${this.panel.webview.cspSource} 'self' https://*.vscode-cdn.net https://cdn.jsdelivr.net; 
+				style-src vscode-resource: 'self'  https://cdn.jsdelivr.net 'unsafe-inline';
+				script-src-elem vscode-resource: 'self' https://cdn.jsdelivr.net 'unsafe-inline';
+				worker-src 'self' blob:;
+				img-src 'self' data:;
+				script-src 'self' https://cdn.jsdelivr.net https://*.vscode-cdn.net;">
+
 			  <link rel="stylesheet" type="text/css" href="${stylesUri}">
 			  <link rel="stylesheet" type="text/css" href="${codiconsUri}">
 			  <title>${translate().t("general.companyName")}</title>

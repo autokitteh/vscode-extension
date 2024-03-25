@@ -1,11 +1,12 @@
 import { vsCommands, namespaces, channels } from "@constants";
-import { getResources } from "@controllers/utilities";
-import { MessageType, ProjectIntervalTypes, SessionStateType } from "@enums";
+import { convertBuildRuntimesToViewTriggers, getResources } from "@controllers/utilities";
+import { MessageType, ProjectIntervalTypes } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
-import { SessionState } from "@models";
-import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
+import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
+import { BuildsService } from "@services";
+import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
@@ -18,7 +19,7 @@ export class ProjectController {
 	public projectId: string;
 	public project?: Project;
 	private sessions?: Session[] = [];
-	private sessionHistoryStates: SessionState[] = [];
+	private sessionHistoryStates: SessionLogRecord[] = [];
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
@@ -59,6 +60,31 @@ export class ProjectController {
 		});
 	}
 
+	public enable = async () => {
+		this.setProjectNameInView();
+		this.startInterval(
+			ProjectIntervalTypes.deployments,
+			() => this.loadAndDisplayDeployments(),
+			this.deploymentsRefreshRate
+		);
+		this.notifyViewResourcesPathChanged();
+		if (this.selectedSessionId) {
+			this.startInterval(
+				ProjectIntervalTypes.sessionHistory,
+				() => this.displaySessionsHistory(this.selectedSessionId!),
+				this.sessionsLogRefreshRate
+			);
+		}
+	};
+
+	public disable = async () => {
+		this.stopInterval(ProjectIntervalTypes.deployments);
+		this.stopInterval(ProjectIntervalTypes.sessionHistory);
+		this.deployments = undefined;
+		this.sessions = undefined;
+		this.hasDisplayedError = new Map();
+	};
+
 	async loadAndDisplayDeployments() {
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
 		if (error) {
@@ -77,11 +103,11 @@ export class ProjectController {
 			return;
 		}
 		this.deployments = deployments;
+
 		const deploymentsViewObject: DeploymentSectionViewModel = {
 			deployments,
 			totalDeployments: deployments?.length || 0,
 		};
-
 		this.view.update({
 			type: MessageType.setDeployments,
 			payload: deploymentsViewObject,
@@ -93,14 +119,43 @@ export class ProjectController {
 		};
 
 		this.view.update({ type: MessageType.setSessionsSection, payload: sessionsViewObject });
-
 		if (this.selectedDeploymentId) {
 			await this.selectDeployment(this.selectedDeploymentId);
 		}
+		this.loadSingleshotArgs();
+	}
+
+	async loadSingleshotArgs() {
+		const lastDeployment = this.deployments ? this.deployments[this.deployments?.length - 1] : null;
+
+		if (!lastDeployment) {
+			return;
+		}
+
+		const { data: buildDescription, error: buildDescriptionError } = await BuildsService.getBuildDescription(
+			lastDeployment.buildId
+		);
+
+		if (buildDescriptionError) {
+			LoggerService.error(namespaces.projectController, translate().t("errors.buildInformationForSingleshotNotLoaded"));
+			return;
+		}
+		let buildInfo;
+		try {
+			buildInfo = JSON.parse(buildDescription!.descriptionJson);
+		} catch (error) {
+			LoggerService.error(namespaces.projectController, translate().t("errors.buildInformationForSingleshotNotParsed"));
+			return;
+		}
+		this.view.update({
+			type: MessageType.setEntrypoints,
+			payload: convertBuildRuntimesToViewTriggers(buildInfo.runtimes),
+		});
 	}
 
 	async selectDeployment(deploymentId: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
+
 		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
 
 		if (error) {
@@ -114,6 +169,7 @@ export class ProjectController {
 		}
 
 		this.sessions = sessions;
+
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions,
 			totalSessions: sessions?.length || 0,
@@ -128,10 +184,20 @@ export class ProjectController {
 			type: MessageType.selectDeployment,
 			payload: deploymentId,
 		});
+
+		if (sessions?.length) {
+			this.view.update({
+				type: MessageType.selectSession,
+				payload: sessions[0].sessionId,
+			});
+
+			this.displaySessionLogs(sessions![0].sessionId);
+		}
 	}
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
-		const { data: sessionHistoryStates, error: sessionsError } = await SessionsService.getHistoryBySessionId(sessionId);
+		const { data: sessionHistoryStates, error: sessionsError } =
+			await SessionsService.getLogRecordsBySessionId(sessionId);
 
 		if (sessionsError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (sessionsError as Error).message);
@@ -150,8 +216,12 @@ export class ProjectController {
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		this.outputSessionLogs(sessionHistoryStates);
 
-		if (sessionHistoryStates[sessionHistoryStates.length - 1].isFinished()) {
-			this.outputSessionFinishDetails(sessionHistoryStates[sessionHistoryStates.length - 1]);
+		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
+		if (lastState.isFinished()) {
+			if (lastState.isError()) {
+				this.outputErrorDetails(lastState);
+				this.outputCallstackDetails(lastState);
+			}
 			this.stopInterval(ProjectIntervalTypes.sessionHistory);
 			return;
 		}
@@ -159,39 +229,34 @@ export class ProjectController {
 		this.sessionHistoryStates = sessionHistoryStates;
 	}
 
-	private outputSessionLogs(sessionStates: SessionState[]) {
+	private outputSessionLogs(sessionStates: SessionLogRecord[]) {
 		const logPrefix = translate().t("sessions.logs");
 		LoggerService.sessionLog(`${logPrefix}:`);
 
-		const hasLogs = sessionStates.some((state) => state.getLogs().length);
+		const hasLogs = sessionStates.some((state) => state.getLogs());
 		if (!hasLogs) {
 			return;
 		}
 		for (let i = 0; i < sessionStates.length; i++) {
-			if (sessionStates[i].type !== SessionStateType.error && sessionStates[i].type !== SessionStateType.completed) {
-				sessionStates[i].getLogs().forEach((logStr) => LoggerService.sessionLog(`	${logStr}`));
+			if (!sessionStates[i].isFinished() && sessionStates[i].getLogs()) {
+				LoggerService.sessionLog(`${sessionStates[i].dateTime?.toISOString()}\t${sessionStates[i].getLogs()}`);
 			}
 		}
 	}
 
-	private outputSessionFinishDetails(lastState: SessionState) {
-		this.outputErrorDetails(lastState);
-		this.outputCallstackDetails(lastState);
-	}
-
-	private outputErrorDetails(state: SessionState) {
+	private outputErrorDetails(state: SessionLogRecord) {
 		LoggerService.sessionLog(`${translate().t("sessions.errors")}:`);
 		const errorMessage = state.isError() ? state.getError() : "";
 		LoggerService.sessionLog(`	${errorMessage}`);
 	}
 
-	private outputCallstackDetails(state: SessionState) {
+	private outputCallstackDetails(state: SessionLogRecord) {
 		LoggerService.sessionLog(`${translate().t("sessions.callstack")}:`);
 		if (!state.getCallstack().length) {
 			return;
 		}
 		state.getCallstack().forEach(({ location: { col, name, path, row } }) => {
-			LoggerService.sessionLog(`	${path}: ${row}.${col}: ${name}`);
+			LoggerService.sessionLog(`\t${path}: ${row}.${col}: ${name}`);
 		});
 	}
 
@@ -248,28 +313,11 @@ export class ProjectController {
 	}
 
 	onBlur() {
-		this.stopInterval(ProjectIntervalTypes.deployments);
-		this.stopInterval(ProjectIntervalTypes.sessionHistory);
-		this.deployments = undefined;
-		this.sessions = undefined;
-		this.hasDisplayedError = new Map();
+		this.disable();
 	}
 
 	onFocus() {
-		this.setProjectNameInView();
-		this.startInterval(
-			ProjectIntervalTypes.deployments,
-			() => this.loadAndDisplayDeployments(),
-			this.deploymentsRefreshRate
-		);
-		this.notifyViewResourcesPathChanged();
-		if (this.selectedSessionId) {
-			this.startInterval(
-				ProjectIntervalTypes.sessionHistory,
-				() => this.displaySessionsHistory(this.selectedSessionId!),
-				this.sessionsLogRefreshRate
-			);
-		}
+		this.enable();
 	}
 
 	onClose() {
@@ -369,13 +417,44 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
-		const successMessage = translate().t("deployments.activationSucceed");
-		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
 		LoggerService.info(
 			namespaces.projectController,
 			translate().t("deployments.activationSucceedId", { id: deploymentId })
 		);
+	}
+
+	async startSession(startSessionArgs: StartSessionArgsType) {
+		const sessionInputs = this.sessions?.find(
+			(session: Session) => session.sessionId === startSessionArgs.sessionId
+		)?.inputs;
+
+		const enrichedSessionArgs = {
+			...startSessionArgs,
+			inputs: sessionInputs,
+		};
+		delete enrichedSessionArgs.sessionId;
+		const { data: sessionId, error } = await SessionsService.startSession(enrichedSessionArgs, this.projectId);
+
+		if (error) {
+			const notification = `${translate().t("sessions.executionFailed")} `;
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			return;
+		}
+		const successMessage = `${translate().t("sessions.executionSucceed")} for session ${sessionId}`;
+		LoggerService.info(namespaces.projectController, successMessage);
+
+		this.view.update({
+			type: MessageType.selectSession,
+			payload: sessionId,
+		});
+
+		this.selectedDeploymentId = startSessionArgs.deploymentId;
+		this.view.update({
+			type: MessageType.selectDeployment,
+			payload: startSessionArgs.deploymentId,
+		});
+		this.displaySessionLogs(sessionId!);
 	}
 
 	async deactivateDeployment(deploymentId: string) {

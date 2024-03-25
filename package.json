@@ -56,7 +56,7 @@
 				"title": "Build autokitteh"
 			},
 			{
-				"command": "autokitteh.connect",
+				"command": "autokitteh.enable",
 				"icon": "./resources/sidebar/top-panel-connect.svg",
 				"title": "autokitteh: Connect to server"
 			},
@@ -69,7 +69,7 @@
 				"title": "autokitteh: Add connection"
 			},
 			{
-				"command": "autokitteh.disconnect",
+				"command": "autokitteh.disable",
 				"icon": "./resources/sidebar/top-panel-disconnect.svg",
 				"title": "autokitteh: Disconnect from server"
 			},
@@ -149,7 +149,7 @@
 			],
 			"view/title": [
 				{
-					"command": "autokitteh.connect",
+					"command": "autokitteh.enable",
 					"group": "navigation",
 					"when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
 				},
@@ -159,7 +159,7 @@
 					"when": "view == autokittehSidebarTree"
 				},
 				{
-					"command": "autokitteh.disconnect",
+					"command": "autokitteh.disable",
 					"group": "navigation",
 					"when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled"
 				}
@@ -168,12 +168,12 @@
 				{
 					"command": "autokitteh.buildProject",
 					"group": "inline",
-					"when": "view == autokittehSidebarTree && viewItem =~ /p:.*/"
+					"when": "view == autokittehSidebarTree && viewItem =~ /prj.*/"
 				},
 				{
 					"command": "autokitteh.runProject",
 					"group": "inline",
-					"when": "view == autokittehSidebarTree && viewItem =~ /p:.*/"
+					"when": "view == autokittehSidebarTree && viewItem =~ /prj.*/"
 				}
 			]
 		},
@@ -196,7 +196,7 @@
 		},
 		"viewsWelcome": [
 			{
-				"contents": "No connection instance has been found.\n[Connect](command:autokitteh.connect)",
+				"contents": "No connection instance has been found.\n[Connect](command:autokitteh.enable)",
 				"view": "autokittehSidebarTree",
 				"when": "config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
 			},
@@ -225,15 +225,15 @@
 					},
 					{
 						"completionEvents": [
-							"onCommand:autokitteh.connect"
+							"onCommand:autokitteh.enable"
 						],
-						"description": "[Connect](command:autokitteh.connect)",
+						"description": "[Connect](command:autokitteh.enable)",
 						"id": "connectAK",
 						"media": {
 							"altText": "Empty image",
 							"image": "resources/walkthrough/empty.png"
 						},
-						"title": "Now you can connect"
+						"title": "Now you can enable the extension"
 					}
 				],
 				"title": "Welcome to autokitteh"
@@ -253,6 +253,7 @@
 		"tar": "^6.2.0",
 		"tar-fs": "^3.0.5",
 		"vscode-languageclient": "^6.1.3",
+		"winattr": "^3.0.0",
 		"zlib": "^1.0.5"
 	},
 	"description": "Simplify the process of automating tasks",
@@ -268,13 +269,13 @@
 		"@semantic-release/release-notes-generator": "^12.1.0",
 		"@types/adm-zip": "^0.5.5",
 		"@types/glob": "^8.1.0",
-		"@types/js-yaml": "^4.0.9",
 		"@types/lodash": "^4.14.202",
 		"@types/node": "^20.11.19",
 		"@types/sinon": "^17.0.3",
 		"@types/tar": "^6.1.11",
 		"@types/tar-fs": "^2.0.4",
 		"@types/vscode": "^1.86.0",
+		"@types/winattr": "^3.0.0",
 		"@typescript-eslint/eslint-plugin": "^7.0.1",
 		"@typescript-eslint/parser": "^7.0.1",
 		"@vscode/vsce": "^2.23.0",
@@ -284,7 +285,7 @@
 		"eslint-plugin-import": "^2.29.1",
 		"eslint-plugin-unicorn": "^51.0.1",
 		"glob": "^10.3.10",
-		"husky": "^9.0.11",
+		"husky": "^8.0.0",
 		"lint-staged": "^15.2.2",
 		"npm-run-all": "^4.1.5",
 		"prettier": "^3.2.5",
@@ -328,7 +329,7 @@
 		"build:vscode-react": "npm run build --workspace=vscode-react",
 		"build": "npm run esbuild-base -- --sourcemap",
 		"build:all": "npm run build --workspace=vscode-react && npm run build",
-		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node",
+		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --external:fswin",
 		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
 		"update-ak-submodle": "git submodule update --remote --merge",
 		"format:check": "npm run prettier -- --check",
@@ -342,9 +343,10 @@
 		"test:all": "vitest run && npm run test:run --workspace=vscode-react",
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
-		"package": "vsce package"
+		"package": "vsce package",
+		"prepare": "husky install"
 	},
-	"version": "0.8.1",
+	"version": "0.9.0-dev.1",
 	"workspaces": [
 		"vscode-react"
 	]

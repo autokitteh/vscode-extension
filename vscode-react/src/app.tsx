@@ -2,31 +2,25 @@ import { useCallback, useEffect, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
-import { DeploymentSectionViewModel } from "@models";
-import { SessionSectionViewModel } from "@models/views";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKButton, AKLogo } from "@react-components";
+import { SessionStartContext } from "@react-context";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { HandleIncomingMessages, sendMessage } from "@react-utilities";
 import { cn } from "@react-utilities/cnClasses.utils";
 import { Message } from "@type";
 import "./app.css";
+import { Deployment } from "@type/models";
 
 function App() {
-	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel | undefined>();
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
-	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | undefined>();
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
-	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
-
+	const [lastDeployment, setLastDeployment] = useState<Deployment>();
 	const messageHandlers: IIncomingMessagesHandler = {
-		setDeploymentsSection,
 		setProjectName,
 		setThemeVisualType,
-		setSessionsSection,
-		setSelectedDeploymentId,
 		setResourcesDirState,
 	};
 
@@ -75,13 +69,10 @@ function App() {
 							<div className="codicon codicon-folder-opened w-4"></div>
 						</AKButton>
 					</div>
-
-					<AKDeployments
-						deployments={deploymentsSection?.deployments}
-						totalDeployments={deploymentsSection?.totalDeployments}
-						selectedDeploymentId={selectedDeploymentId}
-					/>
-					<AKSessions sessions={sessionsSection?.sessions} totalSessions={sessionsSection?.totalSessions} />
+					<SessionStartContext.Provider value={{ lastDeployment, setLastDeployment }}>
+						<AKDeployments />
+						<AKSessions />
+					</SessionStartContext.Provider>
 				</div>
 			) : (
 				<div className="flex justify-center items-center h-screen w-screen">

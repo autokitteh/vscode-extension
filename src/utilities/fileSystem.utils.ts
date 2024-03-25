@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { translate } from "@i18n";
+import * as winattr from "winattr";
 
 export const createDirectory = async (outputPath: string): Promise<void> => {
 	try {
@@ -37,24 +38,42 @@ export const listFilesInDirectory = async (dirPath: string, includeDirectories: 
 	return files;
 };
 
-export const readDirectoryRecursive = (directoryPath: string): string[] => {
-	let files: string[] = [];
-
-	fs.readdirSync(directoryPath).forEach((file) => {
-		const fullPath = path.join(directoryPath, file);
-		if (fs.statSync(fullPath).isDirectory()) {
-			files = files.concat(readDirectoryRecursive(fullPath));
-		} else {
-			files.push(fullPath);
-		}
-	});
-
-	return files;
+const isUnixHiddenPath = function (path: string) {
+	return /(^|\/)\.[^\/\.]/g.test(path);
 };
 
-export const getRelativePath = (basePath: string, fullPath: string): string => {
-	const normalizedBasePath = basePath.endsWith("/") ? basePath : `${basePath}/`;
-	return fullPath.replace(normalizedBasePath, "");
+const isWinHiddenPath = function (path: string) {
+	const pathAttrs = winattr.getSync(path);
+	return pathAttrs.hidden;
+};
+
+export const readDirectoryRecursive = async (directoryPath: string): Promise<string[]> => {
+	let files: string[] = [];
+	const isWin = process.platform === "win32";
+
+	const readDirSync = (dirPath: string) => {
+		fs.readdirSync(dirPath).forEach(async (file) => {
+			const fullPath = path.join(dirPath, file);
+
+			if (isWin && isWinHiddenPath(fullPath)) {
+				return;
+			}
+
+			if (!isWin && isUnixHiddenPath(fullPath)) {
+				return;
+			}
+
+			const stats = fs.statSync(fullPath);
+			if (stats.isDirectory()) {
+				files = files.concat(await readDirectoryRecursive(fullPath));
+			} else if (stats.isFile()) {
+				files.push(fullPath);
+			}
+		});
+	};
+
+	readDirSync(directoryPath);
+	return files;
 };
 
 export const mapFilesToContentInBytes = async (
@@ -64,8 +83,10 @@ export const mapFilesToContentInBytes = async (
 	const fileContentMap: { [key: string]: Buffer } = {};
 
 	for (const fullPath of fullPathArray) {
-		const relativePath = getRelativePath(basePath, fullPath);
-		const contentBytes = fs.readFileSync(fullPath);
+		const normalizedBasePath = path.normalize(basePath);
+		const normalizedFullPath = path.normalize(fullPath);
+		const relativePath = path.relative(normalizedBasePath, normalizedFullPath);
+		const contentBytes = fs.readFileSync(normalizedFullPath);
 		fileContentMap[relativePath] = contentBytes;
 	}
 

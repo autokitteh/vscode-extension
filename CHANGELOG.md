@@ -1,3 +1,66 @@
+# [0.9.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.8...v0.9.0-dev.1) (2024-03-25)
+
+
+### Features
+
+* Single shot of a sessions ([#170](https://github.com/autokitteh/vscode-extension/issues/170)) ([202e62e](https://github.com/autokitteh/vscode-extension/commit/202e62ee8d04cd71dade5f82782f3a496fb1e7b4))
+
+## [0.8.2-dev.8](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.7...v0.8.2-dev.8) (2024-03-25)
+
+
+### Bug Fixes
+
+* starlark needed executable recognition on windows ([#192](https://github.com/autokitteh/vscode-extension/issues/192)) ([d58c8a9](https://github.com/autokitteh/vscode-extension/commit/d58c8a9e2876e85502411472452a8076ca53f2e2))
+
+## [0.8.2-dev.7](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.6...v0.8.2-dev.7) (2024-03-19)
+
+
+### Bug Fixes
+
+* paths issue on windows ([#191](https://github.com/autokitteh/vscode-extension/issues/191)) ([7298668](https://github.com/autokitteh/vscode-extension/commit/7298668326b90d7372152b8d3f7e8fd5b3440e7a))
+
+## [0.8.2-dev.6](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.5...v0.8.2-dev.6) (2024-03-11)
+
+
+### Bug Fixes
+
+* fix missing buttons in the projects list ([#189](https://github.com/autokitteh/vscode-extension/issues/189)) ([7a4f698](https://github.com/autokitteh/vscode-extension/commit/7a4f69857b0352fca673149c4923c798d17f5dd6))
+
+## [0.8.2-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.4...v0.8.2-dev.5) (2024-03-11)
+
+
+### Bug Fixes
+
+* add missing try-catch to services ([#186](https://github.com/autokitteh/vscode-extension/issues/186)) ([4372fe5](https://github.com/autokitteh/vscode-extension/commit/4372fe58670e0ce1f0d2fc0d592002e0790058c2))
+
+## [0.8.2-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.3...v0.8.2-dev.4) (2024-03-10)
+
+
+### Bug Fixes
+
+* skip files in hidden directories on project build ([a3eb1b2](https://github.com/autokitteh/vscode-extension/commit/a3eb1b243e41b91ff07bdcf6af50bdf546ce1db0))
+
+## [0.8.2-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.2...v0.8.2-dev.3) (2024-03-10)
+
+
+### Bug Fixes
+
+* fix relative path in filesSystem utils ([#183](https://github.com/autokitteh/vscode-extension/issues/183)) ([15a97b8](https://github.com/autokitteh/vscode-extension/commit/15a97b8acdbeb9520c5b13d7e55e45438dae094c))
+
+## [0.8.2-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.1...v0.8.2-dev.2) (2024-03-07)
+
+
+### Bug Fixes
+
+* app-state-handler intervals control ([#179](https://github.com/autokitteh/vscode-extension/issues/179)) ([f0ef601](https://github.com/autokitteh/vscode-extension/commit/f0ef6012c539af2b4f9499af32eae966e2f8ff9a))
+
+## [0.8.2-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.8.1...v0.8.2-dev.1) (2024-03-07)
+
+
+### Bug Fixes
+
+* display of the session logs with the new backend ([#173](https://github.com/autokitteh/vscode-extension/issues/173)) ([e5b3d08](https://github.com/autokitteh/vscode-extension/commit/e5b3d08db8e341890aaaa9732873f6d242cc538e))
+
 ## [0.8.1](https://github.com/autokitteh/vscode-extension/compare/v0.8.0...v0.8.1) (2024-02-28)
 
 

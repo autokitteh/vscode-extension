@@ -43,25 +43,30 @@ export class DeploymentsService {
 	}
 
 	static async listByProjectId(projectId: string): Promise<ServiceResponse<Deployment[]>> {
-		const { data: environments, error: environmentsError } = await EnvironmentsService.listByProjectId(projectId);
+		try {
+			const { data: environments, error: listEnvironmentsError } = await EnvironmentsService.listByProjectId(projectId);
 
-		if (environmentsError) {
-			LoggerService.error(namespaces.deploymentsService, (environmentsError as Error).message);
+			if (listEnvironmentsError) {
+				LoggerService.error(namespaces.deploymentsService, (listEnvironmentsError as Error).message);
 
-			return { data: undefined, error: environmentsError };
+				return { data: undefined, error: listEnvironmentsError };
+			}
+
+			const environmentIds = getIds(environments!, "envId");
+			const { data: projectDeployments, error: listDeploymentsError } = await this.listByEnvironmentIds(environmentIds);
+
+			if (listDeploymentsError) {
+				LoggerService.error(namespaces.deploymentsService, (listDeploymentsError as Error).message);
+
+				return { data: undefined, error: listDeploymentsError };
+			}
+			sortArray(projectDeployments, "createdAt", SortOrder.DESC);
+
+			return { data: projectDeployments!, error: undefined };
+		} catch (error) {
+			LoggerService.error(namespaces.deploymentsService, (error as Error).message);
+			return { data: undefined, error: (error as Error).message };
 		}
-
-		const environmentIds = getIds(environments!, "envId");
-		const { data: projectDeployments, error: deploymentsError } = await this.listByEnvironmentIds(environmentIds);
-
-		if (deploymentsError) {
-			LoggerService.error(namespaces.deploymentsService, (deploymentsError as Error).message);
-
-			return { data: undefined, error: deploymentsError };
-		}
-		sortArray(projectDeployments, "createdAt", SortOrder.DESC);
-
-		return { data: projectDeployments!, error: undefined };
 	}
 
 	static async create(deployment: { envId: string; buildId: string }): Promise<ServiceResponse<string>> {

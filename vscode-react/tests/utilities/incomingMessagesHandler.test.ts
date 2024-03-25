@@ -24,30 +24,4 @@ describe("HandleIncomingMessages", () => {
 
 		expect(mockHandler.setThemeVisualType).toHaveBeenCalledWith(Theme.DARK);
 	});
-
-	it("handles setDeployments MessageType correctly", () => {
-		const mockHandler = {
-			setDeploymentsSection: vi.fn(),
-		};
-
-		const messageEvent = {
-			data: {
-				type: MessageType.setDeployments,
-				payload: {
-					deployments: [],
-					totalDeployments: 0,
-				},
-			},
-		};
-
-		HandleIncomingMessages(
-			messageEvent as unknown as MessageEvent<Message>,
-			mockHandler as unknown as IIncomingMessagesHandler
-		);
-
-		expect(mockHandler.setDeploymentsSection).toHaveBeenCalledWith({
-			deployments: [],
-			totalDeployments: 0,
-		});
-	});
 });
