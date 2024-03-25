@@ -1,3 +1,10 @@
+# [0.9.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.8...v0.9.0-dev.1) (2024-03-25)
+
+
+### Features
+
+* Single shot of a sessions ([#170](https://github.com/autokitteh/vscode-extension/issues/170)) ([202e62e](https://github.com/autokitteh/vscode-extension/commit/202e62ee8d04cd71dade5f82782f3a496fb1e7b4))
+
 ## [0.8.2-dev.8](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.7...v0.8.2-dev.8) (2024-03-25)
 
 
