@@ -5,7 +5,6 @@ import { HandleDeploymentsIncomingMessages } from "@react-utilities";
 import { Message } from "@type";
 import { SessionEntrypoint } from "@type/models";
 
-// This is a simplification. You might need to adjust it based on your real API calls or context setup.
 export const useDeployments = () => {
 	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel>();
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string>();
