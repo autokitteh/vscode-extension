@@ -1,11 +1,12 @@
 import { vsCommands, namespaces, channels } from "@constants";
-import { getResources } from "@controllers/utilities";
+import { convertBuildRuntimesToViewTriggers, getResources } from "@controllers/utilities";
 import { MessageType, ProjectIntervalTypes } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
-import { SessionLogRecord } from "@models";
-import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models/views";
+import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
+import { BuildsService } from "@services";
+import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
@@ -102,11 +103,11 @@ export class ProjectController {
 			return;
 		}
 		this.deployments = deployments;
+
 		const deploymentsViewObject: DeploymentSectionViewModel = {
 			deployments,
 			totalDeployments: deployments?.length || 0,
 		};
-
 		this.view.update({
 			type: MessageType.setDeployments,
 			payload: deploymentsViewObject,
@@ -118,14 +119,43 @@ export class ProjectController {
 		};
 
 		this.view.update({ type: MessageType.setSessionsSection, payload: sessionsViewObject });
-
 		if (this.selectedDeploymentId) {
 			await this.selectDeployment(this.selectedDeploymentId);
 		}
+		this.loadSingleshotArgs();
+	}
+
+	async loadSingleshotArgs() {
+		const lastDeployment = this.deployments ? this.deployments[this.deployments?.length - 1] : null;
+
+		if (!lastDeployment) {
+			return;
+		}
+
+		const { data: buildDescription, error: buildDescriptionError } = await BuildsService.getBuildDescription(
+			lastDeployment.buildId
+		);
+
+		if (buildDescriptionError) {
+			LoggerService.error(namespaces.projectController, translate().t("errors.buildInformationForSingleshotNotLoaded"));
+			return;
+		}
+		let buildInfo;
+		try {
+			buildInfo = JSON.parse(buildDescription!.descriptionJson);
+		} catch (error) {
+			LoggerService.error(namespaces.projectController, translate().t("errors.buildInformationForSingleshotNotParsed"));
+			return;
+		}
+		this.view.update({
+			type: MessageType.setEntrypoints,
+			payload: convertBuildRuntimesToViewTriggers(buildInfo.runtimes),
+		});
 	}
 
 	async selectDeployment(deploymentId: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
+
 		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
 
 		if (error) {
@@ -139,6 +169,7 @@ export class ProjectController {
 		}
 
 		this.sessions = sessions;
+
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions,
 			totalSessions: sessions?.length || 0,
@@ -153,6 +184,15 @@ export class ProjectController {
 			type: MessageType.selectDeployment,
 			payload: deploymentId,
 		});
+
+		if (sessions?.length) {
+			this.view.update({
+				type: MessageType.selectSession,
+				payload: sessions[0].sessionId,
+			});
+
+			this.displaySessionLogs(sessions![0].sessionId);
+		}
 	}
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
@@ -377,13 +417,44 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
-		const successMessage = translate().t("deployments.activationSucceed");
-		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
 		LoggerService.info(
 			namespaces.projectController,
 			translate().t("deployments.activationSucceedId", { id: deploymentId })
 		);
+	}
+
+	async startSession(startSessionArgs: StartSessionArgsType) {
+		const sessionInputs = this.sessions?.find(
+			(session: Session) => session.sessionId === startSessionArgs.sessionId
+		)?.inputs;
+
+		const enrichedSessionArgs = {
+			...startSessionArgs,
+			inputs: sessionInputs,
+		};
+		delete enrichedSessionArgs.sessionId;
+		const { data: sessionId, error } = await SessionsService.startSession(enrichedSessionArgs, this.projectId);
+
+		if (error) {
+			const notification = `${translate().t("sessions.executionFailed")} `;
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			return;
+		}
+		const successMessage = `${translate().t("sessions.executionSucceed")} for session ${sessionId}`;
+		LoggerService.info(namespaces.projectController, successMessage);
+
+		this.view.update({
+			type: MessageType.selectSession,
+			payload: sessionId,
+		});
+
+		this.selectedDeploymentId = startSessionArgs.deploymentId;
+		this.view.update({
+			type: MessageType.selectDeployment,
+			payload: startSessionArgs.deploymentId,
+		});
+		this.displaySessionLogs(sessionId!);
 	}
 
 	async deactivateDeployment(deploymentId: string) {

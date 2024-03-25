@@ -16,6 +16,7 @@ export default defineConfig({
 			"@services": path.resolve(__dirname, "../src/services"),
 			"@starlark": path.resolve(__dirname, "../src/starlark"),
 			"@react-assets": path.resolve(__dirname, "./assets"),
+			"@react-context": path.resolve(__dirname, "./src/context"),
 			"@react-components": path.resolve(__dirname, "./src/components"),
 			"@react-enums": path.resolve(__dirname, "./src/enums"),
 			"@react-hooks": path.resolve(__dirname, "./src/hooks"),

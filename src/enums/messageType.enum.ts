@@ -8,7 +8,10 @@ export enum MessageType {
 	buildProject = "BUILD_PROJECT",
 	setSessionsSection = "SET_SESSIONS_SECTION",
 	selectDeployment = "SELECT_DEPLOYMENT",
+	selectSession = "SELECT_SESSION",
 	displaySessionLogs = "DISPLAY_SESSION_LOGS",
 	deactivateDeployment = "DEACTIVATE_DEPLOYMENT",
 	activateDeployment = "ACTIVATE_DEPLOYMENT",
+	startSession = "START_SESSION",
+	setEntrypoints = "SET_ENTRYPOINTS",
 }

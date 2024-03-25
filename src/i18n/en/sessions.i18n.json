@@ -9,7 +9,9 @@
 	"historyResult": "Result",
 	"historyFunction": "Function",
 	"historyInitFunction": "Init function",
-	"historyPrint": "Print",
 	"historyTime": "Time",
-	"historyNoOutput": "No output"
+	"historyNoOutput": "No output",
+	"historyPrint": "Print",
+	"executionFailed": "Session execution failed",
+	"executionFailedError": "Session execution failed - {{error}}"
 }

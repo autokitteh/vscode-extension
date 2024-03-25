@@ -1,73 +1,63 @@
-import { useEffect, useState } from "react";
-import { MessageType } from "@enums";
+import { useCallback, useEffect, useState } from "react";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
-import { AKSessionState } from "@react-components";
-import {
-	AKTable,
-	AKTableMessage,
-	AKTableCell,
-	AKTableHeader,
-	AKTableRow,
-	AKTableHeaderCell,
-} from "@react-components/AKTable";
-import { getTimePassed, sendMessage } from "@react-utilities";
-import { Session } from "@type/models";
+import { AKMonacoEditorModal, AKSessionsTableHeader } from "@react-components";
+import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
+import { AKTable, AKTableMessage } from "@react-components/AKTable";
+import { useCloseOnEscape, useForceRerender } from "@react-hooks";
+import { IIncomingSessionsMessagesHandler } from "@react-interfaces";
+import { HandleSessionsIncomingMessages } from "@react-utilities";
+import { Message } from "@type";
 
-export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewModel) => {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [rerender, setRerender] = useState(0);
+export const AKSessions = () => {
+	const [modal, setModal] = useState(false);
+
 	const [isLoading, setIsLoading] = useState(true);
-	const [selectedSession, setSelectedSession] = useState("");
+	const [sessionInputs, setSessionInputs] = useState<string>();
+	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
+	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
+
+	const handleMessagesFromExtension = useCallback(
+		(event: MessageEvent<Message>) => HandleSessionsIncomingMessages(event, messageHandlers),
+		[]
+	);
+	const { sessions, totalSessions } = sessionsSection || {};
+
+	const messageHandlers: IIncomingSessionsMessagesHandler = {
+		setSessionsSection,
+		setSelectedSession,
+	};
+
+	useEffect(() => {
+		window.addEventListener("message", handleMessagesFromExtension);
+		return () => {
+			window.removeEventListener("message", handleMessagesFromExtension);
+		};
+	}, [handleMessagesFromExtension]);
 
 	useEffect(() => {
 		if (isLoading) {
 			setIsLoading(false);
 		}
 	}, [sessions]);
-	useEffect(() => {
-		const interval = setInterval(() => {
-			setRerender((rerender) => rerender + 1);
-		}, 1000);
 
-		return () => clearInterval(interval);
-	}, []);
-
-	const displaySessionLogs = (sessionId: string) => {
-		sendMessage(MessageType.displaySessionLogs, sessionId);
-		setSelectedSession(sessionId);
-	};
+	useCloseOnEscape(() => setModal(false));
+	useForceRerender();
 
 	return (
-		<div className="mt-4  h-[43vh] overflow-y-auto overflow-x-hidden">
+		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
 			<div className="flex items-baseline">
 				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.sessions.tableTitle")}</h1>
 				<div className="ml-1 text-lg font-extralight">({totalSessions})</div>
 			</div>
 			<AKTable>
-				<AKTableHeader classes="sticky top-0">
-					<AKTableHeaderCell>{translate().t("reactApp.sessions.time")}</AKTableHeaderCell>
-					<AKTableHeaderCell>{translate().t("reactApp.sessions.status")}</AKTableHeaderCell>
-					<AKTableHeaderCell>{translate().t("reactApp.sessions.sessionId")}</AKTableHeaderCell>
-					<AKTableHeaderCell>{translate().t("reactApp.sessions.actions")}</AKTableHeaderCell>
-				</AKTableHeader>
-				{sessions &&
-					sessions.map((session: Session) => (
-						<AKTableRow key={session.sessionId} isSelected={selectedSession === session.sessionId}>
-							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
-								{getTimePassed(session.createdAt)}
-							</AKTableCell>
-							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
-								<AKSessionState sessionState={session.state} />
-							</AKTableCell>
-							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
-								{session.sessionId}
-							</AKTableCell>
-							<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
-								<div className="codicon codicon-output" onClick={() => displaySessionLogs(session.sessionId)}></div>
-							</AKTableCell>
-						</AKTableRow>
-					))}
+				<AKSessionsTableHeader />
+				<AKSessionsTableBody
+					displayInputsModal={setSessionInputs}
+					sessions={sessions}
+					selectedSession={selectedSession}
+					setSelectedSession={setSelectedSession}
+				/>
 			</AKTable>
 			{isLoading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
 			{!sessions && !isLoading && (
@@ -76,6 +66,8 @@ export const AKSessions = ({ sessions, totalSessions = 0 }: SessionSectionViewMo
 			{sessions && sessions.length === 0 && (
 				<AKTableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</AKTableMessage>
 			)}
+
+			{modal && <AKMonacoEditorModal content={sessionInputs} setModal={setModal} />}
 		</div>
 	);
 };

@@ -9,5 +9,6 @@
 	"showMore": "Show more",
 	"sessions": "sessions",
 	"deployments": "deployments",
-	"unknown": "Unknown"
+	"unknown": "Unknown",
+	"execute": "Execute"
 }

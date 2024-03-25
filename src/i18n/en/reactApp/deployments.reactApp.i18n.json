@@ -13,5 +13,11 @@
 		"draining": "Draining",
 		"error": "Error - please reload"
 	},
-	"noDeployments": "No deployments found"
+	"noDeployments": "No deployments found",
+	"executeEntrypoint": "Entrypoint",
+	"executeFile": "File",
+	"executeMissingParams": "Set session execution params",
+	"saveAndRun": "Save & Run",
+	"closeModalButton": "Close",
+	"dismiss": "Dismiss"
 }
