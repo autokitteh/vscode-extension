@@ -15,7 +15,7 @@ export class StarlarkVersionManagerService {
 		currentVersion: string,
 		extensionPath: string
 	): Promise<{ path?: string; version?: string; error?: Error; didUpdate: boolean }> {
-		const platform = os.platform();
+		const platform = StarlarkVersionManagerService.determinePlatform();
 		const arch = StarlarkVersionManagerService.determineArchitecture();
 
 		const { data: latestRelease, error: releaseError } = await StarlarkVersionManagerService.fetchLatestReleaseInfo(
@@ -154,5 +154,15 @@ export class StarlarkVersionManagerService {
 	private static determineArchitecture(): string {
 		const archMappings: Record<string, string> = { x64: "x86_64", arm64: "x86_64" };
 		return archMappings[os.arch()] || os.arch();
+	}
+
+	private static determinePlatform(): string {
+		let platform = os.platform().toString();
+
+		// TODO: Sync in the future with the supported platforms in our LSP versions.
+		if (platform === "win32") {
+			platform = "windows";
+		}
+		return platform;
 	}
 }
