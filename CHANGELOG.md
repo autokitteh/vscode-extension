@@ -1,3 +1,10 @@
+# [0.9.0](https://github.com/autokitteh/vscode-extension/compare/v0.8.1...v0.9.0) (2024-03-25)
+
+
+### Features
+
+* singleshot ([#181](https://github.com/autokitteh/vscode-extension/issues/181)) ([ee76d02](https://github.com/autokitteh/vscode-extension/commit/ee76d02dc1c169cb51467b6318dfc42dd6a1d5a7)), closes [#171](https://github.com/autokitteh/vscode-extension/issues/171) [#176](https://github.com/autokitteh/vscode-extension/issues/176) [#173](https://github.com/autokitteh/vscode-extension/issues/173) [#173](https://github.com/autokitteh/vscode-extension/issues/173) [#179](https://github.com/autokitteh/vscode-extension/issues/179) [#179](https://github.com/autokitteh/vscode-extension/issues/179) [#182](https://github.com/autokitteh/vscode-extension/issues/182) [#184](https://github.com/autokitteh/vscode-extension/issues/184) [#183](https://github.com/autokitteh/vscode-extension/issues/183) [#183](https://github.com/autokitteh/vscode-extension/issues/183) [#185](https://github.com/autokitteh/vscode-extension/issues/185) [#186](https://github.com/autokitteh/vscode-extension/issues/186) [#186](https://github.com/autokitteh/vscode-extension/issues/186) [#189](https://github.com/autokitteh/vscode-extension/issues/189) [#189](https://github.com/autokitteh/vscode-extension/issues/189) [#190](https://github.com/autokitteh/vscode-extension/issues/190) [#191](https://github.com/autokitteh/vscode-extension/issues/191) [#191](https://github.com/autokitteh/vscode-extension/issues/191) [#192](https://github.com/autokitteh/vscode-extension/issues/192) [#192](https://github.com/autokitteh/vscode-extension/issues/192) [#170](https://github.com/autokitteh/vscode-extension/issues/170) [#170](https://github.com/autokitteh/vscode-extension/issues/170)
+
 # [0.9.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.8...v0.9.0-dev.1) (2024-03-25)
 
 
