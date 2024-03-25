@@ -83,7 +83,9 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		}
 	}, [entrypoints]);
 
-	const startSession = (deployment: Deployment) => {
+	const startSession = () => {
+		const lastDeployment = deployments![0];
+
 		setDisplayedErrors({});
 
 		if (!selectedFile || !selectedFunction) {
@@ -97,8 +99,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		}
 
 		const startSessionArgs = {
-			buildId: deployment.buildId,
-			deploymentId: deployment.deploymentId,
+			buildId: lastDeployment.buildId,
+			deploymentId: lastDeployment.deploymentId,
 			entrypoint: selectedEntrypoint,
 		};
 
@@ -143,24 +145,24 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					{deployment.buildId}
 				</AKTableCell>
 				<AKTableCell>
+					{deployment.deploymentId === deployments?.[0]?.deploymentId && (
+						<div
+							className="codicon codicon-redo mr-2 cursor-pointer"
+							ref={referenceEl}
+							title="Execute"
+							onClick={() => togglePopper()}
+						></div>
+					)}
 					{isDeploymentStateStartable(deployment.state) ? (
 						<div
 							className="codicon codicon-debug-start cursor-pointer text-green-500"
 							onClick={() => activateBuild(deployment.deploymentId)}
 						></div>
 					) : (
-						<div>
-							<div
-								className="codicon codicon-redo mr-2 cursor-pointer"
-								ref={referenceEl}
-								title="Execute"
-								onClick={() => togglePopper()}
-							></div>
-							<div
-								className="codicon codicon-debug-stop cursor-pointer text-red-500"
-								onClick={() => deactivateBuild(deployment.deploymentId)}
-							></div>
-						</div>
+						<div
+							className="codicon codicon-debug-stop cursor-pointer text-red-500"
+							onClick={() => deactivateBuild(deployment.deploymentId)}
+						></div>
 					)}
 
 					{displayExecutePopper && (
@@ -213,9 +215,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 								{translate().t("reactApp.deployments.dismiss")}
 							</AKButton>
 							<div className="flex-grow" />
-							<AKButton onClick={() => startSession(deployment)}>
-								{translate().t("reactApp.deployments.saveAndRun")}
-							</AKButton>
+							<AKButton onClick={() => startSession()}>{translate().t("reactApp.deployments.saveAndRun")}</AKButton>
 						</div>
 					</div>
 				</AKTableCell>
