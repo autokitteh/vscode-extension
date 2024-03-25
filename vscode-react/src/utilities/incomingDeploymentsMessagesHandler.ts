@@ -1,12 +1,13 @@
 import { MessageType } from "@enums";
 import { DeploymentSectionViewModel } from "@models";
 import { IIncomingDeploymentsMessagesHandler } from "@react-interfaces";
+import { IIncomingMessagesDeploymentsHandler } from "@react-interfaces/incomingDeploymentsMessagesHandler.interface";
 import { Message } from "@type";
 import { SessionEntrypoint } from "@type/models";
 
 export const HandleDeploymentsIncomingMessages = (
 	event: MessageEvent<Message>,
-	handlers: IIncomingDeploymentsMessagesHandler
+	handlers: IIncomingMessagesDeploymentsHandler
 ) => {
 	const { payload } = event.data as Message;
 	switch (event.data.type) {
@@ -21,6 +22,17 @@ export const HandleDeploymentsIncomingMessages = (
 			break;
 		case MessageType.setEntrypoints:
 			handlers.setEntrypoints(payload as Record<string, SessionEntrypoint[]>);
+		default:
+	}
+};
+export const HandleIncomingDeploymentsMessages = (
+	event: MessageEvent<Message>,
+	handlers: IIncomingDeploymentsMessagesHandler
+) => {
+	const { payload } = event.data as Message;
+	switch (event.data.type) {
+		case MessageType.projectDeletedResponse:
+			handlers.handleProjectDeletedResponse(payload as boolean);
 			break;
 		default:
 	}

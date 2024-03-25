@@ -512,8 +512,19 @@ export class ProjectController {
 			})} - ${(error as Error).message}`;
 			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
 			LoggerService.error(namespaces.deploymentsService, errorMessage);
+
+			this.view.update({
+				type: MessageType.projectDeleted,
+				payload: false,
+			});
 			return;
 		}
+
+		this.view.update({
+			type: MessageType.projectDeleted,
+			payload: true,
+		});
+
 		const successMessage = translate().t("deployments.deleteSucceedIdProject", {
 			deploymentId,
 			projectId: this.projectId,

@@ -5,3 +5,6 @@ export interface IIncomingMessagesHandler {
 	setProjectName(projectName: string | undefined): void;
 	setResourcesDirState(projectFolder: boolean): void;
 }
+export interface IIncomingDeploymentsMessagesHandler {
+	handleProjectDeletedResponse(isDeleted: boolean): void;
+}

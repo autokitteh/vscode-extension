@@ -1,12 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
+import { Player } from "@lottiefiles/react-lottie-player";
+import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKDeploymentState } from "@react-components";
 import { AKButton } from "@react-components/aKButton.component";
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
 import { useDeployments } from "@react-hooks";
-import { getTimePassed, sendMessage } from "@react-utilities";
+import { IIncomingDeploymentsMessagesHandler } from "@react-interfaces";
+import { getTimePassed, HandleIncomingDeploymentsMessages, sendMessage } from "@react-utilities";
 import { cn } from "@react-utilities/cnClasses.utils";
+import { Message } from "@type";
 import { Deployment, SessionEntrypoint } from "@type/models";
 import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
 import { usePopper } from "react-popper";
@@ -119,33 +123,48 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		setSelectedEntrypoint(entrypointForFunction);
 		setSelectedFunction(event);
 	};
+	const [isDeletingInProccess, setIsDeletingInProgress] = useState(false);
 
 	const deletePopperEl = useRef<HTMLDivElement | null>(null);
 	const deleteReferenceEl = useRef<HTMLDivElement | null>(null);
 	const [showPopper, setShowPopper] = useState(false);
 	const [deleteDeploymentId, setDeleteDeploymentId] = useState("");
+	const handleProjectDeletedResponse = (isDeleted: boolean) => {
+		console.log(isDeleted);
+	};
 
-	const { attributes: deleteAttributes, styles: deleteStyles } = usePopper(
-		deleteReferenceEl.current,
-		deletePopperEl.current,
-		{
-			placement: "bottom",
-			modifiers: [
-				{
-					name: "offset",
-					options: {
-						offset: [0, 10],
-					},
-				},
-			],
-		}
+	const messageHandlers: IIncomingDeploymentsMessagesHandler = {
+		handleProjectDeletedResponse,
+	};
+
+	const handleMessagesFromExtension = useCallback(
+		(event: MessageEvent<Message>) => HandleIncomingDeploymentsMessages(event, messageHandlers),
+		[]
 	);
+
+	useEffect(() => {
+		window.addEventListener("message", handleMessagesFromExtension);
+		return () => {
+			window.removeEventListener("message", handleMessagesFromExtension);
+		};
+	}, [handleMessagesFromExtension]);
+
+	const { attributes: deleteAttributes, styles: deleteStyles } = usePopper(referenceEl.current, popperEl.current, {
+		placement: "bottom",
+		modifiers: [
+			{
+				name: "offset",
+				options: {
+					offset: [0, 10],
+				},
+			},
+		],
+	});
 	const deletePopperClasses = cn(
 		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
 		"border border-gray-300 p-4 rounded-lg shadow-lg",
 		{ invisible: !showPopper }
 	);
-
 	const toggleDeletePopper = (refElement: HTMLDivElement | null, deploymentId: string, hidePopper?: boolean) => {
 		if (hidePopper) {
 			setShowPopper(false);
@@ -158,9 +177,9 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	const deleteDeployment = () => {
 		sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
-		setShowPopper(false);
+		setIsDeletingInProgress(true);
+		// setShowPopper(false);
 	};
-
 	return (
 		deployments &&
 		deployments.map((deployment: Deployment) => (
@@ -205,34 +224,45 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 							onClick={() => deactivateBuild(deployment.deploymentId)}
 						></div>
 					)}
-
 					<div
 						className="codicon codicon-trash cursor-pointer ml-2"
 						onClick={(e) => toggleDeletePopper(e.currentTarget, deployment.deploymentId)}
-						ref={referenceEl}
+						ref={deleteReferenceEl}
 					></div>
-
 					<div
 						ref={deletePopperEl}
 						style={deleteStyles.popper}
 						{...deleteAttributes.popper}
 						className={deletePopperClasses}
 					>
-						<div className="mb-3 text-left">
-							<strong className="mb-2">
-								Are you sure you want to
-								<br /> delete this deployment?
-							</strong>
+						<div
+							className={cn("flex justify-center items-center h-full w-full", {
+								visible: isDeletingInProccess,
+							})}
+						>
+							<Player src={loaderAnimation} className="player" loop autoplay />
 						</div>
-						<div className="flex">
-							<AKButton
-								classes="bg-vscode-editor-background text-vscode-foreground"
-								onClick={() => toggleDeletePopper(null, "", true)}
-							>
-								{translate().t("reactApp.general.no")}
-							</AKButton>
-							<div className="flex-grow" />
-							<AKButton onClick={() => deleteDeployment()}>{translate().t("reactApp.general.yes")}</AKButton>
+						<div
+							className={cn({
+								visible: isDeletingInProccess,
+							})}
+						>
+							<div className="mb-3 text-left">
+								<strong className="mb-2">
+									Are you sure you want to
+									<br /> delete this deployment?
+								</strong>
+							</div>
+							<div className="flex">
+								<AKButton
+									classes="bg-vscode-editor-background text-vscode-foreground"
+									onClick={() => toggleDeletePopper(null, "", true)}
+								>
+									{translate().t("reactApp.general.no")}
+								</AKButton>
+								<div className="flex-grow" />
+								<AKButton onClick={() => deleteDeployment()}>{translate().t("reactApp.general.yes")}</AKButton>
+							</div>
 						</div>
 					</div>
 					{displayExecutePopper && (
