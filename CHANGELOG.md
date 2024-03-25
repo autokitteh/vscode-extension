@@ -1,3 +1,10 @@
+## [0.8.2-dev.8](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.7...v0.8.2-dev.8) (2024-03-25)
+
+
+### Bug Fixes
+
+* starlark needed executable recognition on windows ([#192](https://github.com/autokitteh/vscode-extension/issues/192)) ([d58c8a9](https://github.com/autokitteh/vscode-extension/commit/d58c8a9e2876e85502411472452a8076ca53f2e2))
+
 ## [0.8.2-dev.7](https://github.com/autokitteh/vscode-extension/compare/v0.8.2-dev.6...v0.8.2-dev.7) (2024-03-19)
 
 
