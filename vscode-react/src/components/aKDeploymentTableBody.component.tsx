@@ -5,18 +5,20 @@ import { Player } from "@lottiefiles/react-lottie-player";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKDeploymentState } from "@react-components";
 import { AKButton } from "@react-components/aKButton.component";
+import { PopperComponent } from "@react-components/aKPopper.component";
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
-import { useDeployments } from "@react-hooks";
+import { useDeployments, usePoppersManager } from "@react-hooks";
 import { IIncomingDeploymentsMessagesHandler } from "@react-interfaces";
 import { getTimePassed, HandleIncomingDeploymentsMessages, sendMessage } from "@react-utilities";
 import { cn } from "@react-utilities/cnClasses.utils";
 import { Message } from "@type";
 import { Deployment, SessionEntrypoint } from "@type/models";
 import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
-import { usePopper } from "react-popper";
 
 export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
 	const { selectedDeploymentId, entrypoints } = useDeployments();
+	const { visiblePoppers, togglePopperVisibility, hidePopper, setPopperVisibility, hideAllPoppers } =
+		usePoppersManager();
 
 	useEffect(() => {
 		if (typeof selectedDeploymentId === "string") {
@@ -24,8 +26,13 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		}
 	}, [selectedDeploymentId]);
 
-	const referenceEl = useRef<HTMLDivElement | null>(null);
-	const popperEl = useRef<HTMLDivElement | null>(null);
+	useEffect(() => {
+		setPopperVisibility("execute", false);
+	}, []);
+
+	const executePopperElementRef = useRef<HTMLDivElement | null>(null);
+	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
+
 	const isDeploymentStateStartable = (deploymentState: number) =>
 		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
 	const [selectedFile, setSelectedFile] = useState<string>("");
@@ -42,17 +49,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		const session = deployment.sessionStats.find((s) => s.state === state);
 		return session ? session.count : 0;
 	};
-	const { attributes, styles } = usePopper(referenceEl.current, popperEl.current, {
-		placement: "bottom",
-		modifiers: [
-			{
-				name: "offset",
-				options: {
-					offset: [0, 10],
-				},
-			},
-		],
-	});
 
 	const handleFunctionChange = (event: string) => {
 		let entrypointForFunction;
@@ -64,11 +60,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		setSelectedEntrypoint(entrypointForFunction);
 		setSelectedFunction(event);
 	};
-	const [displayExecutePopper, setDisplayExecutePopper] = useState<boolean>(false);
-	const popperClasses = cn(
-		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
-		"border border-gray-300 p-4 rounded-lg shadow-lg"
-	);
 
 	const deactivateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.deactivateDeployment, deploymentId);
@@ -78,9 +69,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		sendMessage(MessageType.activateDeployment, deploymentId);
 	};
 
-	const togglePopper = () => {
-		setDisplayExecutePopper(true);
-	};
 	const getSessionsByDeploymentId = (deploymentId: string) => {
 		sendMessage(MessageType.selectDeployment, deploymentId);
 		setSelectedDeployment(deploymentId);
@@ -121,21 +109,17 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 		sendMessage(MessageType.startSession, startSessionArgs);
 
-		setDisplayExecutePopper(false);
+		hidePopper("execute");
 	};
 
 	const [isDeletingInProccess, setIsDeletingInProgress] = useState(false);
 	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
-
-	const deletePopperEl = useRef<HTMLDivElement | null>(null);
-	const deleteReferenceEl = useRef<HTMLDivElement | null>(null);
-	const [showPopper, setShowPopper] = useState(false);
 	const [deletedDeploymentError, setDeletedDeploymentError] = useState(false);
 
 	const handleDeploymentDeletedResponse = (isDeleted: boolean) => {
 		setIsDeletingInProgress(false);
 		if (isDeleted) {
-			setShowPopper(false);
+			hidePopper("delete");
 			setDeletedDeploymentError(false);
 			return;
 		}
@@ -158,33 +142,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		};
 	}, [handleMessagesFromExtension]);
 
-	const { attributes: deleteAttributes, styles: deleteStyles } = usePopper(referenceEl.current, popperEl.current, {
-		placement: "bottom",
-		modifiers: [
-			{
-				name: "offset",
-				options: {
-					offset: [0, 10],
-				},
-			},
-		],
-	});
-
-	const deletePopperClasses = cn(
-		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
-		"border border-gray-300 p-4 rounded-lg shadow-lg",
-		{ invisible: !showPopper }
-	);
-	const toggleDeletePopper = (deploymentId: string) => {
-		if (deleteDeploymentId === deploymentId) {
-			setDeleteDeploymentId(null);
-			setShowPopper(false);
-		} else {
-			setDeleteDeploymentId(deploymentId);
-			setShowPopper(true);
-		}
-	};
-
 	useEffect(() => {
 		if (typeof selectedDeploymentId === "string") {
 			setSelectedDeployment(selectedDeploymentId);
@@ -199,13 +156,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		}
 		setIsDeletingInProgress(false);
 		setDeletedDeploymentError(false);
-		setShowPopper(false);
-	};
-
-	const hideDeletePopper = () => {
-		setIsDeletingInProgress(false);
 		setDeleteDeploymentId("");
-		setShowPopper(false);
+		hidePopper("execute");
 	};
 
 	return (
@@ -236,9 +188,9 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					{deployment.deploymentId === deployments?.[0]?.deploymentId && (
 						<div
 							className="codicon codicon-redo mr-2 cursor-pointer"
-							ref={referenceEl}
+							ref={executePopperElementRef}
 							title="Execute"
-							onClick={() => togglePopper()}
+							onClick={() => togglePopperVisibility("execute")}
 						></div>
 					)}
 					{isDeploymentStateStartable(deployment.state) ? (
@@ -256,21 +208,17 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						className="relative codicon codicon-trash cursor-pointer ml-2 z-20"
 						onClick={(e) => {
 							const refElement = e.currentTarget;
-							toggleDeletePopper(deployment.deploymentId);
-							deleteReferenceEl.current = refElement;
+							togglePopperVisibility("delete");
+							deletePopperElementRef.current = refElement;
 						}}
-						ref={referenceEl}
 					></div>
 
-					{showPopper && (
-						<div className="absolute h-screen w-screen top-0 left-0 z-10" onClick={() => hideDeletePopper()}></div>
-					)}
-					<div
-						ref={deletePopperEl}
-						style={{ ...deleteStyles.popper, width: "10%" }}
-						{...deleteAttributes.popper}
-						className={deletePopperClasses}
-					>
+					{visiblePoppers["delete"] ||
+						(visiblePoppers["execute"] && (
+							<div className="absolute h-screen w-screen top-0 left-0 z-10" onClick={() => hideAllPoppers()}></div>
+						))}
+
+					<PopperComponent visible={visiblePoppers["delete"]} referenceRef={deletePopperElementRef}>
 						<div
 							className={cn("flex justify-center items-center h-full w-full", {
 								hidden: !isDeletingInProccess,
@@ -297,7 +245,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 							<div className="flex">
 								<AKButton
 									classes="bg-vscode-editor-background text-vscode-foreground"
-									onClick={() => deleteDeploymentAction(false)}
+									onClick={() => hidePopper("delete")}
 								>
 									{translate().t("reactApp.general.no")}
 								</AKButton>
@@ -307,16 +255,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 								</AKButton>
 							</div>
 						</div>
-					</div>
-					{displayExecutePopper && (
-						<div className="absolute w-screen h-screen" onClick={() => setDisplayExecutePopper(false)} />
-					)}
-					<div
-						ref={popperEl}
-						style={styles.popper}
-						{...attributes.popper}
-						className={cn(popperClasses, [{ invisible: !displayExecutePopper }])}
-					>
+					</PopperComponent>
+					<PopperComponent visible={visiblePoppers["execute"]} referenceRef={executePopperElementRef}>
 						<div className="mb-3 text-left">
 							<strong className="mb-2">{translate().t("reactApp.deployments.executeFile")}</strong>
 							<VSCodeDropdown
@@ -353,14 +293,14 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						<div className="flex">
 							<AKButton
 								classes="bg-vscode-editor-background text-vscode-foreground"
-								onClick={() => setDisplayExecutePopper(false)}
+								onClick={() => hidePopper("execute")}
 							>
 								{translate().t("reactApp.deployments.dismiss")}
 							</AKButton>
 							<div className="flex-grow" />
 							<AKButton onClick={() => startSession()}>{translate().t("reactApp.deployments.saveAndRun")}</AKButton>
 						</div>
-					</div>
+					</PopperComponent>
 				</AKTableCell>
 			</AKTableRow>
 		))
