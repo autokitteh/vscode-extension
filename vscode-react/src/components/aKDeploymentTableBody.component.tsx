@@ -133,13 +133,13 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const [deletedDeploymentError, setDeletedDeploymentError] = useState(false);
 
 	const handleDeploymentDeletedResponse = (isDeleted: boolean) => {
+		setIsDeletingInProgress(false);
 		if (isDeleted) {
 			setShowPopper(false);
-			setIsDeletingInProgress(false);
+			setDeletedDeploymentError(false);
 			return;
 		}
 		setDeletedDeploymentError(true);
-		setIsDeletingInProgress(false);
 	};
 
 	const messageHandlers: IIncomingDeploymentsMessagesHandler = {
@@ -202,6 +202,12 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		setShowPopper(false);
 	};
 
+	const hideDeletePopper = () => {
+		setIsDeletingInProgress(false);
+		setDeleteDeploymentId("");
+		setShowPopper(false);
+	};
+
 	return (
 		deployments &&
 		deployments.map((deployment: Deployment) => (
@@ -253,9 +259,12 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 							toggleDeletePopper(deployment.deploymentId);
 							deleteReferenceEl.current = refElement;
 						}}
-						ref={deleteReferenceEl}
+						ref={referenceEl}
 					></div>
 
+					{showPopper && (
+						<div className="absolute h-screen w-screen top-0 left-0" onClick={() => hideDeletePopper()}></div>
+					)}
 					<div
 						ref={deletePopperEl}
 						style={{ ...deleteStyles.popper, width: "10%" }}
