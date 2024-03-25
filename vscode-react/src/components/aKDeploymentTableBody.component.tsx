@@ -84,11 +84,11 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	}, [entrypoints]);
 
 	const startSession = () => {
-		const lastDeployment = deployments?.[0];
+		const lastDeployment = deployments![0];
 
 		setDisplayedErrors({});
 
-		if (!selectedFile || !selectedFunction || !lastDeployment) {
+		if (!selectedFile || !selectedFunction) {
 			if (!selectedFile) {
 				setDisplayedErrors({ ...displayedErrors, selectedFile: true });
 			}
