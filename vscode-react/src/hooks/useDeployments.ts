@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { DeploymentSectionViewModel } from "@models/views";
-import { IIncomingDeploymentsMessagesHandler } from "@react-interfaces";
+import { IIncomingMessagesDeploymentsHandler } from "@react-interfaces/incomingDeploymentsMessagesHandler.interface";
 import { HandleDeploymentsIncomingMessages } from "@react-utilities";
 import { Message } from "@type";
 import { SessionEntrypoint } from "@type/models";
@@ -11,7 +11,7 @@ export const useDeployments = () => {
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string>();
 	const [entrypoints, setEntrypoints] = useState<Record<string, SessionEntrypoint[]>>();
 
-	const messageHandlers: IIncomingDeploymentsMessagesHandler = {
+	const messageHandlers: IIncomingMessagesDeploymentsHandler = {
 		setEntrypoints,
 		setDeploymentsSection,
 		setSelectedDeploymentId,
