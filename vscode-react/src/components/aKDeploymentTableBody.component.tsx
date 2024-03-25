@@ -124,6 +124,32 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		sendMessage(MessageType.deleteDeployment, deploymentId);
 	};
 
+	const deletePopperEl = useRef<HTMLDivElement | null>(null);
+	const deleteReferenceEl = useRef<HTMLDivElement | null>(null);
+	const [showPopper, setShowPopper] = useState(false);
+
+	const { attributes: deleteAttributes, styles: deleteStyles } = usePopper(
+		deleteReferenceEl.current,
+		deletePopperEl.current,
+		{
+			placement: "bottom",
+			modifiers: [
+				{
+					name: "offset",
+					options: {
+						offset: [0, 10],
+					},
+				},
+			],
+		}
+	);
+	const deletePopperClasses = cn(
+		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
+		"border border-gray-300 p-4 rounded-lg shadow-lg",
+		{ invisible: !showPopper }
+	);
+	const toggleDeletePopper = () => setShowPopper(!showPopper);
+
 	return (
 		deployments &&
 		deployments.map((deployment: Deployment) => (
@@ -170,9 +196,33 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					)}
 
 					<div
-						className="codicon codicon-trash cursor-pointer"
-						onClick={() => deleteDeployment(deployment.deploymentId)}
+						className="codicon codicon-trash cursor-pointer ml-2"
+						onClick={() => toggleDeletePopper()}
+						ref={deleteReferenceEl}
 					></div>
+
+					<div
+						ref={deletePopperEl}
+						style={deleteStyles.popper}
+						{...deleteAttributes.popper}
+						className={deletePopperClasses}
+					>
+						<div className="mb-3 text-left">
+							<strong className="mb-2">
+								Are you sure you want to
+								<br /> delete this deployment?
+							</strong>
+						</div>
+						<div className="flex">
+							<AKButton classes="bg-vscode-editor-background text-vscode-foreground" onClick={() => togglePopper()}>
+								{translate().t("reactApp.general.no")}
+							</AKButton>
+							<div className="flex-grow" />
+							<AKButton onClick={() => deleteDeployment(deployment.deploymentId)}>
+								{translate().t("reactApp.general.yes")}
+							</AKButton>
+						</div>
+					</div>
 					{displayExecutePopper && (
 						<div className="absolute w-screen h-screen" onClick={() => setDisplayExecutePopper(false)} />
 					)}
