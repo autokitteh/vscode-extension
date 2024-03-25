@@ -145,6 +145,14 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					{deployment.buildId}
 				</AKTableCell>
 				<AKTableCell>
+					{deployment.deploymentId === deployments?.[0]?.deploymentId && (
+						<div
+							className="codicon codicon-redo mr-2 cursor-pointer"
+							ref={referenceEl}
+							title="Execute"
+							onClick={() => togglePopper()}
+						></div>
+					)}
 					{isDeploymentStateStartable(deployment.state) ? (
 						<div
 							className="codicon codicon-debug-start cursor-pointer text-green-500"
@@ -154,15 +162,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						<div
 							className="codicon codicon-debug-stop cursor-pointer text-red-500"
 							onClick={() => deactivateBuild(deployment.deploymentId)}
-						></div>
-					)}
-
-					{deployment.deploymentId === deployments[0].deploymentId && (
-						<div
-							className="codicon codicon-redo mr-2 cursor-pointer"
-							ref={referenceEl}
-							title="Execute"
-							onClick={() => togglePopper()}
 						></div>
 					)}
 
