@@ -438,11 +438,7 @@ export class ProjectController {
 
 		if (error) {
 			const notification = `${translate().t("sessions.executionFailed")} `;
-			const log = `${translate().t("sessions.executionFailedError", {
-				error,
-			})} for project ${this.projectId}, session: ${sessionId}`;
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
-			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
 		const successMessage = `${translate().t("sessions.executionSucceed")} for session ${sessionId}`;
