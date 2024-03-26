@@ -1,19 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
-import { Player } from "@lottiefiles/react-lottie-player";
-import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKDeploymentState } from "@react-components";
-import { AKButton } from "@react-components/aKButton.component";
+import { DeletePopper } from "@react-components/aKDeploymentsDeletePopper.component";
+import { ExecutePopperComponent } from "@react-components/aKDeploymentsExecutePopper.component";
 import { PopperComponent } from "@react-components/aKPopper.component";
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
 import { useDeployments, usePoppersManager } from "@react-hooks";
 import { IIncomingDeploymentsMessagesHandler } from "@react-interfaces";
 import { getTimePassed, HandleIncomingDeploymentsMessages, sendMessage } from "@react-utilities";
-import { cn } from "@react-utilities/cnClasses.utils";
 import { Message } from "@type";
 import { Deployment, SessionEntrypoint } from "@type/models";
-import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
 
 export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
 	const { selectedDeploymentId, entrypoints } = useDeployments();
@@ -157,7 +154,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		setIsDeletingInProgress(false);
 		setDeletedDeploymentError(false);
 		setDeleteDeploymentId("");
-		hidePopper("execute");
+		hidePopper("delete");
 	};
 
 	return (
@@ -219,87 +216,26 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					)}
 
 					<PopperComponent visible={visiblePoppers["delete"]} referenceRef={deletePopperElementRef}>
-						<div
-							className={cn("flex justify-center items-center h-full w-full", {
-								hidden: !isDeletingInProccess,
-							})}
-						>
-							<Player src={loaderAnimation} className="player" loop autoplay />
-						</div>
-						<div
-							className={cn({
-								hidden: isDeletingInProccess,
-							})}
-						>
-							<div className="mb-3 text-left">
-								<strong className="mb-2">{translate().t("reactApp.deployments.deletionApprovalQuestion")}</strong>
-								<div className="mb-2">{translate().t("reactApp.deployments.deletionApprovalQuestionSubtitle")}</div>
-							</div>
-							{deletedDeploymentError && (
-								<div className="text-red-500 text-left">
-									{translate().t("reactApp.deployments.errorDeletingDeploymentLine1")}
-									<br />
-									{translate().t("reactApp.deployments.errorDeletingDeploymentLine2")}
-								</div>
-							)}
-							<div className="flex">
-								<AKButton
-									classes="bg-vscode-editor-background text-vscode-foreground"
-									onClick={() => hidePopper("delete")}
-								>
-									{translate().t("reactApp.general.no")}
-								</AKButton>
-								<div className="flex-grow" />
-								<AKButton onClick={() => deleteDeploymentAction(true)}>
-									{translate().t("reactApp.general.yes")}
-								</AKButton>
-							</div>
-						</div>
+						<DeletePopper
+							isVisible={visiblePoppers["delete"]}
+							isDeletingInProcess={isDeletingInProccess}
+							onDeleteConfirm={() => deleteDeploymentAction(true)}
+							onDeleteCancel={() => deleteDeploymentAction(false)}
+							hasDeleteError={deletedDeploymentError}
+						/>
 					</PopperComponent>
 					<PopperComponent visible={visiblePoppers["execute"]} referenceRef={executePopperElementRef}>
-						<div className="mb-3 text-left">
-							<strong className="mb-2">{translate().t("reactApp.deployments.executeFile")}</strong>
-							<VSCodeDropdown
-								value={selectedFile}
-								onChange={(e: any) => setSelectedFile(e.target.value)}
-								className="flex"
-							>
-								{files &&
-									Object.keys(files).map((file) => (
-										<option key={file} value={file}>
-											{file}
-										</option>
-									))}
-							</VSCodeDropdown>
-							{displayedErrors["triggerFile"] && <div className="text-red-500">Please choose trigger file</div>}
-						</div>
-						<div className="mb-3 text-left">
-							<strong className="mb-2">{translate().t("reactApp.deployments.executeEntrypoint")}</strong>
-							<VSCodeDropdown
-								value={selectedFunction}
-								onChange={(e: any) => handleFunctionChange(e.target.value)}
-								disabled={functions !== undefined && functions.length <= 1}
-								className="flex"
-							>
-								{functions &&
-									functions.map((func) => (
-										<option key={func.name} value={JSON.stringify(func)}>
-											{func.name}
-										</option>
-									))}
-							</VSCodeDropdown>
-							{displayedErrors["triggerFunction"] && <div className="text-red-500">Please choose trigger function</div>}
-						</div>
-						<div className="flex">
-							<AKButton
-								classes="bg-vscode-editor-background text-vscode-foreground"
-								onClick={() => hidePopper("execute")}
-							>
-								{translate().t("reactApp.deployments.dismiss")}
-							</AKButton>
-							<div className="flex-grow" />
-							<AKButton onClick={() => startSession()}>{translate().t("reactApp.deployments.saveAndRun")}</AKButton>
-						</div>
+						<ExecutePopperComponent
+							files={files!}
+							functions={functions!}
+							selectedFile={selectedFile}
+							selectedFunction={selectedFunction}
+							onFileChange={setSelectedFile}
+							onFunctionChange={handleFunctionChange}
+							onStartSession={startSession}
+							onClose={() => hidePopper("execute")}
+							displayedErrors={displayedErrors}
+						/>
 					</PopperComponent>
 				</AKTableCell>
 			</AKTableRow>
