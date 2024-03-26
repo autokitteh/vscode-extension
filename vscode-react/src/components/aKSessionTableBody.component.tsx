@@ -59,7 +59,7 @@ export const AKSessionsTableBody = ({
 									<div
 										className="codicon codicon-symbol-namespace mr-2 cursor-pointer"
 										title="Execute"
-										onClick={() => displayInputsModal(JSON.stringify(session.inputs))}
+										onClick={() => displayInputsModal(JSON.stringify(session.inputs, null, 2))}
 									></div>
 								</div>
 							)}
