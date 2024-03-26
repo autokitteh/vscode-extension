@@ -16,7 +16,7 @@ interface ExecutePopperProps {
 	displayedErrors: Record<string, boolean>;
 }
 
-export const ExecutePopperComponent: React.FC<ExecutePopperProps> = ({
+export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 	files,
 	functions,
 	selectedFile,

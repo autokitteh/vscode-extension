@@ -2,9 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { AKDeploymentState } from "@react-components";
-import { DeletePopper } from "@react-components/aKDeploymentsDeletePopper.component";
-import { ExecutePopperComponent } from "@react-components/aKDeploymentsExecutePopper.component";
-import { PopperComponent } from "@react-components/aKPopper.component";
+import { ExecutePopper, PopperComponent, DeletePopper } from "@react-components";
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
 import { useDeployments, usePoppersManager } from "@react-hooks";
 import { IIncomingDeploymentsMessagesHandler } from "@react-interfaces";
@@ -26,6 +24,32 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	useEffect(() => {
 		setPopperVisibility("execute", false);
 	}, []);
+
+	const handleDeploymentDeletedResponse = (isDeleted: boolean) => {
+		setIsDeletingInProgress(false);
+		if (isDeleted) {
+			hidePopper("delete");
+			setDeletedDeploymentError(false);
+			return;
+		}
+		setDeletedDeploymentError(true);
+	};
+
+	const messageHandlers: IIncomingDeploymentsMessagesHandler = {
+		handleDeploymentDeletedResponse,
+	};
+
+	const handleMessagesFromExtension = useCallback(
+		(event: MessageEvent<Message>) => HandleIncomingDeploymentsMessages(event, messageHandlers),
+		[]
+	);
+
+	useEffect(() => {
+		window.addEventListener("message", handleMessagesFromExtension);
+		return () => {
+			window.removeEventListener("message", handleMessagesFromExtension);
+		};
+	}, [handleMessagesFromExtension]);
 
 	const executePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
@@ -113,32 +137,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
 	const [deletedDeploymentError, setDeletedDeploymentError] = useState(false);
 
-	const handleDeploymentDeletedResponse = (isDeleted: boolean) => {
-		setIsDeletingInProgress(false);
-		if (isDeleted) {
-			hidePopper("delete");
-			setDeletedDeploymentError(false);
-			return;
-		}
-		setDeletedDeploymentError(true);
-	};
-
-	const messageHandlers: IIncomingDeploymentsMessagesHandler = {
-		handleDeploymentDeletedResponse,
-	};
-
-	const handleMessagesFromExtension = useCallback(
-		(event: MessageEvent<Message>) => HandleIncomingDeploymentsMessages(event, messageHandlers),
-		[]
-	);
-
-	useEffect(() => {
-		window.addEventListener("message", handleMessagesFromExtension);
-		return () => {
-			window.removeEventListener("message", handleMessagesFromExtension);
-		};
-	}, [handleMessagesFromExtension]);
-
 	useEffect(() => {
 		if (typeof selectedDeploymentId === "string") {
 			setSelectedDeployment(selectedDeploymentId);
@@ -217,7 +215,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 					<PopperComponent visible={visiblePoppers["delete"]} referenceRef={deletePopperElementRef}>
 						<DeletePopper
-							isVisible={visiblePoppers["delete"]}
 							isDeletingInProcess={isDeletingInProccess}
 							onDeleteConfirm={() => deleteDeploymentAction(true)}
 							onDeleteCancel={() => deleteDeploymentAction(false)}
@@ -225,7 +222,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						/>
 					</PopperComponent>
 					<PopperComponent visible={visiblePoppers["execute"]} referenceRef={executePopperElementRef}>
-						<ExecutePopperComponent
+						<ExecutePopper
 							files={files!}
 							functions={functions!}
 							selectedFile={selectedFile}
