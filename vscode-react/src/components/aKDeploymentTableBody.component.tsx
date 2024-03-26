@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { AKDeploymentState } from "@react-components";
-import { ExecutePopper, PopperComponent, DeletePopper } from "@react-components";
+import { DeletePopper, ExecutePopper, PopperComponent } from "@react-components";
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
 import { useDeployments, usePoppersManager } from "@react-hooks";
 import { IIncomingDeploymentsMessagesHandler } from "@react-interfaces";
@@ -11,24 +11,20 @@ import { Message } from "@type";
 import { Deployment, SessionEntrypoint } from "@type/models";
 
 export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
-	// State and ref hooks
 	const { selectedDeploymentId, entrypoints } = useDeployments();
 	const { visiblePoppers, togglePopperVisibility, hidePopper, setPopperVisibility, hideAllPoppers } =
 		usePoppersManager();
-	const executePopperElementRef = useRef<HTMLDivElement | null>(null);
-	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
-	const [selectedFile, setSelectedFile] = useState<string>("");
-	const [selectedFunction, setSelectedFunction] = useState<string>("");
-	const [selectedEntrypoint, setSelectedEntrypoint] = useState<SessionEntrypoint>();
-	const [selectedDeployment, setSelectedDeployment] = useState("");
-	const [files, setFiles] = useState<Record<string, SessionEntrypoint[]>>();
-	const [functions, setFunctions] = useState<SessionEntrypoint[]>();
-	const [isDeletingInProccess, setIsDeletingInProgress] = useState(false);
-	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
-	const [deletedDeploymentError, setDeletedDeploymentError] = useState(false);
-	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
 
-	// Handler functions
+	useEffect(() => {
+		if (typeof selectedDeploymentId === "string") {
+			setSelectedDeployment(selectedDeploymentId);
+		}
+	}, [selectedDeploymentId]);
+
+	useEffect(() => {
+		setPopperVisibility("execute", false);
+	}, []);
+
 	const handleDeploymentDeletedResponse = (isDeleted: boolean) => {
 		setIsDeletingInProgress(false);
 		if (isDeleted) {
@@ -48,9 +44,25 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		[]
 	);
 
+	useEffect(() => {
+		window.addEventListener("message", handleMessagesFromExtension);
+		return () => {
+			window.removeEventListener("message", handleMessagesFromExtension);
+		};
+	}, [handleMessagesFromExtension]);
+
+	const executePopperElementRef = useRef<HTMLDivElement | null>(null);
+	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
+
 	const isDeploymentStateStartable = (deploymentState: number) =>
 		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
+	const [selectedFile, setSelectedFile] = useState<string>("");
+	const [selectedFunction, setSelectedFunction] = useState<string>("");
+	const [selectedEntrypoint, setSelectedEntrypoint] = useState<SessionEntrypoint>();
 
+	const [selectedDeployment, setSelectedDeployment] = useState("");
+	const [files, setFiles] = useState<Record<string, SessionEntrypoint[]>>();
+	const [functions, setFunctions] = useState<SessionEntrypoint[]>();
 	const getSessionStateCount = (deployment: Deployment, state: string) => {
 		if (!deployment.sessionStats) {
 			return translate().t("reactApp.general.unknown");
@@ -83,6 +95,18 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		setSelectedDeployment(deploymentId);
 	};
 
+	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
+
+	useEffect(() => {
+		if (entrypoints && Object.keys(entrypoints).length) {
+			setFiles(entrypoints);
+			setSelectedFile(Object.keys(entrypoints)[0]);
+			setFunctions(entrypoints[Object.keys(entrypoints)[0]]);
+			setSelectedFunction(JSON.stringify(entrypoints[Object.keys(entrypoints)[0]][0]));
+			setSelectedEntrypoint(entrypoints[Object.keys(entrypoints)[0]][0]);
+		}
+	}, [entrypoints]);
+
 	const startSession = () => {
 		const lastDeployment = deployments![0];
 
@@ -109,32 +133,9 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		hidePopper("execute");
 	};
 
-	// useEffect hooks
-	useEffect(() => {
-		if (typeof selectedDeploymentId === "string") {
-			setSelectedDeployment(selectedDeploymentId);
-		}
-	}, [selectedDeploymentId]);
-
-	useEffect(() => {
-		setPopperVisibility("execute", false);
-	}, []);
-	useEffect(() => {
-		window.addEventListener("message", handleMessagesFromExtension);
-		return () => {
-			window.removeEventListener("message", handleMessagesFromExtension);
-		};
-	}, [handleMessagesFromExtension]);
-
-	useEffect(() => {
-		if (entrypoints && Object.keys(entrypoints).length) {
-			setFiles(entrypoints);
-			setSelectedFile(Object.keys(entrypoints)[0]);
-			setFunctions(entrypoints[Object.keys(entrypoints)[0]]);
-			setSelectedFunction(JSON.stringify(entrypoints[Object.keys(entrypoints)[0]][0]));
-			setSelectedEntrypoint(entrypoints[Object.keys(entrypoints)[0]][0]);
-		}
-	}, [entrypoints]);
+	const [isDeletingInProccess, setIsDeletingInProgress] = useState(false);
+	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
+	const [deletedDeploymentError, setDeletedDeploymentError] = useState(false);
 
 	useEffect(() => {
 		if (typeof selectedDeploymentId === "string") {
