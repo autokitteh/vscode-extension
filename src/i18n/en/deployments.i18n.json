@@ -10,9 +10,9 @@
 	"deploymentSelectionFailed": "Deployment selection failed - review the logs",
 	"noSelectedDeployment": "No deployment selected, you must select a deployment for the single-shot action",
 	"deleteSucceed": "Deployment activation succeed",
-	"deleteFailedIdProject": "Deployment deletion failed - project: {{projectId}}, deployment: {{deploymentId}}",
-	"deleteSucceedIdProject": "Deployment deletion succeed -  deployment: {{deploymentId}}",
-	"deleteFailedId": "Deployment deletion failed - deployment: {{deploymentId}}",
+	"deleteFailedIdProject": "Deployment deletion failed - project: {{projectId}}, deployment id: {{deploymentId}}",
+	"deleteSucceedIdProject": "Deployment deletion succeed -  deployment id: {{deploymentId}}",
+	"deleteFailedId": "Deployment deletion failed - deployment id: {{deploymentId}}",
 	"deleteFailedIdError": "Deployment deletion failed - deployment: {{deploymentId}}, error: {{error}}",
 	"deleteFailed": "Deployment deletion failed"
 }

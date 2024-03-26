@@ -441,7 +441,7 @@ export class ProjectController {
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
 			return;
 		}
-		const successMessage = `${translate().t("sessions.executionSucceed")} for session ${sessionId}`;
+		const successMessage = translate().t("sessions.executionSucceed", { deploymentId: startSessionArgs.deploymentId });
 		LoggerService.info(namespaces.projectController, successMessage);
 
 		this.view.update({
