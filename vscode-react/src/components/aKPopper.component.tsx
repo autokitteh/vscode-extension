@@ -24,14 +24,11 @@ export const PopperComponent: React.FC<PopperProps> = ({ visible, children, refe
 
 	useEffect(() => {
 		if (visible && update) {
-			// This ensures that the position is recalculated when the popper becomes visible
 			update().catch((error) => console.error(error));
 		}
 	}, [visible, update]);
 
 	useEffect(() => {
-		// This effect ensures the popper element is updated in the state when it becomes visible,
-		// triggering a re-calculation of its position
 		if (visible) {
 			setPopperElement(popperRef.current);
 		}
