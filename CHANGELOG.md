@@ -1,3 +1,10 @@
+## [0.9.2](https://github.com/autokitteh/vscode-extension/compare/v0.9.1...v0.9.2) (2024-03-26)
+
+
+### Bug Fixes
+
+* fix singleshot ui ([#198](https://github.com/autokitteh/vscode-extension/issues/198)) ([#199](https://github.com/autokitteh/vscode-extension/issues/199)) ([fbffbb0](https://github.com/autokitteh/vscode-extension/commit/fbffbb012c3372fd74e800dbc73d670c4283325a))
+
 ## [0.9.2-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.9.1...v0.9.2-dev.1) (2024-03-26)
 
 
