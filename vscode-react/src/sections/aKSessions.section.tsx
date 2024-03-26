@@ -44,6 +44,11 @@ export const AKSessions = () => {
 	useCloseOnEscape(() => setModal(false));
 	useForceRerender();
 
+	const displayInputsModal = (sessionInputs: string) => {
+		setSessionInputs(sessionInputs);
+		setModal(true);
+	};
+
 	return (
 		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
 			<div className="flex items-baseline">
@@ -53,7 +58,7 @@ export const AKSessions = () => {
 			<AKTable>
 				<AKSessionsTableHeader />
 				<AKSessionsTableBody
-					displayInputsModal={setSessionInputs}
+					displayInputsModal={displayInputsModal}
 					sessions={sessions}
 					selectedSession={selectedSession}
 					setSelectedSession={setSelectedSession}
