@@ -9,28 +9,26 @@ export const AKMonacoEditorModal = ({
 }: {
 	setModal: (isDisplayed: boolean) => void;
 	content?: string;
-}) => {
-	return (
-		<AKModal>
-			<div className="flex justify-end cursor-pointer" onClick={() => setModal(false)}>
-				X
+}) => (
+	<AKModal wrapperClasses={["pt-20 bg-black bg-opacity-70"]}>
+		<div className="flex justify-end cursor-pointer" onClick={() => setModal(false)}>
+			X
+		</div>
+		<div className="m-auto">
+			<div className="flex w-full justify-end mt-2">
+				<Editor
+					height="70vh"
+					defaultLanguage="json"
+					defaultValue={content}
+					theme="vs-dark"
+					options={{ readOnly: true }}
+				/>
 			</div>
-			<div className="m-auto">
-				<div className="flex w-full justify-end mt-2">
-					<Editor
-						height="90vh"
-						defaultLanguage="json"
-						defaultValue={content ? JSON.stringify(content, null, 2) : ""}
-						theme="vs-dark"
-						options={{ readOnly: true }}
-					/>
-				</div>
-				<div className="flex w-full justify-end mt-2">
-					<AKButton classes="ml-2" onClick={() => setModal(false)}>
-						{translate().t("reactApp.deployments.closeModalButton")}
-					</AKButton>
-				</div>
+			<div className="flex w-full justify-end mt-2">
+				<AKButton classes="ml-2" onClick={() => setModal(false)}>
+					{translate().t("reactApp.deployments.closeModalButton")}
+				</AKButton>
 			</div>
-		</AKModal>
-	);
-};
+		</div>
+	</AKModal>
+);
