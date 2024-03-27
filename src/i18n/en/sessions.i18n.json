@@ -13,5 +13,6 @@
 	"historyNoOutput": "No output",
 	"historyPrint": "Print",
 	"executionFailed": "Session execution failed",
-	"executionFailedError": "Session execution failed - {{error}}"
+	"executionFailedError": "Session execution failed - {{error}}",
+	"executionSucceed": "Session execution succeed for deployment - {{deploymentId}}"
 }

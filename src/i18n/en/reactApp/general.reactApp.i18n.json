@@ -10,5 +10,7 @@
 	"sessions": "sessions",
 	"deployments": "deployments",
 	"unknown": "Unknown",
-	"execute": "Execute"
+	"execute": "Execute",
+	"yes": "Yes",
+	"no": "No"
 }
