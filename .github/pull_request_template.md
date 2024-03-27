@@ -17,6 +17,8 @@
 
 ## Code Standards
 - [ ] Notify only when user attention is needed, otherwise log to console.
+  - [ ] Notifications: short description with context identifiers (e.g. id of the manipulated entity).
+  - [ ] Logs: full description with full context identifiers (e.g. deploymentId and the relevant projectId).
 - [ ] If you're not sure what is the proper behavior, consult with the product team.
 - [ ] Reduce the use of `else` by employing early returns to make code more readable and less nested.
 - [ ] MVC Separation: Ensure separation of concerns; views should only be manipulated by controllers (also the computing - sorting, fitlering, etc.), not by services, to maintain a clean MVC architecture.
