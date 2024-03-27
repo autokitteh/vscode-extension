@@ -13,6 +13,7 @@ export interface IProjectViewDelegate {
 	activateDeployment?: Callback<string>;
 	deactivateDeployment?: Callback<string>;
 	startSession?: Callback<StartSessionArgsType>;
+	deleteDeployment?: Callback<string>;
 }
 
 export interface IProjectView {

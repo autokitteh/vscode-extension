@@ -1,36 +1,49 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { AKDeploymentState } from "@react-components";
-import { AKButton } from "@react-components/aKButton.component";
+import { DeletePopper, ExecutePopper, PopperComponent } from "@react-components";
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
 import { useDeployments } from "@react-hooks";
-import { getTimePassed, sendMessage } from "@react-utilities";
-import { cn } from "@react-utilities/cnClasses.utils";
+import { IIncomingServerResponsesHandler } from "@react-interfaces";
+import { getTimePassed, HandleIncomingServerResponses, sendMessage } from "@react-utilities";
+import { Message } from "@type";
 import { Deployment, SessionEntrypoint } from "@type/models";
-import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
-import { usePopper } from "react-popper";
 
 export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
+	// State Hooks Section
 	const { selectedDeploymentId, entrypoints } = useDeployments();
-
-	useEffect(() => {
-		if (typeof selectedDeploymentId === "string") {
-			setSelectedDeployment(selectedDeploymentId);
-		}
-	}, [selectedDeploymentId]);
-
-	const referenceEl = useRef<HTMLDivElement | null>(null);
-	const popperEl = useRef<HTMLDivElement | null>(null);
-	const isDeploymentStateStartable = (deploymentState: number) =>
-		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
+	const [visiblePopper, setVisiblePopper] = useState<string | null>(null);
+	const executePopperElementRef = useRef<HTMLDivElement | null>(null);
+	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [selectedFile, setSelectedFile] = useState<string>("");
 	const [selectedFunction, setSelectedFunction] = useState<string>("");
 	const [selectedEntrypoint, setSelectedEntrypoint] = useState<SessionEntrypoint>();
-
 	const [selectedDeployment, setSelectedDeployment] = useState("");
 	const [files, setFiles] = useState<Record<string, SessionEntrypoint[]>>();
 	const [functions, setFunctions] = useState<SessionEntrypoint[]>();
+	const [isDeletingInProcess, setIsDeletingInProgress] = useState(false);
+	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
+	const [deletedDeploymentError, setDeletedDeploymentError] = useState(false);
+	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
+
+	// Functions Section
+	const showPopper = (popperId: string) => setVisiblePopper(popperId);
+	const hidePopper = () => setVisiblePopper(null);
+
+	const handleDeploymentDeletedResponse = (isDeleted: boolean) => {
+		setIsDeletingInProgress(false);
+		if (isDeleted) {
+			hidePopper();
+			setDeletedDeploymentError(false);
+			return;
+		}
+		setDeletedDeploymentError(true);
+	};
+
+	const isDeploymentStateStartable = (deploymentState: number) =>
+		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
+
 	const getSessionStateCount = (deployment: Deployment, state: string) => {
 		if (!deployment.sessionStats) {
 			return translate().t("reactApp.general.unknown");
@@ -38,22 +51,17 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		const session = deployment.sessionStats.find((s) => s.state === state);
 		return session ? session.count : 0;
 	};
-	const { attributes, styles } = usePopper(referenceEl.current, popperEl.current, {
-		placement: "bottom",
-		modifiers: [
-			{
-				name: "offset",
-				options: {
-					offset: [0, 10],
-				},
-			},
-		],
-	});
-	const [displayExecutePopper, setDisplayExecutePopper] = useState<boolean>(false);
-	const popperClasses = cn(
-		"flex-col z-30 bg-vscode-editor-background text-vscode-foreground",
-		"border border-gray-300 p-4 rounded-lg shadow-lg"
-	);
+
+	const handleFunctionChange = (event: string) => {
+		let entrypointForFunction;
+		try {
+			entrypointForFunction = JSON.parse(event);
+		} catch (error) {
+			console.error(error);
+		}
+		setSelectedEntrypoint(entrypointForFunction);
+		setSelectedFunction(event);
+	};
 
 	const deactivateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.deactivateDeployment, deploymentId);
@@ -63,25 +71,10 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		sendMessage(MessageType.activateDeployment, deploymentId);
 	};
 
-	const togglePopper = () => {
-		setDisplayExecutePopper(true);
-	};
 	const getSessionsByDeploymentId = (deploymentId: string) => {
 		sendMessage(MessageType.selectDeployment, deploymentId);
 		setSelectedDeployment(deploymentId);
 	};
-
-	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
-
-	useEffect(() => {
-		if (entrypoints && Object.keys(entrypoints).length) {
-			setFiles(entrypoints);
-			setSelectedFile(Object.keys(entrypoints)[0]);
-			setFunctions(entrypoints[Object.keys(entrypoints)[0]]);
-			setSelectedFunction(JSON.stringify(entrypoints[Object.keys(entrypoints)[0]][0]));
-			setSelectedEntrypoint(entrypoints[Object.keys(entrypoints)[0]][0]);
-		}
-	}, [entrypoints]);
 
 	const startSession = () => {
 		const lastDeployment = deployments![0];
@@ -106,19 +99,63 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 		sendMessage(MessageType.startSession, startSessionArgs);
 
-		setDisplayExecutePopper(false);
+		hidePopper();
 	};
 
-	const handleFunctionChange = (event: string) => {
-		let entrypointForFunction;
-		try {
-			entrypointForFunction = JSON.parse(event);
-		} catch (error) {
-			console.error(error);
+	const deleteDeploymentAction = (isApproved: boolean) => {
+		if (isApproved) {
+			sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
+			setIsDeletingInProgress(true);
+			return;
 		}
-		setSelectedEntrypoint(entrypointForFunction);
-		setSelectedFunction(event);
+		setIsDeletingInProgress(false);
+		setDeletedDeploymentError(false);
+		setDeleteDeploymentId("");
+		hidePopper();
 	};
+
+	// Incoming Messages Section
+	const messageHandlers: IIncomingServerResponsesHandler = {
+		handleDeploymentDeletedResponse,
+	};
+
+	const handleMessagesFromExtension = useCallback(
+		(event: MessageEvent<Message>) => HandleIncomingServerResponses(event, messageHandlers),
+		[]
+	);
+
+	// useEffects Section
+	useEffect(() => {
+		if (typeof selectedDeploymentId === "string") {
+			setSelectedDeployment(selectedDeploymentId);
+		}
+	}, [selectedDeploymentId]);
+
+	useEffect(() => {
+		hidePopper();
+	}, []);
+	useEffect(() => {
+		window.addEventListener("message", handleMessagesFromExtension);
+		return () => {
+			window.removeEventListener("message", handleMessagesFromExtension);
+		};
+	}, [handleMessagesFromExtension]);
+
+	useEffect(() => {
+		if (entrypoints && Object.keys(entrypoints).length) {
+			setFiles(entrypoints);
+			setSelectedFile(Object.keys(entrypoints)[0]);
+			setFunctions(entrypoints[Object.keys(entrypoints)[0]]);
+			setSelectedFunction(JSON.stringify(entrypoints[Object.keys(entrypoints)[0]][0]));
+			setSelectedEntrypoint(entrypoints[Object.keys(entrypoints)[0]][0]);
+		}
+	}, [entrypoints]);
+
+	useEffect(() => {
+		if (typeof selectedDeploymentId === "string") {
+			setSelectedDeployment(selectedDeploymentId);
+		}
+	}, [selectedDeploymentId]);
 
 	return (
 		deployments &&
@@ -148,9 +185,9 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					{deployment.deploymentId === deployments?.[0]?.deploymentId && (
 						<div
 							className="codicon codicon-redo mr-2 cursor-pointer"
-							ref={referenceEl}
+							ref={executePopperElementRef}
 							title="Execute"
-							onClick={() => togglePopper()}
+							onClick={() => showPopper("execute")}
 						></div>
 					)}
 					{isDeploymentStateStartable(deployment.state) ? (
@@ -164,60 +201,41 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 							onClick={() => deactivateBuild(deployment.deploymentId)}
 						></div>
 					)}
-
-					{displayExecutePopper && (
-						<div className="absolute w-screen h-screen" onClick={() => setDisplayExecutePopper(false)} />
-					)}
 					<div
-						ref={popperEl}
-						style={styles.popper}
-						{...attributes.popper}
-						className={cn(popperClasses, [{ invisible: !displayExecutePopper }])}
-					>
-						<div className="mb-3 text-left">
-							<strong className="mb-2">{translate().t("reactApp.deployments.executeFile")}</strong>
-							<VSCodeDropdown
-								value={selectedFile}
-								onChange={(e: any) => setSelectedFile(e.target.value)}
-								className="flex"
-							>
-								{files &&
-									Object.keys(files).map((file) => (
-										<option key={file} value={file}>
-											{file}
-										</option>
-									))}
-							</VSCodeDropdown>
-							{displayedErrors["triggerFile"] && <div className="text-red-500">Please choose trigger file</div>}
-						</div>
-						<div className="mb-3 text-left">
-							<strong className="mb-2">{translate().t("reactApp.deployments.executeEntrypoint")}</strong>
-							<VSCodeDropdown
-								value={selectedFunction}
-								onChange={(e: any) => handleFunctionChange(e.target.value)}
-								disabled={functions !== undefined && functions.length <= 1}
-								className="flex"
-							>
-								{functions &&
-									functions.map((func) => (
-										<option key={func.name} value={JSON.stringify(func)}>
-											{func.name}
-										</option>
-									))}
-							</VSCodeDropdown>
-							{displayedErrors["triggerFunction"] && <div className="text-red-500">Please choose trigger function</div>}
-						</div>
-						<div className="flex">
-							<AKButton
-								classes="bg-vscode-editor-background text-vscode-foreground"
-								onClick={() => setDisplayExecutePopper(false)}
-							>
-								{translate().t("reactApp.deployments.dismiss")}
-							</AKButton>
-							<div className="flex-grow" />
-							<AKButton onClick={() => startSession()}>{translate().t("reactApp.deployments.saveAndRun")}</AKButton>
-						</div>
-					</div>
+						className="relative codicon codicon-trash cursor-pointer ml-2 z-20"
+						onClick={(e) => {
+							const refElement = e.currentTarget;
+							showPopper("delete");
+							deletePopperElementRef.current = refElement;
+							setDeleteDeploymentId(deployment.deploymentId);
+						}}
+					></div>
+
+					{(visiblePopper === "delete" || visiblePopper === "execute") && (
+						<div className="absolute h-screen w-screen top-0 left-0 z-10" onClick={() => hidePopper()}></div>
+					)}
+
+					<PopperComponent visible={visiblePopper === "delete"} referenceRef={deletePopperElementRef}>
+						<DeletePopper
+							isDeletingInProcess={isDeletingInProcess}
+							onDeleteConfirm={() => deleteDeploymentAction(true)}
+							onDeleteCancel={() => deleteDeploymentAction(false)}
+							hasDeleteError={deletedDeploymentError}
+						/>
+					</PopperComponent>
+					<PopperComponent visible={visiblePopper === "execute"} referenceRef={executePopperElementRef}>
+						<ExecutePopper
+							files={files!}
+							functions={functions!}
+							selectedFile={selectedFile}
+							selectedFunction={selectedFunction}
+							onFileChange={setSelectedFile}
+							onFunctionChange={handleFunctionChange}
+							onStartSession={startSession}
+							onClose={() => hidePopper()}
+							displayedErrors={displayedErrors}
+						/>
+					</PopperComponent>
 				</AKTableCell>
 			</AKTableRow>
 		))

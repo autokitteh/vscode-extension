@@ -1,4 +1,4 @@
-export { HandleIncomingMessages } from "@react-utilities/incomingMessagesHandler";
+export { HandleIncomingMessages, HandleIncomingServerResponses } from "@react-utilities/incomingMessagesHandler";
 export { HandleDeploymentsIncomingMessages } from "@react-utilities/incomingDeploymentsMessagesHandler";
 export { vscodeWrapper } from "@react-utilities/vscode";
 export { sendMessage } from "@react-utilities/sendMessage.utils";

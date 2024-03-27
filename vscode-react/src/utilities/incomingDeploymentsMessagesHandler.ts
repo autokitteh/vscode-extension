@@ -1,12 +1,12 @@
 import { MessageType } from "@enums";
 import { DeploymentSectionViewModel } from "@models";
-import { IIncomingDeploymentsMessagesHandler } from "@react-interfaces";
+import { IIncomingDeploymentsHandler } from "@react-interfaces";
 import { Message } from "@type";
 import { SessionEntrypoint } from "@type/models";
 
 export const HandleDeploymentsIncomingMessages = (
 	event: MessageEvent<Message>,
-	handlers: IIncomingDeploymentsMessagesHandler
+	handlers: IIncomingDeploymentsHandler
 ) => {
 	const { payload } = event.data as Message;
 	switch (event.data.type) {
