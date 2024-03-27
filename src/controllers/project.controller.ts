@@ -501,4 +501,29 @@ export class ProjectController {
 		const projectFromContext: { path?: string } = await commands.executeCommand(vsCommands.getContext, this.projectId);
 		return projectFromContext ? projectFromContext.path : undefined;
 	}
+
+	async deleteDeployment(deploymentId: string) {
+		const { error } = await DeploymentsService.delete(deploymentId);
+
+		if (error) {
+			const errorMessage = translate().t("deployments.deleteFailed");
+			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
+
+			this.view.update({
+				type: MessageType.deploymentDeletedResponse,
+				payload: false,
+			});
+			return;
+		}
+
+		this.view.update({
+			type: MessageType.deploymentDeletedResponse,
+			payload: true,
+		});
+
+		const log = translate().t("deployments.deleteSucceedIdProject", {
+			deploymentId,
+		});
+		LoggerService.info(namespaces.projectController, log);
+	}
 }
