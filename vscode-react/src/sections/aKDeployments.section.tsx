@@ -3,12 +3,10 @@ import { translate } from "@i18n";
 import { AKDeploymentTableBody, AKDeploymentTableHeader } from "@react-components";
 import { AKTable, AKTableMessage } from "@react-components/AKTable";
 import { SessionStartContext } from "@react-context";
-import { useDeployments, useForceRerender } from "@react-hooks";
+import { useDeployments } from "@react-hooks";
 import { Deployment } from "@type/models";
 
 export const AKDeployments = () => {
-	useForceRerender();
-
 	const { deploymentsSection } = useDeployments();
 	const [isLoading, setIsLoading] = useState(true);
 	const [totalDeployments, setTotalDeployments] = useState<number>();
