@@ -506,7 +506,7 @@ export class ProjectController {
 		const { error } = await DeploymentsService.delete(deploymentId);
 
 		if (error) {
-			const errorMessage = translate().t("deployments.deleteFailed");
+			const errorMessage = translate().t("deployments.deleteFailedId", { deploymentId });
 			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
 
 			this.view.update({
@@ -523,6 +523,7 @@ export class ProjectController {
 
 		const log = translate().t("deployments.deleteSucceedIdProject", {
 			deploymentId,
+			projectId: this.projectId,
 		});
 		LoggerService.info(namespaces.projectController, log);
 	}
