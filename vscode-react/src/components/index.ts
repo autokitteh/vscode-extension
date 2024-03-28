@@ -8,5 +8,5 @@ export { AKDeploymentTableBody } from "@react-components/aKDeploymentTableBody.c
 export { AKSessionsTableHeader } from "@react-components/aKSessionTableHeader.component";
 export { AKMonacoEditorModal } from "@react-components/akMonacoEditorModal.component";
 export { ExecutePopper } from "@react-components/aKDeploymentsExecutePopper.component";
-export { DeletePopper } from "@react-components/aKDeploymentsDeletePopper.component";
+export { DeletePopper } from "@react-components/aKDeletePopper.component";
 export { PopperComponent } from "@react-components/aKPopper.component";

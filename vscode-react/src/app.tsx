@@ -4,20 +4,18 @@ import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKButton, AKLogo } from "@react-components";
-import { SessionStartContext } from "@react-context";
+import { AppStateProvider } from "@react-context";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { HandleIncomingMessages, sendMessage } from "@react-utilities";
 import { cn } from "@react-utilities/cnClasses.utils";
 import { Message } from "@type";
 import "./app.css";
-import { Deployment } from "@type/models";
 
 function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
-	const [lastDeployment, setLastDeployment] = useState<Deployment>();
 	const messageHandlers: IIncomingMessagesHandler = {
 		setProjectName,
 		setThemeVisualType,
@@ -69,10 +67,10 @@ function App() {
 							<div className="codicon codicon-folder-opened w-4"></div>
 						</AKButton>
 					</div>
-					<SessionStartContext.Provider value={{ lastDeployment, setLastDeployment }}>
+					<AppStateProvider>
 						<AKDeployments />
 						<AKSessions />
-					</SessionStartContext.Provider>
+					</AppStateProvider>
 				</div>
 			) : (
 				<div className="flex justify-center items-center h-screen w-screen">

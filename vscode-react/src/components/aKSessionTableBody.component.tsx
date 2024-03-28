@@ -1,8 +1,10 @@
-import React, { useContext } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MessageType } from "@enums";
-import { AKSessionState } from "@react-components";
+import { translate } from "@i18n";
+import { AKSessionState, DeletePopper, PopperComponent } from "@react-components";
 import { AKTableRow, AKTableCell } from "@react-components/AKTable";
-import { SessionStartContext } from "@react-context";
+import { useAppState } from "@react-context";
+import { useIncomingMessagesFromExtension } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
 
@@ -17,8 +19,37 @@ export const AKSessionsTableBody = ({
 	selectedSession?: string;
 	setSelectedSession: (sessionId: string) => void;
 }) => {
-	const { lastDeployment } = useContext(SessionStartContext);
+	// State Hooks Section
+	const [{ modalName, lastDeployment }, dispatch] = useAppState();
+	const [isDeletingInProcess, setIsDeletingInProgress] = useState(false);
+	const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
+	const [deletedSessionError, setDeletedSessionError] = useState(false);
+	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 
+	// Local variable
+	const deleteSessionPopperTranslations = {
+		question: translate().t("reactApp.sessions.deletionApprovalQuestion"),
+		subtitle: translate().t("reactApp.sessions.deletionApprovalQuestionSubtitle"),
+		messageLine1: translate().t("reactApp.sessions.errorDeletingLine1"),
+		messageLine2: translate().t("reactApp.sessions.errorDeletingLine2"),
+	};
+
+	// Incoming Messages Handler
+	const handleSessionDeletedResponse = (isDeleted: boolean) => {
+		setIsDeletingInProgress(false);
+		if (isDeleted) {
+			hidePopper();
+			setDeletedSessionError(false);
+			return;
+		}
+		setDeletedSessionError(true);
+	};
+
+	useIncomingMessagesFromExtension({ handleSessionDeletedResponse });
+
+	// Functions Section
+	const showPopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "sessionDelete" });
+	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
 	const startSession = (session: Session) => {
 		const startSessionArgs = {
 			sessionId: session.sessionId,
@@ -34,6 +65,24 @@ export const AKSessionsTableBody = ({
 		sendMessage(MessageType.displaySessionLogs, sessionId);
 		setSelectedSession(sessionId);
 	};
+
+	const deleteSessionAction = (isApproved: boolean) => {
+		if (isApproved) {
+			sendMessage(MessageType.deleteSession, deleteSessionId);
+			setIsDeletingInProgress(true);
+			return;
+		}
+		setIsDeletingInProgress(false);
+		setDeletedSessionError(false);
+		setDeleteSessionId("");
+		hidePopper();
+	};
+
+	// useEffects Section
+	useEffect(() => {
+		hidePopper();
+	}, []);
+
 	return (
 		<>
 			{sessions &&
@@ -50,7 +99,7 @@ export const AKSessionsTableBody = ({
 						</AKTableCell>
 						<AKTableCell>
 							{session.deploymentId === lastDeployment?.deploymentId && (
-								<div>
+								<div className="inline-block">
 									<div
 										className="codicon codicon-redo mr-2 cursor-pointer"
 										title="Execute"
@@ -63,6 +112,24 @@ export const AKSessionsTableBody = ({
 									></div>
 								</div>
 							)}
+							<div
+								className="inline-block codicon codicon-trash cursor-pointer z-20"
+								onClick={(e) => {
+									const refElement = e.currentTarget;
+									showPopper();
+									deletePopperElementRef.current = refElement;
+									setDeleteSessionId(session.sessionId);
+								}}
+							></div>
+							<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
+								<DeletePopper
+									isDeletingInProcess={isDeletingInProcess}
+									onDeleteConfirm={() => deleteSessionAction(true)}
+									onDeleteCancel={() => deleteSessionAction(false)}
+									hasDeleteError={deletedSessionError}
+									translations={deleteSessionPopperTranslations}
+								/>
+							</PopperComponent>
 						</AKTableCell>
 					</AKTableRow>
 				))}

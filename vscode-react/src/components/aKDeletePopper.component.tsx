@@ -9,6 +9,12 @@ interface DeletePopperProps {
 	onDeleteConfirm: () => void;
 	onDeleteCancel: () => void;
 	hasDeleteError: boolean;
+	translations: {
+		question: string;
+		subtitle: string;
+		messageLine1: string;
+		messageLine2: string;
+	};
 }
 
 export const DeletePopper: React.FC<DeletePopperProps> = ({
@@ -16,6 +22,7 @@ export const DeletePopper: React.FC<DeletePopperProps> = ({
 	onDeleteConfirm,
 	onDeleteCancel,
 	hasDeleteError,
+	translations,
 }) => (
 	<>
 		<div className="relative shadow-lg">
@@ -24,14 +31,14 @@ export const DeletePopper: React.FC<DeletePopperProps> = ({
 			) : (
 				<>
 					<div className="mb-3 text-left">
-						<strong>{translate().t("reactApp.deployments.deletionApprovalQuestion")}</strong>
-						<div>{translate().t("reactApp.deployments.deletionApprovalQuestionSubtitle")}</div>
+						<strong>{translations.question}</strong>
+						<div>{translations.subtitle}</div>
 					</div>
 					{hasDeleteError && (
 						<div className="text-red-500 text-left">
-							{translate().t("reactApp.deployments.errorDeletingDeploymentLine1")}
+							{translations.messageLine1}
 							<br />
-							{translate().t("reactApp.deployments.errorDeletingDeploymentLine2")}
+							{translations.messageLine1}
 						</div>
 					)}
 					<div className="flex">

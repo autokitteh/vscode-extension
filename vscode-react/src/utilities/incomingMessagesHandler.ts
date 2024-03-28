@@ -23,10 +23,16 @@ export const HandleIncomingServerResponses = (
 	handlers: IIncomingServerResponsesHandler
 ) => {
 	const { payload } = event.data as Message;
-	switch (event.data.type) {
-		case MessageType.deploymentDeletedResponse:
-			handlers.handleDeploymentDeletedResponse(payload as boolean);
-			break;
-		default:
+
+	if (MessageType.deploymentDeletedResponse && !handlers.handleDeploymentDeletedResponse) {
+		return;
+	} else if (MessageType.deleteSessionResponse && handlers.handleDeploymentDeletedResponse) {
+		handlers.handleDeploymentDeletedResponse(payload as boolean);
+	}
+
+	if (MessageType.deleteSessionResponse && !handlers.handleSessionDeletedResponse) {
+		return;
+	} else if (MessageType.deleteSessionResponse && handlers.handleSessionDeletedResponse) {
+		handlers.handleSessionDeletedResponse(payload as boolean);
 	}
 };

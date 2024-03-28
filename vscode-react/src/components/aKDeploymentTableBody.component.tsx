@@ -1,19 +1,19 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { AKDeploymentState } from "@react-components";
 import { DeletePopper, ExecutePopper, PopperComponent } from "@react-components";
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
+import { useAppState } from "@react-context/appState.context";
 import { useDeployments } from "@react-hooks";
-import { IIncomingServerResponsesHandler } from "@react-interfaces";
-import { getTimePassed, HandleIncomingServerResponses, sendMessage } from "@react-utilities";
-import { Message } from "@type";
+import { useIncomingMessagesFromExtension } from "@react-hooks";
+import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment, SessionEntrypoint } from "@type/models";
 
 export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
 	// State Hooks Section
 	const { selectedDeploymentId, entrypoints } = useDeployments();
-	const [visiblePopper, setVisiblePopper] = useState<string | null>(null);
+	const [{ modalName }, dispatch] = useAppState();
 	const executePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [selectedFile, setSelectedFile] = useState<string>("");
@@ -27,10 +27,15 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const [deletedDeploymentError, setDeletedDeploymentError] = useState(false);
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
 
-	// Functions Section
-	const showPopper = (popperId: string) => setVisiblePopper(popperId);
-	const hidePopper = () => setVisiblePopper(null);
+	// Local variable
+	const deleteDeploymentPopperTranslations = {
+		question: translate().t("reactApp.deployments.deletionApprovalQuestion"),
+		subtitle: translate().t("reactApp.deployments.deletionApprovalQuestionSubtitle"),
+		errorLine1: translate().t("reactApp.deployments.errorDeletingDeploymentLine1"),
+		errorLine2: translate().t("reactApp.deployments.errorDeletingDeploymentLine2"),
+	};
 
+	// Incoming Messages Handler
 	const handleDeploymentDeletedResponse = (isDeleted: boolean) => {
 		setIsDeletingInProgress(false);
 		if (isDeleted) {
@@ -40,6 +45,12 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		}
 		setDeletedDeploymentError(true);
 	};
+
+	useIncomingMessagesFromExtension({ handleDeploymentDeletedResponse });
+
+	// Functions Section
+	const showPopper = (popperId: string) => dispatch({ type: "SET_MODAL_NAME", payload: popperId });
+	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
 
 	const isDeploymentStateStartable = (deploymentState: number) =>
 		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
@@ -114,16 +125,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		hidePopper();
 	};
 
-	// Incoming Messages Section
-	const messageHandlers: IIncomingServerResponsesHandler = {
-		handleDeploymentDeletedResponse,
-	};
-
-	const handleMessagesFromExtension = useCallback(
-		(event: MessageEvent<Message>) => HandleIncomingServerResponses(event, messageHandlers),
-		[]
-	);
-
 	// useEffects Section
 	useEffect(() => {
 		if (typeof selectedDeploymentId === "string") {
@@ -134,12 +135,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	useEffect(() => {
 		hidePopper();
 	}, []);
-	useEffect(() => {
-		window.addEventListener("message", handleMessagesFromExtension);
-		return () => {
-			window.removeEventListener("message", handleMessagesFromExtension);
-		};
-	}, [handleMessagesFromExtension]);
 
 	useEffect(() => {
 		if (entrypoints && Object.keys(entrypoints).length) {
@@ -187,7 +182,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 							className="codicon codicon-redo mr-2 cursor-pointer"
 							ref={executePopperElementRef}
 							title="Execute"
-							onClick={() => showPopper("execute")}
+							onClick={() => showPopper("deploymentExecute")}
 						></div>
 					)}
 					{isDeploymentStateStartable(deployment.state) ? (
@@ -205,25 +200,26 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						className="relative codicon codicon-trash cursor-pointer ml-2 z-20"
 						onClick={(e) => {
 							const refElement = e.currentTarget;
-							showPopper("delete");
+							showPopper("deploymentDelete");
 							deletePopperElementRef.current = refElement;
 							setDeleteDeploymentId(deployment.deploymentId);
 						}}
 					></div>
 
-					{(visiblePopper === "delete" || visiblePopper === "execute") && (
+					{(modalName === "deploymentDelete" || modalName === "deploymentExecute") && (
 						<div className="absolute h-screen w-screen top-0 left-0 z-10" onClick={() => hidePopper()}></div>
 					)}
 
-					<PopperComponent visible={visiblePopper === "delete"} referenceRef={deletePopperElementRef}>
+					<PopperComponent visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
 						<DeletePopper
 							isDeletingInProcess={isDeletingInProcess}
 							onDeleteConfirm={() => deleteDeploymentAction(true)}
 							onDeleteCancel={() => deleteDeploymentAction(false)}
 							hasDeleteError={deletedDeploymentError}
+							translations={deleteDeploymentPopperTranslations}
 						/>
 					</PopperComponent>
-					<PopperComponent visible={visiblePopper === "execute"} referenceRef={executePopperElementRef}>
+					<PopperComponent visible={modalName === "deploymentExecute"} referenceRef={executePopperElementRef}>
 						<ExecutePopper
 							files={files!}
 							functions={functions!}

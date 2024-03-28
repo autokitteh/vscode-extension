@@ -8,7 +8,8 @@ export interface IIncomingMessagesHandler {
 	setResourcesDirState(projectFolder: boolean): void;
 }
 export interface IIncomingServerResponsesHandler {
-	handleDeploymentDeletedResponse(isDeleted: boolean): void;
+	handleSessionDeletedResponse?: (isDeleted: boolean) => void;
+	handleDeploymentDeletedResponse?: (isDeleted: boolean) => void;
 }
 
 export interface IIncomingDeploymentsHandler {

@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { translate } from "@i18n";
 import { AKDeploymentTableBody, AKDeploymentTableHeader } from "@react-components";
 import { AKTable, AKTableMessage } from "@react-components/AKTable";
-import { SessionStartContext } from "@react-context";
+import { useAppState } from "@react-context";
 import { useDeployments } from "@react-hooks";
 import { Deployment } from "@type/models";
 
@@ -11,11 +11,11 @@ export const AKDeployments = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [totalDeployments, setTotalDeployments] = useState<number>();
 	const [deployments, setDeployments] = useState<Deployment[]>();
-	const { setLastDeployment } = useContext(SessionStartContext);
+	const [, dispatch] = useAppState();
 
 	useEffect(() => {
 		if (deployments && deployments.length) {
-			setLastDeployment(deployments[0]);
+			dispatch({ type: "SET_LAST_DEPLOYMENT", payload: deployments[0] });
 		}
 		if (deployments && isLoading) {
 			setIsLoading(false);
