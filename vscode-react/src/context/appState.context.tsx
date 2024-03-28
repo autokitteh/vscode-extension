@@ -1,16 +1,15 @@
 import React, { createContext, useContext, useReducer } from "react";
 import { Deployment } from "@type/models";
+import { Action } from "src/types";
 
 type State = {
 	modalName: string;
 	lastDeployment: Deployment | null;
 };
 
-type Action = { type: "SET_MODAL_NAME"; payload: string } | { type: "SET_LAST_DEPLOYMENT"; payload: Deployment };
-
 const AppStateContext = createContext<[State, React.Dispatch<Action>] | undefined>(undefined);
 
-const appStateReducer = (state: State, action: Action): State => {
+export const appStateReducer = (state: State, action: Action): State => {
 	switch (action.type) {
 		case "SET_MODAL_NAME":
 			return { ...state, modalName: action.payload };
