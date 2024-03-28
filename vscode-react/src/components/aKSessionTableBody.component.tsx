@@ -4,7 +4,7 @@ import { translate } from "@i18n";
 import { AKSessionState, DeletePopper, PopperComponent } from "@react-components";
 import { AKTableRow, AKTableCell } from "@react-components/AKTable";
 import { useAppState } from "@react-context";
-import { useIncomingMessagesFromExtension } from "@react-hooks";
+import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
 
@@ -37,7 +37,7 @@ export const AKSessionsTableBody = ({
 		hidePopper();
 	};
 
-	useIncomingMessagesFromExtension({ handleSessionDeletedResponse });
+	useIncomingMessageHandler({ handleSessionDeletedResponse });
 
 	// Functions Section
 	const showPopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "sessionDelete" });

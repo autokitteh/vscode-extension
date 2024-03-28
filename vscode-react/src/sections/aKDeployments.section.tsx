@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
 import { translate } from "@i18n";
+import { DeploymentSectionViewModel } from "@models";
 import { AKDeploymentTableBody, AKDeploymentTableHeader } from "@react-components";
 import { AKTable, AKTableMessage } from "@react-components/AKTable";
 import { useAppState } from "@react-context";
-import { useDeployments } from "@react-hooks";
+import { useIncomingMessageHandler } from "@react-hooks";
 import { Deployment } from "@type/models";
 
 export const AKDeployments = () => {
-	const { deploymentsSection } = useDeployments();
+	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel>();
 	const [isLoading, setIsLoading] = useState(true);
 	const [totalDeployments, setTotalDeployments] = useState<number>();
 	const [deployments, setDeployments] = useState<Deployment[]>();
 	const [, dispatch] = useAppState();
+
+	useIncomingMessageHandler({
+		setDeploymentsSection,
+	});
 
 	useEffect(() => {
 		if (deployments && deployments.length) {

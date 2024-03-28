@@ -1,13 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
 import { AKMonacoEditorModal, AKSessionsTableHeader } from "@react-components";
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
 import { AKTable, AKTableMessage } from "@react-components/AKTable";
-import { useCloseOnEscape, useForceRerender } from "@react-hooks";
-import { IIncomingSessionsMessagesHandler } from "@react-interfaces";
-import { HandleSessionsIncomingMessages } from "@react-utilities";
-import { Message } from "@type";
+import { useCloseOnEscape, useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 
 export const AKSessions = () => {
 	const [modal, setModal] = useState(false);
@@ -17,23 +14,12 @@ export const AKSessions = () => {
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 
-	const handleMessagesFromExtension = useCallback(
-		(event: MessageEvent<Message>) => HandleSessionsIncomingMessages(event, messageHandlers),
-		[]
-	);
 	const { sessions, totalSessions } = sessionsSection || {};
 
-	const messageHandlers: IIncomingSessionsMessagesHandler = {
+	useIncomingMessageHandler({
 		setSessionsSection,
 		setSelectedSession,
-	};
-
-	useEffect(() => {
-		window.addEventListener("message", handleMessagesFromExtension);
-		return () => {
-			window.removeEventListener("message", handleMessagesFromExtension);
-		};
-	}, [handleMessagesFromExtension]);
+	});
 
 	useEffect(() => {
 		if (isLoading) {
