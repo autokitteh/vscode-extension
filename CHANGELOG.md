@@ -1,3 +1,13 @@
+# [0.10.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.9.2...v0.10.0-dev.1) (2024-03-28)
+
+
+### Features
+
+* delete deployments - fix version ([433b4c9](https://github.com/autokitteh/vscode-extension/commit/433b4c92fcc9f600582543ba2a32bf4f7976da23))
+* delete deployments - fix version ([d73a30b](https://github.com/autokitteh/vscode-extension/commit/d73a30b7e664f83688f77aac7fe9b2849a6ca58c))
+* delete deployments ([#200](https://github.com/autokitteh/vscode-extension/issues/200)) ([591329d](https://github.com/autokitteh/vscode-extension/commit/591329da1246d924bc1a1bffff76b9d47a2ba0d1))
+* fix package.json ([0398fbe](https://github.com/autokitteh/vscode-extension/commit/0398fbe78cd4a4316cfeacccf6ae0696c7fa83ef))
+
 ## [0.9.2-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.9.1...v0.9.2-dev.1) (2024-03-26)
 
 
