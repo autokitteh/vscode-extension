@@ -55,10 +55,6 @@
 				"title": "autokitteh: Apply Manifest"
 			},
 			{
-				"command": "autokitteh.buildFolder",
-				"title": "Build autokitteh"
-			},
-			{
 				"command": "autokitteh.enable",
 				"icon": "./resources/sidebar/top-panel-connect.svg",
 				"title": "autokitteh: Connect to server"
@@ -144,12 +140,6 @@
 			}
 		],
 		"menus": {
-			"explorer/context": [
-				{
-					"command": "autokitteh.buildFolder",
-					"when": "resourceLangId == yaml && resourceFilename =~ /autokitteh.yaml/"
-				}
-			],
 			"view/title": [
 				{
 					"command": "autokitteh.enable",
