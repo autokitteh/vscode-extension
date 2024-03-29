@@ -3,7 +3,6 @@ export const vsCommands = {
 	enable: "autokitteh.enable",
 	disable: "autokitteh.disable",
 	applyManifest: "autokitteh.applyManifest",
-	buildFolder: "autokitteh.buildFolder",
 	openBaseURLInputDialog: "autokitteh.openBaseURLInputDialog",
 	openConfigSetupWalkthrough: "autokitteh.openConfigSetupWalkthrough",
 	buildProject: "autokitteh.buildProject",

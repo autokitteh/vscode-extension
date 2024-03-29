@@ -14,14 +14,13 @@ import {
 import { SidebarTreeItem } from "@type/views";
 import { WorkspaceConfig, isStalarkLSPSocketMode } from "@utilities";
 import { MessageHandler, SidebarView } from "@views";
-import { applyManifest, buildOnRightClick, buildProject, runProject } from "@vscommands";
+import { applyManifest, buildProject, runProject } from "@vscommands";
 import { openAddConnectionsPage } from "@vscommands/sideBarActions";
 import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough";
 import { commands, ExtensionContext } from "vscode";
 
 export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
-	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));
 	context.subscriptions.push(commands.registerCommand(vsCommands.showInfoMessage, MessageHandler.infoMessage));
 	context.subscriptions.push(commands.registerCommand(vsCommands.showErrorMessage, MessageHandler.errorMessage));
 	context.subscriptions.push(commands.registerCommand(vsCommands.openBaseURLInputDialog, openBaseURLInputDialog));
