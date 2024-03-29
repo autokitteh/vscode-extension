@@ -115,6 +115,21 @@
 					"description": "Refresh interval in seconds for the sidebar panel",
 					"type": "number"
 				},
+				"autokitteh.notificationsLevel": {
+					"type": "string",
+					"default": "All",
+					"enum": [
+						"All",
+						"Errors",
+						"None"
+					],
+					"description": "Adjust notification visibility in the extension, ranging from all notifications to errors only, or none",
+					"enumDescriptions": [
+						"Displays all notifications (info, errors)",
+						"Only shows error notifications",
+						"Suppresses all notifications"
+					]
+				},
 				"autokitteh.starlarkLSPPath": {
 					"default": "",
 					"description": "The path to the starlark LSP Server",
