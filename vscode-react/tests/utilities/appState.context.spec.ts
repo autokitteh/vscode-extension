@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { Deployment } from "../../../src/types/models";
-import { appStateReducer, Action } from "../../src/context/appState.context"; // Adjust the import path
+import { appStateReducer } from "../../src/context/appState.context";
+import { Action } from "../../src/types/contextAction.type";
 
 const mockDeployment: Deployment = {
 	deploymentId: "testId",
@@ -21,7 +22,7 @@ describe("appStateReducer", () => {
 	it("should handle SET_LAST_DEPLOYMENT", () => {
 		const initialState = { modalName: "", lastDeployment: null };
 		const action = { type: "SET_LAST_DEPLOYMENT" as const, payload: mockDeployment };
-		const state = appStateReducer(initialState, action as Action);
+		const state = appStateReducer(initialState, action);
 		expect(state.lastDeployment).toBe(mockDeployment);
 	});
 });
