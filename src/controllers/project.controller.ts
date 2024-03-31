@@ -222,10 +222,14 @@ export class ProjectController {
 
 		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 		if (lastState.isFinished()) {
+			if (lastState.isStopped()) {
+				LoggerService.sessionLog(translate().t("sessions.historyStopped"));
+			}
 			if (lastState.isError()) {
 				this.outputErrorDetails(lastState);
 				this.outputCallstackDetails(lastState);
 			}
+
 			this.stopInterval(ProjectIntervalTypes.sessionHistory);
 			return;
 		}
@@ -576,6 +580,23 @@ export class ProjectController {
 			return;
 		}
 		return projectFromContext.path;
+	}
+
+	async stopSession(sessionId: string) {
+		const { error } = await SessionsService.stop(sessionId);
+		if (error) {
+			const notification = translate().t("sessions.stopFailed", { sessionId });
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			const log = translate().t("sessions.stopFailedError", {
+				sessionId,
+				projectId: this.projectId,
+				error: (error as Error).message,
+			});
+			LoggerService.error(namespaces.projectController, log);
+			return;
+		}
+		const notification = translate().t("sessions.stopSucceed", { sessionId });
+		commands.executeCommand(vsCommands.showInfoMessage, notification);
 	}
 
 	async deleteDeployment(deploymentId: string) {

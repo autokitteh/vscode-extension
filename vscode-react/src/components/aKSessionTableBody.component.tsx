@@ -54,6 +54,10 @@ export const AKSessionsTableBody = ({
 		sendMessage(MessageType.startSession, startSessionArgs);
 	};
 
+	const stopSession = (sessionId: string) => {
+		sendMessage(MessageType.stopSession, sessionId);
+	};
+
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogs, sessionId);
 		setSelectedSession(sessionId);
@@ -140,6 +144,13 @@ export const AKSessionsTableBody = ({
 									translations={deleteSessionPopperTranslations}
 								/>
 							</PopperComponent>
+							{session.state === SessionState.RUNNING && (
+								<div
+									className="codicon codicon-debug-stop cursor-pointer text-red-500"
+									title="Stop session"
+									onClick={() => stopSession(session.sessionId)}
+								></div>
+							)}
 						</AKTableCell>
 					</AKTableRow>
 				))}

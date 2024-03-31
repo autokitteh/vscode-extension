@@ -9,6 +9,7 @@
 	"statuses": {
 		"created": "Created",
 		"running": "Running",
+		"stopped": "Stopped",
 		"unspecified": "Unspecified",
 		"error": "Error",
 		"completed": "Completed"

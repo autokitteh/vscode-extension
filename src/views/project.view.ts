@@ -60,6 +60,9 @@ export class ProjectView implements IProjectView {
 					case MessageType.displayErrorWithoutActionButton:
 						this.delegate?.displayErrorWithoutActionButton?.(message.payload as string);
 						break;
+					case MessageType.stopSession:
+						this.delegate?.stopSession?.(message.payload as string);
+						break;
 					default:
 				}
 			},
