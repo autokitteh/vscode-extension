@@ -22,10 +22,6 @@ export class MessageHandler {
 		});
 	}
 	static warnMessage(messageText: string): void {
-		window.showWarningMessage(messageText).then((selection) => {
-			if (selection === "View log") {
-				LoggerService.reveal();
-			}
-		});
+		window.showWarningMessage(messageText);
 	}
 }
