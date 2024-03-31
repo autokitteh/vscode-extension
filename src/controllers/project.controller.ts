@@ -1,3 +1,5 @@
+import * as fs from "fs";
+import * as path from "path";
 import { vsCommands, namespaces, channels } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getResources } from "@controllers/utilities";
 import { MessageType, ProjectIntervalTypes } from "@enums";
@@ -302,6 +304,36 @@ export class ProjectController {
 
 			this.notifyViewResourcesPathChanged();
 
+			const { data: existingResources } = await this.getResourcesPathFromBackend();
+
+			if (existingResources) {
+				// And no path in the context
+				window
+					.showOpenDialog({
+						canSelectFolders: true,
+						openLabel: "Select Folder to Save File",
+					})
+					.then((folderUris) => {
+						if (folderUris && folderUris.length > 0) {
+							for (let i = 0; i < Object.keys(existingResources).length; i++) {
+								const savePath: string = folderUris[0].fsPath;
+								const fileName: string = Object.keys(existingResources)[i];
+								const fullPath: string = path.join(savePath, fileName);
+								const data: Uint8Array = existingResources[Object.keys(existingResources)[i]] as Uint8Array;
+								fs.writeFile(fullPath, Buffer.from(data), (err: NodeJS.ErrnoException | null) => {
+									if (err) {
+										window.showErrorMessage("Error saving file: " + err.message);
+									} else {
+										window.showInformationMessage("File saved successfully to " + fullPath);
+									}
+								});
+							}
+						} else {
+							window.showWarningMessage("No folder selected to save the file.");
+						}
+					});
+			}
+
 			this.startInterval(
 				ProjectIntervalTypes.deployments,
 				() => this.loadAndDisplayDeployments(),
@@ -482,7 +514,7 @@ export class ProjectController {
 	}
 
 	async notifyViewResourcesPathChanged() {
-		const resourcesPath = await this.getResourcesPath();
+		const resourcesPath = await this.getResourcesPathFromContext();
 
 		if (resourcesPath) {
 			this.view.update({
@@ -497,9 +529,13 @@ export class ProjectController {
 		}
 	}
 
-	async getResourcesPath() {
+	async getResourcesPathFromContext() {
 		const projectFromContext: { path?: string } = await commands.executeCommand(vsCommands.getContext, this.projectId);
 		return projectFromContext ? projectFromContext.path : undefined;
+	}
+
+	async getResourcesPathFromBackend() {
+		return await ProjectsService.getResources(this.projectId);
 	}
 
 	async deleteDeployment(deploymentId: string) {

@@ -54,6 +54,16 @@ export class ProjectsService {
 		}
 	}
 
+	static async getResources(projectId: string): Promise<ServiceResponse<Record<string, Uint8Array>>> {
+		try {
+			const { resources } = await projectsClient.downloadResources({ projectId });
+			return { data: resources, error: undefined };
+		} catch (error) {
+			LoggerService.error(namespaces.projectService, `Project ID: ${projectId}, error:${(error as Error).message}`);
+			return { data: undefined, error: (error as Error).message };
+		}
+	}
+
 	static async deploy(projectId: string, buildId: string): Promise<ServiceResponse<string>> {
 		const { data: environments, error: envError } = await EnvironmentsService.listByProjectId(projectId);
 		if (envError) {
