@@ -333,17 +333,17 @@ export class ProjectController {
 			if (userResponse !== translate().t("projects.downloadResourcesDirectoryApprove")) {
 				return;
 			}
-			const localResourcesPaths = await this.promptUserForResourcesLocalDirectory();
+			const newLocalResourcesPath = await this.promptUserForResourcesLocalDirectory();
 
-			if (!localResourcesPaths || !localResourcesPaths.length) {
+			if (!newLocalResourcesPath || !newLocalResourcesPath.length) {
 				commands.executeCommand(
 					vsCommands.showWarnMessage,
 					translate().t("projects.downloadResourcesDirectoryNotSelected")
 				);
 				return;
 			}
-			this.downloadProjectResources(localResourcesPaths, existingResourcesToDownload!);
-			await commands.executeCommand(vsCommands.setContext, this.projectId, { path: localResourcesPaths[0].path });
+			this.downloadProjectResources(newLocalResourcesPath, existingResourcesToDownload!);
+			await commands.executeCommand(vsCommands.setContext, this.projectId, { path: newLocalResourcesPath[0].path });
 
 			this.notifyViewResourcesPathChanged();
 
