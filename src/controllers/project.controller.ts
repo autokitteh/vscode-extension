@@ -1,3 +1,4 @@
+import * as fs from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getResources } from "@controllers/utilities";
@@ -10,7 +11,6 @@ import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
-import { writeUint8ArrayBufferToFile } from "@utilities";
 import isEqual from "lodash/isEqual";
 import { commands, OpenDialogOptions, Uri, window } from "vscode";
 
@@ -358,25 +358,34 @@ export class ProjectController {
 			if (fileSaveError) {
 				LoggerService.error(
 					namespaces.projectController,
-					translate().t("downloadResourcesDirectoryError", { error: (fileSaveError as Error).message })
+					translate().t("projects.downloadResourcesDirectoryError", {
+						error: (fileSaveError as Error).message,
+						projectId: this.projectId,
+					})
 				);
 				return;
 			}
 		}
-		LoggerService.info(namespaces.projectController, translate().t("projects.downloadResourcesDirectorySuccess"));
-		commands.executeCommand(vsCommands.showInfoMessage, translate().t("projects.downloadResourcesDirectorySuccess"));
+		const successMessage = translate().t("projects.downloadResourcesDirectorySuccess", { projectId: this.projectId });
+		LoggerService.info(namespaces.projectController, successMessage);
+		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 	}
 
-	async saveBufferToFile(localResourcesPaths: Uri[], existingResources: Record<string, Uint8Array>, index: number) {
+	async saveBufferToFile(
+		localResourcesPaths: Uri[],
+		existingResources: Record<string, Uint8Array>,
+		index: number
+	): Promise<Error | undefined> {
 		const savePath: string = localResourcesPaths[0].fsPath;
 		const fileName: string = Object.keys(existingResources)[index];
 		const fullPath: string = path.join(savePath, fileName);
 		const data: Uint8Array = existingResources[Object.keys(existingResources)[index]] as Uint8Array;
-		const fileWriteError = await writeUint8ArrayBufferToFile(fullPath, data);
-		if (fileWriteError) {
-			return fileWriteError;
+		try {
+			await fs.writeFile(fullPath, Buffer.from(data));
+		} catch (error) {
+			return error as Error;
 		}
-		return undefined;
+		return;
 	}
 
 	onBlur() {

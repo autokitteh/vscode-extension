@@ -94,12 +94,3 @@ export const mapFilesToContentInBytes = async (
 };
 
 export const getDirectoryOfFile = (filePath: string): string => path.dirname(filePath);
-
-export const writeUint8ArrayBufferToFile = async (path: string, data: Uint8Array): Promise<Error | undefined> => {
-	try {
-		await fsPromises.writeFile(path, Buffer.from(data));
-		return undefined;
-	} catch (error) {
-		return error as Error;
-	}
-};
