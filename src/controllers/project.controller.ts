@@ -343,7 +343,7 @@ export class ProjectController {
 				return;
 			}
 			this.downloadProjectResources(newLocalResourcesPath, existingResourcesToDownload!);
-			await commands.executeCommand(vsCommands.setContext, this.projectId, { path: newLocalResourcesPath[0].path });
+			await commands.executeCommand(vsCommands.setContext, this.projectId, { path: newLocalResourcesPath[0].fsPath });
 
 			this.notifyViewResourcesPathChanged();
 
