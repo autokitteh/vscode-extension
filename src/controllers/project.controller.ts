@@ -363,6 +363,12 @@ export class ProjectController {
 						projectId: this.projectId,
 					})
 				);
+				commands.executeCommand(
+					vsCommands.showErrorMessage,
+					translate().t("projects.downloadResourcesDirectoryErrorProjectId", {
+						projectId: this.projectId,
+					})
+				);
 				return;
 			}
 		}
