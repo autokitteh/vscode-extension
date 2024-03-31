@@ -67,9 +67,6 @@ export class SessionLogRecord {
 			)?.message;
 			this.callstackTrace = (logRecord?.state?.error?.error?.callstack || []) as Callstack[];
 		}
-		if (this.state === SessionStateType.stopped) {
-			this.logs = translate().t("sessions.historyStopped");
-		}
 	}
 
 	private handleCallAttemptComplete(logRecord: ProtoSessionLogRecord) {
