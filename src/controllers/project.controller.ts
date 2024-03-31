@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import * as path from "path";
 import { vsCommands, namespaces, channels } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getResources } from "@controllers/utilities";
@@ -11,8 +10,9 @@ import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
+import { writeUint8ArrayBufferToFile } from "@utilities";
 import isEqual from "lodash/isEqual";
-import { commands, OpenDialogOptions, window } from "vscode";
+import { commands, OpenDialogOptions, Uri, window } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
@@ -289,6 +289,13 @@ export class ProjectController {
 		this.intervalKeeper.delete(intervalKey);
 	}
 
+	async promptUserForResourcesLocalDirectory() {
+		return window.showOpenDialog({
+			canSelectFolders: true,
+			openLabel: translate().t("projects.downloadResourcesSelectDirectory"),
+		});
+	}
+
 	public async openProject(disposeCB: Callback<string>) {
 		this.disposeCB = disposeCB;
 		const { data: project, error } = await ProjectsService.get(this.projectId);
@@ -302,46 +309,74 @@ export class ProjectController {
 			this.project = project;
 			this.view.show(this.project.name);
 
-			this.notifyViewResourcesPathChanged();
-
-			const { data: existingResources } = await this.getResourcesPathFromBackend();
-
-			if (existingResources) {
-				// And no path in the context
-				window
-					.showOpenDialog({
-						canSelectFolders: true,
-						openLabel: "Select Folder to Save File",
-					})
-					.then((folderUris) => {
-						if (folderUris && folderUris.length > 0) {
-							for (let i = 0; i < Object.keys(existingResources).length; i++) {
-								const savePath: string = folderUris[0].fsPath;
-								const fileName: string = Object.keys(existingResources)[i];
-								const fullPath: string = path.join(savePath, fileName);
-								const data: Uint8Array = existingResources[Object.keys(existingResources)[i]] as Uint8Array;
-								fs.writeFile(fullPath, Buffer.from(data), (err: NodeJS.ErrnoException | null) => {
-									if (err) {
-										window.showErrorMessage("Error saving file: " + err.message);
-									} else {
-										window.showInformationMessage("File saved successfully to " + fullPath);
-									}
-								});
-							}
-						} else {
-							window.showWarningMessage("No folder selected to save the file.");
-						}
-					});
-			}
-
 			this.startInterval(
 				ProjectIntervalTypes.deployments,
 				() => this.loadAndDisplayDeployments(),
 				this.deploymentsRefreshRate
 			);
+
+			const isResourcesPathExist = await this.getResourcesPathFromContext();
+
+			if (isResourcesPathExist) {
+				this.notifyViewResourcesPathChanged();
+				return;
+			}
+
+			const { data: existingResourcesToDownload } = await this.getResourcesPathToDownload();
+
+			if (!existingResourcesToDownload) {
+				this.notifyViewResourcesPathChanged();
+				return;
+			}
+
+			const userResponse = await this.promptUserToDownloadResources();
+			if (userResponse !== translate().t("projects.downloadResourcesDirectoryApprove")) {
+				return;
+			}
+			const localResourcesPaths = await this.promptUserForResourcesLocalDirectory();
+
+			if (!localResourcesPaths || !localResourcesPaths.length) {
+				commands.executeCommand(
+					vsCommands.showWarnMessage,
+					translate().t("projects.downloadResourcesDirectoryNotSelected")
+				);
+				return;
+			}
+			this.downloadProjectResources(localResourcesPaths, existingResourcesToDownload!);
+			await commands.executeCommand(vsCommands.setContext, this.projectId, { path: localResourcesPaths[0].path });
+
+			this.notifyViewResourcesPathChanged();
+
 			return;
 		}
 		LoggerService.error(namespaces.projectController, log);
+	}
+
+	async downloadProjectResources(localResourcesPaths: Uri[], existingResources: Record<string, Uint8Array>) {
+		for (let i = 0; i < Object.keys(existingResources).length; i++) {
+			const fileSaveError = await this.saveBufferToFile(localResourcesPaths, existingResources, i);
+			if (fileSaveError) {
+				LoggerService.error(
+					namespaces.projectController,
+					translate().t("downloadResourcesDirectoryError", { error: (fileSaveError as Error).message })
+				);
+				return;
+			}
+		}
+		LoggerService.info(namespaces.projectController, translate().t("projects.downloadResourcesDirectorySuccess"));
+		commands.executeCommand(vsCommands.showInfoMessage, translate().t("projects.downloadResourcesDirectorySuccess"));
+	}
+
+	async saveBufferToFile(localResourcesPaths: Uri[], existingResources: Record<string, Uint8Array>, index: number) {
+		const savePath: string = localResourcesPaths[0].fsPath;
+		const fileName: string = Object.keys(existingResources)[index];
+		const fullPath: string = path.join(savePath, fileName);
+		const data: Uint8Array = existingResources[Object.keys(existingResources)[index]] as Uint8Array;
+		const fileWriteError = await writeUint8ArrayBufferToFile(fullPath, data);
+		if (fileWriteError) {
+			return fileWriteError;
+		}
+		return undefined;
 	}
 
 	onBlur() {
@@ -534,7 +569,7 @@ export class ProjectController {
 		return projectFromContext ? projectFromContext.path : undefined;
 	}
 
-	async getResourcesPathFromBackend() {
+	async getResourcesPathToDownload() {
 		return await ProjectsService.getResources(this.projectId);
 	}
 
@@ -562,6 +597,15 @@ export class ProjectController {
 			projectId: this.projectId,
 		});
 		LoggerService.info(namespaces.projectController, log);
+	}
+
+	async promptUserToDownloadResources(): Promise<string | undefined> {
+		const dialogType = "projects.downloadResourcesDirectory";
+		return await window.showInformationMessage(
+			translate().t(dialogType),
+			translate().t("projects.downloadResourcesDirectoryApprove"),
+			translate().t("projects.downloadResourcesDirectoryDismiss")
+		);
 	}
 	async deleteSession(sessionId: string) {
 		const { error } = await SessionsService.deleteSession(sessionId);

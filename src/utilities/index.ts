@@ -16,4 +16,5 @@ export {
 	readDirectoryRecursive,
 	mapFilesToContentInBytes,
 	getDirectoryOfFile,
+	writeUint8ArrayBufferToFile,
 } from "@utilities/fileSystem.utils";

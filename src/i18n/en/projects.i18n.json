@@ -10,5 +10,13 @@
 	"fetchProjectsFailed": "Projects fetch failed",
 	"fetchProjectsFailedError": "Projects fetch failed - error: {{error}}",
 	"resourcesDirectoryMissing": "Resources directory missing",
+	"downloadResourcesDirectory": "Project resources directory available to download",
+	"downloadResourcesDirectoryApprove": "Download",
+	"downloadResourcesDirectoryDismiss": "Dismiss",
+	"downloadResourcesSelectDirectory": "Select folder to save project files",
+	"downloadResourcesDirectoryError": "Error downloading project resources: {{error}}",
+	"downloadResourcesDirectoryFailed": "Downloading project resources failed",
+	"downloadResourcesDirectorySuccess": "Project resources successfully downloaded",
+	"downloadResourcesDirectoryNotSelected": "No folder selected to save the file",
 	"errorReadingResource": "Error reading the selected directory or file"
 }
