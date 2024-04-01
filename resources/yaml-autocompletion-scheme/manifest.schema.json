@@ -80,11 +80,33 @@
 			"required": ["name"]
 		},
 		"Trigger": {
+			"oneOf": [
+				{
+					"required": ["call"],
+					"title": "call"
+				},
+				{
+					"required": ["entrypoint"],
+					"title": "entrypoint"
+				}
+			],
 			"properties": {
 				"connection": {
 					"type": "string"
 				},
+				"name": {
+					"type": "string"
+				},
 				"event_type": {
+					"type": "string"
+				},
+				"filter": {
+					"type": "string"
+				},
+				"additional_data": {
+					"type": "object"
+				},
+				"call": {
 					"type": "string"
 				},
 				"entrypoint": {
@@ -93,7 +115,7 @@
 			},
 			"additionalProperties": false,
 			"type": "object",
-			"required": ["connection", "event_type", "entrypoint"]
+			"required": ["connection"]
 		}
 	}
 }
