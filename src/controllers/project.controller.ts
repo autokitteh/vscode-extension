@@ -595,8 +595,6 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
-		const notification = translate().t("sessions.stopSucceed", { sessionId });
-		commands.executeCommand(vsCommands.showInfoMessage, notification);
 	}
 
 	async deleteDeployment(deploymentId: string) {
