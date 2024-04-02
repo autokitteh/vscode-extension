@@ -58,12 +58,13 @@ export const AKSessionsTableBody = ({
 		setSelectedSession(sessionId);
 	};
 
-	const deleteSessionAction = (isApproved: boolean) => {
-		if (isApproved) {
-			sendMessage(MessageType.deleteSession, deleteSessionId);
-			setIsDeletingInProgress(true);
-			return;
-		}
+	const deleteSessionConfirmed = () => {
+		sendMessage(MessageType.deleteSession, deleteSessionId);
+		setIsDeletingInProgress(true);
+		return;
+	};
+
+	const deleteSessionDismissed = () => {
 		setIsDeletingInProgress(false);
 		setDeleteSessionId("");
 		hidePopper();
@@ -115,8 +116,8 @@ export const AKSessionsTableBody = ({
 							<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
 								<DeletePopper
 									isDeletingInProcess={isDeletingInProcess}
-									onConfirm={() => deleteSessionAction(true)}
-									onDismiss={() => deleteSessionAction(false)}
+									onConfirm={() => deleteSessionConfirmed()}
+									onDismiss={() => deleteSessionDismissed()}
 									translations={deleteSessionPopperTranslations}
 								/>
 							</PopperComponent>

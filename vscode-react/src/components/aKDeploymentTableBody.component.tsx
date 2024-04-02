@@ -33,11 +33,9 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	};
 
 	// Incoming Messages Handler
-	const handleDeploymentDeletedResponse = (isDeleted: boolean) => {
+	const handleDeploymentDeletedResponse = () => {
 		setIsDeletingInProgress(false);
-		if (isDeleted) {
-			hidePopper();
-		}
+		hidePopper();
 	};
 
 	useIncomingMessagesFromExtension({ handleDeploymentDeletedResponse });
@@ -107,12 +105,12 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		hidePopper();
 	};
 
-	const deleteDeploymentAction = (isApproved: boolean) => {
-		if (isApproved) {
-			sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
-			setIsDeletingInProgress(true);
-			return;
-		}
+	const deleteDeploymentConfirmed = () => {
+		sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
+		setIsDeletingInProgress(true);
+	};
+
+	const deleteDeploymentDismissed = () => {
 		setIsDeletingInProgress(false);
 		setDeleteDeploymentId("");
 		hidePopper();
@@ -206,8 +204,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					<PopperComponent visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
 						<DeletePopper
 							isDeletingInProcess={isDeletingInProcess}
-							onConfirm={() => deleteDeploymentAction(true)}
-							onDismiss={() => deleteDeploymentAction(false)}
+							onConfirm={() => deleteDeploymentConfirmed()}
+							onDismiss={() => deleteDeploymentDismissed()}
 							translations={deleteDeploymentPopperTranslations}
 						/>
 					</PopperComponent>
