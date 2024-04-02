@@ -289,13 +289,6 @@ export class ProjectController {
 		this.intervalKeeper.delete(intervalKey);
 	}
 
-	async promptUserForResourcesLocalDirectory() {
-		return window.showOpenDialog({
-			canSelectFolders: true,
-			openLabel: translate().t("projects.downloadResourcesSelectDirectory"),
-		});
-	}
-
 	public async openProject(disposeCB: Callback<string>) {
 		this.disposeCB = disposeCB;
 		const { data: project, error } = await ProjectsService.get(this.projectId);
@@ -305,61 +298,63 @@ export class ProjectController {
 			commands.executeCommand(vsCommands.showErrorMessage, log);
 			return;
 		}
-		if (project) {
-			this.project = project;
-			this.view.show(this.project.name);
+		if (!project) {
+			LoggerService.error(namespaces.projectController, log);
+		}
 
-			this.startInterval(
-				ProjectIntervalTypes.deployments,
-				() => this.loadAndDisplayDeployments(),
-				this.deploymentsRefreshRate
-			);
+		this.project = project;
+		this.view.show(project!.name);
 
-			const isResourcesPathExist = await this.getResourcesPathFromContext();
+		this.startInterval(
+			ProjectIntervalTypes.deployments,
+			() => this.loadAndDisplayDeployments(),
+			this.deploymentsRefreshRate
+		);
 
-			if (isResourcesPathExist) {
-				this.notifyViewResourcesPathChanged();
-				return;
-			}
+		const isResourcesPathExist = await this.getResourcesPathFromContext();
 
-			const { data: existingResourcesToDownload } = await this.getResourcesPathToDownload();
-
-			if (!existingResourcesToDownload) {
-				this.notifyViewResourcesPathChanged();
-				return;
-			}
-
-			const userResponse = await this.promptUserToDownloadResources();
-			if (userResponse !== translate().t("projects.downloadResourcesDirectoryApprove")) {
-				return;
-			}
-			const newLocalResourcesPath = await this.promptUserForResourcesLocalDirectory();
-
-			if (!newLocalResourcesPath || !newLocalResourcesPath.length) {
-				commands.executeCommand(
-					vsCommands.showWarnMessage,
-					translate().t("projects.downloadResourcesDirectoryNotSelected")
-				);
-				return;
-			}
-			this.downloadProjectResources(newLocalResourcesPath, existingResourcesToDownload!);
-			await commands.executeCommand(vsCommands.setContext, this.projectId, { path: newLocalResourcesPath[0].fsPath });
-
+		if (isResourcesPathExist) {
 			this.notifyViewResourcesPathChanged();
-
 			return;
 		}
-		LoggerService.error(namespaces.projectController, log);
-	}
 
-	async downloadProjectResources(localResourcesPaths: Uri[], existingResources: Record<string, Uint8Array>) {
-		for (let i = 0; i < Object.keys(existingResources).length; i++) {
-			const fileSaveError = await this.saveBufferToFile(localResourcesPaths, existingResources, i);
-			if (fileSaveError) {
+		const userResponse = await this.promptUserToDownloadResources();
+		if (userResponse !== translate().t("projects.downloadResourcesDirectoryApprove")) {
+			return;
+		}
+		const { data: existingResources } = await ProjectsService.getResources(this.projectId);
+
+		if (!existingResources) {
+			commands.executeCommand(
+				vsCommands.showInfoMessage,
+				translate().t("projects.downloadResourcesDirectoryNoResources")
+			);
+
+			this.notifyViewResourcesPathChanged();
+			return;
+		}
+
+		const newLocalResourcesPath = await window.showOpenDialog({
+			canSelectFolders: true,
+			openLabel: translate().t("projects.downloadResourcesSelectDirectory"),
+		});
+
+		if (!newLocalResourcesPath || !newLocalResourcesPath.length) {
+			return;
+		}
+
+		const savePath = newLocalResourcesPath[0].fsPath;
+		Object.keys(existingResources).map(async (resource) => {
+			const fileName: string = resource;
+			const fullPath: string = path.join(savePath, fileName);
+			const data: Uint8Array = existingResources[resource] as Uint8Array;
+			try {
+				await fs.writeFile(fullPath, Buffer.from(data));
+			} catch (error) {
 				LoggerService.error(
 					namespaces.projectController,
 					translate().t("projects.downloadResourcesDirectoryError", {
-						error: (fileSaveError as Error).message,
+						error: (error as Error).message,
 						projectId: this.projectId,
 					})
 				);
@@ -371,10 +366,15 @@ export class ProjectController {
 				);
 				return;
 			}
-		}
+		});
+
 		const successMessage = translate().t("projects.downloadResourcesDirectorySuccess", { projectId: this.projectId });
 		LoggerService.info(namespaces.projectController, successMessage);
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
+
+		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: newLocalResourcesPath[0].fsPath });
+
+		this.notifyViewResourcesPathChanged();
 	}
 
 	async saveBufferToFile(
@@ -582,10 +582,6 @@ export class ProjectController {
 	async getResourcesPathFromContext() {
 		const projectFromContext: { path?: string } = await commands.executeCommand(vsCommands.getContext, this.projectId);
 		return projectFromContext ? projectFromContext.path : undefined;
-	}
-
-	async getResourcesPathToDownload() {
-		return await ProjectsService.getResources(this.projectId);
 	}
 
 	async deleteDeployment(deploymentId: string) {
