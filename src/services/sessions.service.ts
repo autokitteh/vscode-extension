@@ -114,4 +114,13 @@ export class SessionsService {
 			};
 		}
 	}
+
+	static async deleteSession(sessionId: string): Promise<ServiceResponse<void>> {
+		try {
+			await sessionsClient.delete({ sessionId });
+			return { data: undefined, error: undefined };
+		} catch (error) {
+			return { data: undefined, error };
+		}
+	}
 }

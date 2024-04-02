@@ -14,5 +14,8 @@
 	"historyPrint": "Print",
 	"executionFailed": "Session execution failed",
 	"executionFailedError": "Session execution failed - {{error}}",
-	"executionSucceed": "Session execution succeed for deployment - {{deploymentId}}"
+	"executionSucceed": "Session execution succeed for deployment - {{deploymentId}}",
+	"sessionDeleteSuccessIdProject": "Session execution succeed for project - {{projectId}}, deployment - {{deploymentId}}, session - {{sessionId}}",
+	"sessionDeleteFailId": "Error deleting session, id: {{sessionId}}",
+	"sessionDeleteError": "Error deleting session, id: {{sessionId}}, deployment id: {{deploymentId}}, project id: {{projectId}} - error: {{error}}"
 }

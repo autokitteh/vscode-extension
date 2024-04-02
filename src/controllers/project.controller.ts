@@ -527,4 +527,35 @@ export class ProjectController {
 		});
 		LoggerService.info(namespaces.projectController, log);
 	}
+	async deleteSession(sessionId: string) {
+		const { error } = await SessionsService.deleteSession(sessionId);
+		if (error) {
+			const notification = translate().t("sessions.sessionDeleteFailId", { sessionId });
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+
+			const log = translate().t("sessions.sessionDeleteError", {
+				sessionId,
+				error: (error as Error).message,
+				projectId: this.projectId,
+				deploymentId: this.selectedDeploymentId,
+			});
+			LoggerService.error(namespaces.sessionsService, log);
+
+			this.view.update({
+				type: MessageType.deleteSessionResponse,
+			});
+
+			return;
+		}
+		this.view.update({
+			type: MessageType.deleteSessionResponse,
+		});
+
+		const log = translate().t("sessions.sessionDeleteSuccessIdProject", {
+			deploymentId: this.selectedDeploymentId,
+			sessionId: sessionId,
+			projectId: this.projectId,
+		});
+		LoggerService.info(namespaces.projectController, log);
+	}
 }

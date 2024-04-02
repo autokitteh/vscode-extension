@@ -6,16 +6,19 @@ import { AKButton } from "@react-components/aKButton.component";
 
 interface DeletePopperProps {
 	isDeletingInProcess: boolean;
-	onDeleteConfirm: () => void;
-	onDeleteCancel: () => void;
-	hasDeleteError: boolean;
+	onConfirm: () => void;
+	onDismiss: () => void;
+	translations: {
+		title: string;
+		subtitle: string;
+	};
 }
 
 export const DeletePopper: React.FC<DeletePopperProps> = ({
 	isDeletingInProcess,
-	onDeleteConfirm,
-	onDeleteCancel,
-	hasDeleteError,
+	onConfirm,
+	onDismiss,
+	translations,
 }) => (
 	<>
 		<div className="relative shadow-lg">
@@ -24,22 +27,15 @@ export const DeletePopper: React.FC<DeletePopperProps> = ({
 			) : (
 				<>
 					<div className="mb-3 text-left">
-						<strong>{translate().t("reactApp.deployments.deletionApprovalQuestion")}</strong>
-						<div>{translate().t("reactApp.deployments.deletionApprovalQuestionSubtitle")}</div>
+						<strong>{translations.title}</strong>
+						<div>{translations.subtitle}</div>
 					</div>
-					{hasDeleteError && (
-						<div className="text-red-500 text-left">
-							{translate().t("reactApp.deployments.errorDeletingDeploymentLine1")}
-							<br />
-							{translate().t("reactApp.deployments.errorDeletingDeploymentLine2")}
-						</div>
-					)}
 					<div className="flex">
-						<AKButton classes="bg-vscode-editor-background text-vscode-foreground" onClick={onDeleteCancel}>
+						<AKButton classes="bg-vscode-editor-background text-vscode-foreground" onClick={onDismiss}>
 							{translate().t("reactApp.general.no")}
 						</AKButton>
 						<div className="flex-grow" />
-						<AKButton onClick={onDeleteConfirm}>{translate().t("reactApp.general.yes")}</AKButton>
+						<AKButton onClick={onConfirm}>{translate().t("reactApp.general.yes")}</AKButton>
 					</div>
 				</>
 			)}
