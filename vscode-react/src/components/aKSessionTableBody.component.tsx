@@ -32,11 +32,9 @@ export const AKSessionsTableBody = ({
 	};
 
 	// Incoming Messages Handler
-	const handleSessionDeletedResponse = (isDeleted: boolean) => {
+	const handleSessionDeletedResponse = () => {
 		setIsDeletingInProgress(false);
-		if (isDeleted) {
-			hidePopper();
-		}
+		hidePopper();
 	};
 
 	useIncomingMessagesFromExtension({ handleSessionDeletedResponse });

@@ -543,14 +543,12 @@ export class ProjectController {
 
 			this.view.update({
 				type: MessageType.deleteSessionResponse,
-				payload: false,
 			});
 
 			return;
 		}
 		this.view.update({
 			type: MessageType.deleteSessionResponse,
-			payload: true,
 		});
 
 		const log = translate().t("sessions.sessionDeleteSuccessIdProject", {
