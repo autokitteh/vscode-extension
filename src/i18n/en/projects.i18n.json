@@ -10,7 +10,7 @@
 	"fetchProjectsFailed": "Projects fetch failed",
 	"fetchProjectsFailedError": "Projects fetch failed - error: {{error}}",
 	"resourcesDirectoryMissing": "Resources directory missing",
-	"downloadResourcesDirectory": "Sync resources with the server",
+	"downloadResourcesDirectory": "Sync resources with the server - Project: {{projectName}}",
 	"downloadResourcesDirectoryNoResources": "Not resources to sync from the server",
 	"downloadResourcesDirectoryApprove": "Sync",
 	"downloadResourcesDirectoryDismiss": "Dismiss",

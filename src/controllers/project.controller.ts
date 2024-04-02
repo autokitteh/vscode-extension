@@ -611,9 +611,8 @@ export class ProjectController {
 	}
 
 	async promptUserToDownloadResources(): Promise<string | undefined> {
-		const dialogType = "projects.downloadResourcesDirectory";
 		return await window.showInformationMessage(
-			translate().t(dialogType),
+			translate().t("projects.downloadResourcesDirectory", { projectName: this.project!.name }),
 			translate().t("projects.downloadResourcesDirectoryApprove"),
 			translate().t("projects.downloadResourcesDirectoryDismiss")
 		);
