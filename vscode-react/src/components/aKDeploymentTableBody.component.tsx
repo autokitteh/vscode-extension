@@ -31,8 +31,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const deleteDeploymentPopperTranslations = {
 		question: translate().t("reactApp.deployments.deletionApprovalQuestion"),
 		subtitle: translate().t("reactApp.deployments.deletionApprovalQuestionSubtitle"),
-		errorLine1: translate().t("reactApp.deployments.errorDeletingDeploymentLine1"),
-		errorLine2: translate().t("reactApp.deployments.errorDeletingDeploymentLine2"),
+		messageLine1: translate().t("reactApp.deployments.errorDeletingDeploymentLine1"),
+		messageLine2: translate().t("reactApp.deployments.errorDeletingDeploymentLine2"),
 	};
 
 	// Incoming Messages Handler
