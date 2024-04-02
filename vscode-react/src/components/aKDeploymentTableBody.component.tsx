@@ -6,7 +6,7 @@ import { DeletePopper, ExecutePopper, PopperComponent } from "@react-components"
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
 import { useAppState } from "@react-context/appState.context";
 import { useDeployments } from "@react-hooks";
-import { useIncomingMessagesFromExtension } from "@react-hooks";
+import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment, SessionEntrypoint } from "@type/models";
 
@@ -38,7 +38,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		hidePopper();
 	};
 
-	useIncomingMessagesFromExtension({ handleDeploymentDeletedResponse });
+	useIncomingMessageHandler({ handleDeploymentDeletedResponse });
 
 	// Functions Section
 	const showPopper = (popperId: string) => dispatch({ type: "SET_MODAL_NAME", payload: popperId });

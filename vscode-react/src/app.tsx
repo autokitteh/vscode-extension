@@ -1,38 +1,26 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKButton, AKLogo } from "@react-components";
 import { AppStateProvider } from "@react-context";
-import { IIncomingMessagesHandler } from "@react-interfaces";
+import { useIncomingMessageHandler } from "@react-hooks";
 import { AKDeployments, AKSessions } from "@react-sections";
-import { HandleIncomingMessages, sendMessage } from "@react-utilities";
+import { sendMessage } from "@react-utilities";
 import { cn } from "@react-utilities/cnClasses.utils";
-import { Message } from "@type";
 import "./app.css";
 
 function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
-	const messageHandlers: IIncomingMessagesHandler = {
+
+	useIncomingMessageHandler({
 		setProjectName,
 		setThemeVisualType,
 		setResourcesDirState,
-	};
-
-	const handleMessagesFromExtension = useCallback(
-		(event: MessageEvent<Message>) => HandleIncomingMessages(event, messageHandlers),
-		[]
-	);
-
-	useEffect(() => {
-		window.addEventListener("message", handleMessagesFromExtension);
-		return () => {
-			window.removeEventListener("message", handleMessagesFromExtension);
-		};
-	}, [handleMessagesFromExtension]);
+	});
 
 	return (
 		<main>
