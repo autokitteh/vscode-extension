@@ -129,10 +129,6 @@ export class SessionLogRecord {
 		return this.type === SessionLogRecordType.print;
 	}
 
-	isStopped(): boolean {
-		return this.state === SessionStateType.stopped;
-	}
-
 	isFinished(): boolean {
 		return (
 			this.state === SessionStateType.error ||
