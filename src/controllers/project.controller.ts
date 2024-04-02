@@ -362,6 +362,7 @@ export class ProjectController {
 					vsCommands.showErrorMessage,
 					translate().t("projects.downloadResourcesDirectoryErrorProjectId", {
 						projectId: this.projectId,
+						fileName: resource,
 					})
 				);
 				return;

@@ -16,7 +16,7 @@
 	"downloadResourcesDirectoryDismiss": "Dismiss",
 	"downloadResourcesSelectDirectory": "Select folder",
 	"downloadResourcesDirectoryError": "Error downloading project resources: {{error}} for project id: {{projectId}}",
-	"downloadResourcesDirectoryErrorProjectId": "Error downloading project resources for project id: {{projectId}}",
+	"downloadResourcesDirectoryErrorProjectId": "Error downloading project resources for project id: {{projectId}}, file name: {{fileName}}",
 	"downloadResourcesDirectoryFailed": "Downloading project resources failed",
 	"downloadResourcesDirectorySuccess": "Project resources successfully downloaded for project id: {{projectId}}",
 	"downloadResourcesDirectoryNotSelected": "No folder selected to save the file",
