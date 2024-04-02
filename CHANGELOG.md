@@ -1,3 +1,10 @@
+# [0.10.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.1...v0.10.0-dev.2) (2024-04-02)
+
+
+### Features
+
+* ability to delete sessions ([#202](https://github.com/autokitteh/vscode-extension/issues/202)) ([b1adaf5](https://github.com/autokitteh/vscode-extension/commit/b1adaf5fb0cd5eeb16d77cc8bf2dc854b38e15ff))
+
 # [0.10.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.9.2...v0.10.0-dev.1) (2024-03-28)
 
 
