@@ -6,22 +6,18 @@ import { AKButton } from "@react-components/aKButton.component";
 
 interface DeletePopperProps {
 	isDeletingInProcess: boolean;
-	onDeleteConfirm: () => void;
-	onDeleteCancel: () => void;
-	hasDeleteError: boolean;
+	onConfirm: () => void;
+	onDismiss: () => void;
 	translations: {
-		question: string;
+		title: string;
 		subtitle: string;
-		messageLine1: string;
-		messageLine2: string;
 	};
 }
 
 export const DeletePopper: React.FC<DeletePopperProps> = ({
 	isDeletingInProcess,
-	onDeleteConfirm,
-	onDeleteCancel,
-	hasDeleteError,
+	onConfirm,
+	onDismiss,
 	translations,
 }) => (
 	<>
@@ -31,22 +27,15 @@ export const DeletePopper: React.FC<DeletePopperProps> = ({
 			) : (
 				<>
 					<div className="mb-3 text-left">
-						<strong>{translations.question}</strong>
+						<strong>{translations.title}</strong>
 						<div>{translations.subtitle}</div>
 					</div>
-					{hasDeleteError && (
-						<div className="text-red-500 text-left">
-							{translations.messageLine1}
-							<br />
-							{translations.messageLine1}
-						</div>
-					)}
 					<div className="flex">
-						<AKButton classes="bg-vscode-editor-background text-vscode-foreground" onClick={onDeleteCancel}>
+						<AKButton classes="bg-vscode-editor-background text-vscode-foreground" onClick={onDismiss}>
 							{translate().t("reactApp.general.no")}
 						</AKButton>
 						<div className="flex-grow" />
-						<AKButton onClick={onDeleteConfirm}>{translate().t("reactApp.general.yes")}</AKButton>
+						<AKButton onClick={onConfirm}>{translate().t("reactApp.general.yes")}</AKButton>
 					</div>
 				</>
 			)}

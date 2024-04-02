@@ -24,15 +24,12 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const [functions, setFunctions] = useState<SessionEntrypoint[]>();
 	const [isDeletingInProcess, setIsDeletingInProgress] = useState(false);
 	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
-	const [deletedDeploymentError, setDeletedDeploymentError] = useState(false);
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
 
 	// Local variable
 	const deleteDeploymentPopperTranslations = {
-		question: translate().t("reactApp.deployments.deletionApprovalQuestion"),
+		title: translate().t("reactApp.deployments.deletionApprovalQuestion"),
 		subtitle: translate().t("reactApp.deployments.deletionApprovalQuestionSubtitle"),
-		messageLine1: translate().t("reactApp.deployments.errorDeletingDeploymentLine1"),
-		messageLine2: translate().t("reactApp.deployments.errorDeletingDeploymentLine2"),
 	};
 
 	// Incoming Messages Handler
@@ -40,10 +37,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		setIsDeletingInProgress(false);
 		if (isDeleted) {
 			hidePopper();
-			setDeletedDeploymentError(false);
-			return;
 		}
-		setDeletedDeploymentError(true);
 	};
 
 	useIncomingMessagesFromExtension({ handleDeploymentDeletedResponse });
@@ -120,7 +114,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 			return;
 		}
 		setIsDeletingInProgress(false);
-		setDeletedDeploymentError(false);
 		setDeleteDeploymentId("");
 		hidePopper();
 	};
@@ -213,9 +206,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					<PopperComponent visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
 						<DeletePopper
 							isDeletingInProcess={isDeletingInProcess}
-							onDeleteConfirm={() => deleteDeploymentAction(true)}
-							onDeleteCancel={() => deleteDeploymentAction(false)}
-							hasDeleteError={deletedDeploymentError}
+							onConfirm={() => deleteDeploymentAction(true)}
+							onDismiss={() => deleteDeploymentAction(false)}
 							translations={deleteDeploymentPopperTranslations}
 						/>
 					</PopperComponent>
