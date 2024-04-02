@@ -1,3 +1,10 @@
+# [0.10.0-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.2...v0.10.0-dev.3) (2024-04-02)
+
+
+### Features
+
+* control notifications level in extension settings ([#207](https://github.com/autokitteh/vscode-extension/issues/207)) ([6558cc6](https://github.com/autokitteh/vscode-extension/commit/6558cc6c944141b581e7976c9d77c90bb70ba63f))
+
 # [0.10.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.1...v0.10.0-dev.2) (2024-04-02)
 
 
