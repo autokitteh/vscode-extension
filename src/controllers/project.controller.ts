@@ -222,9 +222,8 @@ export class ProjectController {
 
 		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 		if (lastState.isFinished()) {
-			if (lastState.isStopped()) {
-				LoggerService.sessionLog(translate().t("sessions.historyStopped"));
-			}
+			LoggerService.sessionLog(`${translate().t("sessions.session")} ${lastState.state}`);
+
 			if (lastState.isError()) {
 				this.outputErrorDetails(lastState);
 				this.outputCallstackDetails(lastState);
@@ -518,7 +517,7 @@ export class ProjectController {
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
 			return;
 		}
-		const successMessage = `${translate().t("sessions.executionSucceed")} for session ${sessionId}`;
+		const successMessage = translate().t("sessions.executionSucceed", { sessionId });
 		LoggerService.info(namespaces.projectController, successMessage);
 
 		this.view.update({

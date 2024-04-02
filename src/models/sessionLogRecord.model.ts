@@ -130,7 +130,7 @@ export class SessionLogRecord {
 	}
 
 	isStopped(): boolean {
-		return this.type === SessionLogRecordType.state && this.state === SessionStateType.stopped;
+		return this.state === SessionStateType.stopped;
 	}
 
 	isFinished(): boolean {
