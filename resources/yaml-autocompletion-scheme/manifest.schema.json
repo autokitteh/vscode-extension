@@ -17,7 +17,7 @@
 			},
 			"additionalProperties": false,
 			"type": "object",
-			"required": ["name", "token", "integration"]
+			"required": ["name", "integration"]
 		},
 		"EnvVar": {
 			"properties": {
@@ -103,7 +103,7 @@
 				"filter": {
 					"type": "string"
 				},
-				"additional_data": {
+				"data": {
 					"type": "object"
 				},
 				"call": {
