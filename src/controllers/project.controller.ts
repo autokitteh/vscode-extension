@@ -345,8 +345,7 @@ export class ProjectController {
 
 		const savePath = newLocalResourcesPath[0].fsPath;
 		Object.keys(existingResources).map(async (resource) => {
-			const fileName: string = resource;
-			const fullPath: string = path.join(savePath, fileName);
+			const fullPath: string = path.join(savePath, resource);
 			const data: Uint8Array = existingResources[resource] as Uint8Array;
 			try {
 				await fs.writeFile(fullPath, Buffer.from(data));
