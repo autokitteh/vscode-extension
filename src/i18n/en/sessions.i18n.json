@@ -19,6 +19,6 @@
 	"sessionDeleteSuccessIdProject": "Session execution succeed for project - {{projectId}}, deployment - {{deploymentId}}, session - {{sessionId}}",
 	"sessionDeleteFailId": "Error deleting session, id: {{sessionId}}",
 	"sessionDeleteError": "Error deleting session, id: {{sessionId}}, deployment id: {{deploymentId}}, project id: {{projectId}} - error: {{error}}",
-	"stopFailed": "Session execution failed - id {{sessionId}}",
-	"stopFailedError": "Session execution failed, session id: {{sessionId}}, project id: {{projectId}}, error: {{error}}"
+	"stopFailed": "Session stop failed - id {{sessionId}}",
+	"stopFailedError": "Session stop failed, session id: {{sessionId}}, project id: {{projectId}}, error: {{error}}"
 }
