@@ -51,7 +51,7 @@ export class ProjectsService {
 		} catch (error) {
 			LoggerService.error(
 				namespaces.projectService,
-				`Project ID: ${projectId} build, error:${(error as Error).message}`
+				translate().t("errors.buildProjectError", { projectId, error: (error as Error).message })
 			);
 			return { data: undefined, error: (error as Error).message };
 		}
