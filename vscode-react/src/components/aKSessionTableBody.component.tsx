@@ -72,6 +72,9 @@ export const AKSessionsTableBody = ({
 	};
 
 	const displaySessionDeletePopper = (event: React.MouseEvent<HTMLDivElement>, session: Session) => {
+		if (session.state === SessionState.RUNNING) {
+			return;
+		}
 		const refElement = event.currentTarget;
 		showPopper();
 		deletePopperElementRef.current = refElement;
