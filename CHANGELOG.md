@@ -1,3 +1,10 @@
+# [0.10.0-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.3...v0.10.0-dev.4) (2024-04-03)
+
+
+### Bug Fixes
+
+* fix the notification-level getter ([#215](https://github.com/autokitteh/vscode-extension/issues/215)) ([8bad6d7](https://github.com/autokitteh/vscode-extension/commit/8bad6d718f221d07765a44c7571b36ae07286b1d))
+
 # [0.10.0-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.2...v0.10.0-dev.3) (2024-04-02)
 
 
