@@ -3,16 +3,16 @@ import { WorkspaceConfig } from "@utilities/workspaceConfig.util";
 import { window } from "vscode";
 
 export class MessageHandler {
+	private static notificationsLevel = WorkspaceConfig.getFromWorkspace<string>("notificationsLevel", "");
+
 	static infoMessage(messageText: string): void {
-		const notificationsLevel = WorkspaceConfig.getFromWorkspace<string>("notificationsLevel", "");
-		if (notificationsLevel !== "All") {
+		if (MessageHandler.notificationsLevel !== "All") {
 			return;
 		}
 		window.showInformationMessage(messageText);
 	}
 	static errorMessage(messageText: string): void {
-		const notificationsLevel = WorkspaceConfig.getFromWorkspace<string>("notificationsLevel", "");
-		if (notificationsLevel === "None") {
+		if (MessageHandler.notificationsLevel === "None") {
 			return;
 		}
 		window.showErrorMessage(messageText, "View log").then((selection) => {
