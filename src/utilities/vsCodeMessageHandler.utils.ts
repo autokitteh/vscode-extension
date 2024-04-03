@@ -6,13 +6,13 @@ export class MessageHandler {
 	private static notificationsLevel = WorkspaceConfig.getFromWorkspace<string>("notificationsLevel", "");
 
 	static infoMessage(messageText: string): void {
-		if (this.notificationsLevel !== "All") {
+		if (MessageHandler.notificationsLevel !== "All") {
 			return;
 		}
 		window.showInformationMessage(messageText);
 	}
 	static errorMessage(messageText: string): void {
-		if (this.notificationsLevel === "None") {
+		if (MessageHandler.notificationsLevel === "None") {
 			return;
 		}
 		window.showErrorMessage(messageText, "View log").then((selection) => {
