@@ -1,3 +1,10 @@
+# [0.10.0-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.4...v0.10.0-dev.5) (2024-04-03)
+
+
+### Features
+
+* sync resources with the server in case local folder not selected or exist ([#208](https://github.com/autokitteh/vscode-extension/issues/208)) ([781eeb0](https://github.com/autokitteh/vscode-extension/commit/781eeb0358ecaf06ed04bfe2569b26b11d9ab114))
+
 # [0.10.0-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.3...v0.10.0-dev.4) (2024-04-03)
 
 
