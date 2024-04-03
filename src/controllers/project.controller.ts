@@ -359,7 +359,7 @@ export class ProjectController {
 					namespaces.projectController,
 					translate().t("projects.downloadResourcesDirectoryError", {
 						error: (error as Error).message,
-						projectId: this.projectId,
+						projectName: this.project!.name,
 					})
 				);
 				commands.executeCommand(
