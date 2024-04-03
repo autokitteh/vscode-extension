@@ -13,7 +13,7 @@ import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
-import { commands, OpenDialogOptions, Uri, window } from "vscode";
+import { commands, OpenDialogOptions, window } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
@@ -380,23 +380,6 @@ export class ProjectController {
 		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: newLocalResourcesPath[0].fsPath });
 
 		this.notifyViewResourcesPathChanged();
-	}
-
-	async saveBufferToFile(
-		localResourcesPaths: Uri[],
-		existingResources: Record<string, Uint8Array>,
-		index: number
-	): Promise<Error | undefined> {
-		const savePath: string = localResourcesPaths[0].fsPath;
-		const fileName: string = Object.keys(existingResources)[index];
-		const fullPath: string = path.join(savePath, fileName);
-		const data: Uint8Array = existingResources[Object.keys(existingResources)[index]] as Uint8Array;
-		try {
-			await fsPromises.writeFile(fullPath, Buffer.from(data));
-		} catch (error) {
-			return error as Error;
-		}
-		return;
 	}
 
 	onBlur() {
