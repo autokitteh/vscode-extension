@@ -37,5 +37,6 @@
 	"errorOccured": "An error occurred",
 	"buildInformationForSingleshotNotLoaded": "Couldn't load build information for singleshot",
 	"buildInformationForSingleshotNotParsed": "Couldn't parse build information for singleshot",
-	"buildInfoFetchFailedForBuild": "Couldn't fetch build info for build {{buildId}}, error: {{error}}"
+	"buildInfoFetchFailedForBuild": "Couldn't fetch build info for build {{buildId}}, error: {{error}}",
+	"buildProjectError": "Couldn't build project {{projectId}}, error: {{error}}"
 }
