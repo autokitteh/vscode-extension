@@ -21,7 +21,4 @@ export class MessageHandler {
 			}
 		});
 	}
-	static warnMessage(messageText: string): void {
-		window.showWarningMessage(messageText);
-	}
 }

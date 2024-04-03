@@ -12,7 +12,6 @@ export const vsCommands = {
 	baseURLUpdated: "autokitteh.baseURLUpdated",
 	showErrorMessage: "autokitteh.showErrorMessage",
 	showInfoMessage: "autokitteh.showInfoMessage",
-	showWarnMessage: "autokitteh.showWarnMessage",
 	downloadExecutableDialog: "autokitteh.downloadExecutableDialog",
 	addConnections: "autokitteh.addConnections",
 	setContext: "autokitteh.setContext",
