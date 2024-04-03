@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
 import { AKDeploymentTableBody, AKDeploymentTableHeader } from "@react-components";
-import { AKTable, AKTableMessage } from "@react-components/AKTable";
+import { AKTable, AKTableMessage } from "@react-components/atoms/table";
 import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { Deployment } from "@type/models";

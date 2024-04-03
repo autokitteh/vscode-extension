@@ -1,12 +1,12 @@
 import React, { ReactNode } from "react";
 import clsx from "clsx";
 
-interface AKTableProps {
+interface TableProps {
 	children: ReactNode;
 	classes?: string;
 }
 
-export const AKTable = ({ children, classes }: AKTableProps) => {
+export const Table = ({ children, classes }: TableProps) => {
 	const baseClass = ["w-full"];
 	const tableClass = clsx(baseClass, [classes]);
 

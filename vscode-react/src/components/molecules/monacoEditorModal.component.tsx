@@ -1,16 +1,16 @@
 import React from "react";
 import { translate } from "@i18n";
 import { Editor } from "@monaco-editor/react";
-import { AKButton, AKModal } from "@react-components";
+import { Button, Modal } from "@react-components";
 
-export const AKMonacoEditorModal = ({
+export const MonacoEditorModal = ({
 	setModal,
 	content,
 }: {
 	setModal: (isDisplayed: boolean) => void;
 	content?: string;
 }) => (
-	<AKModal wrapperClasses={["pt-20 bg-black bg-opacity-70"]}>
+	<Modal wrapperClasses={["pt-20 bg-black bg-opacity-70"]}>
 		<div className="flex justify-end cursor-pointer" onClick={() => setModal(false)}>
 			X
 		</div>
@@ -25,10 +25,10 @@ export const AKMonacoEditorModal = ({
 				/>
 			</div>
 			<div className="flex w-full justify-end mt-2">
-				<AKButton classes="ml-2" onClick={() => setModal(false)}>
+				<Button classes="ml-2" onClick={() => setModal(false)}>
 					{translate().t("reactApp.deployments.closeModalButton")}
-				</AKButton>
+				</Button>
 			</div>
 		</div>
-	</AKModal>
+	</Modal>
 );

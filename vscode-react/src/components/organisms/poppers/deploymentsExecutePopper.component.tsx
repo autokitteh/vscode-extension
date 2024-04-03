@@ -1,6 +1,6 @@
 import React from "react";
 import { translate } from "@i18n";
-import { AKButton } from "@react-components/aKButton.component";
+import { Button } from "@react-components/atoms/aKButton.component";
 import { SessionEntrypoint } from "@type/models";
 import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
 
@@ -57,11 +57,11 @@ export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 				{displayedErrors["selectedFunction"] && <div className="text-red-500">Please choose a function</div>}
 			</div>
 			<div className="flex">
-				<AKButton classes="bg-vscode-editor-background text-vscode-foreground" onClick={onClose}>
+				<Button classes="bg-vscode-editor-background text-vscode-foreground" onClick={onClose}>
 					{translate().t("reactApp.deployments.dismiss")}
-				</AKButton>
+				</Button>
 				<div className="flex-grow" />
-				<AKButton onClick={onStartSession}>{translate().t("reactApp.deployments.saveAndRun")}</AKButton>
+				<Button onClick={onStartSession}>{translate().t("reactApp.deployments.saveAndRun")}</Button>
 			</div>
 		</div>
 	);

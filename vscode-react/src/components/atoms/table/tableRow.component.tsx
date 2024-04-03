@@ -1,12 +1,12 @@
 import React, { ReactNode } from "react";
 import clsx from "clsx";
 
-interface AKTableRowProps {
+interface TableRowProps {
 	children: ReactNode;
 	isSelected?: boolean;
 }
 
-export const AKTableRow = ({ children, isSelected }: AKTableRowProps) => {
+export const TableRow = ({ children, isSelected }: TableRowProps) => {
 	const rowClass = clsx(isSelected && "bg-vscode-editor-selectionBackground");
 	return <tr className={rowClass}>{children}</tr>;
 };

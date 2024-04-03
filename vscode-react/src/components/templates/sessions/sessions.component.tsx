@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
-import { AKMonacoEditorModal, AKSessionsTableHeader } from "@react-components";
-import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
-import { AKTable, AKTableMessage } from "@react-components/AKTable";
+import { MonacoEditorModal, SessionsTableHeader } from "@react-components";
+import { Table, TableMessage } from "@react-components/atoms/table";
+import { AKSessionsTableBody } from "@react-components/organisms/sessions/sessionTableBody.component";
 import { useCloseOnEscape, useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 
 export const AKSessions = () => {
@@ -41,24 +41,24 @@ export const AKSessions = () => {
 				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.sessions.tableTitle")}</h1>
 				<div className="ml-1 text-lg font-extralight">({totalSessions})</div>
 			</div>
-			<AKTable>
-				<AKSessionsTableHeader />
+			<Table>
+				<SessionsTableHeader />
 				<AKSessionsTableBody
 					displayInputsModal={displayInputsModal}
 					sessions={sessions}
 					selectedSession={selectedSession}
 					setSelectedSession={setSelectedSession}
 				/>
-			</AKTable>
-			{isLoading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
+			</Table>
+			{isLoading && <TableMessage>{translate().t("reactApp.general.loading")}</TableMessage>}
 			{!sessions && !isLoading && (
-				<AKTableMessage>{translate().t("reactApp.sessions.pickDeploymentToShowSessions")}</AKTableMessage>
+				<TableMessage>{translate().t("reactApp.sessions.pickDeploymentToShowSessions")}</TableMessage>
 			)}
 			{sessions && sessions.length === 0 && (
-				<AKTableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</AKTableMessage>
+				<TableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</TableMessage>
 			)}
 
-			{modal && <AKMonacoEditorModal content={sessionInputs} setModal={setModal} />}
+			{modal && <MonacoEditorModal content={sessionInputs} setModal={setModal} />}
 		</div>
 	);
 };

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
-import { AKSessionState, DeletePopper, PopperComponent } from "@react-components";
-import { AKTableRow, AKTableCell } from "@react-components/AKTable";
+import { SessionState, DeletePopper, PopperComponent } from "@react-components";
+import { TableRow, TableCell } from "@react-components/atoms/table";
 import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
@@ -79,17 +79,17 @@ export const AKSessionsTableBody = ({
 		<>
 			{sessions &&
 				sessions.map((session: Session) => (
-					<AKTableRow key={session.sessionId} isSelected={selectedSession === session.sessionId}>
-						<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
+					<TableRow key={session.sessionId} isSelected={selectedSession === session.sessionId}>
+						<TableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
 							{getTimePassed(session.createdAt)}
-						</AKTableCell>
-						<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
-							<AKSessionState sessionState={session.state} />
-						</AKTableCell>
-						<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
+						</TableCell>
+						<TableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
+							<SessionState sessionState={session.state} />
+						</TableCell>
+						<TableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
 							{session.sessionId}
-						</AKTableCell>
-						<AKTableCell>
+						</TableCell>
+						<TableCell>
 							{session.deploymentId === lastDeployment?.deploymentId && (
 								<div className="inline-block">
 									<div
@@ -121,8 +121,8 @@ export const AKSessionsTableBody = ({
 									translations={deleteSessionPopperTranslations}
 								/>
 							</PopperComponent>
-						</AKTableCell>
-					</AKTableRow>
+						</TableCell>
+					</TableRow>
 				))}
 		</>
 	);

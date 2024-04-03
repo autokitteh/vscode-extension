@@ -8,7 +8,7 @@ type LogoProperties = {
 	themeVisualType: Theme | undefined;
 };
 
-export const AKLogo = ({ className, themeVisualType }: LogoProperties): ReactNode =>
+export const Logo = ({ className, themeVisualType }: LogoProperties): ReactNode =>
 	themeVisualType === 2 || themeVisualType === 3 ? (
 		<AKLogoWhite className={className} fill="white" />
 	) : (

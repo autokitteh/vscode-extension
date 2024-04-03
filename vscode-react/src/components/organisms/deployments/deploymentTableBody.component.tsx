@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { DeploymentState, MessageType, SessionStateType } from "@enums";
+import { DeploymentState as EDeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
-import { AKDeploymentState } from "@react-components";
+import { DeploymentState } from "@react-components";
 import { DeletePopper, ExecutePopper, PopperComponent } from "@react-components";
-import { AKTableCell, AKTableRow } from "@react-components/AKTable";
+import { TableCell, TableRow } from "@react-components/atoms/table";
 import { useAppState } from "@react-context/appState.context";
 import { useDeployments } from "@react-hooks";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment, SessionEntrypoint } from "@type/models";
 
-export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
+export const DeploymentTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
 	// State Hooks Section
 	const { selectedDeploymentId, entrypoints } = useDeployments();
 	const [{ modalName }, dispatch] = useAppState();
@@ -45,7 +45,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
 
 	const isDeploymentStateStartable = (deploymentState: number) =>
-		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
+		deploymentState === EDeploymentState.INACTIVE_DEPLOYMENT ||
+		deploymentState === EDeploymentState.DRAINING_DEPLOYMENT;
 
 	const getSessionStateCount = (deployment: Deployment, state: string) => {
 		if (!deployment.sessionStats) {
@@ -146,28 +147,28 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	return (
 		deployments &&
 		deployments.map((deployment: Deployment) => (
-			<AKTableRow key={deployment.deploymentId} isSelected={selectedDeployment === deployment.deploymentId}>
-				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+			<TableRow key={deployment.deploymentId} isSelected={selectedDeployment === deployment.deploymentId}>
+				<TableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getTimePassed(deployment.createdAt)}
-				</AKTableCell>
-				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+				</TableCell>
+				<TableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					<div className="flex justify-center">
-						<AKDeploymentState deploymentState={deployment.state} />
+						<DeploymentState deploymentState={deployment.state} />
 					</div>
-				</AKTableCell>
-				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+				</TableCell>
+				<TableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getSessionStateCount(deployment, SessionStateType.running)}
-				</AKTableCell>
-				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+				</TableCell>
+				<TableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getSessionStateCount(deployment, SessionStateType.error)}
-				</AKTableCell>
-				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+				</TableCell>
+				<TableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getSessionStateCount(deployment, SessionStateType.completed)}
-				</AKTableCell>
-				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+				</TableCell>
+				<TableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{deployment.buildId}
-				</AKTableCell>
-				<AKTableCell>
+				</TableCell>
+				<TableCell>
 					{deployment.deploymentId === deployments?.[0]?.deploymentId && (
 						<div
 							className="codicon codicon-redo mr-2 cursor-pointer"
@@ -222,8 +223,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 							displayedErrors={displayedErrors}
 						/>
 					</PopperComponent>
-				</AKTableCell>
-			</AKTableRow>
+				</TableCell>
+			</TableRow>
 		))
 	);
 };

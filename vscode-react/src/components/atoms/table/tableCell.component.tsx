@@ -1,13 +1,13 @@
 import React, { ReactNode } from "react";
 import clsx from "clsx";
 
-interface AKCellProps {
+interface CellProps {
 	children: ReactNode;
 	onClick?: () => void;
 	classes?: string[];
 }
 
-export const AKTableCell = ({ children, onClick, classes }: AKCellProps) => {
+export const TableCell = ({ children, onClick, classes }: CellProps) => {
 	const baseClass = "text-center p-1";
 	const cellClass = clsx(baseClass, classes);
 	return (

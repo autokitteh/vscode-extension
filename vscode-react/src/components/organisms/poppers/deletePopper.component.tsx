@@ -2,7 +2,7 @@ import React from "react";
 import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
-import { AKButton } from "@react-components/aKButton.component";
+import { Button } from "@react-components/atoms/aKButton.component";
 
 interface DeletePopperProps {
 	isDeletingInProcess: boolean;
@@ -31,11 +31,11 @@ export const DeletePopper: React.FC<DeletePopperProps> = ({
 						<div>{translations.subtitle}</div>
 					</div>
 					<div className="flex">
-						<AKButton classes="bg-vscode-editor-background text-vscode-foreground" onClick={onDismiss}>
+						<Button classes="bg-vscode-editor-background text-vscode-foreground" onClick={onDismiss}>
 							{translate().t("reactApp.general.no")}
-						</AKButton>
+						</Button>
 						<div className="flex-grow" />
-						<AKButton onClick={onConfirm}>{translate().t("reactApp.general.yes")}</AKButton>
+						<Button onClick={onConfirm}>{translate().t("reactApp.general.yes")}</Button>
 					</div>
 				</>
 			)}
