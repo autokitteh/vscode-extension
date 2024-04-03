@@ -116,7 +116,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		hidePopper();
 	};
 
-	const deleteDeploymentDisplayPopper = (event: React.MouseEvent<HTMLDivElement>, deployment: Deployment) => {
+	const showDeleteDeploymentPopper = (event: React.MouseEvent<HTMLDivElement>, deployment: Deployment) => {
 		if (deployment.state === DeploymentState.ACTIVE_DEPLOYMENT) {
 			return;
 		}
@@ -201,7 +201,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						className={`relative codicon codicon-trash ${
 							deployment.state === DeploymentState.ACTIVE_DEPLOYMENT ? "cursor-not-allowed" : "cursor-pointer"
 						} ml-2 z-20`}
-						onClick={(event) => deleteDeploymentDisplayPopper(event, deployment)}
+						onClick={(event) => showDeleteDeploymentPopper(event, deployment)}
 					></div>
 
 					{(modalName === "deploymentDelete" || modalName === "deploymentExecute") && (
