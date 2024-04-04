@@ -169,6 +169,9 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					</div>
 				</AKTableCell>
 				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+					{getSessionStateCount(deployment, SessionStateType.stopped)}
+				</AKTableCell>
+				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getSessionStateCount(deployment, SessionStateType.running)}
 				</AKTableCell>
 				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>

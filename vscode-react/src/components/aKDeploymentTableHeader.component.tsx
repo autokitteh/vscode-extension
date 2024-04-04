@@ -7,6 +7,7 @@ export const AKDeploymentTableHeader: React.FC = () => {
 		<AKTableHeader classes="sticky top-0">
 			<AKTableHeaderCell>{translate().t("reactApp.deployments.time")}</AKTableHeaderCell>
 			<AKTableHeaderCell>{translate().t("reactApp.deployments.status")}</AKTableHeaderCell>
+			<AKTableHeaderCell>{translate().t("reactApp.sessions.statuses.stopped")}</AKTableHeaderCell>
 			<AKTableHeaderCell>{translate().t("reactApp.sessions.statuses.running")}</AKTableHeaderCell>
 			<AKTableHeaderCell>{translate().t("reactApp.sessions.statuses.error")}</AKTableHeaderCell>
 			<AKTableHeaderCell>{translate().t("reactApp.sessions.statuses.completed")}</AKTableHeaderCell>
