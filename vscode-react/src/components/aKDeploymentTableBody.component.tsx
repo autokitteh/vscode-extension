@@ -120,6 +120,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	const showDeleteDeploymentPopper = (event: React.MouseEvent<HTMLDivElement>, deployment: Deployment) => {
 		if (deployment.state === DeploymentState.ACTIVE_DEPLOYMENT) {
+			sendMessage(MessageType.displayErrorWithoutActionButton, translate().t("reactApp.deployments.deleteDisabled"));
 			return;
 		}
 		const refElement = event.currentTarget;

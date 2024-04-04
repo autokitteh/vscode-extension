@@ -15,6 +15,7 @@ export interface IProjectViewDelegate {
 	startSession?: Callback<StartSessionArgsType>;
 	deleteDeployment?: Callback<string>;
 	deleteSession?: Callback<string>;
+	displayErrorWithoutActionButton?: Callback<string>;
 }
 
 export interface IProjectView {

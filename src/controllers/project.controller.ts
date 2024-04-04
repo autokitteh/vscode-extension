@@ -326,6 +326,10 @@ export class ProjectController {
 		await this.downloadResources();
 	}
 
+	displayErrorWithoutActionButton(errorMessage: string) {
+		commands.executeCommand(vsCommands.showErrorMessage, errorMessage, false);
+	}
+
 	async downloadResources() {
 		const { data: existingResources } = await ProjectsService.getResources(this.projectId);
 
