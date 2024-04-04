@@ -4,6 +4,7 @@ import { translate } from "@i18n";
 import { AKSessionState, DeletePopper, PopperComponent } from "@react-components";
 import { AKTableRow, AKTableCell } from "@react-components/AKTable";
 import { useAppState } from "@react-context";
+import { SessionState } from "@react-enums";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
@@ -70,6 +71,22 @@ export const AKSessionsTableBody = ({
 		hidePopper();
 	};
 
+	const displaySessionDeletePopper = (event: React.MouseEvent<HTMLDivElement>, session: Session) => {
+		if (session.state === SessionState.RUNNING) {
+			sendMessage(
+				MessageType.displayErrorWithoutActionButton,
+				translate().t("reactApp.sessions.deleteSessionDisabled")
+			);
+			return;
+		}
+		const refElement = event.currentTarget;
+		showPopper();
+		deletePopperElementRef.current = refElement;
+		setDeleteSessionId(session.sessionId);
+	};
+
+	const isRunning = (sessionState: SessionState) => sessionState === SessionState.RUNNING;
+
 	// useEffects Section
 	useEffect(() => {
 		hidePopper();
@@ -105,13 +122,15 @@ export const AKSessionsTableBody = ({
 								</div>
 							)}
 							<div
-								className="inline-block codicon codicon-trash cursor-pointer z-20"
-								onClick={(e) => {
-									const refElement = e.currentTarget;
-									showPopper();
-									deletePopperElementRef.current = refElement;
-									setDeleteSessionId(session.sessionId);
-								}}
+								className={`inline-block codicon codicon-trash z-20 ${
+									isRunning(session.state) ? "cursor-not-allowed" : "cursor-pointer"
+								}`}
+								title={
+									isRunning(session.state)
+										? translate().t("reactApp.sessions.deleteSessionDisabled")
+										: translate().t("reactApp.sessions.delete")
+								}
+								onClick={(event) => displaySessionDeletePopper(event, session)}
 							></div>
 							<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
 								<DeletePopper

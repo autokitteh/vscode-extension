@@ -19,4 +19,5 @@ export enum MessageType {
 	deploymentDeletedResponse = "DEPLOYMENT_DELETED_RESPONSE",
 	deleteSession = "DELETE_SESSION",
 	deleteSessionResponse = "DELETE_SESSION_RESPONSE",
+	displayErrorWithoutActionButton = "DISPLAY_ERROR_WITHOUT_ACTION_BUTTON",
 }

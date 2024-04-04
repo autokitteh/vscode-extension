@@ -23,5 +23,8 @@
 	"errorDeletingDeploymentLine1": "Error: cannot delete",
 	"errorDeletingDeploymentLine2": "Check logs",
 	"deletionApprovalQuestion": "Delete this deployment?",
-	"deletionApprovalQuestionSubtitle": "You will not be able to recover it"
+	"deletionApprovalQuestionSubtitle": "You will not be able to recover it",
+	"execute": "Execute",
+	"delete": "Delete",
+	"deleteDisabled": "Cannot delete active deployment"
 }

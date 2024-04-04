@@ -79,6 +79,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		setSelectedDeployment(deploymentId);
 	};
 
+	const isActive = (deploymentState: DeploymentState) => deploymentState === DeploymentState.ACTIVE_DEPLOYMENT;
+
 	const startSession = () => {
 		const lastDeployment = deployments![0];
 
@@ -114,6 +116,17 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		setIsDeletingInProgress(false);
 		setDeleteDeploymentId("");
 		hidePopper();
+	};
+
+	const showDeleteDeploymentPopper = (event: React.MouseEvent<HTMLDivElement>, deployment: Deployment) => {
+		if (deployment.state === DeploymentState.ACTIVE_DEPLOYMENT) {
+			sendMessage(MessageType.displayErrorWithoutActionButton, translate().t("reactApp.deployments.deleteDisabled"));
+			return;
+		}
+		const refElement = event.currentTarget;
+		showPopper("deploymentDelete");
+		deletePopperElementRef.current = refElement;
+		setDeleteDeploymentId(deployment.deploymentId);
 	};
 
 	// useEffects Section
@@ -172,7 +185,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						<div
 							className="codicon codicon-redo mr-2 cursor-pointer"
 							ref={executePopperElementRef}
-							title="Execute"
+							title={translate().t("reactApp.deployments.execute")}
 							onClick={() => showPopper("deploymentExecute")}
 						></div>
 					)}
@@ -188,13 +201,15 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						></div>
 					)}
 					<div
-						className="relative codicon codicon-trash cursor-pointer ml-2 z-20"
-						onClick={(e) => {
-							const refElement = e.currentTarget;
-							showPopper("deploymentDelete");
-							deletePopperElementRef.current = refElement;
-							setDeleteDeploymentId(deployment.deploymentId);
-						}}
+						className={`relative codicon codicon-trash ${
+							isActive(deployment.state) ? "cursor-not-allowed" : "cursor-pointer"
+						} ml-2 z-20`}
+						title={
+							isActive(deployment.state)
+								? translate().t("reactApp.deployments.deleteDisabled")
+								: translate().t("reactApp.deployments.delete")
+						}
+						onClick={(event) => showDeleteDeploymentPopper(event, deployment)}
 					></div>
 
 					{(modalName === "deploymentDelete" || modalName === "deploymentExecute") && (

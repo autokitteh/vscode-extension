@@ -57,6 +57,9 @@ export class ProjectView implements IProjectView {
 					case MessageType.deleteSession:
 						this.delegate?.deleteSession?.(message.payload as string);
 						break;
+					case MessageType.displayErrorWithoutActionButton:
+						this.delegate?.displayErrorWithoutActionButton?.(message.payload as string);
+						break;
 					default:
 				}
 			},

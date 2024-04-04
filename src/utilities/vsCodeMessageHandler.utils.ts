@@ -11,11 +11,11 @@ export class MessageHandler {
 		}
 		window.showInformationMessage(messageText);
 	}
-	static errorMessage(messageText: string): void {
+	static errorMessage(messageText: string, displayShowLogButton = true): void {
 		if (MessageHandler.notificationsLevel === "None") {
 			return;
 		}
-		window.showErrorMessage(messageText, "View log").then((selection) => {
+		window.showErrorMessage(messageText, displayShowLogButton ? "View log" : "").then((selection) => {
 			if (selection === "View log") {
 				LoggerService.reveal();
 			}
