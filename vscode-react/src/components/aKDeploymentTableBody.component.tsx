@@ -79,6 +79,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		setSelectedDeployment(deploymentId);
 	};
 
+	const isActive = (deploymentState: DeploymentState) => deploymentState === DeploymentState.ACTIVE_DEPLOYMENT;
+
 	const startSession = () => {
 		const lastDeployment = deployments![0];
 
@@ -182,7 +184,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						<div
 							className="codicon codicon-redo mr-2 cursor-pointer"
 							ref={executePopperElementRef}
-							title="Execute"
+							title={translate().t("reactApp.deployments.execute")}
 							onClick={() => showPopper("deploymentExecute")}
 						></div>
 					)}
@@ -199,8 +201,13 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					)}
 					<div
 						className={`relative codicon codicon-trash ${
-							deployment.state === DeploymentState.ACTIVE_DEPLOYMENT ? "cursor-not-allowed" : "cursor-pointer"
+							isActive(deployment.state) ? "cursor-not-allowed" : "cursor-pointer"
 						} ml-2 z-20`}
+						title={
+							isActive(deployment.state)
+								? translate().t("reactApp.deployments.deleteDisabled")
+								: translate().t("reactApp.deployments.delete")
+						}
 						onClick={(event) => showDeleteDeploymentPopper(event, deployment)}
 					></div>
 

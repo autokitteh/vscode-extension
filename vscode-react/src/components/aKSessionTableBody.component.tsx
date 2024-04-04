@@ -81,6 +81,8 @@ export const AKSessionsTableBody = ({
 		setDeleteSessionId(session.sessionId);
 	};
 
+	const isRunning = (sessionState: SessionState) => sessionState === SessionState.RUNNING;
+
 	// useEffects Section
 	useEffect(() => {
 		hidePopper();
@@ -117,8 +119,13 @@ export const AKSessionsTableBody = ({
 							)}
 							<div
 								className={`inline-block codicon codicon-trash z-20 ${
-									session.state === SessionState.RUNNING ? "cursor-not-allowed" : "cursor-pointer"
+									isRunning(session.state) ? "cursor-not-allowed" : "cursor-pointer"
 								}`}
+								title={
+									isRunning(session.state)
+										? translate().t("reactApp.sessions.deleteSessionDisabled")
+										: translate().t("reactApp.sessions.delete")
+								}
 								onClick={(event) => displaySessionDeletePopper(event, session)}
 							></div>
 							<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
