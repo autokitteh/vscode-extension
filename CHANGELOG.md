@@ -1,3 +1,10 @@
+# [0.10.0-dev.6](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.5...v0.10.0-dev.6) (2024-04-04)
+
+
+### Bug Fixes
+
+* disable delete buttons in case deployment is active or session is running ([#214](https://github.com/autokitteh/vscode-extension/issues/214)) ([baa405d](https://github.com/autokitteh/vscode-extension/commit/baa405d6f9906e548f01b076732b871cc74f8e5a))
+
 # [0.10.0-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.4...v0.10.0-dev.5) (2024-04-03)
 
 
