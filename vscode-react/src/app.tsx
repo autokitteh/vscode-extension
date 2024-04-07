@@ -8,18 +8,17 @@ import { AppStateProvider } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { sendMessage } from "@react-utilities";
-import { cn } from "@react-utilities/cnClasses.utils";
 import "./app.css";
 
 function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
-	const [resourcesDirState, setResourcesDirState] = useState<boolean>(false);
+	const [resourcesDir, setResourcesDir] = useState<string>("");
 
 	useIncomingMessageHandler({
 		setProjectName,
 		setThemeVisualType,
-		setResourcesDirState,
+		setResourcesDir,
 	});
 
 	return (
@@ -29,31 +28,33 @@ function App() {
 					<div className="flex items-center w-full">
 						<AKLogo className="w-12 h-12" themeVisualType={themeVisualType} />
 						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">{projectName}</div>
-						<AKButton
-							classes="mx-4"
-							onClick={() => sendMessage(MessageType.buildProject)}
-							disabled={!resourcesDirState}
-						>
+						<AKButton classes="mx-4" onClick={() => sendMessage(MessageType.buildProject)} disabled={!resourcesDir}>
 							<div className="codicon codicon-tools mr-2"></div>
 							{translate().t("reactApp.general.build")}
 						</AKButton>
-						<AKButton onClick={() => sendMessage(MessageType.runProject)} disabled={!resourcesDirState}>
+						<AKButton onClick={() => sendMessage(MessageType.runProject)} disabled={!resourcesDir}>
 							<div className="codicon codicon-rocket mr-2"></div>
 							{translate().t("reactApp.general.deploy")}
 						</AKButton>
 						<div className="flex-grow"></div>
-						{!resourcesDirState && (
+						{!resourcesDir && (
 							<div className="mr-2">
 								<strong>{translate().t("reactApp.settings.setLocalDirectory")} </strong>
 							</div>
 						)}
-						<AKButton
-							onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
-							classes={cn(resourcesDirState ? "bg-gray-700" : "bg-red-700")}
-							title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
-						>
-							<div className="codicon codicon-folder-opened w-4"></div>
-						</AKButton>
+						{resourcesDir ? (
+							<AKButton classes="bg-gray-700 text-gray-400 cursor-default" title={resourcesDir}>
+								<div className="codicon codicon-folder-opened w-4"></div>
+							</AKButton>
+						) : (
+							<AKButton
+								onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
+								classes={"bg-red-700"}
+								title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
+							>
+								<div className="codicon codicon-folder-opened w-4"></div>
+							</AKButton>
+						)}
 					</div>
 					<AppStateProvider>
 						<AKDeployments />
