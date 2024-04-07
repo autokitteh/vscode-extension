@@ -215,6 +215,7 @@ export class ProjectController {
 		if (isEqual(this.sessionHistoryStates, sessionHistoryStates)) {
 			return;
 		}
+		this.sessionHistoryStates = sessionHistoryStates;
 
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		this.outputSessionLogs(sessionHistoryStates);
@@ -228,8 +229,6 @@ export class ProjectController {
 			this.stopInterval(ProjectIntervalTypes.sessionHistory);
 			return;
 		}
-
-		this.sessionHistoryStates = sessionHistoryStates;
 	}
 
 	private outputSessionLogs(sessionStates: SessionLogRecord[]) {
@@ -266,9 +265,6 @@ export class ProjectController {
 	async displaySessionLogs(sessionId: string): Promise<void> {
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		this.selectedSessionId = sessionId;
-
-		this.sessions = [];
-		this.displaySessionsHistory(sessionId);
 
 		this.startInterval(
 			ProjectIntervalTypes.sessionHistory,
