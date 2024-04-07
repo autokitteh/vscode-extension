@@ -90,18 +90,15 @@ export class ProjectController {
 		6;
 		this.notifyViewResourcesPathChanged();
 		if (this.selectedSessionId) {
-			LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
-
-			const sessionHistoryStates = await this.getSessionHistory(this.selectedSessionId);
-			if (!sessionHistoryStates) {
-				return;
-			}
-
-			this.startInterval(
-				ProjectIntervalTypes.sessionHistory,
-				() => this.displaySessionsHistory(sessionHistoryStates),
-				this.sessionsLogRefreshRate
-			);
+			this.initSessionLogsDisplay(this.selectedSessionId);
+			// this.lastSessionHistoryIndexPrinted = 0;
+			// this.sessionHistoryStates = [];
+			// LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+			// this.startInterval(
+			// 	ProjectIntervalTypes.sessionHistory,
+			// 	() => this.displaySessionsHistory(this.selectedSessionId!),
+			// 	this.sessionsLogRefreshRate
+			// );
 		}
 	};
 
@@ -223,22 +220,32 @@ export class ProjectController {
 		}
 	}
 
-	async displaySessionsHistory(sessionHistoryStates: SessionLogRecord[]): Promise<void> {
+	printFinishedSessionLogs(lastState: SessionLogRecord) {
+		if (lastState.isError()) {
+			this.outputErrorDetails(lastState);
+			this.outputCallstackDetails(lastState);
+		}
+		this.lastSessionHistoryIndexPrinted = 0;
+
+		this.stopInterval(ProjectIntervalTypes.sessionHistory);
+	}
+
+	async displaySessionsHistory(sessionId: string): Promise<void> {
+		const sessionHistoryStates = await this.getSessionHistory(sessionId);
+		if (!sessionHistoryStates) {
+			return;
+		}
+
 		if (isEqual(this.sessionHistoryStates, sessionHistoryStates)) {
 			return;
 		}
 
+		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
+
 		this.outputSessionLogs(sessionHistoryStates);
 
-		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 		if (lastState.isFinished()) {
-			if (lastState.isError()) {
-				this.outputErrorDetails(lastState);
-				this.outputCallstackDetails(lastState);
-			}
-			this.lastSessionHistoryIndexPrinted = 0;
-
-			this.stopInterval(ProjectIntervalTypes.sessionHistory);
+			this.printFinishedSessionLogs(lastState);
 			return;
 		}
 
@@ -279,24 +286,44 @@ export class ProjectController {
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
 		this.selectedSessionId = sessionId;
+		this.initSessionLogsDisplay(sessionId);
+	}
 
-		const sessionHistoryStates = await this.getSessionHistory(this.selectedSessionId);
+	async initSessionLogsDisplay(sessionId: string) {
+		const sessionHistoryStates = await this.getSessionHistory(sessionId);
 		if (!sessionHistoryStates) {
 			return;
 		}
+		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 
-		this.startInterval(
-			ProjectIntervalTypes.sessionHistory,
-			() => this.displaySessionsHistory(sessionHistoryStates),
-			this.sessionsLogRefreshRate
-		);
+		this.lastSessionHistoryIndexPrinted = 0;
+		this.sessionHistoryStates = [];
+
+		if (lastState.isFinished()) {
+			this.outputSessionLogs(sessionHistoryStates);
+			this.printFinishedSessionLogs(lastState);
+		} else {
+			this.startInterval(
+				ProjectIntervalTypes.sessionHistory,
+				() => this.displaySessionsHistory(sessionId),
+				this.sessionsLogRefreshRate
+			);
+		}
 	}
 
-	async startInterval(intervalKey: ProjectIntervalTypes, loadFunc: () => Promise<void> | void, refreshRate: number) {
+	async startInterval(
+		intervalKey: ProjectIntervalTypes,
+		loadFunc: () => Promise<void> | void,
+		refreshRate: number,
+		runInitOnly: boolean = false
+	) {
 		if (this.intervalKeeper.has(intervalKey)) {
 			this.stopInterval(intervalKey);
 		}
 		await loadFunc();
+		if (runInitOnly) {
+			return;
+		}
 		this.intervalKeeper.set(
 			intervalKey,
 			setInterval(() => loadFunc(), refreshRate)
