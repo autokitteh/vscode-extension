@@ -1,3 +1,4 @@
+import { Code, ConnectError } from "@connectrpc/connect";
 import { namespaces, vsCommands } from "@constants";
 import { getResources } from "@controllers/utilities";
 import { translate } from "@i18n";
@@ -40,7 +41,11 @@ export class SidebarController {
 				namespaces.projectSidebarController,
 				translate().t("projects.fetchProjectsFailedError", { error: (error as Error).message })
 			);
-			return [{ label: translate().t("projects.cantFetchProjectsReconnecting"), key: undefined }];
+			if ((error as ConnectError).code === Code.Unavailable || (error as ConnectError).code === Code.Aborted) {
+				return [{ label: translate().t("general.reconnecting"), key: undefined }];
+			} else {
+				return [{ label: translate().t("general.internalError"), key: undefined }];
+			}
 		}
 		if (projects!.length) {
 			return projects!.map((project) => ({

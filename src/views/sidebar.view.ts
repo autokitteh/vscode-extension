@@ -22,9 +22,15 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 		this.rootNode = new TreeItem(translate().t("projects.projects"), TreeItemCollapsibleState.Expanded);
 		this.childNodeMap = new Map();
 
+		if (children.length === 1 && children[0].key === undefined) {
+			this.rootNode = new TreeItem(children[0].label, TreeItemCollapsibleState.None);
+			this.childNodeMap.set(this.rootNode, []);
+			return;
+		}
+
 		const childItems = children.map((child: SidebarTreeItem) => {
 			const treeItem = new TreeItem(child.label);
-			treeItem.contextValue = child.key; // Set the key as contextValue
+			treeItem.contextValue = child.key;
 			return treeItem;
 		});
 
