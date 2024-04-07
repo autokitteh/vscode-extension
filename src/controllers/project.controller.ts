@@ -462,7 +462,6 @@ export class ProjectController {
 
 		const uri = await window.showOpenDialog(options);
 		if (!uri || uri.length === 0) {
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("resources.setResourcesFailed"));
 			return;
 		}
 
