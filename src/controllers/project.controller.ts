@@ -91,14 +91,6 @@ export class ProjectController {
 		this.notifyViewResourcesPathChanged();
 		if (this.selectedSessionId) {
 			this.initSessionLogsDisplay(this.selectedSessionId);
-			// this.lastSessionHistoryIndexPrinted = 0;
-			// this.sessionHistoryStates = [];
-			// LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
-			// this.startInterval(
-			// 	ProjectIntervalTypes.sessionHistory,
-			// 	() => this.displaySessionsHistory(this.selectedSessionId!),
-			// 	this.sessionsLogRefreshRate
-			// );
 		}
 	};
 
