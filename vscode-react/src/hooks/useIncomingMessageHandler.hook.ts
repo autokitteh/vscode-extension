@@ -23,8 +23,8 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 				case MessageType.setProjectName:
 					handlers.setProjectName?.(payload as string);
 					break;
-				case MessageType.setResourcesDirState:
-					handlers.setResourcesDirState?.(payload as boolean);
+				case MessageType.setResourcesDir:
+					handlers.setResourcesDir?.(payload as string);
 					break;
 				case MessageType.setDeployments:
 					handlers.setDeploymentsSection?.(payload as DeploymentSectionViewModel);

@@ -559,13 +559,13 @@ export class ProjectController {
 
 		if (resourcesPath) {
 			this.view.update({
-				type: MessageType.setResourcesDirState,
-				payload: true,
+				type: MessageType.setResourcesDir,
+				payload: resourcesPath,
 			});
 		} else {
 			this.view.update({
-				type: MessageType.setResourcesDirState,
-				payload: false,
+				type: MessageType.setResourcesDir,
+				payload: undefined,
 			});
 		}
 	}
