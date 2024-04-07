@@ -565,7 +565,7 @@ export class ProjectController {
 		} else {
 			this.view.update({
 				type: MessageType.setResourcesDir,
-				payload: undefined,
+				payload: "",
 			});
 		}
 	}
