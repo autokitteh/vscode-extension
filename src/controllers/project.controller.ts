@@ -267,6 +267,9 @@ export class ProjectController {
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		this.selectedSessionId = sessionId;
 
+		this.sessions = [];
+		this.displaySessionsHistory(sessionId);
+
 		this.startInterval(
 			ProjectIntervalTypes.sessionHistory,
 			() => this.displaySessionsHistory(sessionId),
