@@ -34,12 +34,12 @@ export class SidebarController {
 				const notification = translate().t("projects.fetchProjectsFailed");
 				commands.executeCommand(vsCommands.showErrorMessage, notification);
 				this.projectsFetchErrorDisplayed = true;
-			}
 
-			LoggerService.error(
-				namespaces.projectSidebarController,
-				translate().t("projects.fetchProjectsFailedError", { error: (error as Error).message })
-			);
+				LoggerService.error(
+					namespaces.projectSidebarController,
+					translate().t("projects.fetchProjectsFailedError", { error: (error as Error).message })
+				);
+			}
 			return;
 		}
 		if (projects!.length) {

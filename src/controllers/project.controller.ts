@@ -96,9 +96,6 @@ export class ProjectController {
 				commands.executeCommand(vsCommands.showErrorMessage, notification);
 				this.hasDisplayedError.set(ProjectIntervalTypes.deployments, true);
 			}
-
-			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
-			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
 
