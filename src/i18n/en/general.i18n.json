@@ -1,3 +1,5 @@
 {
-	"companyName": "autokitteh"
+	"companyName": "autokitteh",
+	"reconnecting": "Reconnecting...",
+	"internalError": "Internal error"
 }
