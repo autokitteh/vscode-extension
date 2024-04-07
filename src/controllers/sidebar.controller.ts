@@ -40,7 +40,7 @@ export class SidebarController {
 				namespaces.projectSidebarController,
 				translate().t("projects.fetchProjectsFailedError", { error: (error as Error).message })
 			);
-			return;
+			return [{ label: translate().t("projects.cantFetchProjectsReconnecting"), key: undefined }];
 		}
 		if (projects!.length) {
 			return projects!.map((project) => ({
