@@ -302,19 +302,11 @@ export class ProjectController {
 		}
 	}
 
-	async startInterval(
-		intervalKey: ProjectIntervalTypes,
-		loadFunc: () => Promise<void> | void,
-		refreshRate: number,
-		runInitOnly: boolean = false
-	) {
+	async startInterval(intervalKey: ProjectIntervalTypes, loadFunc: () => Promise<void> | void, refreshRate: number) {
 		if (this.intervalKeeper.has(intervalKey)) {
 			this.stopInterval(intervalKey);
 		}
 		await loadFunc();
-		if (runInitOnly) {
-			return;
-		}
 		this.intervalKeeper.set(
 			intervalKey,
 			setInterval(() => loadFunc(), refreshRate)
