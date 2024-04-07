@@ -87,7 +87,6 @@ export class ProjectController {
 			() => this.loadAndDisplayDeployments(),
 			this.deploymentsRefreshRate
 		);
-		6;
 		this.notifyViewResourcesPathChanged();
 		if (this.selectedSessionId) {
 			this.initSessionLogsDisplay(this.selectedSessionId);
