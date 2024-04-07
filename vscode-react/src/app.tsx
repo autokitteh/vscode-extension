@@ -2,6 +2,7 @@ import { useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
+import DownloadIcon from "@react-assets/icons/download.svg?react";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKButton, AKLogo } from "@react-components";
 import { AppStateProvider } from "@react-context";
@@ -9,6 +10,7 @@ import { useIncomingMessageHandler } from "@react-hooks";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { sendMessage } from "@react-utilities";
 import "./app.css";
+import { cn } from "@react-utilities/cnClasses.utils";
 
 function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
@@ -37,24 +39,14 @@ function App() {
 							{translate().t("reactApp.general.deploy")}
 						</AKButton>
 						<div className="flex-grow"></div>
-						{!resourcesDir && (
-							<div className="mr-2">
-								<strong>{translate().t("reactApp.settings.setLocalDirectory")} </strong>
-							</div>
-						)}
-						{resourcesDir ? (
-							<AKButton classes="bg-gray-700 text-gray-400 cursor-default" title={resourcesDir}>
-								<div className="codicon codicon-folder-opened w-4"></div>
-							</AKButton>
-						) : (
-							<AKButton
-								onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
-								classes={"bg-red-700"}
-								title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
-							>
-								<div className="codicon codicon-folder-opened w-4"></div>
-							</AKButton>
-						)}
+						<AKButton
+							onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
+							// eslint-disable-next-line @typescript-eslint/naming-convention
+							classes={cn("bg-transparent border-0", { "bg-yellow-600": !resourcesDir })}
+							title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
+						>
+							<DownloadIcon className="text-white" />
+						</AKButton>
 					</div>
 					<AppStateProvider>
 						<AKDeployments />
