@@ -23,6 +23,7 @@ export class ProjectController {
 	public project?: Project;
 	private sessions?: Session[] = [];
 	private sessionHistoryStates: SessionLogRecord[] = [];
+	private lastSessionHistoryIndexPrinted: number = 0;
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
@@ -63,6 +64,22 @@ export class ProjectController {
 		});
 	}
 
+	async getSessionHistory(sessionId: string) {
+		const { data: sessionHistoryStates, error: sessionsError } =
+			await SessionsService.getLogRecordsBySessionId(sessionId);
+
+		if (sessionsError) {
+			commands.executeCommand(vsCommands.showErrorMessage, (sessionsError as Error).message);
+			LoggerService.error(namespaces.projectController, (sessionsError as Error).message);
+			return;
+		}
+		if (!sessionHistoryStates?.length || !sessionHistoryStates) {
+			LoggerService.sessionLog(translate().t("sessions.emptyHistory"));
+			return;
+		}
+		return sessionHistoryStates;
+	}
+
 	public enable = async () => {
 		this.setProjectNameInView();
 		this.startInterval(
@@ -72,11 +89,7 @@ export class ProjectController {
 		);
 		this.notifyViewResourcesPathChanged();
 		if (this.selectedSessionId) {
-			this.startInterval(
-				ProjectIntervalTypes.sessionHistory,
-				() => this.displaySessionsHistory(this.selectedSessionId!),
-				this.sessionsLogRefreshRate
-			);
+			this.initSessionLogsDisplay(this.selectedSessionId);
 		}
 	};
 
@@ -198,17 +211,19 @@ export class ProjectController {
 		}
 	}
 
-	async displaySessionsHistory(sessionId: string): Promise<void> {
-		const { data: sessionHistoryStates, error: sessionsError } =
-			await SessionsService.getLogRecordsBySessionId(sessionId);
-
-		if (sessionsError) {
-			commands.executeCommand(vsCommands.showErrorMessage, (sessionsError as Error).message);
-			LoggerService.error(namespaces.projectController, (sessionsError as Error).message);
-			return;
+	printFinishedSessionLogs(lastState: SessionLogRecord) {
+		if (lastState.isError()) {
+			this.outputErrorDetails(lastState);
+			this.outputCallstackDetails(lastState);
 		}
-		if (!sessionHistoryStates?.length || !sessionHistoryStates) {
-			LoggerService.sessionLog(translate().t("sessions.emptyHistory"));
+		this.lastSessionHistoryIndexPrinted = 0;
+
+		this.stopInterval(ProjectIntervalTypes.sessionHistory);
+	}
+
+	async displaySessionsHistory(sessionId: string): Promise<void> {
+		const sessionHistoryStates = await this.getSessionHistory(sessionId);
+		if (!sessionHistoryStates) {
 			return;
 		}
 
@@ -217,36 +232,27 @@ export class ProjectController {
 		}
 		this.sessionHistoryStates = sessionHistoryStates;
 
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
+
 		this.outputSessionLogs(sessionHistoryStates);
 
-		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 		if (lastState.isFinished()) {
-			LoggerService.sessionLog(`${translate().t("sessions.session")} ${lastState.state}`);
-
-			if (lastState.isError()) {
-				this.outputErrorDetails(lastState);
-				this.outputCallstackDetails(lastState);
-			}
-
-			this.stopInterval(ProjectIntervalTypes.sessionHistory);
+			this.printFinishedSessionLogs(lastState);
 			return;
 		}
 	}
 
 	private outputSessionLogs(sessionStates: SessionLogRecord[]) {
-		const logPrefix = translate().t("sessions.logs");
-		LoggerService.sessionLog(`${logPrefix}:`);
-
 		const hasLogs = sessionStates.some((state) => state.getLogs());
 		if (!hasLogs) {
 			return;
 		}
-		for (let i = 0; i < sessionStates.length; i++) {
+		for (let i = this.lastSessionHistoryIndexPrinted; i < sessionStates.length; i++) {
 			if (!sessionStates[i].isFinished() && sessionStates[i].getLogs()) {
 				LoggerService.sessionLog(`${sessionStates[i].dateTime?.toISOString()}\t${sessionStates[i].getLogs()}`);
 			}
 		}
+		this.lastSessionHistoryIndexPrinted = sessionStates.length - 1;
 	}
 
 	private outputErrorDetails(state: SessionLogRecord) {
@@ -267,13 +273,32 @@ export class ProjectController {
 
 	async displaySessionLogs(sessionId: string): Promise<void> {
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
-		this.selectedSessionId = sessionId;
+		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
-		this.startInterval(
-			ProjectIntervalTypes.sessionHistory,
-			() => this.displaySessionsHistory(sessionId),
-			this.sessionsLogRefreshRate
-		);
+		this.selectedSessionId = sessionId;
+		this.initSessionLogsDisplay(sessionId);
+	}
+
+	async initSessionLogsDisplay(sessionId: string) {
+		const sessionHistoryStates = await this.getSessionHistory(sessionId);
+		if (!sessionHistoryStates) {
+			return;
+		}
+		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
+
+		this.lastSessionHistoryIndexPrinted = 0;
+		this.sessionHistoryStates = [];
+
+		if (lastState.isFinished()) {
+			this.outputSessionLogs(sessionHistoryStates);
+			this.printFinishedSessionLogs(lastState);
+		} else {
+			this.startInterval(
+				ProjectIntervalTypes.sessionHistory,
+				() => this.displaySessionsHistory(sessionId),
+				this.sessionsLogRefreshRate
+			);
+		}
 	}
 
 	async startInterval(intervalKey: ProjectIntervalTypes, loadFunc: () => Promise<void> | void, refreshRate: number) {
