@@ -61,7 +61,7 @@
 			{
 				"command": "autokitteh.enable",
 				"icon": "./resources/sidebar/top-panel-connect.svg",
-				"title": "autokitteh: Connect to server"
+				"title": "autokitteh: Enable"
 			},
 			{
 				"command": "autokitteh.addConnections",
@@ -74,7 +74,7 @@
 			{
 				"command": "autokitteh.disable",
 				"icon": "./resources/sidebar/top-panel-disconnect.svg",
-				"title": "autokitteh: Disconnect from server"
+				"title": "autokitteh: Disable"
 			},
 			{
 				"command": "autokitteh.buildProject",
@@ -214,7 +214,7 @@
 		},
 		"viewsWelcome": [
 			{
-				"contents": "No connection instance has been found.\n[Connect](command:autokitteh.enable)",
+				"contents": "No connection instance has been found.\n[Enable](command:autokitteh.enable)",
 				"view": "autokittehSidebarTree",
 				"when": "config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
 			},
@@ -245,7 +245,7 @@
 						"completionEvents": [
 							"onCommand:autokitteh.enable"
 						],
-						"description": "[Connect](command:autokitteh.enable)",
+						"description": "[Enable](command:autokitteh.enable)",
 						"id": "connectAK",
 						"media": {
 							"altText": "Empty image",
