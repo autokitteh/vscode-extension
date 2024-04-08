@@ -623,12 +623,13 @@ export class ProjectController {
 				type: MessageType.setResourcesDir,
 				payload: resourcesPath,
 			});
-		} else {
-			this.view.update({
-				type: MessageType.setResourcesDir,
-				payload: "",
-			});
+			return;
 		}
+
+		this.view.update({
+			type: MessageType.setResourcesDir,
+			payload: "",
+		});
 	}
 
 	async getResourcesPathFromContext() {
