@@ -68,7 +68,7 @@ function App() {
 							)}
 							<PopperComponent visible={resourcesDirPopperVisible} referenceRef={pathPopperElementRef}>
 								<div className="relative shadow-lg">
-									<div className="mb-3 text-left flex items-center">
+									<div className="text-left flex items-center">
 										<strong className="ml-2">{resourcesDir}</strong>
 										<AKButton
 											onClick={() => sendMessage(MessageType.copyProjectPath, resourcesDir)}
