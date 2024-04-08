@@ -1,3 +1,10 @@
+# [0.10.0](https://github.com/autokitteh/vscode-extension/compare/v0.9.2...v0.10.0) (2024-04-08)
+
+
+### Features
+
+* deployments and sessions delete and sessions stop ([f03dc7e](https://github.com/autokitteh/vscode-extension/commit/f03dc7e4e1e7d4c806829a99dbffec81e3414a38))
+
 # [0.10.0-dev.8](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.7...v0.10.0-dev.8) (2024-04-08)
 
 
