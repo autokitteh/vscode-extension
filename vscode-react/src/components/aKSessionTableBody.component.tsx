@@ -147,7 +147,7 @@ export const AKSessionsTableBody = ({
 							{session.state === SessionState.RUNNING && (
 								<div
 									className="codicon codicon-debug-stop cursor-pointer text-red-500"
-									title="Stop session"
+									title={translate().t("reactApp.sessions.stopSession")}
 									onClick={() => stopSession(session.sessionId)}
 								></div>
 							)}
