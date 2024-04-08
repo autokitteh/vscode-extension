@@ -39,6 +39,6 @@
 	"buildInformationForSingleshotNotParsed": "Couldn't parse build information for singleshot",
 	"buildInfoFetchFailedForBuild": "Couldn't fetch build info for build {{buildId}}, error: {{error}}",
 	"buildProjectError": "Couldn't build project {{projectId}}, error: {{error}}",
-	"creatingDirectory": "There was an issue creating directory: {{resourcePath}}",
+	"creatingDirectory": "Project directory setup failed",
 	"pathExist": "Path exists but is not a directory"
 }
