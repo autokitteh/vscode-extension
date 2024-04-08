@@ -51,6 +51,18 @@ export class ProjectView implements IProjectView {
 					case MessageType.startSession:
 						this.delegate?.startSession?.(message.payload as StartSessionArgsType);
 						break;
+					case MessageType.deleteDeployment:
+						this.delegate?.deleteDeployment?.(message.payload as string);
+						break;
+					case MessageType.deleteSession:
+						this.delegate?.deleteSession?.(message.payload as string);
+						break;
+					case MessageType.displayErrorWithoutActionButton:
+						this.delegate?.displayErrorWithoutActionButton?.(message.payload as string);
+						break;
+					case MessageType.stopSession:
+						this.delegate?.stopSession?.(message.payload as string);
+						break;
 					default:
 				}
 			},

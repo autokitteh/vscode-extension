@@ -14,4 +14,11 @@ export enum MessageType {
 	activateDeployment = "ACTIVATE_DEPLOYMENT",
 	startSession = "START_SESSION",
 	setEntrypoints = "SET_ENTRYPOINTS",
+	deleteDeployment = "DELETE_DEPLOYMENT",
+	deploymentDeleted = "DEPLOYMENT_DELETED",
+	deploymentDeletedResponse = "DEPLOYMENT_DELETED_RESPONSE",
+	deleteSession = "DELETE_SESSION",
+	deleteSessionResponse = "DELETE_SESSION_RESPONSE",
+	displayErrorWithoutActionButton = "DISPLAY_ERROR_WITHOUT_ACTION_BUTTON",
+	stopSession = "STOP_SESSION",
 }

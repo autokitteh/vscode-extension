@@ -1,1 +1,1 @@
-export { SessionStartContext } from "@react-context/startSession.context";
+export { AppStateProvider, useAppState } from "@react-context/appState.context";

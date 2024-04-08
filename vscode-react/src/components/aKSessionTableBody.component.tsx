@@ -1,8 +1,11 @@
-import React, { useContext } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MessageType } from "@enums";
-import { AKSessionState } from "@react-components";
+import { translate } from "@i18n";
+import { AKSessionState, DeletePopper, PopperComponent } from "@react-components";
 import { AKTableRow, AKTableCell } from "@react-components/AKTable";
-import { SessionStartContext } from "@react-context";
+import { useAppState } from "@react-context";
+import { SessionState } from "@react-enums";
+import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
 
@@ -17,8 +20,29 @@ export const AKSessionsTableBody = ({
 	selectedSession?: string;
 	setSelectedSession: (sessionId: string) => void;
 }) => {
-	const { lastDeployment } = useContext(SessionStartContext);
+	// State Hooks Section
+	const [{ modalName, lastDeployment }, dispatch] = useAppState();
+	const [isDeletingInProcess, setIsDeletingInProgress] = useState(false);
+	const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
+	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 
+	// Local variable
+	const deleteSessionPopperTranslations = {
+		title: translate().t("reactApp.sessions.deletionApprovalQuestion"),
+		subtitle: translate().t("reactApp.sessions.deletionApprovalQuestionSubtitle"),
+	};
+
+	// Incoming Messages Handler
+	const handleSessionDeletedResponse = () => {
+		setIsDeletingInProgress(false);
+		hidePopper();
+	};
+
+	useIncomingMessageHandler({ handleSessionDeletedResponse });
+
+	// Functions Section
+	const showPopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "sessionDelete" });
+	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
 	const startSession = (session: Session) => {
 		const startSessionArgs = {
 			sessionId: session.sessionId,
@@ -30,10 +54,48 @@ export const AKSessionsTableBody = ({
 		sendMessage(MessageType.startSession, startSessionArgs);
 	};
 
+	const stopSession = (sessionId: string) => {
+		sendMessage(MessageType.stopSession, sessionId);
+	};
+
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogs, sessionId);
 		setSelectedSession(sessionId);
 	};
+
+	const deleteSessionConfirmed = () => {
+		sendMessage(MessageType.deleteSession, deleteSessionId);
+		setIsDeletingInProgress(true);
+		return;
+	};
+
+	const deleteSessionDismissed = () => {
+		setIsDeletingInProgress(false);
+		setDeleteSessionId("");
+		hidePopper();
+	};
+
+	const displaySessionDeletePopper = (event: React.MouseEvent<HTMLDivElement>, session: Session) => {
+		if (session.state === SessionState.RUNNING) {
+			sendMessage(
+				MessageType.displayErrorWithoutActionButton,
+				translate().t("reactApp.sessions.deleteSessionDisabled")
+			);
+			return;
+		}
+		const refElement = event.currentTarget;
+		showPopper();
+		deletePopperElementRef.current = refElement;
+		setDeleteSessionId(session.sessionId);
+	};
+
+	const isRunning = (sessionState: SessionState) => sessionState === SessionState.RUNNING;
+
+	// useEffects Section
+	useEffect(() => {
+		hidePopper();
+	}, []);
+
 	return (
 		<>
 			{sessions &&
@@ -50,7 +112,7 @@ export const AKSessionsTableBody = ({
 						</AKTableCell>
 						<AKTableCell>
 							{session.deploymentId === lastDeployment?.deploymentId && (
-								<div>
+								<div className="inline-block">
 									<div
 										className="codicon codicon-redo mr-2 cursor-pointer"
 										title="Execute"
@@ -62,6 +124,32 @@ export const AKSessionsTableBody = ({
 										onClick={() => displayInputsModal(JSON.stringify(session.inputs, null, 2))}
 									></div>
 								</div>
+							)}
+							<div
+								className={`inline-block codicon codicon-trash mr-2 z-20 ${
+									isRunning(session.state) ? "cursor-not-allowed" : "cursor-pointer"
+								}`}
+								title={
+									isRunning(session.state)
+										? translate().t("reactApp.sessions.deleteSessionDisabled")
+										: translate().t("reactApp.sessions.delete")
+								}
+								onClick={(event) => displaySessionDeletePopper(event, session)}
+							></div>
+							<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
+								<DeletePopper
+									isDeletingInProcess={isDeletingInProcess}
+									onConfirm={() => deleteSessionConfirmed()}
+									onDismiss={() => deleteSessionDismissed()}
+									translations={deleteSessionPopperTranslations}
+								/>
+							</PopperComponent>
+							{session.state === SessionState.RUNNING && (
+								<div
+									className="codicon codicon-debug-stop cursor-pointer text-red-500"
+									title={translate().t("reactApp.sessions.stopSession")}
+									onClick={() => stopSession(session.sessionId)}
+								></div>
 							)}
 						</AKTableCell>
 					</AKTableRow>

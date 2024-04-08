@@ -19,5 +19,12 @@
 	"executeMissingParams": "Set session execution params",
 	"saveAndRun": "Save & Run",
 	"closeModalButton": "Close",
-	"dismiss": "Dismiss"
+	"dismiss": "Dismiss",
+	"errorDeletingDeploymentLine1": "Error: cannot delete",
+	"errorDeletingDeploymentLine2": "Check logs",
+	"deletionApprovalQuestion": "Delete this deployment?",
+	"deletionApprovalQuestionSubtitle": "You will not be able to recover it",
+	"execute": "Execute",
+	"delete": "Delete",
+	"deleteDisabled": "Cannot delete active deployment"
 }

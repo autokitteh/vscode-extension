@@ -38,6 +38,16 @@ export class SessionsService {
 		}
 	}
 
+	static async stop(sessionId: string): Promise<ServiceResponse<undefined>> {
+		try {
+			await sessionsClient.stop({ sessionId });
+
+			return { data: undefined, error: undefined };
+		} catch (error) {
+			return { data: undefined, error };
+		}
+	}
+
 	static async getLogRecordsBySessionId(sessionId: string): Promise<ServiceResponse<Array<SessionLogRecord>>> {
 		try {
 			const response = await sessionsClient.getLog({ sessionId });
@@ -112,6 +122,15 @@ export class SessionsService {
 				data: undefined,
 				error,
 			};
+		}
+	}
+
+	static async deleteSession(sessionId: string): Promise<ServiceResponse<void>> {
+		try {
+			await sessionsClient.delete({ sessionId });
+			return { data: undefined, error: undefined };
+		} catch (error) {
+			return { data: undefined, error };
 		}
 	}
 }

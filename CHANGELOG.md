@@ -1,3 +1,109 @@
+# [0.10.0-dev.8](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.7...v0.10.0-dev.8) (2024-04-08)
+
+
+### Features
+
+* stop sessions ([#210](https://github.com/autokitteh/vscode-extension/issues/210)) ([8359678](https://github.com/autokitteh/vscode-extension/commit/835967806b5392d56119a1d76944e17834b489a9))
+
+# [0.10.0-dev.7](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.6...v0.10.0-dev.7) (2024-04-08)
+
+
+### Bug Fixes
+
+* display session history when switching to running session ([#217](https://github.com/autokitteh/vscode-extension/issues/217)) ([278ea79](https://github.com/autokitteh/vscode-extension/commit/278ea793a2262c06286cbe2182de79ac2131982f))
+
+# [0.10.0-dev.6](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.5...v0.10.0-dev.6) (2024-04-04)
+
+
+### Bug Fixes
+
+* disable delete buttons in case deployment is active or session is running ([#214](https://github.com/autokitteh/vscode-extension/issues/214)) ([baa405d](https://github.com/autokitteh/vscode-extension/commit/baa405d6f9906e548f01b076732b871cc74f8e5a))
+
+# [0.10.0-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.4...v0.10.0-dev.5) (2024-04-03)
+
+
+### Features
+
+* sync resources with the server in case local folder not selected or exist ([#208](https://github.com/autokitteh/vscode-extension/issues/208)) ([781eeb0](https://github.com/autokitteh/vscode-extension/commit/781eeb0358ecaf06ed04bfe2569b26b11d9ab114))
+
+# [0.10.0-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.3...v0.10.0-dev.4) (2024-04-03)
+
+
+### Bug Fixes
+
+* fix the notification-level getter ([#215](https://github.com/autokitteh/vscode-extension/issues/215)) ([8bad6d7](https://github.com/autokitteh/vscode-extension/commit/8bad6d718f221d07765a44c7571b36ae07286b1d))
+
+# [0.10.0-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.2...v0.10.0-dev.3) (2024-04-02)
+
+
+### Features
+
+* control notifications level in extension settings ([#207](https://github.com/autokitteh/vscode-extension/issues/207)) ([6558cc6](https://github.com/autokitteh/vscode-extension/commit/6558cc6c944141b581e7976c9d77c90bb70ba63f))
+
+# [0.10.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.1...v0.10.0-dev.2) (2024-04-02)
+
+
+### Features
+
+* ability to delete sessions ([#202](https://github.com/autokitteh/vscode-extension/issues/202)) ([b1adaf5](https://github.com/autokitteh/vscode-extension/commit/b1adaf5fb0cd5eeb16d77cc8bf2dc854b38e15ff))
+
+# [0.10.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.9.2...v0.10.0-dev.1) (2024-03-28)
+
+
+### Features
+
+* delete deployments - fix version ([433b4c9](https://github.com/autokitteh/vscode-extension/commit/433b4c92fcc9f600582543ba2a32bf4f7976da23))
+* delete deployments - fix version ([d73a30b](https://github.com/autokitteh/vscode-extension/commit/d73a30b7e664f83688f77aac7fe9b2849a6ca58c))
+* delete deployments ([#200](https://github.com/autokitteh/vscode-extension/issues/200)) ([591329d](https://github.com/autokitteh/vscode-extension/commit/591329da1246d924bc1a1bffff76b9d47a2ba0d1))
+* fix package.json ([0398fbe](https://github.com/autokitteh/vscode-extension/commit/0398fbe78cd4a4316cfeacccf6ae0696c7fa83ef))
+
+# [0.10.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.9.2...v0.10.0-dev.1) (2024-03-28)
+
+
+### Features
+
+* delete deployments - fix version ([433b4c9](https://github.com/autokitteh/vscode-extension/commit/433b4c92fcc9f600582543ba2a32bf4f7976da23))
+* delete deployments - fix version ([d73a30b](https://github.com/autokitteh/vscode-extension/commit/d73a30b7e664f83688f77aac7fe9b2849a6ca58c))
+* delete deployments ([#200](https://github.com/autokitteh/vscode-extension/issues/200)) ([591329d](https://github.com/autokitteh/vscode-extension/commit/591329da1246d924bc1a1bffff76b9d47a2ba0d1))
+* fix package.json ([0398fbe](https://github.com/autokitteh/vscode-extension/commit/0398fbe78cd4a4316cfeacccf6ae0696c7fa83ef))
+
+# [0.10.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.9.2...v0.10.0-dev.1) (2024-03-28)
+
+
+### Features
+
+* delete deployments - fix version ([433b4c9](https://github.com/autokitteh/vscode-extension/commit/433b4c92fcc9f600582543ba2a32bf4f7976da23))
+* delete deployments - fix version ([d73a30b](https://github.com/autokitteh/vscode-extension/commit/d73a30b7e664f83688f77aac7fe9b2849a6ca58c))
+* delete deployments ([#200](https://github.com/autokitteh/vscode-extension/issues/200)) ([591329d](https://github.com/autokitteh/vscode-extension/commit/591329da1246d924bc1a1bffff76b9d47a2ba0d1))
+* fix package.json ([0398fbe](https://github.com/autokitteh/vscode-extension/commit/0398fbe78cd4a4316cfeacccf6ae0696c7fa83ef))
+
+# [0.10.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.9.2...v0.10.0-dev.1) (2024-03-28)
+
+
+### Features
+
+* delete deployments - fix version ([433b4c9](https://github.com/autokitteh/vscode-extension/commit/433b4c92fcc9f600582543ba2a32bf4f7976da23))
+* delete deployments - fix version ([d73a30b](https://github.com/autokitteh/vscode-extension/commit/d73a30b7e664f83688f77aac7fe9b2849a6ca58c))
+* delete deployments ([#200](https://github.com/autokitteh/vscode-extension/issues/200)) ([591329d](https://github.com/autokitteh/vscode-extension/commit/591329da1246d924bc1a1bffff76b9d47a2ba0d1))
+* fix package.json ([0398fbe](https://github.com/autokitteh/vscode-extension/commit/0398fbe78cd4a4316cfeacccf6ae0696c7fa83ef))
+
+# [0.10.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.9.2...v0.10.0-dev.1) (2024-03-28)
+
+
+### Features
+
+* delete deployments - fix version ([433b4c9](https://github.com/autokitteh/vscode-extension/commit/433b4c92fcc9f600582543ba2a32bf4f7976da23))
+* delete deployments - fix version ([d73a30b](https://github.com/autokitteh/vscode-extension/commit/d73a30b7e664f83688f77aac7fe9b2849a6ca58c))
+* delete deployments ([#200](https://github.com/autokitteh/vscode-extension/issues/200)) ([591329d](https://github.com/autokitteh/vscode-extension/commit/591329da1246d924bc1a1bffff76b9d47a2ba0d1))
+* fix package.json ([0398fbe](https://github.com/autokitteh/vscode-extension/commit/0398fbe78cd4a4316cfeacccf6ae0696c7fa83ef))
+
+## [0.9.2-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.9.1...v0.9.2-dev.1) (2024-03-26)
+
+
+### Bug Fixes
+
+* fix singleshot ui ([#198](https://github.com/autokitteh/vscode-extension/issues/198)) ([fec77c8](https://github.com/autokitteh/vscode-extension/commit/fec77c8be7a04ab92476e7e129a6802dd95d1fef))
+
 ## [0.9.2](https://github.com/autokitteh/vscode-extension/compare/v0.9.1...v0.9.2) (2024-03-26)
 
 

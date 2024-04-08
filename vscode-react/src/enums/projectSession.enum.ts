@@ -4,4 +4,5 @@ export enum SessionState {
 	RUNNING = 2,
 	ERROR = 3,
 	COMPLETED = 4,
+	STOPPED = 5,
 }

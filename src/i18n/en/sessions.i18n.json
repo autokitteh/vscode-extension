@@ -4,6 +4,7 @@
 	"errors": "Errors",
 	"noErrors": "No errors to display",
 	"callstack": "Callstack",
+	"session": "Session",
 	"callstackNoPrints": "No callstack to display",
 	"emptyHistory": "Session history states are empty",
 	"historyResult": "Result",
@@ -13,5 +14,11 @@
 	"historyNoOutput": "No output",
 	"historyPrint": "Print",
 	"executionFailed": "Session execution failed",
-	"executionFailedError": "Session execution failed - {{error}}"
+	"executionFailedError": "Session execution failed - {{error}}",
+	"executionSucceed": "Session execution succeed for sessionId - {{sessionId}}",
+	"sessionDeleteSuccessIdProject": "Session execution succeed for project - {{projectId}}, deployment - {{deploymentId}}, session - {{sessionId}}",
+	"sessionDeleteFailId": "Error deleting session, id: {{sessionId}}",
+	"sessionDeleteError": "Error deleting session, id: {{sessionId}}, deployment id: {{deploymentId}}, project id: {{projectId}} - error: {{error}}",
+	"stopFailed": "Session stop failed - id {{sessionId}}",
+	"stopFailedError": "Session stop failed, session id: {{sessionId}}, project id: {{projectId}}, error: {{error}}"
 }

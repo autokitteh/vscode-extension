@@ -10,5 +10,16 @@
 	"fetchProjectsFailed": "Projects fetch failed",
 	"fetchProjectsFailedError": "Projects fetch failed - error: {{error}}",
 	"resourcesDirectoryMissing": "Resources directory missing",
+	"downloadResourcesDirectory": "Sync resources with the server - Project: {{projectName}}",
+	"downloadResourcesDirectoryErrorExtended": "Getting resources from the server errored - Project ID: {{projectId}}, error: {{error}}",
+	"downloadResourcesDirectoryNoResources": "There are no resources to sync from the server",
+	"downloadResourcesDirectoryApprove": "Sync",
+	"downloadResourcesDirectoryDismiss": "Dismiss",
+	"downloadResourcesSelectDirectory": "Select folder",
+	"downloadResourcesDirectoryError": "Error syncing project resources: {{error}} for project: {{projectName}}",
+	"downloadResourcesDirectoryErrorProjectId": "Error syncing project resources for project id: {{projectId}}, file name: {{fileName}}",
+	"downloadResourcesDirectoryFailed": "Syncing project resources failed",
+	"downloadResourcesDirectorySuccess": "Project resources successfully synced for project id: {{projectId}}",
+	"downloadResourcesDirectoryNotSelected": "No folder selected to save the file",
 	"errorReadingResource": "Error reading the selected directory or file"
 }

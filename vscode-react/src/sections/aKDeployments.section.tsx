@@ -1,23 +1,26 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { translate } from "@i18n";
+import { DeploymentSectionViewModel } from "@models";
 import { AKDeploymentTableBody, AKDeploymentTableHeader } from "@react-components";
 import { AKTable, AKTableMessage } from "@react-components/AKTable";
-import { SessionStartContext } from "@react-context";
-import { useDeployments, useForceRerender } from "@react-hooks";
+import { useAppState } from "@react-context";
+import { useIncomingMessageHandler } from "@react-hooks";
 import { Deployment } from "@type/models";
 
 export const AKDeployments = () => {
-	useForceRerender();
-
-	const { deploymentsSection } = useDeployments();
+	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel>();
 	const [isLoading, setIsLoading] = useState(true);
 	const [totalDeployments, setTotalDeployments] = useState<number>();
 	const [deployments, setDeployments] = useState<Deployment[]>();
-	const { setLastDeployment } = useContext(SessionStartContext);
+	const [, dispatch] = useAppState();
+
+	useIncomingMessageHandler({
+		setDeploymentsSection,
+	});
 
 	useEffect(() => {
 		if (deployments && deployments.length) {
-			setLastDeployment(deployments[0]);
+			dispatch({ type: "SET_LAST_DEPLOYMENT", payload: deployments[0] });
 		}
 		if (deployments && isLoading) {
 			setIsLoading(false);

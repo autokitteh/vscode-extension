@@ -18,6 +18,9 @@
 	"extensionDependencies": [
 		"redhat.vscode-yaml"
 	],
+	"optionalDependencies": {
+		"@rollup/rollup-linux-x64-gnu": "4.6.1"
+	},
 	"contributes": {
 		"activationEvents": [
 			"onCommand:autokitteh.buildProject",
@@ -58,7 +61,7 @@
 			{
 				"command": "autokitteh.enable",
 				"icon": "./resources/sidebar/top-panel-connect.svg",
-				"title": "autokitteh: Connect to server"
+				"title": "autokitteh: Enable"
 			},
 			{
 				"command": "autokitteh.addConnections",
@@ -71,7 +74,7 @@
 			{
 				"command": "autokitteh.disable",
 				"icon": "./resources/sidebar/top-panel-disconnect.svg",
-				"title": "autokitteh: Disconnect from server"
+				"title": "autokitteh: Disable"
 			},
 			{
 				"command": "autokitteh.buildProject",
@@ -111,6 +114,21 @@
 					"default": 1,
 					"description": "Refresh interval in seconds for the sidebar panel",
 					"type": "number"
+				},
+				"autokitteh.notificationsLevel": {
+					"type": "string",
+					"default": "All",
+					"enum": [
+						"All",
+						"Errors",
+						"None"
+					],
+					"description": "Adjust notification visibility in the extension, ranging from all notifications to errors only, or none",
+					"enumDescriptions": [
+						"Displays all notifications (info, errors)",
+						"Only shows error notifications",
+						"Suppresses all notifications"
+					]
 				},
 				"autokitteh.starlarkLSPPath": {
 					"default": "",
@@ -196,7 +214,7 @@
 		},
 		"viewsWelcome": [
 			{
-				"contents": "No connection instance has been found.\n[Connect](command:autokitteh.enable)",
+				"contents": "No connection instance has been found.\n[Enable](command:autokitteh.enable)",
 				"view": "autokittehSidebarTree",
 				"when": "config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
 			},
@@ -227,7 +245,7 @@
 						"completionEvents": [
 							"onCommand:autokitteh.enable"
 						],
-						"description": "[Connect](command:autokitteh.enable)",
+						"description": "[Enable](command:autokitteh.enable)",
 						"id": "connectAK",
 						"media": {
 							"altText": "Empty image",
@@ -346,7 +364,7 @@
 		"package": "vsce package",
 		"prepare": "husky install"
 	},
-	"version": "0.9.2",
+	"version": "0.10.0-dev.8",
 	"workspaces": [
 		"vscode-react"
 	]
