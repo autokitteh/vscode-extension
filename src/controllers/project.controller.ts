@@ -12,6 +12,7 @@ import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
+import { createDirectory } from "@utilities";
 import isEqual from "lodash/isEqual";
 import { commands, OpenDialogOptions, window, env } from "vscode";
 
@@ -357,7 +358,7 @@ export class ProjectController {
 		commands.executeCommand(vsCommands.showErrorMessage, errorMessage, false);
 	}
 
-	async downloadResources() {
+	async downloadResources(downloadPath?: string) {
 		const { data: existingResources } = await ProjectsService.getResources(this.projectId);
 
 		if (!existingResources) {
@@ -370,18 +371,22 @@ export class ProjectController {
 			return;
 		}
 
-		const newLocalResourcesPath = await window.showOpenDialog({
-			canSelectFolders: true,
-			openLabel: translate().t("projects.downloadResourcesSelectDirectory"),
-		});
+		let savePath = downloadPath;
 
-		if (!newLocalResourcesPath || !newLocalResourcesPath.length) {
-			return;
+		if (!path) {
+			const newLocalResourcesPath = await window.showOpenDialog({
+				canSelectFolders: true,
+				openLabel: translate().t("projects.downloadResourcesSelectDirectory"),
+			});
+
+			if (!newLocalResourcesPath || !newLocalResourcesPath.length) {
+				return;
+			}
+			savePath = newLocalResourcesPath[0].fsPath;
 		}
 
-		const savePath = newLocalResourcesPath[0].fsPath;
 		Object.keys(existingResources).map(async (resource) => {
-			const fullPath: string = path.join(savePath, resource);
+			const fullPath: string = path.join(savePath!, resource);
 			const data: Uint8Array = existingResources[resource] as Uint8Array;
 			try {
 				await fsPromises.writeFile(fullPath, Buffer.from(data));
@@ -408,7 +413,7 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, successMessage);
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
-		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: newLocalResourcesPath[0].fsPath });
+		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: savePath });
 
 		this.notifyViewResourcesPathChanged();
 	}
@@ -460,12 +465,22 @@ export class ProjectController {
 			openLabel: translate().t("resources.selectResourcesFolder"),
 		};
 
-		const uri = await window.showOpenDialog(options);
-		if (!uri || uri.length === 0) {
+		const newDirectoryPath = await window.showOpenDialog(options);
+		if (!newDirectoryPath || newDirectoryPath.length === 0) {
 			return;
 		}
 
-		const resourcePath = uri[0].fsPath;
+		const resourcePath = path.join(newDirectoryPath[0].fsPath, this.project!.name);
+		try {
+			await createDirectory(resourcePath);
+		} catch (error) {
+			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.creatingDirectory", { resourcePath }));
+
+			LoggerService.error(namespaces.projectController, (error as Error).message);
+			return;
+		}
+		await this.downloadResources(resourcePath);
+
 		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: resourcePath });
 
 		this.notifyViewResourcesPathChanged();

@@ -6,16 +6,38 @@ import * as winattr from "winattr";
 
 export const createDirectory = async (outputPath: string): Promise<void> => {
 	try {
-		await fsPromises.mkdir(outputPath, { recursive: true });
+		// Attempt to get stats first to check if directory already exists
+		const stats = await fsPromises.stat(outputPath);
+
+		// If stats do not throw and the path is indeed a directory, throw an already exists error
+		if (stats.isDirectory()) {
+			throw new Error(translate().t("errors.creatingDirectoryAlreadyExist", { outputPath }));
+		} else {
+			// Exists but is not a directory, handle this case if needed
+			throw new Error(
+				translate().t("errors.creatingDirectoryAccess", {
+					outputPath,
+					error: translate().t("errors.pathExist"),
+				})
+			);
+		}
 	} catch (error) {
 		const nodeError = error as NodeJS.ErrnoException;
 
-		if (nodeError.code === "EEXIST") {
-			throw new Error(translate().t("errors.creatingDirectoryAlreadyExist", { outputPath }));
-		} else if (nodeError.code === "EPERM" || nodeError.code === "EACCES") {
-			throw new Error(translate().t("errors.creatingDirectoryPermission", { outputPath }));
+		// If the error code is ENOENT, the directory does not exist, and we can safely create it
+		if (nodeError.code === "ENOENT") {
+			try {
+				await fsPromises.mkdir(outputPath, { recursive: true });
+			} catch (mkdirError) {
+				// Handle mkdir error, potentially a permission issue
+				const mkdirNodeError = mkdirError as NodeJS.ErrnoException;
+				throw new Error(
+					translate().t("errors.creatingDirectoryPermission", { outputPath, error: mkdirNodeError.message })
+				);
+			}
 		} else {
-			throw new Error(translate().t("errors.creatingDirectoryPermission", { outputPath, error: nodeError.message }));
+			// For any other error during stats fetching, throw a generic access error
+			throw new Error(translate().t("errors.creatingDirectoryAccess", { outputPath, error: nodeError.message }));
 		}
 	}
 };

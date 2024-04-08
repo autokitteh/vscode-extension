@@ -19,6 +19,9 @@ export const translate = () => {
 			ns: ["translation"],
 			defaultNS: "translation",
 			keySeparator: ".",
+			interpolation: {
+				escapeValue: false,
+			},
 		});
 		return i18n;
 	}

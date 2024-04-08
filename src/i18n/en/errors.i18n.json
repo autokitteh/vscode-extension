@@ -26,7 +26,7 @@
 	"starlarkPlatformNotSupported": "Starlark LSP is not supported on this platform",
 	"unsupportedArchiveType": "Unsupported archive type: {{type}}",
 	"errorExtractingArchive": "Error extracting archive: {{error}}",
-	"creatingDirectoryAlreadyExist": "Cannot create directory, a file with the same name exists: {{outputPath}}",
+	"creatingDirectoryAlreadyExist": "Directory with the same name exists: {{outputPath}}",
 	"creatingDirectoryPermission": "Permission denied to create or access directory: {{outputPath}}",
 	"creatingDirectoryAccess": "Failed to create or access directory: {{outputPath}}, Error: {{error}}",
 	"couldNotFetchLSP": "Couldn't fetch latest LSP executable release",
@@ -38,5 +38,7 @@
 	"buildInformationForSingleshotNotLoaded": "Couldn't load build information for singleshot",
 	"buildInformationForSingleshotNotParsed": "Couldn't parse build information for singleshot",
 	"buildInfoFetchFailedForBuild": "Couldn't fetch build info for build {{buildId}}, error: {{error}}",
-	"buildProjectError": "Couldn't build project {{projectId}}, error: {{error}}"
+	"buildProjectError": "Couldn't build project {{projectId}}, error: {{error}}",
+	"creatingDirectory": "There was an issue creating directory: {{resourcePath}}",
+	"pathExist": "Path exists but is not a directory"
 }
