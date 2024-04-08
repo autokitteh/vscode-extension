@@ -1,3 +1,10 @@
+## [0.10.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.10.0...v0.10.1-dev.1) (2024-04-08)
+
+
+### Bug Fixes
+
+* display appropriate message on reconnecting status ([#223](https://github.com/autokitteh/vscode-extension/issues/223)) ([42ed7a8](https://github.com/autokitteh/vscode-extension/commit/42ed7a8b057a3dee6f15d096a6da9831d9ed565c))
+
 # [0.10.0](https://github.com/autokitteh/vscode-extension/compare/v0.9.2...v0.10.0) (2024-04-08)
 
 
