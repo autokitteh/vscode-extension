@@ -9,6 +9,7 @@
 	"statuses": {
 		"created": "Created",
 		"running": "Running",
+		"stopped": "Stopped",
 		"unspecified": "Unspecified",
 		"error": "Error",
 		"completed": "Completed"
@@ -18,5 +19,6 @@
 	"errorDeletingLine1": "Something went wrong",
 	"errorDeletingLine2": "Check the logs",
 	"deleteSessionDisabled": "Cannot delete running session",
-	"delete": "Delete"
+	"delete": "Delete",
+	"stopSession": "Stop session"
 }

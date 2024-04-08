@@ -130,7 +130,11 @@ export class SessionLogRecord {
 	}
 
 	isFinished(): boolean {
-		return this.state === SessionStateType.error || this.state === SessionStateType.completed;
+		return (
+			this.state === SessionStateType.error ||
+			this.state === SessionStateType.completed ||
+			this.state === SessionStateType.stopped
+		);
 	}
 
 	containLogs(): boolean {

@@ -222,10 +222,13 @@ export class ProjectController {
 
 		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 		if (lastState.isFinished()) {
+			LoggerService.sessionLog(`${translate().t("sessions.session")} ${lastState.state}`);
+
 			if (lastState.isError()) {
 				this.outputErrorDetails(lastState);
 				this.outputCallstackDetails(lastState);
 			}
+
 			this.stopInterval(ProjectIntervalTypes.sessionHistory);
 			return;
 		}
@@ -514,7 +517,7 @@ export class ProjectController {
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
 			return;
 		}
-		const successMessage = `${translate().t("sessions.executionSucceed")} for session ${sessionId}`;
+		const successMessage = translate().t("sessions.executionSucceed", { sessionId });
 		LoggerService.info(namespaces.projectController, successMessage);
 
 		this.view.update({
@@ -576,6 +579,21 @@ export class ProjectController {
 			return;
 		}
 		return projectFromContext.path;
+	}
+
+	async stopSession(sessionId: string) {
+		const { error } = await SessionsService.stop(sessionId);
+		if (error) {
+			const notification = translate().t("sessions.stopFailed", { sessionId });
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			const log = translate().t("sessions.stopFailedError", {
+				sessionId,
+				projectId: this.projectId,
+				error: (error as Error).message,
+			});
+			LoggerService.error(namespaces.projectController, log);
+			return;
+		}
 	}
 
 	async deleteDeployment(deploymentId: string) {

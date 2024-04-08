@@ -54,6 +54,10 @@ export const AKSessionsTableBody = ({
 		sendMessage(MessageType.startSession, startSessionArgs);
 	};
 
+	const stopSession = (sessionId: string) => {
+		sendMessage(MessageType.stopSession, sessionId);
+	};
+
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogs, sessionId);
 		setSelectedSession(sessionId);
@@ -122,7 +126,7 @@ export const AKSessionsTableBody = ({
 								</div>
 							)}
 							<div
-								className={`inline-block codicon codicon-trash z-20 ${
+								className={`inline-block codicon codicon-trash mr-2 z-20 ${
 									isRunning(session.state) ? "cursor-not-allowed" : "cursor-pointer"
 								}`}
 								title={
@@ -140,6 +144,13 @@ export const AKSessionsTableBody = ({
 									translations={deleteSessionPopperTranslations}
 								/>
 							</PopperComponent>
+							{session.state === SessionState.RUNNING && (
+								<div
+									className="codicon codicon-debug-stop cursor-pointer text-red-500"
+									title={translate().t("reactApp.sessions.stopSession")}
+									onClick={() => stopSession(session.sessionId)}
+								></div>
+							)}
 						</AKTableCell>
 					</AKTableRow>
 				))}
