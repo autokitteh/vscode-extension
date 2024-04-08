@@ -689,38 +689,36 @@ export class ProjectController {
 		);
 	}
 
-	copyProjectPath(projectPathToCopy: string): void {
-		env.clipboard.writeText(projectPathToCopy).then(
-			() => {
-				commands.executeCommand(
-					vsCommands.showInfoMessage,
-					translate().t("projects.projectPathCopied", { projectName: this.project?.name })
-				);
+	async copyProjectPath(projectPathToCopy: string): Promise<void> {
+		try {
+			await env.clipboard.writeText(projectPathToCopy);
+			commands.executeCommand(
+				vsCommands.showInfoMessage,
+				translate().t("projects.projectPathCopied", { projectName: this.project?.name })
+			);
 
-				this.view.update({
-					type: MessageType.copyProjectPathResponse,
-					payload: true,
-				});
-			},
-			(error) => {
-				commands.executeCommand(
-					vsCommands.showInfoMessage,
-					translate().t("projects.projectPathCopiedError", { projectName: this.project?.name })
-				);
-				LoggerService.error(
-					namespaces.projectController,
-					translate().t("projects.projectPathCopiedErrorEnriched", {
-						error: (error as Error).message,
-						projectName: this.project?.name,
-					})
-				);
+			this.view.update({
+				type: MessageType.copyProjectPathResponse,
+				payload: true,
+			});
+		} catch (error) {
+			commands.executeCommand(
+				vsCommands.showInfoMessage,
+				translate().t("projects.projectPathCopiedError", { projectName: this.project?.name })
+			);
+			LoggerService.error(
+				namespaces.projectController,
+				translate().t("projects.projectPathCopiedErrorEnriched", {
+					error: (error as Error).message,
+					projectName: this.project?.name,
+				})
+			);
 
-				this.view.update({
-					type: MessageType.copyProjectPathResponse,
-					payload: false,
-				});
-			}
-		);
+			this.view.update({
+				type: MessageType.copyProjectPathResponse,
+				payload: false,
+			});
+		}
 	}
 
 	async deleteSession(sessionId: string) {
