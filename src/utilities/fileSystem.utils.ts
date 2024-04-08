@@ -10,14 +10,13 @@ export const createDirectory = async (outputPath: string): Promise<void> => {
 
 		if (stats.isDirectory()) {
 			throw new Error(translate().t("errors.creatingDirectoryAlreadyExist", { outputPath }));
-		} else {
-			throw new Error(
-				translate().t("errors.creatingDirectoryAccess", {
-					outputPath,
-					error: translate().t("errors.pathExist"),
-				})
-			);
 		}
+		throw new Error(
+			translate().t("errors.creatingDirectoryAccess", {
+				outputPath,
+				error: translate().t("errors.pathExist"),
+			})
+		);
 	} catch (error) {
 		const nodeError = error as NodeJS.ErrnoException;
 
@@ -28,9 +27,9 @@ export const createDirectory = async (outputPath: string): Promise<void> => {
 				const mkdirNodeError = mkdirError as NodeJS.ErrnoException;
 				throw new Error(translate().t("errors.creatingDirectoryPermission", { error: mkdirNodeError.message }));
 			}
-		} else {
-			throw new Error(translate().t("errors.creatingDirectoryAccess", { error: nodeError.message }));
+			return;
 		}
+		throw new Error(translate().t("errors.creatingDirectoryAccess", { error: nodeError.message }));
 	}
 };
 
