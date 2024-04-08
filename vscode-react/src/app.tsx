@@ -50,13 +50,13 @@ function App() {
 							{!resourcesDir ? (
 								<AKButton
 									onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
-									classes="flex bg-gray-500"
+									classes="flex bg-transparent"
 									title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
 								>
 									<DownloadIcon className="text-[#FDE767]" />
 								</AKButton>
 							) : (
-								<AKButton classes="flex bg-gray-500" onClick={() => setResourcesDirPopperVisible(true)}>
+								<AKButton classes="flex bg-transparent" onClick={() => setResourcesDirPopperVisible(true)}>
 									<div className="codicon codicon-info" ref={pathPopperElementRef}></div>
 								</AKButton>
 							)}
@@ -75,7 +75,7 @@ function App() {
 									<div className="flex">
 										<AKButton
 											onClick={() => sendMessage(MessageType.copyProjectPath, resourcesDir)}
-											classes="bg-gray-500"
+											classes="bg-transparent"
 											title={translate().t("reactApp.settings.copyPath")}
 										>
 											<div className="codicon codicon-copy"></div>
@@ -83,7 +83,7 @@ function App() {
 										<div className="flex-grow"></div>
 										<AKButton
 											onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
-											classes="bg-gray-500"
+											classes="bg-transparent"
 											title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
 										>
 											<DownloadIcon className="text-[#FDE767]" />
