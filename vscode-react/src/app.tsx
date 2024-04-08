@@ -4,7 +4,7 @@ import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
 import DownloadIcon from "@react-assets/icons/download.svg?react";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
-import { AKButton, AKLogo, PopperComponent } from "@react-components";
+import { AKButton, AKLogo, DirectoryDownloadPopper, PopperComponent } from "@react-components";
 import { AppStateProvider } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { AKDeployments, AKSessions } from "@react-sections";
@@ -67,25 +67,7 @@ function App() {
 								></div>
 							)}
 							<PopperComponent visible={resourcesDirPopperVisible} referenceRef={pathPopperElementRef}>
-								<div className="relative shadow-lg">
-									<div className="text-left flex items-center">
-										<strong className="ml-2">{resourcesDir}</strong>
-										<AKButton
-											onClick={() => sendMessage(MessageType.copyProjectPath, resourcesDir)}
-											classes="bg-transparent ml-2"
-											title={translate().t("reactApp.settings.copyPath")}
-										>
-											<div className="codicon codicon-copy"></div>
-										</AKButton>
-										<AKButton
-											onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
-											classes="bg-transparent"
-											title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
-										>
-											<DownloadIcon className="text-[#FDE767]" />
-										</AKButton>
-									</div>
-								</div>
+								<DirectoryDownloadPopper resourcesDir={resourcesDir} />
 							</PopperComponent>
 						</div>
 					</div>
