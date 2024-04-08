@@ -11,17 +11,17 @@
 	"fetchProjectsFailedError": "Projects fetch failed - error: {{error}}",
 	"resourcesDirectoryMissing": "Resources directory missing",
 	"downloadResourcesDirectory": "Download resources from the server - Project: {{projectName}}",
-	"downloadResourcesDirectoryErrorExtended": "Getting resources from the server errored - Project ID: {{projectId}}, error: {{error}}",
 	"downloadResourcesDirectoryNoResources": "There are no resources to download from the server",
 	"downloadResourcesDirectoryApprove": "Download",
 	"downloadResourcesDirectoryDismiss": "Dismiss",
 	"downloadResourcesSelectDirectory": "Select folder",
+	"downloadResourcesDirectoryErrorForProject": "Error downloading project resources for project: {{projectName}}",
 	"downloadResourcesDirectoryError": "Error downloading project resources: {{error}} for project: {{projectName}}",
 	"downloadResourcesDirectoryErrorProjectId": "Error downloading project resources for project: {{projectName}}, file name: {{fileName}}",
 	"downloadResourcesDirectoryFailed": "Downloading project resources failed - Project name: {{projectName}}",
 	"downloadResourcesDirectorySuccess": "Project resources successfully downloaded for project: {{projectName}}",
-	"errorReadingResource": "Error reading the selected directory or file",
-	"projectPathCopied": "Project path copied to clipboard",
-	"projectPathCopiedError": "Error copying project path to clipboard",
-	"projectPathCopiedErrorEnriched": "Error copying project path to clipboard: {{error}}"
+	"errorReadingResource": "Error reading the selected directory or file for project {{projectId}}",
+	"projectPathCopied": "Project {{projectName}} path copied to clipboard",
+	"projectPathCopiedError": "Error copying project path to clipboard for project: {{projectName}}",
+	"projectPathCopiedErrorEnriched": "Error copying project path to clipboard - project: {{projectName}}, error: {{error}}"
 }

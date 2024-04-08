@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels } from "@constants";
-import { convertBuildRuntimesToViewTriggers, getResources } from "@controllers/utilities";
+import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { MessageType, ProjectIntervalTypes } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
@@ -359,7 +359,20 @@ export class ProjectController {
 	}
 
 	async downloadResources(downloadPath?: string) {
-		const { data: existingResources } = await ProjectsService.getResources(this.projectId);
+		const { data: existingResources, error } = await ProjectsService.getResources(this.projectId);
+
+		if (error) {
+			const notification = translate().t("projects.downloadResourcesDirectoryErrorForProject", {
+				projectName: this.project?.name,
+			});
+			const log = translate().t("projects.downloadResourcesDirectoryError", {
+				projectName: this.project?.name,
+				error: (error as Error).message,
+			});
+			LoggerService.error(namespaces.projectController, log);
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			return;
+		}
 
 		if (!existingResources || !Object.keys(existingResources).length) {
 			commands.executeCommand(
@@ -436,7 +449,8 @@ export class ProjectController {
 	}
 
 	async build() {
-		const { data: mappedResources, error: resourcesError } = await getResources(this.projectId);
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(this.projectId);
+
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
@@ -490,7 +504,7 @@ export class ProjectController {
 	}
 
 	async run() {
-		const { data: mappedResources, error: resourcesError } = await getResources(this.projectId);
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(this.projectId);
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
@@ -674,7 +688,10 @@ export class ProjectController {
 	copyProjectPath(projectPathToCopy: string): void {
 		env.clipboard.writeText(projectPathToCopy).then(
 			() => {
-				commands.executeCommand(vsCommands.showInfoMessage, translate().t("projects.projectPathCopied"));
+				commands.executeCommand(
+					vsCommands.showInfoMessage,
+					translate().t("projects.projectPathCopied", { projectName: this.project?.name })
+				);
 
 				this.view.update({
 					type: MessageType.copyProjectPathResponse,
@@ -682,10 +699,16 @@ export class ProjectController {
 				});
 			},
 			(error) => {
-				commands.executeCommand(vsCommands.showInfoMessage, translate().t("projects.projectPathCopiedError"));
+				commands.executeCommand(
+					vsCommands.showInfoMessage,
+					translate().t("projects.projectPathCopiedError", { projectName: this.project?.name })
+				);
 				LoggerService.error(
 					namespaces.projectController,
-					translate().t("projects.projectPathCopiedErrorEnriched", { error: (error as Error).message })
+					translate().t("projects.projectPathCopiedErrorEnriched", {
+						error: (error as Error).message,
+						projectName: this.project?.name,
+					})
 				);
 
 				this.view.update({

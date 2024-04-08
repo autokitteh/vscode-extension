@@ -62,10 +62,6 @@ export class ProjectsService {
 			const { resources } = await projectsClient.downloadResources({ projectId });
 			return { data: resources, error: undefined };
 		} catch (error) {
-			LoggerService.error(
-				namespaces.projectService,
-				translate().t("errors.downloadResourcesDirectoryErrorExtended", { projectId, error: (error as Error).message })
-			);
 			return { data: undefined, error: (error as Error).message };
 		}
 	}
