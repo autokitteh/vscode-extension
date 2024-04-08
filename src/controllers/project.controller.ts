@@ -13,7 +13,7 @@ import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import isEqual from "lodash/isEqual";
-import { commands, OpenDialogOptions, window } from "vscode";
+import { commands, OpenDialogOptions, window, env } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
@@ -653,6 +653,32 @@ export class ProjectController {
 			translate().t("projects.downloadResourcesDirectoryDismiss")
 		);
 	}
+
+	copyProjectPath(projectPathToCopy: string): void {
+		env.clipboard.writeText(projectPathToCopy).then(
+			() => {
+				commands.executeCommand(vsCommands.showInfoMessage, translate().t("projects.projectPathCopied"));
+
+				this.view.update({
+					type: MessageType.copyProjectPathResponse,
+					payload: true,
+				});
+			},
+			(error) => {
+				commands.executeCommand(vsCommands.showInfoMessage, translate().t("projects.projectPathCopiedError"));
+				LoggerService.error(
+					namespaces.projectController,
+					translate().t("projects.projectPathCopiedErrorEnriched", { error: (error as Error).message })
+				);
+
+				this.view.update({
+					type: MessageType.copyProjectPathResponse,
+					payload: false,
+				});
+			}
+		);
+	}
+
 	async deleteSession(sessionId: string) {
 		const { error } = await SessionsService.deleteSession(sessionId);
 		if (error) {

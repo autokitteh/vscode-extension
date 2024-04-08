@@ -63,6 +63,9 @@ export class ProjectView implements IProjectView {
 					case MessageType.stopSession:
 						this.delegate?.stopSession?.(message.payload as string);
 						break;
+					case MessageType.copyProjectPath:
+						this.delegate?.copyProjectPath?.(message.payload as string);
+						break;
 					default:
 				}
 			},

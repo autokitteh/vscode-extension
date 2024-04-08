@@ -21,4 +21,6 @@ export enum MessageType {
 	deleteSessionResponse = "DELETE_SESSION_RESPONSE",
 	displayErrorWithoutActionButton = "DISPLAY_ERROR_WITHOUT_ACTION_BUTTON",
 	stopSession = "STOP_SESSION",
+	copyProjectPath = "COPY_PROJECT_PATH",
+	copyProjectPathResponse = "COPY_PROJECT_PATH_RESPONSE",
 }

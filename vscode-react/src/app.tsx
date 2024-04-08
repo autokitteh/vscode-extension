@@ -1,27 +1,34 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
 import DownloadIcon from "@react-assets/icons/download.svg?react";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
-import { AKButton, AKLogo } from "@react-components";
+import { AKButton, AKLogo, PopperComponent } from "@react-components";
 import { AppStateProvider } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { sendMessage } from "@react-utilities";
 import "./app.css";
-import { cn } from "@react-utilities/cnClasses.utils";
 
 function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [resourcesDir, setResourcesDir] = useState<string>("");
+	const [pathResponse, setPathResponse] = useState<boolean>(false);
+	const [resourcesDirPopperVisible, setResourcesDirPopperVisible] = useState<boolean>(false);
+	const pathPopperElementRef = useRef<HTMLDivElement | null>(null);
 
 	useIncomingMessageHandler({
 		setProjectName,
 		setThemeVisualType,
 		setResourcesDir,
+		setPathResponse,
 	});
+
+	useEffect(() => {
+		setResourcesDirPopperVisible(false);
+	}, [pathResponse, resourcesDir]);
 
 	return (
 		<main>
@@ -39,14 +46,52 @@ function App() {
 							{translate().t("reactApp.general.deploy")}
 						</AKButton>
 						<div className="flex-grow"></div>
-						<AKButton
-							onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
-							// eslint-disable-next-line @typescript-eslint/naming-convention
-							classes={cn("bg-transparent border-0", { "bg-yellow-600": !resourcesDir })}
-							title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
-						>
-							<DownloadIcon className="text-white" />
-						</AKButton>
+						<div className="flex-col">
+							{!resourcesDir ? (
+								<AKButton
+									onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
+									classes="flex bg-gray-500"
+									title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
+								>
+									<DownloadIcon className="text-[#FDE767]" />
+								</AKButton>
+							) : (
+								<AKButton classes="flex bg-gray-500" onClick={() => setResourcesDirPopperVisible(true)}>
+									<div className="codicon codicon-info" ref={pathPopperElementRef}></div>
+								</AKButton>
+							)}
+							{resourcesDirPopperVisible && (
+								<div
+									className="absolute h-screen w-screen top-0 left-0 z-10"
+									onClick={() => setResourcesDirPopperVisible(false)}
+								></div>
+							)}
+							<PopperComponent visible={resourcesDirPopperVisible} referenceRef={pathPopperElementRef}>
+								<div className="relative shadow-lg">
+									<div className="mb-3 text-left">
+										<div>Project path:</div>
+										<strong>{resourcesDir}</strong>
+									</div>
+									<div className="flex">
+										<AKButton
+											onClick={() => sendMessage(MessageType.copyProjectPath, resourcesDir)}
+											classes="bg-gray-500"
+											title={translate().t("reactApp.settings.copyPath")}
+										>
+											<div className="codicon codicon-copy"></div>
+										</AKButton>
+										<div className="flex-grow"></div>
+										<AKButton
+											onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
+											classes="bg-gray-500"
+											title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
+										>
+											<DownloadIcon className="text-[#FDE767]" />
+										</AKButton>
+									</div>
+								</div>
+							</PopperComponent>
+						</div>
 					</div>
 					<AppStateProvider>
 						<AKDeployments />
