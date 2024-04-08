@@ -490,7 +490,10 @@ export class ProjectController {
 		try {
 			await createDirectory(resourcePath);
 		} catch (error) {
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.creatingDirectory"));
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				translate().t("errors.creatingDirectory", { projectName: this.project?.name })
+			);
 
 			LoggerService.error(namespaces.projectController, (error as Error).message);
 			return;
