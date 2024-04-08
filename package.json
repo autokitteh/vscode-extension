@@ -364,7 +364,7 @@
 		"package": "vsce package",
 		"prepare": "husky install"
 	},
-	"version": "0.10.0-dev.7",
+	"version": "0.10.0-dev.8",
 	"workspaces": [
 		"vscode-react"
 	]
