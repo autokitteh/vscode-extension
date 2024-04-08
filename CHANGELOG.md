@@ -1,3 +1,10 @@
+# [0.10.0-dev.7](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.6...v0.10.0-dev.7) (2024-04-08)
+
+
+### Bug Fixes
+
+* display session history when switching to running session ([#217](https://github.com/autokitteh/vscode-extension/issues/217)) ([278ea79](https://github.com/autokitteh/vscode-extension/commit/278ea793a2262c06286cbe2182de79ac2131982f))
+
 # [0.10.0-dev.6](https://github.com/autokitteh/vscode-extension/compare/v0.10.0-dev.5...v0.10.0-dev.6) (2024-04-04)
 
 
