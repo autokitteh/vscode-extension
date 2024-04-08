@@ -1,3 +1,10 @@
+# [0.11.0](https://github.com/autokitteh/vscode-extension/compare/v0.10.0...v0.11.0) (2024-04-08)
+
+
+### Features
+
+* print only the diff of the sessions history every time ([#225](https://github.com/autokitteh/vscode-extension/issues/225)) ([367a996](https://github.com/autokitteh/vscode-extension/commit/367a9963d5f538f28068064e37e17771b6365b15))
+
 # [0.10.0](https://github.com/autokitteh/vscode-extension/compare/v0.9.2...v0.10.0) (2024-04-08)
 
 
