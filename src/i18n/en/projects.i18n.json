@@ -21,5 +21,8 @@
 	"downloadResourcesDirectoryFailed": "Syncing project resources failed",
 	"downloadResourcesDirectorySuccess": "Project resources successfully synced for project id: {{projectId}}",
 	"downloadResourcesDirectoryNotSelected": "No folder selected to save the file",
-	"errorReadingResource": "Error reading the selected directory or file"
+	"errorReadingResource": "Error reading the selected directory or file",
+	"projectPathCopied": "Project path copied to clipboard",
+	"projectPathCopiedError": "Error copying project path to clipboard",
+	"projectPathCopiedErrorEnriched": "Error copying project path to clipboard: {{error}}"
 }

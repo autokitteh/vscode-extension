@@ -16,6 +16,7 @@ export interface IProjectViewDelegate {
 	deleteDeployment?: Callback<string>;
 	deleteSession?: Callback<string>;
 	displayErrorWithoutActionButton?: Callback<string>;
+	copyProjectPath?: Callback<string>;
 }
 
 export interface IProjectView {
