@@ -50,14 +50,14 @@ function App() {
 							{!resourcesDir ? (
 								<AKButton
 									onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
-									classes="flex bg-transparent"
+									classes="flex"
 									title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
 								>
-									<DownloadIcon className="text-[#FDE767]" />
+									<DownloadIcon className="text-vscode-background" />
 								</AKButton>
 							) : (
-								<AKButton classes="flex bg-transparent" onClick={() => setResourcesDirPopperVisible(true)}>
-									<div className="codicon codicon-info" ref={pathPopperElementRef}></div>
+								<AKButton onClick={() => setResourcesDirPopperVisible(true)}>
+									<div className="codicon codicon-info text-vscode-background" ref={pathPopperElementRef}></div>
 								</AKButton>
 							)}
 							{resourcesDirPopperVisible && (

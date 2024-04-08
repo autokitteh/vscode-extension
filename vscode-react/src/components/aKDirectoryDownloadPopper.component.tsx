@@ -6,7 +6,7 @@ import { AKButton } from "@react-components/aKButton.component";
 import { sendMessage } from "@react-utilities";
 
 export const DirectoryDownloadPopper = ({ resourcesDir }: { resourcesDir: string }) => (
-	<div className="relative shadow-lg">
+	<div className="relative">
 		<div className="text-left flex items-center">
 			<strong className="ml-2">{resourcesDir}</strong>
 			<AKButton
@@ -14,14 +14,13 @@ export const DirectoryDownloadPopper = ({ resourcesDir }: { resourcesDir: string
 				classes="bg-transparent ml-2"
 				title={translate().t("reactApp.settings.copyPath")}
 			>
-				<div className="codicon codicon-copy"></div>
+				<div className="codicon codicon-copy text-vscode-foreground"></div>
 			</AKButton>
 			<AKButton
 				onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
-				classes="bg-transparent"
 				title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
 			>
-				<DownloadIcon className="text-[#FDE767]" />
+				<DownloadIcon className="text-vscode-background" />
 			</AKButton>
 		</div>
 	</div>
