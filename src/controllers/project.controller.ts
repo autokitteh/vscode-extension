@@ -386,7 +386,7 @@ export class ProjectController {
 
 		let savePath = downloadPath;
 
-		if (!path) {
+		if (!savePath) {
 			const newLocalResourcesPath = await window.showOpenDialog({
 				canSelectFolders: true,
 				openLabel: translate().t("projects.downloadResourcesSelectDirectory"),
