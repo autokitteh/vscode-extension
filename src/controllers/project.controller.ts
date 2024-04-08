@@ -361,7 +361,7 @@ export class ProjectController {
 	async downloadResources(downloadPath?: string) {
 		const { data: existingResources } = await ProjectsService.getResources(this.projectId);
 
-		if (!existingResources) {
+		if (!existingResources || !Object.keys(existingResources).length) {
 			commands.executeCommand(
 				vsCommands.showInfoMessage,
 				translate().t("projects.downloadResourcesDirectoryNoResources")
@@ -401,7 +401,7 @@ export class ProjectController {
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
 					translate().t("projects.downloadResourcesDirectoryErrorProjectId", {
-						projectId: this.projectId,
+						projectName: this.project?.name,
 						fileName: resource,
 					})
 				);
@@ -409,7 +409,9 @@ export class ProjectController {
 			}
 		});
 
-		const successMessage = translate().t("projects.downloadResourcesDirectorySuccess", { projectId: this.projectId });
+		const successMessage = translate().t("projects.downloadResourcesDirectorySuccess", {
+			projectName: this.project?.name,
+		});
 		LoggerService.info(namespaces.projectController, successMessage);
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
