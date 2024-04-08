@@ -13,5 +13,5 @@ export interface IIncomingMessagesHandler {
 	setSelectedDeploymentId?: (selectDeploymentId: string | undefined) => void;
 	setSelectedSession?: (sessionId: string | undefined) => void;
 	setSessionsSection?: (sessions: SessionSectionViewModel | undefined) => void;
-	setPathResponse: (pathResponse: boolean) => void;
+	setPathResponse?: (pathResponse: boolean) => void;
 }
