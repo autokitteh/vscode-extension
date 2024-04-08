@@ -23,7 +23,7 @@ export class ProjectController {
 	public project?: Project;
 	private sessions?: Session[] = [];
 	private sessionHistoryStates: SessionLogRecord[] = [];
-	private lastSessionHistoryIndexPrinted: number = 0;
+	private sessionLogOutputCursor: number = 0;
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
@@ -216,7 +216,7 @@ export class ProjectController {
 			this.outputErrorDetails(lastState);
 			this.outputCallstackDetails(lastState);
 		}
-		this.lastSessionHistoryIndexPrinted = 0;
+		this.sessionLogOutputCursor = 0;
 
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 	}
@@ -247,12 +247,12 @@ export class ProjectController {
 		if (!hasLogs) {
 			return;
 		}
-		for (let i = this.lastSessionHistoryIndexPrinted; i < sessionStates.length; i++) {
+		for (let i = this.sessionLogOutputCursor; i < sessionStates.length; i++) {
 			if (!sessionStates[i].isFinished() && sessionStates[i].getLogs()) {
 				LoggerService.sessionLog(`${sessionStates[i].dateTime?.toISOString()}\t${sessionStates[i].getLogs()}`);
 			}
 		}
-		this.lastSessionHistoryIndexPrinted = sessionStates.length - 1;
+		this.sessionLogOutputCursor = sessionStates.length - 1;
 	}
 
 	private outputErrorDetails(state: SessionLogRecord) {
@@ -286,7 +286,7 @@ export class ProjectController {
 		}
 		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
 
-		this.lastSessionHistoryIndexPrinted = 0;
+		this.sessionLogOutputCursor = 0;
 		this.sessionHistoryStates = [];
 
 		if (lastState.isFinished()) {
