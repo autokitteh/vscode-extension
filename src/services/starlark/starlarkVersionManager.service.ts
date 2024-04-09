@@ -122,7 +122,12 @@ export class StarlarkVersionManagerService {
 		await StarlarkVersionManagerService.downloadFile(release.url, filePath);
 		LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.executableDownloadedUnpacking"));
 
-		await extractArchive(filePath, extensionPath);
+		try {
+			await extractArchive(filePath, extensionPath);
+		} catch (error) {
+			LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
+			return { error: error as Error };
+		}
 
 		const extractedFiles = await listFilesInDirectory(path.join(extensionPath, starlarkLSPExtractedDirectory));
 		if (extractedFiles.length !== 1) {
