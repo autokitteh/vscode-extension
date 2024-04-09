@@ -26,9 +26,9 @@
 	"starlarkPlatformNotSupported": "Starlark LSP is not supported on this platform",
 	"unsupportedArchiveType": "Unsupported archive type: {{type}}",
 	"errorExtractingArchive": "Error extracting archive: {{error}}",
-	"creatingDirectoryAlreadyExist": "Cannot create directory, a file with the same name exists: {{outputPath}}",
-	"creatingDirectoryPermission": "Permission denied to create or access directory: {{outputPath}}",
-	"creatingDirectoryAccess": "Failed to create or access directory: {{outputPath}}, Error: {{error}}",
+	"creatingDirectoryAlreadyExist": "Directory with the same name exists: {{outputPath}}",
+	"creatingDirectoryPermission": "Permission denied to create or access directory: {{error}}",
+	"creatingDirectoryAccess": "Failed to create or access directory: {{error}}",
 	"couldNotFetchLSP": "Couldn't fetch latest LSP executable release",
 	"sessionLogFetchFailed": "Couldn't fetch session log",
 	"deploymentsFetchFailed": "Couldn't fetch deployments",
@@ -38,5 +38,8 @@
 	"buildInformationForSingleshotNotLoaded": "Couldn't load build information for singleshot",
 	"buildInformationForSingleshotNotParsed": "Couldn't parse build information for singleshot",
 	"buildInfoFetchFailedForBuild": "Couldn't fetch build info for build {{buildId}}, error: {{error}}",
-	"buildProjectError": "Couldn't build project {{projectId}}, error: {{error}}"
+	"buildProjectError": "Couldn't build project {{projectId}}, error: {{error}}",
+	"creatingDirectory": "Project directory setup failed - project {{projectName}}",
+	"creatingDirectoryExtended": "Project directory setup failed - project {{projectName}}, error: {{error}}",
+	"pathExist": "Path exists but is not a directory"
 }

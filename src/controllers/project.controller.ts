@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels } from "@constants";
-import { convertBuildRuntimesToViewTriggers, getResources } from "@controllers/utilities";
+import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { MessageType, ProjectIntervalTypes } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
@@ -12,8 +12,9 @@ import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
+import { createDirectory } from "@utilities";
 import isEqual from "lodash/isEqual";
-import { commands, OpenDialogOptions, window } from "vscode";
+import { commands, OpenDialogOptions, window, env } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
@@ -357,10 +358,23 @@ export class ProjectController {
 		commands.executeCommand(vsCommands.showErrorMessage, errorMessage, false);
 	}
 
-	async downloadResources() {
-		const { data: existingResources } = await ProjectsService.getResources(this.projectId);
+	async downloadResources(downloadPath?: string) {
+		const { data: existingResources, error } = await ProjectsService.getResources(this.projectId);
 
-		if (!existingResources) {
+		if (error) {
+			const notification = translate().t("projects.downloadResourcesDirectoryErrorForProject", {
+				projectName: this.project?.name,
+			});
+			const log = translate().t("projects.downloadResourcesDirectoryError", {
+				projectName: this.project?.name,
+				error: (error as Error).message,
+			});
+			LoggerService.error(namespaces.projectController, log);
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			return;
+		}
+
+		if (!existingResources || !Object.keys(existingResources).length) {
 			commands.executeCommand(
 				vsCommands.showInfoMessage,
 				translate().t("projects.downloadResourcesDirectoryNoResources")
@@ -370,18 +384,22 @@ export class ProjectController {
 			return;
 		}
 
-		const newLocalResourcesPath = await window.showOpenDialog({
-			canSelectFolders: true,
-			openLabel: translate().t("projects.downloadResourcesSelectDirectory"),
-		});
+		let savePath = downloadPath;
 
-		if (!newLocalResourcesPath || !newLocalResourcesPath.length) {
-			return;
+		if (!savePath) {
+			const newLocalResourcesPath = await window.showOpenDialog({
+				canSelectFolders: true,
+				openLabel: translate().t("projects.downloadResourcesSelectDirectory"),
+			});
+
+			if (!newLocalResourcesPath || !newLocalResourcesPath.length) {
+				return;
+			}
+			savePath = newLocalResourcesPath[0].fsPath;
 		}
 
-		const savePath = newLocalResourcesPath[0].fsPath;
 		Object.keys(existingResources).map(async (resource) => {
-			const fullPath: string = path.join(savePath, resource);
+			const fullPath: string = path.join(savePath!, resource);
 			const data: Uint8Array = existingResources[resource] as Uint8Array;
 			try {
 				await fsPromises.writeFile(fullPath, Buffer.from(data));
@@ -396,7 +414,7 @@ export class ProjectController {
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
 					translate().t("projects.downloadResourcesDirectoryErrorProjectId", {
-						projectId: this.projectId,
+						projectName: this.project?.name,
 						fileName: resource,
 					})
 				);
@@ -404,11 +422,13 @@ export class ProjectController {
 			}
 		});
 
-		const successMessage = translate().t("projects.downloadResourcesDirectorySuccess", { projectId: this.projectId });
+		const successMessage = translate().t("projects.downloadResourcesDirectorySuccess", {
+			projectName: this.project?.name,
+		});
 		LoggerService.info(namespaces.projectController, successMessage);
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
-		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: newLocalResourcesPath[0].fsPath });
+		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: savePath });
 
 		this.notifyViewResourcesPathChanged();
 	}
@@ -429,7 +449,8 @@ export class ProjectController {
 	}
 
 	async build() {
-		const { data: mappedResources, error: resourcesError } = await getResources(this.projectId);
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(this.projectId);
+
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
@@ -460,13 +481,31 @@ export class ProjectController {
 			openLabel: translate().t("resources.selectResourcesFolder"),
 		};
 
-		const uri = await window.showOpenDialog(options);
-		if (!uri || uri.length === 0) {
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("resources.setResourcesFailed"));
+		const newDirectoryPath = await window.showOpenDialog(options);
+		if (!newDirectoryPath || newDirectoryPath.length === 0) {
 			return;
 		}
 
-		const resourcePath = uri[0].fsPath;
+		const resourcePath = path.join(newDirectoryPath[0].fsPath, this.project!.name);
+		try {
+			await createDirectory(resourcePath);
+		} catch (error) {
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				translate().t("errors.creatingDirectory", { projectName: this.project?.name })
+			);
+
+			LoggerService.error(
+				namespaces.projectController,
+				translate().t("errors.creatingDirectoryExtended", {
+					projectName: this.project?.name,
+					error: (error as Error).message,
+				})
+			);
+			return;
+		}
+		await this.downloadResources(resourcePath);
+
 		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: resourcePath });
 
 		this.notifyViewResourcesPathChanged();
@@ -474,7 +513,7 @@ export class ProjectController {
 	}
 
 	async run() {
-		const { data: mappedResources, error: resourcesError } = await getResources(this.projectId);
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(this.projectId);
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
@@ -587,15 +626,16 @@ export class ProjectController {
 
 		if (resourcesPath) {
 			this.view.update({
-				type: MessageType.setResourcesDirState,
-				payload: true,
+				type: MessageType.setResourcesDir,
+				payload: resourcesPath,
 			});
-		} else {
-			this.view.update({
-				type: MessageType.setResourcesDirState,
-				payload: false,
-			});
+			return;
 		}
+
+		this.view.update({
+			type: MessageType.setResourcesDir,
+			payload: "",
+		});
 	}
 
 	async getResourcesPathFromContext() {
@@ -654,6 +694,39 @@ export class ProjectController {
 			translate().t("projects.downloadResourcesDirectoryDismiss")
 		);
 	}
+
+	async copyProjectPath(projectPathToCopy: string): Promise<void> {
+		try {
+			await env.clipboard.writeText(projectPathToCopy);
+			commands.executeCommand(
+				vsCommands.showInfoMessage,
+				translate().t("projects.projectPathCopied", { projectName: this.project?.name })
+			);
+
+			this.view.update({
+				type: MessageType.copyProjectPathResponse,
+				payload: true,
+			});
+		} catch (error) {
+			commands.executeCommand(
+				vsCommands.showInfoMessage,
+				translate().t("projects.projectPathCopiedError", { projectName: this.project?.name })
+			);
+			LoggerService.error(
+				namespaces.projectController,
+				translate().t("projects.projectPathCopiedErrorEnriched", {
+					error: (error as Error).message,
+					projectName: this.project?.name,
+				})
+			);
+
+			this.view.update({
+				type: MessageType.copyProjectPathResponse,
+				payload: false,
+			});
+		}
+	}
+
 	async deleteSession(sessionId: string) {
 		const { error } = await SessionsService.deleteSession(sessionId);
 		if (error) {

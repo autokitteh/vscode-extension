@@ -5,7 +5,7 @@ import { SessionEntrypoint } from "@type/models";
 export interface IIncomingMessagesHandler {
 	setThemeVisualType?(themeKind: Theme | undefined): void;
 	setProjectName?(projectName: string | undefined): void;
-	setResourcesDirState?(projectFolder: boolean): void;
+	setResourcesDir?(projectFolder: string): void;
 	handleSessionDeletedResponse?: (isDeleted: boolean) => void;
 	handleDeploymentDeletedResponse?: (isDeleted: boolean) => void;
 	setEntrypoints?: (value: Record<string, SessionEntrypoint[]> | undefined) => void;
@@ -13,4 +13,5 @@ export interface IIncomingMessagesHandler {
 	setSelectedDeploymentId?: (selectDeploymentId: string | undefined) => void;
 	setSelectedSession?: (sessionId: string | undefined) => void;
 	setSessionsSection?: (sessions: SessionSectionViewModel | undefined) => void;
+	setPathResponse?: (pathResponse: boolean) => void;
 }
