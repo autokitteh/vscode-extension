@@ -3,7 +3,7 @@ import * as path from "path";
 import { pipeline } from "stream/promises";
 import * as zlib from "zlib";
 import { starlarkLSPExtractedDirectory } from "@constants/starlark.constants";
-import { createDirectory } from "@utilities";
+import { createDirectory, directoryExists } from "@utilities";
 import AdmZip from "adm-zip";
 import tarFs from "tar-fs";
 
@@ -44,7 +44,9 @@ export const extractArchive = async (inputPath: string, outputPath: string): Pro
 	const extractPath = `${outputPath}/${starlarkLSPExtractedDirectory}`;
 
 	try {
-		await createDirectory(extractPath);
+		if (!directoryExists(extractPath)) {
+			await createDirectory(extractPath);
+		}
 
 		switch (type) {
 			case "tar.gz":

@@ -33,6 +33,15 @@ export const createDirectory = async (outputPath: string): Promise<void> => {
 	}
 };
 
+export const directoryExists = async (directoryPath: string): Promise<boolean> => {
+	try {
+		const stat = await fs.promises.stat(directoryPath);
+		return stat.isDirectory();
+	} catch (error) {
+		return false;
+	}
+};
+
 export const listFilesInDirectory = async (dirPath: string, includeDirectories: boolean = false): Promise<string[]> => {
 	const entries = await fsPromises.readdir(dirPath, { withFileTypes: true });
 	const files: string[] = [];
