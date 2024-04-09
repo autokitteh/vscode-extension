@@ -495,7 +495,13 @@ export class ProjectController {
 				translate().t("errors.creatingDirectory", { projectName: this.project?.name })
 			);
 
-			LoggerService.error(namespaces.projectController, (error as Error).message);
+			LoggerService.error(
+				namespaces.projectController,
+				translate().t("errors.creatingDirectoryExtended", {
+					projectName: this.project?.name,
+					error: (error as Error).message,
+				})
+			);
 			return;
 		}
 		await this.downloadResources(resourcePath);

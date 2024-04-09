@@ -40,5 +40,6 @@
 	"buildInfoFetchFailedForBuild": "Couldn't fetch build info for build {{buildId}}, error: {{error}}",
 	"buildProjectError": "Couldn't build project {{projectId}}, error: {{error}}",
 	"creatingDirectory": "Project directory setup failed - project {{projectName}}",
+	"creatingDirectoryExtended": "Project directory setup failed - project {{projectName}}, error: {{error}}",
 	"pathExist": "Path exists but is not a directory"
 }
