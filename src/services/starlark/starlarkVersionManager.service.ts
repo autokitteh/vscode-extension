@@ -1,13 +1,13 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { namespaces, starlarkExecutableGithubRepository, starlarkLSPExtractedDirectory } from "@constants";
+import { namespaces, starlarkExecutableGithubRepository, starlarkLSPExtractedDirectory, vsCommands } from "@constants";
 import { translate } from "@i18n";
 import { AssetInfo, GitHubRelease } from "@interfaces";
 import { LoggerService } from "@services";
 import { extractArchive, listFilesInDirectory } from "@utilities";
 import axios from "axios";
-import { window } from "vscode";
+import { commands, window } from "vscode";
 
 export class StarlarkVersionManagerService {
 	public static async updateLSPVersionIfNeeded(
@@ -126,6 +126,12 @@ export class StarlarkVersionManagerService {
 			await extractArchive(filePath, extensionPath);
 		} catch (error) {
 			LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
+			
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				(error as Error).message
+			);
+
 			return { error: error as Error };
 		}
 
