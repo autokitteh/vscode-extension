@@ -1,3 +1,10 @@
+# [0.12.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.1...v0.12.0-dev.2) (2024-04-09)
+
+
+### Bug Fixes
+
+* fix starlark download when the folder is already exist ([#229](https://github.com/autokitteh/vscode-extension/issues/229)) ([8dbaea6](https://github.com/autokitteh/vscode-extension/commit/8dbaea63e26611d5130d870b5c4961b6e9e5cb1d))
+
 # [0.12.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.11.1-dev.1...v0.12.0-dev.1) (2024-04-09)
 
 
