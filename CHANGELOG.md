@@ -1,3 +1,10 @@
+# [0.12.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.11.1-dev.1...v0.12.0-dev.1) (2024-04-09)
+
+
+### Features
+
+* pick directory button change behavior ([#226](https://github.com/autokitteh/vscode-extension/issues/226)) ([20c4c69](https://github.com/autokitteh/vscode-extension/commit/20c4c69d5c19dc28201b3f6e36a22229ad2012bf))
+
 ## [0.11.1-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.11.0...v0.11.1-dev.1) (2024-04-08)
 
 
