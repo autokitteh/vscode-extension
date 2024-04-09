@@ -56,7 +56,10 @@ function App() {
 									<DownloadIcon className="text-vscode-background" />
 								</AKButton>
 							) : (
-								<AKButton onClick={() => setResourcesDirPopperVisible(true)}>
+								<AKButton
+									onClick={() => setResourcesDirPopperVisible(true)}
+									title={translate().t("reactApp.settings.viewProjectResourcesDirectory")}
+								>
 									<div className="codicon codicon-info text-vscode-background" ref={pathPopperElementRef}></div>
 								</AKButton>
 							)}

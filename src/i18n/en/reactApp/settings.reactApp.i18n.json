@@ -1,4 +1,5 @@
 {
 	"pickDirectoryOfExecutables": "Pick resources folder",
-	"copyPath": "Copy path"
+	"copyPath": "Copy path",
+	"viewProjectResourcesDirectoryPath": "View project resources directory path"
 }
