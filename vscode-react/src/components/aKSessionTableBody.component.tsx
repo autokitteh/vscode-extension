@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
-import { AKSessionState, DeletePopper, PopperComponent } from "@react-components";
+import { AKOverlay, AKSessionState, DeletePopper, PopperComponent } from "@react-components";
 import { AKTableRow, AKTableCell } from "@react-components/AKTable";
 import { useAppState } from "@react-context";
 import { SessionState } from "@react-enums";
@@ -136,6 +136,8 @@ export const AKSessionsTableBody = ({
 								}
 								onClick={(event) => displaySessionDeletePopper(event, session)}
 							></div>
+
+							<AKOverlay isVisibile={modalName === "sessionDelete"} onOverlayClick={hidePopper} />
 							<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
 								<DeletePopper
 									isDeletingInProcess={isDeletingInProcess}

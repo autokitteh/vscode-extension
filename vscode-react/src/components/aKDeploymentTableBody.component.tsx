@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
-import { AKDeploymentState } from "@react-components";
+import { AKDeploymentState, AKOverlay } from "@react-components";
 import { DeletePopper, ExecutePopper, PopperComponent } from "@react-components";
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
 import { useAppState } from "@react-context/appState.context";
@@ -208,7 +208,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					<div
 						className={`relative codicon codicon-trash ${
 							isActive(deployment.state) ? "cursor-not-allowed" : "cursor-pointer"
-						} ml-2 z-20`}
+						} ml-2`}
 						title={
 							isActive(deployment.state)
 								? translate().t("reactApp.deployments.deleteDisabled")
@@ -216,10 +216,10 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						}
 						onClick={(event) => showDeleteDeploymentPopper(event, deployment)}
 					></div>
-
-					{(modalName === "deploymentDelete" || modalName === "deploymentExecute") && (
-						<div className="absolute h-screen w-screen top-0 left-0 z-10" onClick={() => hidePopper()}></div>
-					)}
+					<AKOverlay
+						isVisibile={modalName === "deploymentDelete" || modalName === "deploymentExecute"}
+						onOverlayClick={hidePopper}
+					/>
 
 					<PopperComponent visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
 						<DeletePopper
