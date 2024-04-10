@@ -1,3 +1,10 @@
+# [0.12.0-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.2...v0.12.0-dev.3) (2024-04-10)
+
+
+### Bug Fixes
+
+* add titles on hover to ui buttons ([#233](https://github.com/autokitteh/vscode-extension/issues/233)) ([e41ddd0](https://github.com/autokitteh/vscode-extension/commit/e41ddd009f89a4d8eeeec18099943ee8d4737a96))
+
 # [0.12.0-dev.2](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.1...v0.12.0-dev.2) (2024-04-09)
 
 
