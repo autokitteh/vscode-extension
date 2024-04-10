@@ -126,11 +126,8 @@ export class StarlarkVersionManagerService {
 			await extractArchive(filePath, extensionPath);
 		} catch (error) {
 			LoggerService.error(namespaces.startlarkLSPServer, (error as Error).message);
-			
-			commands.executeCommand(
-				vsCommands.showErrorMessage,
-				(error as Error).message
-			);
+
+			commands.executeCommand(vsCommands.showErrorMessage, (error as Error).message);
 
 			return { error: error as Error };
 		}
