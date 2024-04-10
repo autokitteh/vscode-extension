@@ -10,14 +10,17 @@ export const AKMonacoEditorModal = ({
 	setModal: (isDisplayed: boolean) => void;
 	content?: string;
 }) => (
-	<AKModal wrapperClasses={["pt-20 !bg-transparent"]}>
-		<div className="flex justify-end cursor-pointer" onClick={() => setModal(false)}>
+	<AKModal wrapperClasses={["pt-2", "!bg-transparent"]} classes={["bg-[#ffffff85]"]}>
+		<div
+			className="flex justify-end cursor-pointer text-black font-extrabold pt-8 text-xl"
+			onClick={() => setModal(false)}
+		>
 			X
 		</div>
 		<div className="m-auto">
 			<div className="flex w-full justify-end mt-2">
 				<Editor
-					height="70vh"
+					height="80vh"
 					defaultLanguage="json"
 					defaultValue={content}
 					theme="vs-dark"
@@ -25,7 +28,7 @@ export const AKMonacoEditorModal = ({
 				/>
 			</div>
 			<div className="flex w-full justify-end mt-2">
-				<AKButton classes="ml-2" onClick={() => setModal(false)}>
+				<AKButton classes="w-full" onClick={() => setModal(false)}>
 					{translate().t("reactApp.deployments.closeModalButton")}
 				</AKButton>
 			</div>
