@@ -186,38 +186,41 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					{deployment.buildId}
 				</AKTableCell>
 				<AKTableCell>
-					{isLatestDeployment(deployment.deploymentId) && (
+					<div className="flex justify-start">
+						{isDeploymentStateStartable(deployment.state) ? (
+							<div
+								className="codicon codicon-debug-start cursor-pointer text-green-500"
+								title={translate().t("reactApp.deployments.activate")}
+								onClick={() => activateBuild(deployment.deploymentId)}
+							></div>
+						) : (
+							<div
+								className="codicon codicon-debug-stop cursor-pointer text-red-500"
+								title={translate().t("reactApp.deployments.deactivate")}
+								onClick={() => deactivateBuild(deployment.deploymentId)}
+							></div>
+						)}
 						<div
-							className="codicon codicon-redo mr-2 cursor-pointer"
-							ref={executePopperElementRef}
-							title={translate().t("reactApp.deployments.execute")}
-							onClick={() => showPopper("deploymentExecute")}
+							className={`relative codicon codicon-trash ${
+								isActive(deployment.state) ? "cursor-not-allowed" : "cursor-pointer"
+							} ml-2 z-20`}
+							title={
+								isActive(deployment.state)
+									? translate().t("reactApp.deployments.deleteDisabled")
+									: translate().t("reactApp.deployments.delete")
+							}
+							onClick={(event) => showDeleteDeploymentPopper(event, deployment)}
 						></div>
-					)}
-					{isDeploymentStateStartable(deployment.state) ? (
-						<div
-							className="codicon codicon-debug-start cursor-pointer text-green-500"
-							title={translate().t("reactApp.deployments.activate")}
-							onClick={() => activateBuild(deployment.deploymentId)}
-						></div>
-					) : (
-						<div
-							className="codicon codicon-debug-stop cursor-pointer text-red-500"
-							title={translate().t("reactApp.deployments.deactivate")}
-							onClick={() => deactivateBuild(deployment.deploymentId)}
-						></div>
-					)}
-					<div
-						className={`relative codicon codicon-trash ${
-							isActive(deployment.state) ? "cursor-not-allowed" : "cursor-pointer"
-						} ml-2`}
-						title={
-							isActive(deployment.state)
-								? translate().t("reactApp.deployments.deleteDisabled")
-								: translate().t("reactApp.deployments.delete")
-						}
-						onClick={(event) => showDeleteDeploymentPopper(event, deployment)}
-					></div>
+
+						{isLatestDeployment(deployment.deploymentId) && (
+							<div
+								className="codicon codicon-redo ml-2 cursor-pointer"
+								ref={executePopperElementRef}
+								title={translate().t("reactApp.deployments.execute")}
+								onClick={() => showPopper("deploymentExecute")}
+							></div>
+						)}
+					</div>
 
 					<AKOverlay
 						isVisibile={index === 0 && (modalName === "deploymentDelete" || modalName === "deploymentExecute")}

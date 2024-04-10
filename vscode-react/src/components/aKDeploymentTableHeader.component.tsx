@@ -12,7 +12,9 @@ export const AKDeploymentTableHeader: React.FC = () => {
 			<AKTableHeaderCell>{translate().t("reactApp.sessions.statuses.error")}</AKTableHeaderCell>
 			<AKTableHeaderCell>{translate().t("reactApp.sessions.statuses.completed")}</AKTableHeaderCell>
 			<AKTableHeaderCell>{translate().t("reactApp.deployments.buildId")}</AKTableHeaderCell>
-			<AKTableHeaderCell>{translate().t("reactApp.deployments.actions")}</AKTableHeaderCell>
+			<AKTableHeaderCell>
+				<div className="flex justify-start">{translate().t("reactApp.deployments.actions")}</div>
+			</AKTableHeaderCell>
 		</AKTableHeader>
 	);
 };

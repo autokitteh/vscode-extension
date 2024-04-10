@@ -141,6 +141,14 @@ export const AKSessionsTableBody = ({
 								isVisibile={modalName === "sessionDelete" && index === 0}
 								onOverlayClick={() => hidePopper()}
 							/>
+
+							<div
+								className={`codicon codicon-debug-stop cursor-pointer text-red-500 ${
+									session.state !== SessionState.RUNNING && "invisible"
+								}`}
+								title={translate().t("reactApp.sessions.stopSession")}
+								onClick={() => stopSession(session.sessionId)}
+							></div>
 							<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
 								<DeletePopper
 									isDeletingInProcess={isDeletingInProcess}
@@ -149,13 +157,6 @@ export const AKSessionsTableBody = ({
 									translations={deleteSessionPopperTranslations}
 								/>
 							</PopperComponent>
-							{session.state === SessionState.RUNNING && (
-								<div
-									className="codicon codicon-debug-stop cursor-pointer text-red-500"
-									title={translate().t("reactApp.sessions.stopSession")}
-									onClick={() => stopSession(session.sessionId)}
-								></div>
-							)}
 						</AKTableCell>
 					</AKTableRow>
 				))}
