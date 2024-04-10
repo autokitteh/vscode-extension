@@ -137,7 +137,7 @@ export const AKSessionsTableBody = ({
 								onClick={(event) => displaySessionDeletePopper(event, session)}
 							></div>
 
-							<AKOverlay isVisibile={modalName === "sessionDelete"} onOverlayClick={hidePopper} />
+							<AKOverlay isVisibile={modalName === "sessionDelete"} onOverlayClick={() => hidePopper()} />
 							<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
 								<DeletePopper
 									isDeletingInProcess={isDeletingInProcess}

@@ -44,6 +44,11 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const showPopper = (popperId: string) => dispatch({ type: "SET_MODAL_NAME", payload: popperId });
 	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
 
+	const isLatestDeployment = (deploymentId: string) => deploymentId === deployments?.[0].deploymentId;
+
+	const displayOverlayForPoppers = (deploymentId: string) =>
+		isLatestDeployment(deploymentId) && (modalName === "deploymentDelete" || modalName === "deploymentExecute");
+
 	const isDeploymentStateStartable = (deploymentState: number) =>
 		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
 
@@ -184,7 +189,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					{deployment.buildId}
 				</AKTableCell>
 				<AKTableCell>
-					{deployment.deploymentId === deployments?.[0]?.deploymentId && (
+					{isLatestDeployment(deployment.deploymentId) && (
 						<div
 							className="codicon codicon-redo mr-2 cursor-pointer"
 							ref={executePopperElementRef}
@@ -216,11 +221,11 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						}
 						onClick={(event) => showDeleteDeploymentPopper(event, deployment)}
 					></div>
-					<AKOverlay
-						isVisibile={modalName === "deploymentDelete" || modalName === "deploymentExecute"}
-						onOverlayClick={hidePopper}
-					/>
 
+					<AKOverlay
+						isVisibile={displayOverlayForPoppers(deployment.deploymentId)}
+						onOverlayClick={() => hidePopper()}
+					/>
 					<PopperComponent visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
 						<DeletePopper
 							isDeletingInProcess={isDeletingInProcess}
