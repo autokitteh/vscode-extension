@@ -34,12 +34,12 @@ export const DeletePopper: React.FC<DeletePopperProps> = ({
 						<AKButton
 							classes="bg-vscode-editor-background text-vscode-foreground"
 							onClick={onDismiss}
-							title={translate().t("reactApp.deployments.dismiss")}
+							title={translate().t("reactApp.general.dismiss")}
 						>
-							{translate().t("reactApp.general.no")}
+							{translate().t("reactApp.general.dismiss")}
 						</AKButton>
 						<div className="flex-grow" />
-						<AKButton onClick={onConfirm} title={translate().t("reactApp.deployments.yes")}>
+						<AKButton onClick={onConfirm} title={translate().t("reactApp.general.yes")}>
 							{translate().t("reactApp.general.yes")}
 						</AKButton>
 					</div>
