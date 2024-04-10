@@ -20,5 +20,7 @@
 	"errorDeletingLine2": "Check the logs",
 	"deleteSessionDisabled": "Cannot delete running session",
 	"delete": "Delete",
-	"stopSession": "Stop session"
+	"stopSession": "Stop session",
+	"startSession": "Start session",
+	"showSessionProps": "Show session properties"
 }

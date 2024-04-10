@@ -37,11 +37,20 @@ function App() {
 					<div className="flex items-center w-full">
 						<AKLogo className="w-12 h-12" themeVisualType={themeVisualType} />
 						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">{projectName}</div>
-						<AKButton classes="mx-4" onClick={() => sendMessage(MessageType.buildProject)} disabled={!resourcesDir}>
+						<AKButton
+							classes="mx-4"
+							onClick={() => sendMessage(MessageType.buildProject)}
+							disabled={!resourcesDir}
+							title={translate().t("reactApp.general.build")}
+						>
 							<div className="codicon codicon-tools mr-2"></div>
 							{translate().t("reactApp.general.build")}
 						</AKButton>
-						<AKButton onClick={() => sendMessage(MessageType.runProject)} disabled={!resourcesDir}>
+						<AKButton
+							onClick={() => sendMessage(MessageType.runProject)}
+							disabled={!resourcesDir}
+							title={translate().t("reactApp.general.deploy")}
+						>
 							<div className="codicon codicon-rocket mr-2"></div>
 							{translate().t("reactApp.general.deploy")}
 						</AKButton>

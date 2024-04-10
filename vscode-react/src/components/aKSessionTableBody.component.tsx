@@ -115,12 +115,12 @@ export const AKSessionsTableBody = ({
 								<div className="inline-block">
 									<div
 										className="codicon codicon-redo mr-2 cursor-pointer"
-										title="Execute"
+										title={translate().t("reactApp.sessions.startSession")}
 										onClick={() => startSession(session)}
 									></div>
 									<div
 										className="codicon codicon-symbol-namespace mr-2 cursor-pointer"
-										title="Execute"
+										title={translate().t("reactApp.sessions.showSessionProps")}
 										onClick={() => displayInputsModal(JSON.stringify(session.inputs, null, 2))}
 									></div>
 								</div>
