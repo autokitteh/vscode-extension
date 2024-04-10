@@ -17,16 +17,17 @@ export const DirectoryDownloadPopper = ({ resourcesDir }: { resourcesDir: string
 				<div className="codicon codicon-copy text-vscode-foreground"></div>
 			</AKButton>
 			<AKButton
+				onClick={() => sendMessage(MessageType.openProjectResourcesDirectory, resourcesDir)}
+				classes="bg-transparent"
+				title={translate().t("reactApp.settings.openProjectResourcesDirectory")}
+			>
+				<div className="codicon codicon-folder-opened text-vscode-foreground"></div>
+			</AKButton>
+			<AKButton
 				onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
 				title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
 			>
 				<DownloadIcon className="text-vscode-background" />
-			</AKButton>
-			<AKButton
-				onClick={() => sendMessage(MessageType.openProjectResourcesDirectory, resourcesDir)}
-				title={translate().t("reactApp.settings.openProjectResourcesDirectory")}
-			>
-				<div className="codicon codicon-folder-opened text-vscode-foreground"></div>
 			</AKButton>
 		</div>
 	</div>
