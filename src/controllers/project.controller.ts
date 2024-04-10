@@ -12,7 +12,7 @@ import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
-import { createDirectory } from "@utilities";
+import { createDirectory, openFileExplorer } from "@utilities";
 import isEqual from "lodash/isEqual";
 import { commands, OpenDialogOptions, window, env } from "vscode";
 
@@ -719,6 +719,10 @@ export class ProjectController {
 				payload: false,
 			});
 		}
+	}
+
+	async openProjectResourcesDirectory(resourcesPath: string): Promise<void> {
+		openFileExplorer(resourcesPath);
 	}
 
 	async deleteSession(sessionId: string) {

@@ -33,6 +33,31 @@ export const createDirectory = async (outputPath: string): Promise<void> => {
 	}
 };
 
+export const openFileExplorer = async (directoryPath: string): Promise<void> => {
+	const { exec } = require("child_process");
+	let command;
+
+	if (process.platform === "darwin") {
+		// Escapes spaces for use in shell command
+		const escapedPath = directoryPath.replace(/ /g, "\\ ");
+		command = `open "${escapedPath}"`; // Opens Finder at the specified path
+	} else if (process.platform === "win32") {
+		const escapedPath = directoryPath.replace(/\\/g, "\\\\"); // Escapes backslashes for Windows paths
+		command = `explorer "${escapedPath}"`; // Opens File Explorer at the specified path
+	} else {
+		console.log("Unsupported platform for opening file explorer");
+		return;
+	}
+
+	exec(command, (error: Error) => {
+		if (error) {
+			console.error(`Error opening file explorer: ${error}`);
+			return;
+		}
+		console.log(`File explorer opened at ${path} successfully`);
+	});
+};
+
 export const directoryExists = async (directoryPath: string): Promise<boolean> => {
 	try {
 		const stat = await fs.promises.stat(directoryPath);

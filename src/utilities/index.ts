@@ -17,4 +17,5 @@ export {
 	mapFilesToContentInBytes,
 	getDirectoryOfFile,
 	directoryExists,
+	openFileExplorer,
 } from "@utilities/fileSystem.utils";

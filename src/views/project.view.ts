@@ -66,6 +66,9 @@ export class ProjectView implements IProjectView {
 					case MessageType.copyProjectPath:
 						this.delegate?.copyProjectPath?.(message.payload as string);
 						break;
+					case MessageType.openProjectResourcesDirectory:
+						this.delegate?.openProjectResourcesDirectory?.(message.payload as string);
+						break;
 					default:
 				}
 			},
