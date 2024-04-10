@@ -195,11 +195,13 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					{isDeploymentStateStartable(deployment.state) ? (
 						<div
 							className="codicon codicon-debug-start cursor-pointer text-green-500"
+							title={translate().t("reactApp.deployments.activate")}
 							onClick={() => activateBuild(deployment.deploymentId)}
 						></div>
 					) : (
 						<div
 							className="codicon codicon-debug-stop cursor-pointer text-red-500"
+							title={translate().t("reactApp.deployments.deactivate")}
 							onClick={() => deactivateBuild(deployment.deploymentId)}
 						></div>
 					)}
