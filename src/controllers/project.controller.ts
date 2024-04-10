@@ -482,7 +482,7 @@ export class ProjectController {
 
 		const resourcePath = path.join(newDirectoryPath[0].fsPath, this.project!.name);
 		try {
-			await createDirectory(resourcePath);
+			createDirectory(resourcePath);
 		} catch (error) {
 			commands.executeCommand(
 				vsCommands.showErrorMessage,
@@ -722,7 +722,21 @@ export class ProjectController {
 	}
 
 	async openProjectResourcesDirectory(resourcesPath: string): Promise<void> {
-		openFileExplorer(resourcesPath);
+		try {
+			openFileExplorer(resourcesPath);
+		} catch (error) {
+			LoggerService.error(
+				namespaces.sessionsService,
+				translate().t("projects.errorOpeningFileExplorerError", {
+					projectName: this.project?.name,
+					error: (error as Error).message,
+				})
+			);
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				translate().t("projects.errorOpeningFileExplorerShort", { projectName: this.project?.name })
+			);
+		}
 	}
 
 	async deleteSession(sessionId: string) {

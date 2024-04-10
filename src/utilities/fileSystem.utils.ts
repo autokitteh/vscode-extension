@@ -1,3 +1,4 @@
+import { exec } from "child_process";
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
@@ -33,28 +34,23 @@ export const createDirectory = async (outputPath: string): Promise<void> => {
 	}
 };
 
-export const openFileExplorer = async (directoryPath: string): Promise<void> => {
-	const { exec } = require("child_process");
+export const openFileExplorer = (directoryPath: string) => {
 	let command;
+	const normalizedPath = path.normalize(directoryPath);
+	const quotedPath = `"${normalizedPath}"`;
 
 	if (process.platform === "darwin") {
-		// Escapes spaces for use in shell command
-		const escapedPath = directoryPath.replace(/ /g, "\\ ");
-		command = `open "${escapedPath}"`; // Opens Finder at the specified path
+		command = `open ${quotedPath}`;
 	} else if (process.platform === "win32") {
-		const escapedPath = directoryPath.replace(/\\/g, "\\\\"); // Escapes backslashes for Windows paths
-		command = `explorer "${escapedPath}"`; // Opens File Explorer at the specified path
+		command = `explorer ${quotedPath}`;
 	} else {
-		console.log("Unsupported platform for opening file explorer");
-		return;
+		throw new Error(translate().t("errors.notSupportedPlatform"));
 	}
 
-	exec(command, (error: Error) => {
+	exec(command, (error) => {
 		if (error) {
-			console.error(`Error opening file explorer: ${error}`);
-			return;
+			throw new Error(translate().t("errors.errorOpeningFileExplorer", { error }));
 		}
-		console.log(`File explorer opened at ${path} successfully`);
 	});
 };
 

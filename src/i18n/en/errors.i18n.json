@@ -41,5 +41,9 @@
 	"buildProjectError": "Couldn't build project {{projectId}}, error: {{error}}",
 	"creatingDirectory": "Project directory setup failed - project {{projectName}}",
 	"creatingDirectoryExtended": "Project directory setup failed - project {{projectName}}, error: {{error}}",
-	"pathExist": "Path exists but is not a directory"
+	"pathExist": "Path exists but is not a directory",
+	"errorOpeningFileExplorerShort": "Error opening file explorer, for project: {{projectName}}",
+	"notSupportedPlatform": "Unsupported platform for opening file explorer",
+	"errorOpeningFileExplorer": "Error opening file explorer: {{error}}",
+	"errorOpeningFileExplorerError": "Project {{projectName}}: {{error}}"
 }
