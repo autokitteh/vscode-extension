@@ -43,6 +43,8 @@ export const openFileExplorer = (directoryPath: string) => {
 		command = `open ${quotedPath}`;
 	} else if (process.platform === "win32") {
 		command = `explorer ${quotedPath}`;
+	} else if (process.platform === "linux") {
+		command = `xdg-open "${path}"`;
 	} else {
 		throw new Error(translate().t("errors.notSupportedPlatform"));
 	}
