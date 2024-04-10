@@ -114,7 +114,7 @@ export const AKSessionsTableBody = ({
 							{session.deploymentId === lastDeployment?.deploymentId && (
 								<div className="inline-block">
 									<div
-										className="codicon codicon-redo mr-2 cursor-pointer"
+										className="codicon codicon-debug-rerun mr-2 cursor-pointer"
 										title={translate().t("reactApp.sessions.startSession")}
 										onClick={() => startSession(session)}
 									></div>
