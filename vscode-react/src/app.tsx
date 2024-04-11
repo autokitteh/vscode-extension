@@ -77,7 +77,6 @@ function App() {
 								onOverlayClick={() => setResourcesDirPopperVisible(false)}
 							/>
 
-							<AKOverlay isVisibile={!!!resourcesDir} />
 							<PopperComponent visible={resourcesDirPopperVisible} referenceRef={pathPopperElementRef}>
 								<DirectoryDownloadPopper resourcesDir={resourcesDir} />
 							</PopperComponent>
