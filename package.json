@@ -15,9 +15,6 @@
 		"@views": "dist/src/views",
 		"@vscommands": "dist/src/vscommands"
 	},
-	"extensionDependencies": [
-		"redhat.vscode-yaml"
-	],
 	"optionalDependencies": {
 		"@rollup/rollup-linux-x64-gnu": "4.6.1"
 	},
@@ -297,6 +294,10 @@
 		"@typescript-eslint/eslint-plugin": "^7.0.1",
 		"@typescript-eslint/parser": "^7.0.1",
 		"@vscode/vsce": "^2.23.0",
+		"@wdio/cli": "^8.35.1",
+		"@wdio/local-runner": "^8.35.1",
+		"@wdio/mocha-framework": "^8.35.0",
+		"@wdio/spec-reporter": "^8.32.4",
 		"esbuild": "0.20.0",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
@@ -312,9 +313,11 @@
 		"semantic-release-slack-bot": "^4.0.2",
 		"semantic-release-vsce": "^5.6.4",
 		"sinon": "^17.0.1",
+		"ts-node": "^10.9.2",
 		"typescript": "^5.3.3",
 		"vitest": "^1.2.2",
-		"vscode-test": "^1.5.0"
+		"vscode-test": "^1.5.0",
+		"wdio-vscode-service": "^6.0.3"
 	},
 	"engines": {
 		"vscode": "^1.86.0"
@@ -362,7 +365,8 @@
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
 		"package": "vsce package",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"wdio": "wdio run ./wdio.conf.ts"
 	},
 	"version": "0.12.0-dev.3",
 	"workspaces": [

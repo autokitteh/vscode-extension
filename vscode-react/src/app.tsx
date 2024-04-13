@@ -36,7 +36,9 @@ function App() {
 				<div className="flex flex-col w-full">
 					<div className="flex items-center w-full">
 						<AKLogo className="w-12 h-12" themeVisualType={themeVisualType} />
-						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">{projectName}</div>
+						<div className="text-vscode-input-foreground font-bold ml-4 text-lg" id="projectName">
+							{projectName}
+						</div>
 						<AKButton
 							classes="mx-4"
 							onClick={() => sendMessage(MessageType.buildProject)}
