@@ -1,3 +1,10 @@
+# [0.12.0-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.4...v0.12.0-dev.5) (2024-04-14)
+
+
+### Features
+
+* open directory of project resources from the webview ([#231](https://github.com/autokitteh/vscode-extension/issues/231)) ([1fde797](https://github.com/autokitteh/vscode-extension/commit/1fde797c11af59e44ae4e84c11e46abb7074ce95))
+
 # [0.12.0-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.3...v0.12.0-dev.4) (2024-04-14)
 
 
