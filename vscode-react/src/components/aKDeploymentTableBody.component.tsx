@@ -82,6 +82,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	};
 
 	const isActive = (deploymentState: DeploymentState) => deploymentState === DeploymentState.ACTIVE_DEPLOYMENT;
+	const isLastDeployment = (deploymentId: string) => deploymentId === deployments?.[0]?.deploymentId;
 
 	const startSession = () => {
 		const lastDeployment = deployments![0];
@@ -200,7 +201,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 								onClick={() => deactivateBuild(deployment.deploymentId)}
 							></div>
 						)}
-						{deployment.deploymentId === deployments?.[0]?.deploymentId && (
+						{isLastDeployment(deployment.deploymentId) && (
 							<div
 								className="codicon codicon-debug-rerun ml-2 cursor-pointer"
 								ref={executePopperElementRef}
