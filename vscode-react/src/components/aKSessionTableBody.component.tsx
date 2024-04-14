@@ -99,7 +99,7 @@ export const AKSessionsTableBody = ({
 	return (
 		<>
 			{sessions &&
-				sessions.map((session: Session) => (
+				sessions.map((session: Session, index: number) => (
 					<AKTableRow key={session.sessionId} isSelected={selectedSession === session.sessionId}>
 						<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
 							{getTimePassed(session.createdAt)}
@@ -137,7 +137,10 @@ export const AKSessionsTableBody = ({
 								onClick={(event) => displaySessionDeletePopper(event, session)}
 							></div>
 
-							<AKOverlay isVisibile={modalName === "sessionDelete"} onOverlayClick={() => hidePopper()} />
+							<AKOverlay
+								isVisibile={modalName === "sessionDelete" && index === 0}
+								onOverlayClick={() => hidePopper()}
+							/>
 							<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
 								<DeletePopper
 									isDeletingInProcess={isDeletingInProcess}

@@ -46,9 +46,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	const isLatestDeployment = (deploymentId: string) => deploymentId === deployments?.[0].deploymentId;
 
-	const displayOverlayForPoppers = (deploymentId: string) =>
-		isLatestDeployment(deploymentId) && (modalName === "deploymentDelete" || modalName === "deploymentExecute");
-
 	const isDeploymentStateStartable = (deploymentState: number) =>
 		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
 
@@ -163,7 +160,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	return (
 		deployments &&
-		deployments.map((deployment: Deployment) => (
+		deployments.map((deployment: Deployment, index: number) => (
 			<AKTableRow key={deployment.deploymentId} isSelected={selectedDeployment === deployment.deploymentId}>
 				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getTimePassed(deployment.createdAt)}
@@ -223,7 +220,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					></div>
 
 					<AKOverlay
-						isVisibile={displayOverlayForPoppers(deployment.deploymentId)}
+						isVisibile={index === 0 && (modalName === "deploymentDelete" || modalName === "deploymentExecute")}
 						onOverlayClick={() => hidePopper()}
 					/>
 					<PopperComponent visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
