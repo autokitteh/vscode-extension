@@ -1,3 +1,10 @@
+# [0.12.0-dev.4](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.3...v0.12.0-dev.4) (2024-04-14)
+
+
+### Features
+
+* overlay for poppovers and modals ([#237](https://github.com/autokitteh/vscode-extension/issues/237)) ([6e99db1](https://github.com/autokitteh/vscode-extension/commit/6e99db17f7c7d2e258e169c5daa7d6edfb0f1a59))
+
 # [0.12.0-dev.3](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.2...v0.12.0-dev.3) (2024-04-10)
 
 
