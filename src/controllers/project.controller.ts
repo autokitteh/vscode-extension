@@ -346,12 +346,6 @@ export class ProjectController {
 			this.notifyViewResourcesPathChanged();
 			return;
 		}
-
-		const userResponse = await this.promptUserToDownloadResources();
-		if (userResponse !== translate().t("projects.downloadResourcesDirectoryApprove")) {
-			return;
-		}
-		await this.downloadResources();
 	}
 
 	displayErrorWithoutActionButton(errorMessage: string) {
