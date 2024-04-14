@@ -12,7 +12,7 @@ import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
-import { createDirectory } from "@utilities";
+import { createDirectory, openFileExplorer } from "@utilities";
 import isEqual from "lodash/isEqual";
 import { commands, OpenDialogOptions, window, env } from "vscode";
 
@@ -482,7 +482,7 @@ export class ProjectController {
 
 		const resourcePath = path.join(newDirectoryPath[0].fsPath, this.project!.name);
 		try {
-			await createDirectory(resourcePath);
+			createDirectory(resourcePath);
 		} catch (error) {
 			commands.executeCommand(
 				vsCommands.showErrorMessage,
@@ -718,6 +718,24 @@ export class ProjectController {
 				type: MessageType.copyProjectPathResponse,
 				payload: false,
 			});
+		}
+	}
+
+	async openProjectResourcesDirectory(resourcesPath: string): Promise<void> {
+		try {
+			openFileExplorer(resourcesPath);
+		} catch (error) {
+			LoggerService.error(
+				namespaces.sessionsService,
+				translate().t("projects.errorOpeningFileExplorerError", {
+					projectName: this.project?.name,
+					error: (error as Error).message,
+				})
+			);
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				translate().t("projects.errorOpeningFileExplorerShort", { projectName: this.project?.name })
+			);
 		}
 	}
 

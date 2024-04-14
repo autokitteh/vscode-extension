@@ -18,6 +18,7 @@ export interface IProjectViewDelegate {
 	displayErrorWithoutActionButton?: Callback<string>;
 	stopSession?: Callback<string>;
 	copyProjectPath?: Callback<string>;
+	openProjectResourcesDirectory?: Callback<string>;
 }
 
 export interface IProjectView {

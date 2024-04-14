@@ -45,7 +45,7 @@ export const extractArchive = async (inputPath: string, outputPath: string): Pro
 
 	try {
 		if (!directoryExists(extractPath)) {
-			await createDirectory(extractPath);
+			createDirectory(extractPath);
 		}
 
 		switch (type) {
