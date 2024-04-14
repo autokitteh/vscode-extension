@@ -44,8 +44,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const showPopper = (popperId: string) => dispatch({ type: "SET_MODAL_NAME", payload: popperId });
 	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
 
-	const isLatestDeployment = (deploymentId: string) => deploymentId === deployments?.[0].deploymentId;
-
 	const isDeploymentStateStartable = (deploymentState: number) =>
 		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
 
@@ -187,7 +185,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					{deployment.buildId}
 				</AKTableCell>
 				<AKTableCell>
-					<div className="flex justify-start">
+					<div className="flex justify-center">
 						<div
 							className={`codicon codicon-debug-rerun mr-2 cursor-pointer 
 							${isLastDeployment(deployment.deploymentId) ? "" : "invisible"}`}
@@ -219,15 +217,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 							}
 							onClick={(event) => showDeleteDeploymentPopper(event, deployment)}
 						></div>
-
-						{isLatestDeployment(deployment.deploymentId) && (
-							<div
-								className="codicon codicon-debug-rerun ml-2 cursor-pointer"
-								ref={executePopperElementRef}
-								title={translate().t("reactApp.deployments.execute")}
-								onClick={() => showPopper("deploymentExecute")}
-							></div>
-						)}
 					</div>
 
 					<AKOverlay
