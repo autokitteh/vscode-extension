@@ -143,7 +143,7 @@ export const AKSessionsTableBody = ({
 								></div>
 							)}
 							<div
-								className={`inline-block codicon codicon-trash mr-2 z-20 ${
+								className={`codicon codicon-trash mr-2 z-20 ${
 									isRunning(session.state) ? "cursor-not-allowed" : "cursor-pointer"
 								}`}
 								title={
