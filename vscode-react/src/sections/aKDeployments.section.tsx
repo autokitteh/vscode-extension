@@ -7,7 +7,7 @@ import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { Deployment } from "@type/models";
 
-export const AKDeployments = () => {
+export const AKDeployments = ({ height }) => {
 	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel>();
 	const [isLoading, setIsLoading] = useState(true);
 	const [totalDeployments, setTotalDeployments] = useState<number>();
@@ -34,8 +34,10 @@ export const AKDeployments = () => {
 		}
 	}, [deploymentsSection]);
 
+	console.log("height deployments", height);
+
 	return (
-		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
+		<div className="mt-4" style={{ height: `${height + 200}px` }}>
 			<div className="flex items-baseline">
 				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.deployments.tableTitle")}</h1>
 				<div className="ml-1 text-lg font-extralight">({totalDeployments})</div>

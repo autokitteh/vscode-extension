@@ -6,7 +6,7 @@ import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.compon
 import { AKTable, AKTableMessage } from "@react-components/AKTable";
 import { useCloseOnEscape, useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 
-export const AKSessions = () => {
+export const AKSessions = ({ height }) => {
 	const [inputsModalVisible, setInputsModalVisible] = useState(false);
 
 	const [isLoading, setIsLoading] = useState(true);
@@ -36,7 +36,7 @@ export const AKSessions = () => {
 	};
 
 	return (
-		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
+		<div className="mt-4" style={{ height: height }}>
 			<div className="flex items-baseline">
 				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.sessions.tableTitle")}</h1>
 				<div className="ml-1 text-lg font-extralight">({totalSessions})</div>
