@@ -91,6 +91,8 @@ export const AKSessionsTableBody = ({
 
 	const isRunning = (sessionState: SessionState) => sessionState === SessionState.RUNNING;
 
+	const isLastDeployment = (deploymentId: string) => deploymentId === lastDeployment?.deploymentId;
+
 	// useEffects Section
 	useEffect(() => {
 		hidePopper();
@@ -111,44 +113,46 @@ export const AKSessionsTableBody = ({
 							{session.sessionId}
 						</AKTableCell>
 						<AKTableCell>
-							{session.deploymentId === lastDeployment?.deploymentId && (
-								<div className="inline-block">
+							<div className="inline-block">
+								{isLastDeployment(session.deploymentId) && (
 									<div
 										className="codicon codicon-debug-rerun mr-2 cursor-pointer"
 										title={translate().t("reactApp.sessions.startSession")}
 										onClick={() => startSession(session)}
 									></div>
+								)}
+								<div
+									className={`codicon codicon-debug-stop cursor-pointer text-red-500 ${
+										session.state !== SessionState.RUNNING && "invisible"
+									}`}
+									title={translate().t("reactApp.sessions.stopSession")}
+									onClick={() => stopSession(session.sessionId)}
+								></div>
+								{isLastDeployment(session.deploymentId) && (
 									<div
 										className="codicon codicon-symbol-namespace mr-2 cursor-pointer"
 										title={translate().t("reactApp.sessions.showSessionProps")}
 										onClick={() => displayInputsModal(JSON.stringify(session.inputs, null, 2))}
 									></div>
-								</div>
-							)}
-							<div
-								className={`inline-block codicon codicon-trash mr-2 z-20 ${
-									isRunning(session.state) ? "cursor-not-allowed" : "cursor-pointer"
-								}`}
-								title={
-									isRunning(session.state)
-										? translate().t("reactApp.sessions.deleteSessionDisabled")
-										: translate().t("reactApp.sessions.delete")
-								}
-								onClick={(event) => displaySessionDeletePopper(event, session)}
-							></div>
+								)}
+								<div
+									className={`inline-block codicon codicon-trash mr-2 z-20 ${
+										isRunning(session.state) ? "cursor-not-allowed" : "cursor-pointer"
+									}`}
+									title={
+										isRunning(session.state)
+											? translate().t("reactApp.sessions.deleteSessionDisabled")
+											: translate().t("reactApp.sessions.delete")
+									}
+									onClick={(event) => displaySessionDeletePopper(event, session)}
+								></div>
 
 							<AKOverlay
 								isVisibile={modalName === "sessionDelete" && index === 0}
 								onOverlayClick={() => hidePopper()}
 							/>
+							</div>
 
-							<div
-								className={`codicon codicon-debug-stop cursor-pointer text-red-500 ${
-									session.state !== SessionState.RUNNING && "invisible"
-								}`}
-								title={translate().t("reactApp.sessions.stopSession")}
-								onClick={() => stopSession(session.sessionId)}
-							></div>
 							<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
 								<DeletePopper
 									isDeletingInProcess={isDeletingInProcess}

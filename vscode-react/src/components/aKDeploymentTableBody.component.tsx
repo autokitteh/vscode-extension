@@ -200,6 +200,14 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 								onClick={() => deactivateBuild(deployment.deploymentId)}
 							></div>
 						)}
+						{deployment.deploymentId === deployments?.[0]?.deploymentId && (
+							<div
+								className="codicon codicon-debug-rerun ml-2 cursor-pointer"
+								ref={executePopperElementRef}
+								title={translate().t("reactApp.deployments.execute")}
+								onClick={() => showPopper("deploymentExecute")}
+							></div>
+						)}
 						<div
 							className={`relative codicon codicon-trash ${
 								isActive(deployment.state) ? "cursor-not-allowed" : "cursor-pointer"
