@@ -123,43 +123,41 @@ export const AKSessionsTableBody = ({
 							{session.sessionId}
 						</AKTableCell>
 						<AKTableCell>
-							<div className="inline-block">
-								{isLastDeployment(session.deploymentId) && (
-									<div
-										className="codicon codicon-debug-rerun mr-2 cursor-pointer"
-										title={translate().t("reactApp.sessions.startSession")}
-										onClick={() => startSession(session)}
-									></div>
-								)}
+							{isLastDeployment(session.deploymentId) && (
 								<div
-									className={getStopSessionClass(session.state)}
-									title={translate().t("reactApp.sessions.stopSession")}
-									onClick={() => stopSession(session)}
+									className="codicon codicon-debug-rerun mr-2 cursor-pointer"
+									title={translate().t("reactApp.sessions.startSession")}
+									onClick={() => startSession(session)}
 								></div>
-								{isLastDeployment(session.deploymentId) && (
-									<div
-										className="codicon codicon-symbol-namespace mr-2 cursor-pointer"
-										title={translate().t("reactApp.sessions.showSessionProps")}
-										onClick={() => displayInputsModal(JSON.stringify(session.inputs, null, 2))}
-									></div>
-								)}
+							)}
+							<div
+								className={getStopSessionClass(session.state)}
+								title={translate().t("reactApp.sessions.stopSession")}
+								onClick={() => stopSession(session)}
+							></div>
+							{isLastDeployment(session.deploymentId) && (
 								<div
-									className={`inline-block codicon codicon-trash mr-2 z-20 ${
-										isRunning(session.state) ? "cursor-not-allowed" : "cursor-pointer"
-									}`}
-									title={
-										isRunning(session.state)
-											? translate().t("reactApp.sessions.deleteSessionDisabled")
-											: translate().t("reactApp.sessions.delete")
-									}
-									onClick={(event) => displaySessionDeletePopper(event, session)}
+									className="codicon codicon-symbol-namespace mr-2 cursor-pointer"
+									title={translate().t("reactApp.sessions.showSessionProps")}
+									onClick={() => displayInputsModal(JSON.stringify(session.inputs, null, 2))}
 								></div>
+							)}
+							<div
+								className={`inline-block codicon codicon-trash mr-2 z-20 ${
+									isRunning(session.state) ? "cursor-not-allowed" : "cursor-pointer"
+								}`}
+								title={
+									isRunning(session.state)
+										? translate().t("reactApp.sessions.deleteSessionDisabled")
+										: translate().t("reactApp.sessions.delete")
+								}
+								onClick={(event) => displaySessionDeletePopper(event, session)}
+							></div>
 
 							<AKOverlay
 								isVisibile={modalName === "sessionDelete" && index === 0}
 								onOverlayClick={() => hidePopper()}
 							/>
-							</div>
 
 							<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
 								<DeletePopper
