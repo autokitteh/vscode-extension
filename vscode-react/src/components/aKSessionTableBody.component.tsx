@@ -40,6 +40,12 @@ export const AKSessionsTableBody = ({
 
 	useIncomingMessageHandler({ handleSessionDeletedResponse });
 
+	const getStopSessionClass = (sessionState: SessionState) => {
+		const defineStopButtonProps =
+			sessionState === SessionState.RUNNING ? "text-red-500 cursor-pointer" : "text-gray-500 cursor-not-allowed";
+		return `codicon codicon-debug-stop mr-2 ${defineStopButtonProps}`;
+	};
+
 	// Functions Section
 	const showPopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "sessionDelete" });
 	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
@@ -54,8 +60,11 @@ export const AKSessionsTableBody = ({
 		sendMessage(MessageType.startSession, startSessionArgs);
 	};
 
-	const stopSession = (sessionId: string) => {
-		sendMessage(MessageType.stopSession, sessionId);
+	const stopSession = (session: Session) => {
+		if (session.state !== SessionState.RUNNING) {
+			return;
+		}
+		sendMessage(MessageType.stopSession, session.sessionId);
 	};
 
 	const displaySessionLogs = (sessionId: string) => {
@@ -122,11 +131,9 @@ export const AKSessionsTableBody = ({
 									></div>
 								)}
 								<div
-									className={`codicon codicon-debug-stop cursor-pointer text-red-500 mr-2 ${
-										session.state !== SessionState.RUNNING && "invisible"
-									}`}
+									className={getStopSessionClass(session.state)}
 									title={translate().t("reactApp.sessions.stopSession")}
-									onClick={() => stopSession(session.sessionId)}
+									onClick={() => stopSession(session)}
 								></div>
 								{isLastDeployment(session.deploymentId) && (
 									<div
