@@ -9,9 +9,9 @@ export const AKMonacoEditorModal = ({
 	setModal: (isDisplayed: boolean) => void;
 	content?: string;
 }) => (
-	<AKModal wrapperClasses={["!bg-transparent"]} classes={["bg-[#ffffff85]", "rounded-none"]}>
+	<AKModal wrapperClasses={["!bg-transparent"]} classes={["bg-[#00000050]", "rounded-none"]}>
 		<div
-			className="flex justify-end cursor-pointer text-black font-extrabold pt-8 text-xl"
+			className="flex justify-end cursor-pointer text-white font-extrabold pt-8 text-xl"
 			onClick={() => setModal(false)}
 		>
 			X
