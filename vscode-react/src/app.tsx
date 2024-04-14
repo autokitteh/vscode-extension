@@ -17,6 +17,7 @@ function App() {
 	const [resourcesDir, setResourcesDir] = useState<string>("");
 	const [settingsPopperVisible, setSettingsPopperVisible] = useState<boolean>(false);
 	const pathPopperElementRef = useRef<HTMLDivElement | null>(null);
+	const [openDirectoryResponse, setOpenDirectoryResponse] = useState<boolean>(false);
 
 	useIncomingMessageHandler({
 		setProjectName,

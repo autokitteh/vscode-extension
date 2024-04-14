@@ -14,4 +14,5 @@ export interface IIncomingMessagesHandler {
 	setSelectedSession?: (sessionId: string | undefined) => void;
 	setSessionsSection?: (sessions: SessionSectionViewModel | undefined) => void;
 	setPathResponse?: (pathResponse: boolean) => void;
+	setOpenDirectoryResponse?: (directoryOpenResponse: boolean) => void;
 }

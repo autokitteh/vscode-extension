@@ -731,6 +731,11 @@ export class ProjectController {
 	async openProjectResourcesDirectory(resourcesPath: string): Promise<void> {
 		try {
 			openFileExplorer(resourcesPath);
+
+			this.view.update({
+				type: MessageType.openProjectResourcesDirectoryResponse,
+				payload: true,
+			});
 		} catch (error) {
 			LoggerService.error(
 				namespaces.sessionsService,
@@ -743,6 +748,11 @@ export class ProjectController {
 				vsCommands.showErrorMessage,
 				translate().t("errors.errorOpeningFileExplorerShort", { projectName: this.project?.name })
 			);
+
+			this.view.update({
+				type: MessageType.openProjectResourcesDirectoryResponse,
+				payload: false,
+			});
 		}
 	}
 
