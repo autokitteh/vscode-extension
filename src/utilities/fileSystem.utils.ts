@@ -1,4 +1,4 @@
-import { exec } from "child_process";
+import { execSync } from "child_process";
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
@@ -34,26 +34,26 @@ export const createDirectory = async (outputPath: string): Promise<void> => {
 	}
 };
 
-export const openFileExplorer = (directoryPath: string) => {
-	let command;
+export const openFileExplorer = (directoryPath: string): void => {
 	const normalizedPath = path.normalize(directoryPath);
 	const quotedPath = `"${normalizedPath}"`;
+	let command;
 
-	if (process.platform === "darwin") {
-		command = `open ${quotedPath}`;
-	} else if (process.platform === "win32") {
-		command = `explorer ${quotedPath}`;
-	} else if (process.platform === "linux") {
-		command = `xdg-open "${path}"`;
-	} else {
-		throw new Error(translate().t("errors.notSupportedPlatform"));
+	switch (process.platform) {
+		case "darwin":
+			command = `open ${quotedPath}`;
+			break;
+		case "win32":
+			command = `explorer ${quotedPath}`;
+			break;
+		case "linux":
+			command = `xdg-open ${quotedPath}`;
+			break;
+		default:
+			throw new Error(translate().t("errors.notSupportedPlatform"));
 	}
 
-	exec(command, (error) => {
-		if (error) {
-			throw new Error(translate().t("errors.errorOpeningFileExplorer", { error }));
-		}
-	});
+	execSync(command);
 };
 
 export const directoryExists = async (directoryPath: string): Promise<boolean> => {
