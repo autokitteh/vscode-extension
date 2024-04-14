@@ -122,7 +122,7 @@ export const AKSessionsTableBody = ({
 									></div>
 								)}
 								<div
-									className={`codicon codicon-debug-stop cursor-pointer text-red-500 ${
+									className={`codicon codicon-debug-stop cursor-pointer text-red-500 mr-2 ${
 										session.state !== SessionState.RUNNING && "invisible"
 									}`}
 									title={translate().t("reactApp.sessions.stopSession")}

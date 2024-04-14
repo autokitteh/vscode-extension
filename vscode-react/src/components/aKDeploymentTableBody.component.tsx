@@ -188,6 +188,13 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 				</AKTableCell>
 				<AKTableCell>
 					<div className="flex justify-start">
+						<div
+							className={`codicon codicon-debug-rerun mr-2 cursor-pointer 
+							${isLastDeployment(deployment.deploymentId) ? "" : "invisible"}`}
+							ref={executePopperElementRef}
+							title={translate().t("reactApp.deployments.execute")}
+							onClick={() => showPopper("deploymentExecute")}
+						></div>
 						{isDeploymentStateStartable(deployment.state) ? (
 							<div
 								className="codicon codicon-debug-start cursor-pointer text-green-500"
@@ -199,14 +206,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 								className="codicon codicon-debug-stop cursor-pointer text-red-500"
 								title={translate().t("reactApp.deployments.deactivate")}
 								onClick={() => deactivateBuild(deployment.deploymentId)}
-							></div>
-						)}
-						{isLastDeployment(deployment.deploymentId) && (
-							<div
-								className="codicon codicon-debug-rerun ml-2 cursor-pointer"
-								ref={executePopperElementRef}
-								title={translate().t("reactApp.deployments.execute")}
-								onClick={() => showPopper("deploymentExecute")}
 							></div>
 						)}
 						<div
