@@ -81,7 +81,12 @@ function App() {
 					</div>
 					<AppStateProvider>
 						<div className="h-screen">
-							<SplitPane split="horizontal" sizes={sizes} onChange={setSizes} sashRender={() => <div />}>
+							<SplitPane
+								split="horizontal"
+								sizes={sizes}
+								onChange={setSizes}
+								sashRender={() => <hr className="bg-vscode-editor-background" />}
+							>
 								<div>
 									<AKDeployments height={sizes[0]} />
 								</div>
