@@ -55,10 +55,7 @@ export const openFileExplorer = (directoryPath: string): void => {
 	if (!command) {
 		throw new Error(translate().t("errors.notSupportedPlatform"));
 	}
-	const childProcess = spawn.sync(command, [normalizedPath], { stdio: "inherit" });
-	childProcess.on("error", (error: Error) => {
-		throw new Error((error as Error).message);
-	});
+	spawn.sync(command, [normalizedPath], { stdio: "inherit" });
 };
 
 export const directoryExists = async (directoryPath: string): Promise<boolean> => {
