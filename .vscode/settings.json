@@ -5,6 +5,5 @@
 	},
 	"editor.formatOnSave": true,
 	"typescript.preferences.importModuleSpecifier": "non-relative",
-	"git.enableCommitSigning": true,
-	"prettier.configPath": "/Users/ronenmars/Desktop/dev/vscode-extension/.prettierrc"
+	"git.enableCommitSigning": true
 }
