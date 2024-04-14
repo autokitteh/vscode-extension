@@ -44,6 +44,5 @@
 	"pathExist": "Path exists but is not a directory",
 	"errorOpeningFileExplorerShort": "Error opening file explorer, for project: {{projectName}}",
 	"notSupportedPlatform": "Unsupported platform for opening file explorer",
-	"errorOpeningFileExplorer": "Error opening file explorer: {{error}}",
-	"errorOpeningFileExplorerError": "Project {{projectName}}: {{error}}"
+	"errorOpeningFileExplorerError": "Error opening file explorer, for project: {{projectName}}, error: {{error}}"
 }
