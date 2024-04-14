@@ -4,7 +4,7 @@ import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
 import DownloadIcon from "@react-assets/icons/download.svg?react";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
-import { AKButton, AKLogo, AKOverlay, DirectoryDownloadPopper, PopperComponent } from "@react-components";
+import { AKButton, AKLogo, AKOverlay, ProjectSettingsPopper, PopperComponent } from "@react-components";
 import { AppStateProvider } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { AKDeployments, AKSessions } from "@react-sections";
@@ -69,7 +69,7 @@ function App() {
 									onClick={() => setResourcesDirPopperVisible(true)}
 									title={translate().t("reactApp.settings.viewProjectResourcesDirectory")}
 								>
-									<div className="codicon codicon-info text-vscode-background" ref={pathPopperElementRef}></div>
+									<div className="codicon codicon-gear text-vscode-background" ref={pathPopperElementRef}></div>
 								</AKButton>
 							)}
 							<AKOverlay
@@ -78,7 +78,7 @@ function App() {
 							/>
 
 							<PopperComponent visible={resourcesDirPopperVisible} referenceRef={pathPopperElementRef}>
-								<DirectoryDownloadPopper resourcesDir={resourcesDir} />
+								<ProjectSettingsPopper resourcesDir={resourcesDir} />
 							</PopperComponent>
 						</div>
 					</div>

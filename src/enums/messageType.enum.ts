@@ -24,4 +24,5 @@ export enum MessageType {
 	copyProjectPath = "COPY_PROJECT_PATH",
 	copyProjectPathResponse = "COPY_PROJECT_PATH_RESPONSE",
 	openProjectResourcesDirectory = "OPEN_PROJECT_RESOURCES_DIRECTORY",
+	deleteProject = "DELETE_PROJECT",
 }

@@ -24,7 +24,10 @@ export class TabsManagerController {
 					projectControllerRefreshRate,
 					projectControllerSessionsLogRefreshRate
 				);
-				newController.openProject(() => this.disposeWebview(project.key as string));
+				newController.openProject(
+					() => this.onProjectDispose(project.key as string),
+					() => this.onProjectDelete(project.key as string)
+				);
 				this.openWebviews[project.key] = newController;
 				return;
 			}
@@ -39,13 +42,17 @@ export class TabsManagerController {
 		}
 	}
 
+	public onProjectDelete(controllerId: string) {
+		this.openWebviews[controllerId].view.panel.dispose();
+	}
+
 	public disable() {
 		for (const key in this.openWebviews) {
 			this.openWebviews[key].disable();
 		}
 	}
 
-	private disposeWebview(controllerId: string) {
+	private onProjectDispose(controllerId: string) {
 		delete this.openWebviews[controllerId];
 	}
 }
