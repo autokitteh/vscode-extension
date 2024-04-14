@@ -80,7 +80,7 @@ function App() {
 						</div>
 					</div>
 					<AppStateProvider>
-						<div className="h-screen">
+						<div className="h-[calc(100vh-5vh)]">
 							<SplitPane
 								split="horizontal"
 								sizes={sizes}

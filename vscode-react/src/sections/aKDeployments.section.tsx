@@ -37,7 +37,7 @@ export const AKDeployments = ({ height }) => {
 	console.log("height deployments", height);
 
 	return (
-		<div className="mt-4" style={{ height: `${height + 200}px` }}>
+		<div className="mt-4" style={{ height }}>
 			<div className="flex items-baseline">
 				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.deployments.tableTitle")}</h1>
 				<div className="ml-1 text-lg font-extralight">({totalDeployments})</div>
