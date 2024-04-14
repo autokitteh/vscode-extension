@@ -10,7 +10,7 @@ export const AKMonacoEditorModal = ({
 	setModal: (isDisplayed: boolean) => void;
 	content?: string;
 }) => (
-	<AKModal wrapperClasses={["pt-20 bg-black bg-opacity-70"]}>
+	<AKModal wrapperClasses={["pt-20 !bg-transparent"]}>
 		<div className="flex justify-end cursor-pointer" onClick={() => setModal(false)}>
 			X
 		</div>

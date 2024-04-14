@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
-import { AKDeploymentState } from "@react-components";
+import { AKDeploymentState, AKOverlay } from "@react-components";
 import { DeletePopper, ExecutePopper, PopperComponent } from "@react-components";
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
 import { useAppState } from "@react-context/appState.context";
@@ -43,6 +43,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	// Functions Section
 	const showPopper = (popperId: string) => dispatch({ type: "SET_MODAL_NAME", payload: popperId });
 	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
+
+	const isLatestDeployment = (deploymentId: string) => deploymentId === deployments?.[0].deploymentId;
 
 	const isDeploymentStateStartable = (deploymentState: number) =>
 		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
@@ -158,7 +160,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	return (
 		deployments &&
-		deployments.map((deployment: Deployment) => (
+		deployments.map((deployment: Deployment, index: number) => (
 			<AKTableRow key={deployment.deploymentId} isSelected={selectedDeployment === deployment.deploymentId}>
 				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getTimePassed(deployment.createdAt)}
@@ -184,7 +186,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					{deployment.buildId}
 				</AKTableCell>
 				<AKTableCell>
-					{deployment.deploymentId === deployments?.[0]?.deploymentId && (
+					{isLatestDeployment(deployment.deploymentId) && (
 						<div
 							className="codicon codicon-redo mr-2 cursor-pointer"
 							ref={executePopperElementRef}
@@ -208,7 +210,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					<div
 						className={`relative codicon codicon-trash ${
 							isActive(deployment.state) ? "cursor-not-allowed" : "cursor-pointer"
-						} ml-2 z-20`}
+						} ml-2`}
 						title={
 							isActive(deployment.state)
 								? translate().t("reactApp.deployments.deleteDisabled")
@@ -217,10 +219,10 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						onClick={(event) => showDeleteDeploymentPopper(event, deployment)}
 					></div>
 
-					{(modalName === "deploymentDelete" || modalName === "deploymentExecute") && (
-						<div className="absolute h-screen w-screen top-0 left-0 z-10" onClick={() => hidePopper()}></div>
-					)}
-
+					<AKOverlay
+						isVisibile={index === 0 && (modalName === "deploymentDelete" || modalName === "deploymentExecute")}
+						onOverlayClick={() => hidePopper()}
+					/>
 					<PopperComponent visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
 						<DeletePopper
 							isDeletingInProcess={isDeletingInProcess}

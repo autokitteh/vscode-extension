@@ -4,7 +4,7 @@ import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
 import DownloadIcon from "@react-assets/icons/download.svg?react";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
-import { AKButton, AKLogo, DirectoryDownloadPopper, PopperComponent } from "@react-components";
+import { AKButton, AKLogo, AKOverlay, DirectoryDownloadPopper, PopperComponent } from "@react-components";
 import { AppStateProvider } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { AKDeployments, AKSessions } from "@react-sections";
@@ -59,7 +59,7 @@ function App() {
 							{!resourcesDir ? (
 								<AKButton
 									onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
-									classes="flex"
+									classes="flex relative z-30"
 									title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
 								>
 									<DownloadIcon className="text-vscode-background" />
@@ -72,12 +72,11 @@ function App() {
 									<div className="codicon codicon-info text-vscode-background" ref={pathPopperElementRef}></div>
 								</AKButton>
 							)}
-							{resourcesDirPopperVisible && (
-								<div
-									className="absolute h-screen w-screen top-0 left-0 z-10"
-									onClick={() => setResourcesDirPopperVisible(false)}
-								></div>
-							)}
+							<AKOverlay
+								isVisibile={resourcesDirPopperVisible}
+								onOverlayClick={() => setResourcesDirPopperVisible(false)}
+							/>
+
 							<PopperComponent visible={resourcesDirPopperVisible} referenceRef={pathPopperElementRef}>
 								<DirectoryDownloadPopper resourcesDir={resourcesDir} />
 							</PopperComponent>

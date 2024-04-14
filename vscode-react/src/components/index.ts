@@ -11,3 +11,4 @@ export { ExecutePopper } from "@react-components/aKDeploymentsExecutePopper.comp
 export { DeletePopper } from "@react-components/aKDeletePopper.component";
 export { PopperComponent } from "@react-components/aKPopper.component";
 export { DirectoryDownloadPopper } from "@react-components/aKDirectoryDownloadPopper.component";
+export { AKOverlay } from "@react-components/aKOverlay.component";
