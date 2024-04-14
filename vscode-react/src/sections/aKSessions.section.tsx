@@ -36,7 +36,7 @@ export const AKSessions = ({ height }) => {
 	};
 
 	return (
-		<div className="mt-4" style={{ height: height }}>
+		<div className="mt-4" style={{ height }}>
 			<div className="flex items-baseline">
 				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.sessions.tableTitle")}</h1>
 				<div className="ml-1 text-lg font-extralight">({totalSessions})</div>
