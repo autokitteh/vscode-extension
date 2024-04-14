@@ -40,13 +40,14 @@ export const AKSessionsTableBody = ({
 
 	useIncomingMessageHandler({ handleSessionDeletedResponse });
 
+	// Functions Section
+
 	const getStopSessionClass = (sessionState: SessionState) => {
 		const defineStopButtonProps =
 			sessionState === SessionState.RUNNING ? "text-red-500 cursor-pointer" : "text-gray-500 cursor-not-allowed";
 		return `codicon codicon-debug-stop mr-2 ${defineStopButtonProps}`;
 	};
 
-	// Functions Section
 	const showPopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "sessionDelete" });
 	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
 	const startSession = (session: Session) => {
