@@ -1,6 +1,6 @@
 {
-	"pickDirectoryOfExecutables": "Pick resources folder",
-	"openDirectoryOfExecutables": "Open resources folder",
+	"downloadDirectoryOfExecutables": "Download remote resources folder",
+	"openProjectResourcesDirectory": "Open resources folder in file browser",
 	"copyPath": "Copy path",
 	"viewProjectResourcesDirectoryPath": "View project resources directory path"
 }
