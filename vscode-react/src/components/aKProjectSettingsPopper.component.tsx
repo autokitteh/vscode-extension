@@ -16,10 +16,22 @@ export const ProjectSettingsPopper = ({
 		sendMessage(message, arg);
 		closePopper();
 	};
+
+	const formatPath = (path: string, maxLength: number = 40): string => {
+		const prefix = "...";
+
+		if (path.length > maxLength) {
+			const visibleLength = maxLength - prefix.length;
+			return prefix + path.slice(-visibleLength);
+		}
+
+		return path;
+	};
+
 	return (
 		<div className="relative">
-			<div className="mb-4">
-				<strong>{resourcesDir}</strong>
+			<div className="mb-4" title={resourcesDir}>
+				<strong>{formatPath(resourcesDir)}</strong>
 			</div>
 			<div className="flex justify-between w-full">
 				<AKButton
