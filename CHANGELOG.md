@@ -1,3 +1,10 @@
+# [0.12.0-dev.7](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.6...v0.12.0-dev.7) (2024-04-15)
+
+
+### Bug Fixes
+
+* fix stuck loading screen on project open in windows ([#243](https://github.com/autokitteh/vscode-extension/issues/243)) ([4a846f9](https://github.com/autokitteh/vscode-extension/commit/4a846f9dd4550b36f4ead6445b0e5f7b3f134aa6))
+
 # [0.12.0-dev.6](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.5...v0.12.0-dev.6) (2024-04-15)
 
 
