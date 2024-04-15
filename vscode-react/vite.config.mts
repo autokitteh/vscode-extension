@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import path from "path";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { visualizer } from "rollup-plugin-visualizer";
+import { defineConfig, type PluginOption } from "vite";
 import svgr from "vite-plugin-svgr";
 
 export default defineConfig({
@@ -34,6 +35,7 @@ export default defineConfig({
 			include: "**/*.tsx",
 		}),
 		svgr(),
+		visualizer() as PluginOption,
 	],
 	server: {
 		watch: {
