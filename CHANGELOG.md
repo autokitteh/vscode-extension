@@ -1,3 +1,10 @@
+# [0.12.0-dev.6](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.5...v0.12.0-dev.6) (2024-04-15)
+
+
+### Features
+
+* delete project ([#235](https://github.com/autokitteh/vscode-extension/issues/235)) ([ab60a40](https://github.com/autokitteh/vscode-extension/commit/ab60a40e9e8a6be98a5bb19a82572ecc24afd7a9))
+
 # [0.12.0-dev.5](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.4...v0.12.0-dev.5) (2024-04-14)
 
 
