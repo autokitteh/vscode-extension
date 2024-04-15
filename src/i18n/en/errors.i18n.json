@@ -44,5 +44,7 @@
 	"pathExist": "Path exists but is not a directory",
 	"errorOpeningFileExplorerShort": "Error opening file explorer, for project: {{projectName}}",
 	"notSupportedPlatform": "Unsupported platform for opening file explorer",
-	"errorOpeningFileExplorerError": "Error opening file explorer, for project: {{projectName}}, error: {{error}}"
+	"errorOpeningFileExplorerError": "Error opening file explorer, for project: {{projectName}}, error: {{error}}",
+	"projectPathCopiedError": "Error copying project path to clipboard for project: {{projectName}}",
+	"projectPathCopiedErrorEnriched": "Error copying project path to clipboard - project: {{projectName}}, error: {{error}}"
 }
