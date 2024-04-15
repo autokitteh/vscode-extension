@@ -7,7 +7,7 @@ import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { Deployment } from "@type/models";
 
-export const AKDeployments = ({ height }) => {
+export const AKDeployments = ({ height }: { height: string | number }) => {
 	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel>();
 	const [isLoading, setIsLoading] = useState(true);
 	const [totalDeployments, setTotalDeployments] = useState<number>();
@@ -33,8 +33,6 @@ export const AKDeployments = ({ height }) => {
 			setDeployments(deploymentsSection?.deployments);
 		}
 	}, [deploymentsSection]);
-
-	console.log("height deployments", height);
 
 	return (
 		<div className="mt-4" style={{ height }}>

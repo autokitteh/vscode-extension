@@ -6,7 +6,7 @@ import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.compon
 import { AKTable, AKTableMessage } from "@react-components/AKTable";
 import { useCloseOnEscape, useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 
-export const AKSessions = ({ height }) => {
+export const AKSessions = ({ height }: { height: string | number }) => {
 	const [inputsModalVisible, setInputsModalVisible] = useState(false);
 
 	const [isLoading, setIsLoading] = useState(true);
