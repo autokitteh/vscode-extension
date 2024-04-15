@@ -36,14 +36,14 @@ export const ProjectSettingsPopper = ({
 			<div className="flex justify-between w-full">
 				<AKButton
 					onClick={() => postMessage(MessageType.copyProjectPath, resourcesDir)}
-					classes="w-1/2"
+					classes="w-1/4"
 					title={translate().t("reactApp.settings.copyPath")}
 				>
 					<div className="codicon codicon-copy text-vscode-foreground"></div>
 				</AKButton>
 				<AKButton
 					onClick={() => postMessage(MessageType.openProjectResourcesDirectory, resourcesDir)}
-					classes="ml-4 w-1/2"
+					classes="ml-4 w-1/4"
 					title={translate().t("reactApp.settings.openProjectResourcesDirectory")}
 				>
 					<div className="codicon codicon-folder-opened text-vscode-foreground"></div>
@@ -51,13 +51,13 @@ export const ProjectSettingsPopper = ({
 				<AKButton
 					onClick={() => postMessage(MessageType.onClickSetResourcesDirectory, undefined)}
 					title={translate().t("reactApp.settings.downloadDirectoryOfExecutables")}
-					classes="ml-4 w-1/2"
+					classes="ml-4 w-1/4"
 				>
 					<DownloadIcon className="text-vscode-background text-vscode-foreground" />
 				</AKButton>
 				<AKButton
 					onClick={() => postMessage(MessageType.deleteProject, undefined)}
-					classes="ml-4 w-1/2"
+					classes="ml-4 w-1/4"
 					title={translate().t("reactApp.settings.deleteProject")}
 				>
 					<div className="codicon codicon-trash text-vscode-foreground" />
