@@ -22,8 +22,6 @@
 	"downloadResourcesDirectorySuccess": "Project resources successfully downloaded for project: {{projectName}}",
 	"errorReadingResource": "Error reading the selected directory or file for project {{projectId}}",
 	"projectPathCopied": "Project {{projectName}} path copied to clipboard",
-	"projectPathCopiedError": "Error copying project path to clipboard for project: {{projectName}}",
-	"projectPathCopiedErrorEnriched": "Error copying project path to clipboard - project: {{projectName}}, error: {{error}}",
 	"deleteFailed": "Project deletion failed - project name: {{projectName}}",
 	"deleteFailedError": "Project deletion failed - project name: {{projectName}}, error: {{error}}",
 	"deleteSucceed": "Project deletion succeed - project name: {{projectName}}"

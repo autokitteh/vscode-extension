@@ -716,11 +716,11 @@ export class ProjectController {
 		} catch (error) {
 			commands.executeCommand(
 				vsCommands.showInfoMessage,
-				translate().t("projects.projectPathCopiedError", { projectName: this.project?.name })
+				translate().t("errors.projectPathCopiedError", { projectName: this.project?.name })
 			);
 			LoggerService.error(
 				namespaces.projectController,
-				translate().t("projects.projectPathCopiedErrorEnriched", {
+				translate().t("errors.projectPathCopiedErrorEnriched", {
 					error: (error as Error).message,
 					projectName: this.project?.name,
 				})
@@ -734,14 +734,14 @@ export class ProjectController {
 		} catch (error) {
 			LoggerService.error(
 				namespaces.sessionsService,
-				translate().t("projects.errorOpeningFileExplorerError", {
+				translate().t("errors.errorOpeningFileExplorerError", {
 					projectName: this.project?.name,
 					error: (error as Error).message,
 				})
 			);
 			commands.executeCommand(
 				vsCommands.showErrorMessage,
-				translate().t("projects.errorOpeningFileExplorerShort", { projectName: this.project?.name })
+				translate().t("errors.errorOpeningFileExplorerShort", { projectName: this.project?.name })
 			);
 		}
 	}
