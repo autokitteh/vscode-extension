@@ -1,3 +1,10 @@
+# [0.12.0-dev.8](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.7...v0.12.0-dev.8) (2024-04-15)
+
+
+### Bug Fixes
+
+* fix open resources functionality in project settings ([#238](https://github.com/autokitteh/vscode-extension/issues/238)) ([5321e3d](https://github.com/autokitteh/vscode-extension/commit/5321e3d675074014e3dc589128f0cbac895f757c))
+
 # [0.12.0-dev.7](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.6...v0.12.0-dev.7) (2024-04-15)
 
 
