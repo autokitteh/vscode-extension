@@ -21,6 +21,14 @@ export class ProjectsService {
 			return { data: undefined, error };
 		}
 	}
+	static async delete(projectId: string): Promise<ServiceResponse<undefined>> {
+		try {
+			await projectsClient.delete({ projectId });
+			return { data: undefined, error: undefined };
+		} catch (error) {
+			return { data: undefined, error };
+		}
+	}
 
 	static async list(): Promise<ServiceResponse<Project[]>> {
 		try {

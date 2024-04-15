@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
 import DownloadIcon from "@react-assets/icons/download.svg?react";
 import loaderAnimation from "@react-assets/media/catto-loader.json";
-import { AKButton, AKLogo, AKOverlay, DirectoryDownloadPopper, PopperComponent } from "@react-components";
+import { AKButton, AKLogo, AKOverlay, ProjectSettingsPopper, PopperComponent } from "@react-components";
 import { AppStateProvider } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { AKDeployments, AKSessions } from "@react-sections";
@@ -15,20 +15,14 @@ function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [resourcesDir, setResourcesDir] = useState<string>("");
-	const [pathResponse, setPathResponse] = useState<boolean>(false);
-	const [resourcesDirPopperVisible, setResourcesDirPopperVisible] = useState<boolean>(false);
+	const [settingsPopperVisible, setSettingsPopperVisible] = useState<boolean>(false);
 	const pathPopperElementRef = useRef<HTMLDivElement | null>(null);
 
 	useIncomingMessageHandler({
 		setProjectName,
 		setThemeVisualType,
 		setResourcesDir,
-		setPathResponse,
 	});
-
-	useEffect(() => {
-		setResourcesDirPopperVisible(false);
-	}, [pathResponse, resourcesDir]);
 
 	return (
 		<main>
@@ -66,19 +60,19 @@ function App() {
 								</AKButton>
 							) : (
 								<AKButton
-									onClick={() => setResourcesDirPopperVisible(true)}
+									onClick={() => setSettingsPopperVisible(true)}
 									title={translate().t("reactApp.settings.viewProjectResourcesDirectory")}
 								>
-									<div className="codicon codicon-info text-vscode-background" ref={pathPopperElementRef}></div>
+									<div className="codicon codicon-gear text-vscode-background" ref={pathPopperElementRef}></div>
 								</AKButton>
 							)}
-							<AKOverlay
-								isVisibile={resourcesDirPopperVisible}
-								onOverlayClick={() => setResourcesDirPopperVisible(false)}
-							/>
+							<AKOverlay isVisibile={settingsPopperVisible} onOverlayClick={() => setSettingsPopperVisible(false)} />
 
-							<PopperComponent visible={resourcesDirPopperVisible} referenceRef={pathPopperElementRef}>
-								<DirectoryDownloadPopper resourcesDir={resourcesDir} />
+							<PopperComponent visible={settingsPopperVisible} referenceRef={pathPopperElementRef}>
+								<ProjectSettingsPopper
+									resourcesDir={resourcesDir}
+									closePopper={() => setSettingsPopperVisible(false)}
+								/>
 							</PopperComponent>
 						</div>
 					</div>

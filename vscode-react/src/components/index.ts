@@ -10,5 +10,5 @@ export { AKMonacoEditorModal } from "@react-components/akMonacoEditorModal.compo
 export { ExecutePopper } from "@react-components/aKDeploymentsExecutePopper.component";
 export { DeletePopper } from "@react-components/aKDeletePopper.component";
 export { PopperComponent } from "@react-components/aKPopper.component";
-export { DirectoryDownloadPopper } from "@react-components/aKDirectoryDownloadPopper.component";
+export { ProjectSettingsPopper } from "@react-components/aKProjectSettingsPopper.component";
 export { AKOverlay } from "@react-components/aKOverlay.component";

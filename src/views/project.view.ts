@@ -69,6 +69,9 @@ export class ProjectView implements IProjectView {
 					case MessageType.openProjectResourcesDirectory:
 						this.delegate?.openProjectResourcesDirectory?.(message.payload as string);
 						break;
+					case MessageType.deleteProject:
+						this.delegate?.deleteProject?.();
+						break;
 					default:
 				}
 			},

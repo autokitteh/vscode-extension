@@ -1,6 +1,7 @@
 {
 	"downloadDirectoryOfExecutables": "Download remote resources folder",
 	"openProjectResourcesDirectory": "Open resources folder in file browser",
-	"copyPath": "Copy path",
+	"copyPath": "Copy Path",
+	"deleteProject": "Delete Project",
 	"viewProjectResourcesDirectoryPath": "View project resources directory path"
 }

@@ -19,7 +19,8 @@ import { commands, OpenDialogOptions, window, env } from "vscode";
 export class ProjectController {
 	private view: IProjectView;
 	private intervalKeeper: Map<ProjectIntervalTypes, NodeJS.Timeout> = new Map();
-	private disposeCB?: Callback<string>;
+	private onProjectDisposeCB?: Callback<string>;
+	private onProjectDeleteCB?: Callback<string>;
 	public projectId: string;
 	public project?: Project;
 	private sessions?: Session[] = [];
@@ -63,6 +64,21 @@ export class ProjectController {
 			type: MessageType.setProjectName,
 			payload: this.project?.name,
 		});
+	}
+
+	async deleteProject() {
+		const { error } = await ProjectsService.delete(this.projectId);
+		if (error) {
+			const notification = translate().t("projects.deleteFailed", { projectName: this.project?.name });
+			const log = translate().t("projects.deleteFailedError", { projectName: this.project?.name, error });
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.projectController, log);
+			return;
+		}
+		const successMessage = translate().t("projects.deleteSucceed", { projectName: this.project?.name });
+		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
+		LoggerService.info(namespaces.projectController, successMessage);
+		this.onProjectDeleteCB?.(this.projectId);
 	}
 
 	async getSessionHistory(sessionId: string) {
@@ -318,8 +334,9 @@ export class ProjectController {
 		this.intervalKeeper.delete(intervalKey);
 	}
 
-	public async openProject(disposeCB: Callback<string>) {
-		this.disposeCB = disposeCB;
+	public async openProject(onProjectDisposeCB: Callback<string>, onProjectDeleteCB: Callback<string>) {
+		this.onProjectDisposeCB = onProjectDisposeCB;
+		this.onProjectDeleteCB = onProjectDeleteCB;
 		const { data: project, error } = await ProjectsService.get(this.projectId);
 		const log = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
 		if (error) {
@@ -438,7 +455,7 @@ export class ProjectController {
 	onClose() {
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		this.stopInterval(ProjectIntervalTypes.deployments);
-		this.disposeCB?.(this.projectId);
+		this.onProjectDisposeCB?.(this.projectId);
 		this.hasDisplayedError = new Map();
 	}
 
@@ -696,11 +713,6 @@ export class ProjectController {
 				vsCommands.showInfoMessage,
 				translate().t("projects.projectPathCopied", { projectName: this.project?.name })
 			);
-
-			this.view.update({
-				type: MessageType.copyProjectPathResponse,
-				payload: true,
-			});
 		} catch (error) {
 			commands.executeCommand(
 				vsCommands.showInfoMessage,
@@ -713,11 +725,6 @@ export class ProjectController {
 					projectName: this.project?.name,
 				})
 			);
-
-			this.view.update({
-				type: MessageType.copyProjectPathResponse,
-				payload: false,
-			});
 		}
 	}
 
