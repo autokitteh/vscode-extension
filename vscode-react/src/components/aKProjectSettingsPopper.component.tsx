@@ -29,7 +29,7 @@ export const ProjectSettingsPopper = ({
 	};
 
 	return (
-		<div className="relative">
+		<div className="relative w-64">
 			<div className="mb-4" title={resourcesDir}>
 				<strong>{formatPath(resourcesDir)}</strong>
 			</div>
