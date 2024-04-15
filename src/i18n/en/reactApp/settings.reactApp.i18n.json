@@ -3,7 +3,5 @@
 	"openProjectResourcesDirectory": "Open resources folder in file browser",
 	"copyPath": "Copy Path",
 	"deleteProject": "Delete Project",
-	"downloadRemote": "Download Remote",
-	"openDirectory": "Open Directory",
 	"viewProjectResourcesDirectoryPath": "View project resources directory path"
 }

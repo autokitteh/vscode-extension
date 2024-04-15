@@ -16,34 +16,28 @@ export const ProjectSettingsPopper = ({ resourcesDir }: { resourcesDir: string }
 				classes="w-1/2"
 				title={translate().t("reactApp.settings.copyPath")}
 			>
-				<div className="codicon codicon-copy text-vscode-foreground mr-2"></div>
-				{translate().t("reactApp.settings.copyPath")}
+				<div className="codicon codicon-copy text-vscode-foreground"></div>
 			</AKButton>
 			<AKButton
 				onClick={() => sendMessage(MessageType.openProjectResourcesDirectory, resourcesDir)}
-				classes="ml-2 w-1/2"
+				classes="ml-4 w-1/2"
 				title={translate().t("reactApp.settings.openProjectResourcesDirectory")}
 			>
-				<div className="codicon codicon-folder-opened text-vscode-foreground mr-2"></div>
-				{translate().t("reactApp.settings.openDirectory")}
+				<div className="codicon codicon-folder-opened text-vscode-foreground"></div>
 			</AKButton>
-		</div>
-		<div className="flex justify-between w-full mt-2">
 			<AKButton
 				onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
 				title={translate().t("reactApp.settings.downloadDirectoryOfExecutables")}
-				classes="w-1/2"
+				classes="ml-4 w-1/2"
 			>
-				<DownloadIcon className="text-vscode-background text-vscode-foreground mr-2" />
-				{translate().t("reactApp.settings.downloadRemote")}
+				<DownloadIcon className="text-vscode-background text-vscode-foreground" />
 			</AKButton>
 			<AKButton
 				onClick={() => sendMessage(MessageType.deleteProject)}
-				classes="ml-2 w-1/2"
+				classes="ml-4 w-1/2"
 				title={translate().t("reactApp.settings.deleteProject")}
 			>
-				<div className="codicon codicon-trash text-vscode-foreground mr-2" />
-				{translate().t("reactApp.settings.deleteProject")}
+				<div className="codicon codicon-trash text-vscode-foreground" />
 			</AKButton>
 		</div>
 	</div>
