@@ -1,3 +1,10 @@
+# [0.12.0-dev.9](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.8...v0.12.0-dev.9) (2024-04-15)
+
+
+### Features
+
+* reduce bundle size ([#244](https://github.com/autokitteh/vscode-extension/issues/244)) ([23d9501](https://github.com/autokitteh/vscode-extension/commit/23d950101791001e3591197330a3e5cc89465eea))
+
 # [0.12.0-dev.8](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.7...v0.12.0-dev.8) (2024-04-15)
 
 
