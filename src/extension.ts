@@ -115,7 +115,7 @@ export async function activate(context: ExtensionContext) {
 					namespaces.startlarkLSPServer,
 					translate().t("starlark.executableFetchError", { error: error.message })
 				);
-				commands.executeCommand(vsCommands.showErrorMessage, translate().t("starlark.executableFetchError"));
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("starlark.executableFetch"));
 				return;
 			}
 
