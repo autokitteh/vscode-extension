@@ -734,14 +734,14 @@ export class ProjectController {
 		} catch (error) {
 			LoggerService.error(
 				namespaces.sessionsService,
-				translate().t("projects.errorOpeningFileExplorerError", {
+				translate().t("errors.errorOpeningFileExplorerError", {
 					projectName: this.project?.name,
 					error: (error as Error).message,
 				})
 			);
 			commands.executeCommand(
 				vsCommands.showErrorMessage,
-				translate().t("projects.errorOpeningFileExplorerShort", { projectName: this.project?.name })
+				translate().t("errors.errorOpeningFileExplorerShort", { projectName: this.project?.name })
 			);
 		}
 	}
