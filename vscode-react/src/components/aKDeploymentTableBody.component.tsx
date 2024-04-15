@@ -189,7 +189,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 						<div
 							className={`codicon codicon-debug-rerun mr-2 cursor-pointer 
 							${isLastDeployment(deployment.deploymentId) ? "" : "invisible"}`}
-							ref={executePopperElementRef}
+							ref={isLastDeployment(deployment.deploymentId) ? executePopperElementRef : null}
 							title={translate().t("reactApp.deployments.execute")}
 							onClick={() => showPopper("deploymentExecute")}
 						></div>
