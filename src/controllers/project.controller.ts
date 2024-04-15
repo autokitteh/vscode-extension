@@ -44,7 +44,6 @@ export class ProjectController {
 		this.view.delegate = this;
 		this.deploymentsRefreshRate = deploymentsRefreshRate;
 		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
-		this.setProjectNameInView();
 	}
 
 	reveal(): void {
@@ -350,6 +349,7 @@ export class ProjectController {
 
 		this.project = project;
 		this.view.show(project!.name);
+		this.setProjectNameInView();
 
 		this.startInterval(
 			ProjectIntervalTypes.deployments,
