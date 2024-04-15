@@ -41,6 +41,13 @@ export const AKSessionsTableBody = ({
 	useIncomingMessageHandler({ handleSessionDeletedResponse });
 
 	// Functions Section
+
+	const getStopSessionClass = (sessionState: SessionState) => {
+		const isRunningClass =
+			sessionState === SessionState.RUNNING ? "text-red-500 cursor-pointer" : "text-gray-500 cursor-not-allowed";
+		return `codicon codicon-debug-stop mr-2 ${isRunningClass}`;
+	};
+
 	const showPopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "sessionDelete" });
 	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
 	const startSession = (session: Session) => {
@@ -54,8 +61,11 @@ export const AKSessionsTableBody = ({
 		sendMessage(MessageType.startSession, startSessionArgs);
 	};
 
-	const stopSession = (sessionId: string) => {
-		sendMessage(MessageType.stopSession, sessionId);
+	const stopSession = (session: Session) => {
+		if (session.state !== SessionState.RUNNING) {
+			return;
+		}
+		sendMessage(MessageType.stopSession, session.sessionId);
 	};
 
 	const displaySessionLogs = (sessionId: string) => {
@@ -91,6 +101,8 @@ export const AKSessionsTableBody = ({
 
 	const isRunning = (sessionState: SessionState) => sessionState === SessionState.RUNNING;
 
+	const isLastDeployment = (deploymentId: string) => deploymentId === lastDeployment?.deploymentId;
+
 	// useEffects Section
 	useEffect(() => {
 		hidePopper();
@@ -111,22 +123,27 @@ export const AKSessionsTableBody = ({
 							{session.sessionId}
 						</AKTableCell>
 						<AKTableCell>
-							{session.deploymentId === lastDeployment?.deploymentId && (
-								<div className="inline-block">
-									<div
-										className="codicon codicon-redo mr-2 cursor-pointer"
-										title={translate().t("reactApp.sessions.startSession")}
-										onClick={() => startSession(session)}
-									></div>
-									<div
-										className="codicon codicon-symbol-namespace mr-2 cursor-pointer"
-										title={translate().t("reactApp.sessions.showSessionProps")}
-										onClick={() => displayInputsModal(JSON.stringify(session.inputs, null, 2))}
-									></div>
-								</div>
+							{isLastDeployment(session.deploymentId) && (
+								<div
+									className="codicon codicon-debug-rerun mr-2 cursor-pointer"
+									title={translate().t("reactApp.sessions.startSession")}
+									onClick={() => startSession(session)}
+								></div>
 							)}
 							<div
-								className={`inline-block codicon codicon-trash mr-2 z-20 ${
+								className={getStopSessionClass(session.state)}
+								title={translate().t("reactApp.sessions.stopSession")}
+								onClick={() => stopSession(session)}
+							></div>
+							{isLastDeployment(session.deploymentId) && (
+								<div
+									className="codicon codicon-symbol-namespace mr-2 cursor-pointer"
+									title={translate().t("reactApp.sessions.showSessionProps")}
+									onClick={() => displayInputsModal(JSON.stringify(session.inputs, null, 2))}
+								></div>
+							)}
+							<div
+								className={`codicon codicon-trash mr-2 z-20 ${
 									isRunning(session.state) ? "cursor-not-allowed" : "cursor-pointer"
 								}`}
 								title={
@@ -141,6 +158,7 @@ export const AKSessionsTableBody = ({
 								isVisibile={modalName === "sessionDelete" && index === 0}
 								onOverlayClick={() => hidePopper()}
 							/>
+
 							<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
 								<DeletePopper
 									isDeletingInProcess={isDeletingInProcess}
@@ -149,13 +167,6 @@ export const AKSessionsTableBody = ({
 									translations={deleteSessionPopperTranslations}
 								/>
 							</PopperComponent>
-							{session.state === SessionState.RUNNING && (
-								<div
-									className="codicon codicon-debug-stop cursor-pointer text-red-500"
-									title={translate().t("reactApp.sessions.stopSession")}
-									onClick={() => stopSession(session.sessionId)}
-								></div>
-							)}
 						</AKTableCell>
 					</AKTableRow>
 				))}
