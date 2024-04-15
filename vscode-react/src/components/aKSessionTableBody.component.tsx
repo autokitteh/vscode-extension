@@ -43,9 +43,9 @@ export const AKSessionsTableBody = ({
 	// Functions Section
 
 	const getStopSessionClass = (sessionState: SessionState) => {
-		const defineStopButtonProps =
+		const isRunningClass =
 			sessionState === SessionState.RUNNING ? "text-red-500 cursor-pointer" : "text-gray-500 cursor-not-allowed";
-		return `codicon codicon-debug-stop mr-2 ${defineStopButtonProps}`;
+		return `codicon codicon-debug-stop mr-2 ${isRunningClass}`;
 	};
 
 	const showPopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "sessionDelete" });
