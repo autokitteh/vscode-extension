@@ -713,11 +713,6 @@ export class ProjectController {
 				vsCommands.showInfoMessage,
 				translate().t("projects.projectPathCopied", { projectName: this.project?.name })
 			);
-
-			this.view.update({
-				type: MessageType.copyProjectPathResponse,
-				payload: true,
-			});
 		} catch (error) {
 			commands.executeCommand(
 				vsCommands.showInfoMessage,
@@ -730,11 +725,6 @@ export class ProjectController {
 					projectName: this.project?.name,
 				})
 			);
-
-			this.view.update({
-				type: MessageType.copyProjectPathResponse,
-				payload: false,
-			});
 		}
 	}
 

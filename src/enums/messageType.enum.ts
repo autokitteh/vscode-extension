@@ -22,7 +22,6 @@ export enum MessageType {
 	displayErrorWithoutActionButton = "DISPLAY_ERROR_WITHOUT_ACTION_BUTTON",
 	stopSession = "STOP_SESSION",
 	copyProjectPath = "COPY_PROJECT_PATH",
-	copyProjectPathResponse = "COPY_PROJECT_PATH_RESPONSE",
 	openProjectResourcesDirectory = "OPEN_PROJECT_RESOURCES_DIRECTORY",
 	deleteProject = "DELETE_PROJECT",
 }
