@@ -1,9 +1,9 @@
-import { execSync } from "child_process";
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { translate } from "@i18n";
 import * as winattr from "winattr";
+const spawn = require("cross-spawn");
 
 export const createDirectory = async (outputPath: string): Promise<void> => {
 	try {
@@ -36,24 +36,26 @@ export const createDirectory = async (outputPath: string): Promise<void> => {
 
 export const openFileExplorer = (directoryPath: string): void => {
 	const normalizedPath = path.normalize(directoryPath);
-	const quotedPath = `"${normalizedPath}"`;
 	let command;
 
 	switch (process.platform) {
 		case "darwin":
-			command = `open ${quotedPath}`;
+			command = "open";
 			break;
 		case "win32":
-			command = `explorer ${quotedPath}`;
+			command = "explorer";
 			break;
 		case "linux":
-			command = `xdg-open ${quotedPath}`;
+			command = "xdg-open";
 			break;
 		default:
 			throw new Error(translate().t("errors.notSupportedPlatform"));
 	}
 
-	execSync(command);
+	if (!command) {
+		throw new Error(translate().t("errors.notSupportedPlatform"));
+	}
+	spawn.sync(command, [normalizedPath], { stdio: "inherit" });
 };
 
 export const directoryExists = async (directoryPath: string): Promise<boolean> => {
