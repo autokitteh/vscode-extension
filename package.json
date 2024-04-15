@@ -364,7 +364,8 @@
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
 		"package": "vsce package",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"source-map-explorer": "npx source-map-explorer dist/main.js dist/main.js.map --no-border-checks"
 	},
 	"version": "0.12.0-dev.8",
 	"workspaces": [

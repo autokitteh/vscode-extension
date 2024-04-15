@@ -10,6 +10,8 @@ dist/test/**
 
 # Ignore source code
 src/**
+node_modules/**
+
 
 # Ignore all vscode-react files except the build directory
 vscode-react/src/**
@@ -30,3 +32,5 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 **/*.map
 **/*.ts
+
+
