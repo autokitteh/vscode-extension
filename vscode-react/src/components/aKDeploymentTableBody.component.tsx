@@ -9,6 +9,7 @@ import { useDeployments } from "@react-hooks";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment, SessionEntrypoint } from "@type/models";
+import { createPortal } from "react-dom";
 
 export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
 	// State Hooks Section
@@ -218,32 +219,36 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 							onClick={(event) => showDeleteDeploymentPopper(event, deployment)}
 						></div>
 					</div>
-
-					<AKOverlay
-						isVisibile={index === 0 && (modalName === "deploymentDelete" || modalName === "deploymentExecute")}
-						onOverlayClick={() => hidePopper()}
-					/>
-					<PopperComponent visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
-						<DeletePopper
-							isDeletingInProcess={isDeletingInProcess}
-							onConfirm={() => deleteDeploymentConfirmed()}
-							onDismiss={() => deleteDeploymentDismissed()}
-							translations={deleteDeploymentPopperTranslations}
-						/>
-					</PopperComponent>
-					<PopperComponent visible={modalName === "deploymentExecute"} referenceRef={executePopperElementRef}>
-						<ExecutePopper
-							files={files!}
-							functions={functions!}
-							selectedFile={selectedFile}
-							selectedFunction={selectedFunction}
-							onFileChange={setSelectedFile}
-							onFunctionChange={handleFunctionChange}
-							onStartSession={startSession}
-							onClose={() => hidePopper()}
-							displayedErrors={displayedErrors}
-						/>
-					</PopperComponent>
+					{createPortal(
+						<div>
+							<AKOverlay
+								isVisibile={index === 0 && (modalName === "deploymentDelete" || modalName === "deploymentExecute")}
+								onOverlayClick={() => hidePopper()}
+							/>
+							<PopperComponent visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
+								<DeletePopper
+									isDeletingInProcess={isDeletingInProcess}
+									onConfirm={() => deleteDeploymentConfirmed()}
+									onDismiss={() => deleteDeploymentDismissed()}
+									translations={deleteDeploymentPopperTranslations}
+								/>
+							</PopperComponent>
+							<PopperComponent visible={modalName === "deploymentExecute"} referenceRef={executePopperElementRef}>
+								<ExecutePopper
+									files={files!}
+									functions={functions!}
+									selectedFile={selectedFile}
+									selectedFunction={selectedFunction}
+									onFileChange={setSelectedFile}
+									onFunctionChange={handleFunctionChange}
+									onStartSession={startSession}
+									onClose={() => hidePopper()}
+									displayedErrors={displayedErrors}
+								/>
+							</PopperComponent>
+						</div>,
+						document.body
+					)}
 				</AKTableCell>
 			</AKTableRow>
 		))
