@@ -1,30 +1,34 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
-import { AKOverlay, AKSessionState, DeletePopper, PopperComponent } from "@react-components";
+import { AKMonacoEditorModal, AKOverlay, AKSessionState, DeletePopper, PopperComponent } from "@react-components";
 import { AKTableRow, AKTableCell } from "@react-components/AKTable";
 import { useAppState } from "@react-context";
 import { SessionState } from "@react-enums";
-import { useIncomingMessageHandler } from "@react-hooks";
+import { useCloseOnEscape, useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
+import { createPortal } from "react-dom";
 
 export const AKSessionsTableBody = ({
 	sessions,
-	displayInputsModal,
 	selectedSession,
 	setSelectedSession,
 }: {
 	sessions?: Session[];
-	displayInputsModal: (sessionInputs: string) => void;
 	selectedSession?: string;
 	setSelectedSession: (sessionId: string) => void;
 }) => {
-	// State Hooks Section
+	// State Section
 	const [{ modalName, lastDeployment }, dispatch] = useAppState();
 	const [isDeletingInProcess, setIsDeletingInProgress] = useState(false);
 	const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
+	const [inputsModalVisible, setInputsModalVisible] = useState(false);
+	const [sessionInputs, setSessionInputs] = useState<string>();
+
+	// Hooks Section
+	useCloseOnEscape(() => setInputsModalVisible(false));
 
 	// Local variable
 	const deleteSessionPopperTranslations = {
@@ -41,6 +45,11 @@ export const AKSessionsTableBody = ({
 	useIncomingMessageHandler({ handleSessionDeletedResponse });
 
 	// Functions Section
+
+	const displayInputsModal = (sessionInputs: string) => {
+		setSessionInputs(sessionInputs);
+		setInputsModalVisible(true);
+	};
 
 	const getStopSessionClass = (sessionState: SessionState) => {
 		const isRunningClass =
@@ -110,6 +119,11 @@ export const AKSessionsTableBody = ({
 
 	return (
 		<>
+			{inputsModalVisible &&
+				createPortal(
+					<AKMonacoEditorModal content={sessionInputs} onCloseClicked={() => setInputsModalVisible(false)} />,
+					document.body
+				)}
 			{sessions &&
 				sessions.map((session: Session, index: number) => (
 					<AKTableRow key={session.sessionId} isSelected={selectedSession === session.sessionId}>

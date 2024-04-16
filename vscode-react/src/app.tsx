@@ -10,6 +10,8 @@ import { useIncomingMessageHandler } from "@react-hooks";
 import { AKDeployments, AKSessions } from "@react-sections";
 import { sendMessage } from "@react-utilities";
 import "./app.css";
+import SplitPane from "split-pane-react";
+import "split-pane-react/esm/themes/default.css";
 
 function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
@@ -23,6 +25,7 @@ function App() {
 		setThemeVisualType,
 		setResourcesDir,
 	});
+	const [sizes, setSizes] = useState<(number | string)[]>(["50%", "50%"]);
 
 	return (
 		<main>
@@ -77,8 +80,21 @@ function App() {
 						</div>
 					</div>
 					<AppStateProvider>
-						<AKDeployments />
-						<AKSessions />
+						<div className="h-[calc(100vh-6vh)]">
+							<SplitPane
+								split="horizontal"
+								sizes={sizes}
+								onChange={setSizes}
+								sashRender={() => <hr className="bg-vscode-editor-background h-3" />}
+							>
+								<div>
+									<AKDeployments height={sizes[0]} />
+								</div>
+								<div>
+									<AKSessions height={sizes[1]} />
+								</div>
+							</SplitPane>
+						</div>
 					</AppStateProvider>
 				</div>
 			) : (

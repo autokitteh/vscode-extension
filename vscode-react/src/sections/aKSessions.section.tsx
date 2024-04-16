@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
-import { AKMonacoEditorModal, AKOverlay, AKSessionsTableHeader } from "@react-components";
+import { AKSessionsTableHeader } from "@react-components";
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
-import { AKTable, AKTableMessage } from "@react-components/AKTable";
-import { useCloseOnEscape, useIncomingMessageHandler, useForceRerender } from "@react-hooks";
+import { AKTable, AKTableHeader, AKTableHeaderCell, AKTableMessage } from "@react-components/AKTable";
+import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 
-export const AKSessions = () => {
-	const [inputsModalVisible, setInputsModalVisible] = useState(false);
-
+export const AKSessions = ({ height }: { height: string | number }) => {
 	const [isLoading, setIsLoading] = useState(true);
-	const [sessionInputs, setSessionInputs] = useState<string>();
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 
@@ -27,24 +24,18 @@ export const AKSessions = () => {
 		}
 	}, [sessions]);
 
-	useCloseOnEscape(() => setInputsModalVisible(false));
 	useForceRerender();
 
-	const displayInputsModal = (sessionInputs: string) => {
-		setSessionInputs(sessionInputs);
-		setInputsModalVisible(true);
-	};
-
 	return (
-		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
-			<div className="flex items-baseline">
-				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.sessions.tableTitle")}</h1>
-				<div className="ml-1 text-lg font-extralight">({totalSessions})</div>
-			</div>
+		<div style={{ height }}>
 			<AKTable>
+				<AKTableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-40">
+					<AKTableHeaderCell className="text-lg font-extralight pt-5" colSpan={4}>
+						{`${translate().t("reactApp.sessions.tableTitle")} (${totalSessions})`}
+					</AKTableHeaderCell>
+				</AKTableHeader>
 				<AKSessionsTableHeader />
 				<AKSessionsTableBody
-					displayInputsModal={displayInputsModal}
 					sessions={sessions}
 					selectedSession={selectedSession}
 					setSelectedSession={setSelectedSession}
@@ -57,9 +48,6 @@ export const AKSessions = () => {
 			{sessions && sessions.length === 0 && (
 				<AKTableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</AKTableMessage>
 			)}
-			<AKOverlay isVisibile={inputsModalVisible} onOverlayClick={() => setInputsModalVisible(false)} />
-
-			{inputsModalVisible && <AKMonacoEditorModal content={sessionInputs} setModal={setInputsModalVisible} />}
 		</div>
 	);
 };
