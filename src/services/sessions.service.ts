@@ -11,7 +11,7 @@ import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse, StartSessionArgsType } from "@type";
 import { Session } from "@type/models";
 import { flattenArray } from "@utilities";
-import { get } from "lodash";
+import get from "lodash/get";
 
 export class SessionsService {
 	static async listByEnvironmentId(environmentId: string): Promise<ServiceResponse<Session[]>> {
