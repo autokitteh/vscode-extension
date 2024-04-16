@@ -1,3 +1,10 @@
+# [0.12.0-dev.13](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.12...v0.12.0-dev.13) (2024-04-16)
+
+
+### Bug Fixes
+
+* poppers and overlays weren't displayed properly because of the split-pane feature ([#251](https://github.com/autokitteh/vscode-extension/issues/251)) ([8b7b0e4](https://github.com/autokitteh/vscode-extension/commit/8b7b0e4c4e184bf0b1a77ba46e8af24d2e1a04b2))
+
 # [0.12.0-dev.12](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.11...v0.12.0-dev.12) (2024-04-16)
 
 
