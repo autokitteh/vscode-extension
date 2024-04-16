@@ -1,11 +1,10 @@
-import { differenceInDays, format, formatDistanceToNow } from "date-fns";
+import moment from "moment";
 
 export const getTimePassed = (startDate: Date): string => {
-	const now = new Date();
-	const daysPassed = differenceInDays(now, startDate);
-
+	const now = moment();
+	const daysPassed = now.diff(startDate as unknown as string, "days");
 	if (daysPassed >= 1) {
-		return formatDistanceToNow(startDate, { addSuffix: true });
+		return moment(startDate as unknown as string).fromNow();
 	}
-	return format(startDate, "yyyy/MM/dd HH:mm:ss");
+	return moment(startDate as unknown as string).format("YYYY/MM/DD HH:mm:ss");
 };

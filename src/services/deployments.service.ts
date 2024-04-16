@@ -8,7 +8,7 @@ import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
 import { Deployment } from "@type/models";
 import { flattenArray, getIds, sortArray } from "@utilities";
-import get from "lodash/get";
+import { get } from "lodash";
 
 export class DeploymentsService {
 	static async listByEnvironmentIds(environmentsIds: string[]): Promise<ServiceResponse<Deployment[]>> {

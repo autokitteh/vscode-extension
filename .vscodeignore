@@ -35,7 +35,8 @@ node_modules/**
 !node_modules/@connectrpc/connect-node/**
 !node_modules/@connectrpc/connect/**
 !node_modules/undici/**
-!node_modules/lodash/get/**
+!node_modules/lodash/**
+!node_modules/moment/**
 !node_modules/vscode-languageclient/**
 !node_modules/vscode-languageserver-protocol/**
 !node_modules/@fastify/busboy/**
