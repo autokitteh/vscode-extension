@@ -22,7 +22,7 @@ export class SessionLogRecord {
 		if (Object.keys(props).length > 1) {
 			LoggerService.error(
 				namespaces.sessionsHistory,
-				`More than one session log record type found: ${Object.keys(props).join(", ")}`
+				translate().t("errors.sessionLogRecordMultipleProps", { props: Object.keys(props).join(", ") })
 			);
 			return;
 		}
@@ -94,7 +94,8 @@ export class SessionLogRecord {
 			return;
 		}
 		this.logs = `${translate().t("sessions.historyFunction")} - 
-			${translate().t("sessions.historyResult")}: ${functionName} - ${functionResponse}`;
+			${translate().t("sessions.historyResult")}: 
+			${functionName} - ${functionResponse}`;
 	}
 
 	private handleFuncCall(logRecord: ProtoSessionLogRecord) {

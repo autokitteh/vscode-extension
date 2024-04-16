@@ -47,5 +47,6 @@
 	"errorOpeningFileExplorerError": "Error opening file explorer, for project: {{projectName}}, error: {{error}}",
 	"projectPathCopiedError": "Error copying project path to clipboard for project: {{projectName}}",
 	"projectPathCopiedErrorEnriched": "Error copying project path to clipboard - project: {{projectName}}, error: {{error}}",
-	"sessionStartFailedExtended": "Error running session execution: {{error}} for build id: {{buildId}}"
+	"sessionStartFailedExtended": "Error running session execution: {{error}} for build id: {{buildId}}",
+	"sessionLogRecordMultipleProps": "More than one session log record type found: {{props}}"
 }
