@@ -167,20 +167,24 @@ export const AKSessionsTableBody = ({
 								}
 								onClick={(event) => displaySessionDeletePopper(event, session)}
 							></div>
+							{createPortal(
+								<div>
+									<AKOverlay
+										isVisibile={modalName === "sessionDelete" && index === 0}
+										onOverlayClick={() => hidePopper()}
+									/>
 
-							<AKOverlay
-								isVisibile={modalName === "sessionDelete" && index === 0}
-								onOverlayClick={() => hidePopper()}
-							/>
-
-							<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
-								<DeletePopper
-									isDeletingInProcess={isDeletingInProcess}
-									onConfirm={() => deleteSessionConfirmed()}
-									onDismiss={() => deleteSessionDismissed()}
-									translations={deleteSessionPopperTranslations}
-								/>
-							</PopperComponent>
+									<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
+										<DeletePopper
+											isDeletingInProcess={isDeletingInProcess}
+											onConfirm={() => deleteSessionConfirmed()}
+											onDismiss={() => deleteSessionDismissed()}
+											translations={deleteSessionPopperTranslations}
+										/>
+									</PopperComponent>
+								</div>,
+								document.body
+							)}
 						</AKTableCell>
 					</AKTableRow>
 				))}

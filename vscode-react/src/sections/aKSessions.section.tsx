@@ -29,7 +29,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	return (
 		<div style={{ height }}>
 			<AKTable>
-				<AKTableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-40">
+				<AKTableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-30">
 					<AKTableHeaderCell className="text-lg font-extralight pt-5" colSpan={4}>
 						{`${translate().t("reactApp.sessions.tableTitle")} (${totalSessions})`}
 					</AKTableHeaderCell>

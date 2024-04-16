@@ -34,8 +34,8 @@ export const PopperComponent: React.FC<PopperProps> = ({ visible, children, refe
 		}
 	}, [visible]);
 
-	// eslint-disable-next-line max-len
-	const popperClasses = `flex-col z-30 bg-vscode-editor-background text-vscode-foreground border border-gray-300 p-4 rounded-lg shadow-lg`;
+	const popperClasses =
+		"flex-col z-50 bg-vscode-editor-background text-vscode-foreground border border-gray-300 p-4 rounded-lg shadow-lg";
 
 	return (
 		<>
