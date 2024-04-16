@@ -25,7 +25,7 @@ function App() {
 		setThemeVisualType,
 		setResourcesDir,
 	});
-	const [sizes, setSizes] = useState<(number | string)[]>(["100%", "100%"]);
+	const [sizes, setSizes] = useState<(number | string)[]>(["50%", "50%"]);
 
 	return (
 		<main>
@@ -80,7 +80,7 @@ function App() {
 						</div>
 					</div>
 					<AppStateProvider>
-						<div className="h-[calc(100vh-5vh)]">
+						<div className="h-[calc(100vh-6vh)]">
 							<SplitPane
 								split="horizontal"
 								sizes={sizes}

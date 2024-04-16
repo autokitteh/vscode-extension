@@ -4,7 +4,7 @@ import { AKTableHeader, AKTableHeaderCell } from "@react-components/AKTable";
 
 export const AKDeploymentTableHeader: React.FC = () => {
 	return (
-		<AKTableHeader classes="sticky top-0">
+		<AKTableHeader classes="sticky top-2">
 			<AKTableHeaderCell>{translate().t("reactApp.deployments.time")}</AKTableHeaderCell>
 			<AKTableHeaderCell>{translate().t("reactApp.deployments.status")}</AKTableHeaderCell>
 			<AKTableHeaderCell>{translate().t("reactApp.sessions.statuses.stopped")}</AKTableHeaderCell>

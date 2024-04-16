@@ -5,6 +5,7 @@ import { AKMonacoEditorModal, AKOverlay, AKSessionsTableHeader } from "@react-co
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
 import { AKTable, AKTableMessage } from "@react-components/AKTable";
 import { useCloseOnEscape, useIncomingMessageHandler, useForceRerender } from "@react-hooks";
+import { createPortal } from "react-dom";
 
 export const AKSessions = ({ height }: { height: string | number }) => {
 	const [inputsModalVisible, setInputsModalVisible] = useState(false);
@@ -44,8 +45,8 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 			<AKTable>
 				<AKSessionsTableHeader />
 				<AKSessionsTableBody
-					displayInputsModal={displayInputsModal}
 					sessions={sessions}
+					displayInputsModal={displayInputsModal}
 					selectedSession={selectedSession}
 					setSelectedSession={setSelectedSession}
 				/>
@@ -59,7 +60,11 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 			)}
 			<AKOverlay isVisibile={inputsModalVisible} onOverlayClick={() => setInputsModalVisible(false)} />
 
-			{inputsModalVisible && <AKMonacoEditorModal content={sessionInputs} setModal={setInputsModalVisible} />}
+			{inputsModalVisible &&
+				createPortal(
+					<AKMonacoEditorModal content={sessionInputs} hideModal={() => setInputsModalVisible(false)} />,
+					document.body
+				)}
 		</div>
 	);
 };
