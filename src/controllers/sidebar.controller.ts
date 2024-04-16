@@ -5,7 +5,7 @@ import { translate } from "@i18n";
 import { LoggerService, ProjectsService } from "@services";
 import { SidebarTreeItem } from "@type/views";
 import { ISidebarView } from "interfaces";
-import isEqual from "lodash/isEqual";
+import isEqual from "lodash.isequal";
 import { commands, window } from "vscode";
 
 export class SidebarController {

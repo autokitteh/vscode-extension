@@ -13,7 +13,7 @@ import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import { createDirectory, openFileExplorer } from "@utilities";
-import isEqual from "lodash/isEqual";
+import isEqual from "lodash.isequal";
 import { commands, OpenDialogOptions, window, env } from "vscode";
 
 export class ProjectController {
