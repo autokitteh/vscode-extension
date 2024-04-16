@@ -111,7 +111,7 @@ export class DeploymentsService {
 			});
 			LoggerService.error(namespaces.deploymentsService, errorMessage);
 
-			return { data: undefined, error: errorMessage };
+			return { data: undefined, error };
 		}
 	}
 }
