@@ -174,7 +174,7 @@ export class ProjectController {
 		}
 		let buildInfo;
 		try {
-			buildInfo = JSON.parse(buildDescription!.descriptionJson);
+			buildInfo = JSON.parse(buildDescription!);
 		} catch (error) {
 			LoggerService.error(namespaces.projectController, translate().t("errors.buildInformationForSingleshotNotParsed"));
 			return;

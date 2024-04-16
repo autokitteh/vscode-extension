@@ -2,7 +2,7 @@ import { SessionLogRecord as ProtoSessionLogRecord } from "@ak-proto-ts/sessions
 import { Value } from "@ak-proto-ts/values/v1/values_pb";
 import { namespaces } from "@constants";
 import { SessionStateType, SessionLogRecordType } from "@enums";
-import { translate } from "@i18n/index";
+import { translate } from "@i18n";
 import { convertErrorProtoToModel } from "@models/error.model";
 import { LoggerService } from "@services";
 import { Callstack } from "@type/models";
@@ -72,37 +72,37 @@ export class SessionLogRecord {
 	private handleCallAttemptComplete(logRecord: ProtoSessionLogRecord) {
 		this.type = SessionLogRecordType.callAttemptComplete;
 
-		if (logRecord[this.type]?.result?.value?.time) {
-			this.logs =
-				// eslint-disable-next-line max-len
-				`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${translate().t("sessions.historyTime")} - ${convertTimestampToDate(logRecord[this.type]?.result?.value?.time?.v).toISOString()}`;
-
+		const sessionLogRecord = logRecord[this.type];
+		if (sessionLogRecord?.result?.value?.time) {
+			this.logs = `${translate().t("sessions.historyFunction")} - 
+					${translate().t("sessions.historyResult")}: ${translate().t("sessions.historyTime")} - 
+						${convertTimestampToDate(sessionLogRecord?.result?.value?.time?.v).toISOString()}`;
 			return;
 		}
-		if (logRecord[this.type]?.result?.value?.nothing) {
-			this.logs =
-				// eslint-disable-next-line max-len
-				`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${translate().t("sessions.historyNoOutput")}`;
+		if (sessionLogRecord?.result?.value?.nothing) {
+			this.logs = `${translate().t("sessions.historyFunction")} - 
+				${translate().t("sessions.historyResult")}: 
+				${translate().t("sessions.historyNoOutput")}`;
 			return;
 		}
 
-		let functionResponse = logRecord[this.type]?.result?.value?.struct?.fields?.body?.string?.v || "";
-		let functionName = logRecord[this.type]?.result?.value?.struct?.ctor?.string?.v || "";
+		const functionResponse = sessionLogRecord?.result?.value?.struct?.fields?.body?.string?.v || "";
+		const functionName = sessionLogRecord?.result?.value?.struct?.ctor?.string?.v || "";
 
 		if (!functionName && !functionResponse) {
 			this.logs = undefined;
 			return;
 		}
-		this.logs =
-			// eslint-disable-next-line max-len
-			`${translate().t("sessions.historyFunction")} - ${translate().t("sessions.historyResult")}: ${functionName} - ${functionResponse}`;
+		this.logs = `${translate().t("sessions.historyFunction")} - 
+			${translate().t("sessions.historyResult")}: ${functionName} - ${functionResponse}`;
 	}
 
 	private handleFuncCall(logRecord: ProtoSessionLogRecord) {
 		this.type = SessionLogRecordType.callSpec;
+		const sessionLogRecord = logRecord[this.type];
 
-		const functionName = logRecord[this.type]?.function?.function?.name || "";
-		const args = (logRecord[this.type]?.args || [])
+		const functionName = sessionLogRecord?.function?.function?.name || "";
+		const args = (sessionLogRecord?.args || [])
 			.map((arg: Value) => arg.string?.v)
 			.join(", ")
 			.replace(/, ([^,]*)$/, "");
