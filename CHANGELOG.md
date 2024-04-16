@@ -1,3 +1,10 @@
+# [0.12.0-dev.12](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.11...v0.12.0-dev.12) (2024-04-16)
+
+
+### Bug Fixes
+
+* fixed lodash.isEqual package in bundle ([#250](https://github.com/autokitteh/vscode-extension/issues/250)) ([7193a1c](https://github.com/autokitteh/vscode-extension/commit/7193a1cc6590de7ec2c1fa2ce33e633a1f0781b3))
+
 # [0.12.0-dev.11](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.10...v0.12.0-dev.11) (2024-04-16)
 
 
