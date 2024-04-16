@@ -35,10 +35,10 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 	}, [deploymentsSection]);
 
 	return (
-		<div className="mt-4" style={{ height }}>
+		<div style={{ height }}>
 			<AKTable>
 				<AKTableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-40">
-					<AKTableHeaderCell className="text-lg font-extralight" colSpan={8}>
+					<AKTableHeaderCell className="text-lg font-extralight pt-5" colSpan={8}>
 						{`${translate().t("reactApp.deployments.tableTitle")} (${totalDeployments})`}
 					</AKTableHeaderCell>
 				</AKTableHeader>

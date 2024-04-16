@@ -37,14 +37,10 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	};
 
 	return (
-		<div className="mt-4" style={{ height }}>
-			{/* <div className="flex items-baseline sticky top-0 z-20 bg-vscode-editor-background">
-				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.sessions.tableTitle")}</h1>
-				<div className="ml-1 text-lg font-extralight">({totalSessions})</div>
-			</div> */}
+		<div style={{ height }}>
 			<AKTable>
 				<AKTableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-40">
-					<AKTableHeaderCell className="text-lg font-extralight" colSpan={8}>
+					<AKTableHeaderCell className="text-lg font-extralight pt-5" colSpan={8}>
 						{`${translate().t("reactApp.sessions.tableTitle")} (${totalSessions})`}
 					</AKTableHeaderCell>
 				</AKTableHeader>
