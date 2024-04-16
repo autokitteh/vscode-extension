@@ -10,8 +10,6 @@ import { SessionLogRecord, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse, StartSessionArgsType } from "@type";
 import { Session } from "@type/models";
-import { flattenArray } from "@utilities";
-import { get } from "lodash";
 
 export class SessionsService {
 	static async listByEnvironmentId(environmentId: string): Promise<ServiceResponse<Session[]>> {
@@ -87,40 +85,6 @@ export class SessionsService {
 			const log = `Error running session execution: ${(error as Error).message} for deployment id: ${startSessionArgs.buildId}`;
 			LoggerService.error(namespaces.sessionsService, log);
 			return { data: undefined, error: log };
-		}
-	}
-
-	static async listByProjectId(projectId: string): Promise<ServiceResponse<Session[]>> {
-		try {
-			const { data: projectEnvironments, error: environmentsError } =
-				await EnvironmentsService.listByProjectId(projectId);
-
-			if (environmentsError) {
-				LoggerService.error(namespaces.sessionsService, (environmentsError as Error).message);
-
-				return { data: undefined, error: environmentsError };
-			}
-			const sessionsPromises = (projectEnvironments || []).map(async (environment) => {
-				const sessions = await this.listByEnvironmentId(environment.envId);
-				return sessions;
-			});
-
-			const sessionsResponses = await Promise.allSettled(sessionsPromises);
-
-			const sessions = flattenArray<Session>(
-				sessionsResponses
-					.filter((response) => response.status === "fulfilled")
-					.map((response) => get(response, "value.sessions", []).map((session) => convertSessionProtoToModel(session)))
-			);
-
-			return { data: sessions, error: undefined };
-		} catch (error) {
-			LoggerService.error(namespaces.sessionsService, (error as Error).message);
-
-			return {
-				data: undefined,
-				error,
-			};
 		}
 	}
 
