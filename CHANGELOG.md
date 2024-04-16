@@ -1,3 +1,10 @@
+# [0.12.0-dev.11](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.10...v0.12.0-dev.11) (2024-04-16)
+
+
+### Bug Fixes
+
+* reduced bundle size - improved imports ([#247](https://github.com/autokitteh/vscode-extension/issues/247)) ([376d75c](https://github.com/autokitteh/vscode-extension/commit/376d75ce5b7b504c4967e620610418962adb1e62))
+
 # [0.12.0-dev.10](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.9...v0.12.0-dev.10) (2024-04-15)
 
 
