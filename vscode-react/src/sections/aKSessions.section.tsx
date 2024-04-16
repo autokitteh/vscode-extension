@@ -3,7 +3,7 @@ import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
 import { AKMonacoEditorModal, AKOverlay, AKSessionsTableHeader } from "@react-components";
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
-import { AKTable, AKTableMessage } from "@react-components/AKTable";
+import { AKTable, AKTableHeader, AKTableHeaderCell, AKTableMessage } from "@react-components/AKTable";
 import { useCloseOnEscape, useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 import { createPortal } from "react-dom";
 
@@ -38,11 +38,16 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 
 	return (
 		<div className="mt-4" style={{ height }}>
-			<div className="flex items-baseline">
+			{/* <div className="flex items-baseline sticky top-0 z-20 bg-vscode-editor-background">
 				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.sessions.tableTitle")}</h1>
 				<div className="ml-1 text-lg font-extralight">({totalSessions})</div>
-			</div>
+			</div> */}
 			<AKTable>
+				<AKTableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-40">
+					<AKTableHeaderCell className="text-lg font-extralight" colSpan={8}>
+						{`${translate().t("reactApp.sessions.tableTitle")} (${totalSessions})`}
+					</AKTableHeaderCell>
+				</AKTableHeader>
 				<AKSessionsTableHeader />
 				<AKSessionsTableBody
 					sessions={sessions}

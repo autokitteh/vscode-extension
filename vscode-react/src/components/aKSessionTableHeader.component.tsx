@@ -4,7 +4,7 @@ import { AKTableHeader, AKTableHeaderCell } from "@react-components/AKTable";
 
 export const AKSessionsTableHeader: React.FC = () => {
 	return (
-		<AKTableHeader classes="sticky top-2">
+		<AKTableHeader classes="sticky top-8 z-50">
 			<AKTableHeaderCell>{translate().t("reactApp.sessions.time")}</AKTableHeaderCell>
 			<AKTableHeaderCell>{translate().t("reactApp.sessions.status")}</AKTableHeaderCell>
 			<AKTableHeaderCell>{translate().t("reactApp.sessions.sessionId")}</AKTableHeaderCell>

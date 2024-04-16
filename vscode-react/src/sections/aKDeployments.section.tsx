@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
 import { AKDeploymentTableBody, AKDeploymentTableHeader } from "@react-components";
-import { AKTable, AKTableMessage } from "@react-components/AKTable";
+import { AKTable, AKTableHeader, AKTableHeaderCell, AKTableMessage } from "@react-components/AKTable";
 import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { Deployment } from "@type/models";
@@ -36,11 +36,12 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 
 	return (
 		<div className="mt-4" style={{ height }}>
-			<div className="flex items-baseline">
-				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.deployments.tableTitle")}</h1>
-				<div className="ml-1 text-lg font-extralight">({totalDeployments})</div>
-			</div>
 			<AKTable>
+				<AKTableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-40">
+					<AKTableHeaderCell className="text-lg font-extralight" colSpan={8}>
+						{`${translate().t("reactApp.deployments.tableTitle")} (${totalDeployments})`}
+					</AKTableHeaderCell>
+				</AKTableHeader>
 				<AKDeploymentTableHeader />
 				<AKDeploymentTableBody deployments={deployments} />
 			</AKTable>
