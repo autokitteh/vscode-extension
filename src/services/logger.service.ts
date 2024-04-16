@@ -1,6 +1,6 @@
 import { channels } from "@constants";
 import { LoggerLevel } from "@enums";
-import { format } from "date-fns";
+import moment from "moment";
 import { window, OutputChannel } from "vscode";
 
 export class LoggerService {
@@ -28,7 +28,7 @@ export class LoggerService {
 		this.initializeOutputChannel(channelName);
 
 		this.outputChannels[channelName].appendLine(
-			`${format(new Date(), "yyyy-MM-dd HH:mm:ss")} - [${namespace}] [${level}] ${message}`
+			`${moment().format("YYYY-MM-DD HH:mm:ss")} - [${namespace}] [${level}] ${message}`
 		);
 	}
 
