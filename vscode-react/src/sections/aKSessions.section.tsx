@@ -45,7 +45,11 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 					</AKTableHeaderCell>
 					<AKTableHeaderCell className="flex justify-end text-xs font-extralight pt-3">
 						<div className="codicon codicon-filter text-xs mr-1" />
-						<select className="text-white bg-black rounded" onChange={(value) => filterSessions(value.target.value)}>
+						<select
+							className="text-white bg-black rounded"
+							onChange={(value) => filterSessions(value.target.value)}
+							disabled={totalSessions === 0}
+						>
 							<option value={undefined}>All</option>
 							{(Object.keys(SessionStateType) as Array<keyof typeof SessionStateType>).map((sessionState) => (
 								<option value={sessionState}>{capitalizeFirstLetter(sessionState)}</option>
