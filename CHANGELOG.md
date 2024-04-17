@@ -1,3 +1,10 @@
+# [0.12.0-dev.14](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.13...v0.12.0-dev.14) (2024-04-17)
+
+
+### Bug Fixes
+
+* get session log record type by the new structure from the ak backend ([#252](https://github.com/autokitteh/vscode-extension/issues/252)) ([d0c262f](https://github.com/autokitteh/vscode-extension/commit/d0c262f69868d5c9ffd9aaa16920b806274a203b))
+
 # [0.12.0-dev.13](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.12...v0.12.0-dev.13) (2024-04-16)
 
 
