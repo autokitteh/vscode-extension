@@ -132,12 +132,30 @@ export class StarlarkVersionManagerService {
 			return { error: error as Error };
 		}
 
-		const extractedFiles = await listFilesInDirectory(path.join(extensionPath, starlarkLSPExtractedDirectory));
-		if (extractedFiles.length !== 1) {
+		const extractionDirectory = path.join(extensionPath, starlarkLSPExtractedDirectory);
+
+		const extractedFiles = await listFilesInDirectory(extractionDirectory);
+
+		if (StarlarkVersionManagerService.determinePlatform() !== "windows" && extractedFiles.length === 1) {
 			return {
-				error: new Error(translate().t("errors.corruptedLSPArchive")),
+				data: extractedFiles[0],
 			};
 		}
+
+		if (StarlarkVersionManagerService.determinePlatform() === "windows") {
+			const executable = extractedFiles.find((file) => file.includes(".exe"));
+			if (!executable) {
+				return {
+					error: new Error(translate().t("starlark.executableNotFoundError", { starlarkLSPPath: extractionDirectory })),
+				};
+			}
+			return { data: executable };
+		}
+
+		return {
+			error: new Error(translate().t("starlark.executableNotFoundError", { starlarkLSPPath: extractionDirectory })),
+		};
+
 		LoggerService.info(namespaces.startlarkLSPServer, translate().t("starlark.executableUnpackedSuccessfully"));
 
 		return {

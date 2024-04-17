@@ -41,7 +41,7 @@ const extractZip = async (inputPath: string, outputPath: string): Promise<void> 
 
 export const extractArchive = async (inputPath: string, outputPath: string): Promise<void> => {
 	const type = getArchiveType(inputPath);
-	const extractPath = `${outputPath}/${starlarkLSPExtractedDirectory}`;
+	const extractPath = path.join(outputPath, starlarkLSPExtractedDirectory);
 
 	try {
 		if (!directoryExists(extractPath)) {
