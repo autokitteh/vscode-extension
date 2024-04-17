@@ -19,14 +19,15 @@ export class SessionLogRecord {
 	constructor(logRecord: ProtoSessionLogRecord) {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { t, ...props } = logRecord;
-		if (Object.keys(props).length > 1) {
+		const logRecordType = this.getLogRecordType(props);
+
+		if (!logRecordType) {
 			LoggerService.error(
 				namespaces.sessionsHistory,
-				translate().t("errors.sessionLogRecordMultipleProps", { props: Object.keys(props).join(", ") })
+				translate().t("errors.sessionLogRecordTypeNotFound", { props: Object.keys(props).join(", ") })
 			);
 			return;
 		}
-		const logRecordType = Object.keys(props)[0] as SessionLogRecordType;
 
 		switch (logRecordType) {
 			case SessionLogRecordType.callAttemptStart:
@@ -51,6 +52,16 @@ export class SessionLogRecord {
 		if (logRecordType !== SessionLogRecordType.callAttemptStart) {
 			this.dateTime = convertTimestampToDate(logRecord.t);
 		}
+	}
+
+	private getLogRecordType(props: { [key: string]: any }): SessionLogRecordType | undefined {
+		const keys = Object.keys(props);
+		for (const key of keys) {
+			if (key in SessionLogRecordType) {
+				return key as SessionLogRecordType;
+			}
+		}
+		return undefined;
 	}
 
 	private handleStateRecord(logRecord: ProtoSessionLogRecord) {
