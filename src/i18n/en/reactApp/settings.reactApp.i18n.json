@@ -4,5 +4,6 @@
 	"copyPath": "Copy Path",
 	"deleteProject": "Delete Project",
 	"viewProjectResourcesDirectoryPath": "View project resources directory path",
-	"viewProjectSettings": "View project settings"
+	"viewProjectSettings": "View project settings",
+	"pickDirectoryOfExecutables": "Pick directory of project files"
 }
