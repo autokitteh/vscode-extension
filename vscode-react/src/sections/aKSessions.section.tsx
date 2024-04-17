@@ -41,12 +41,12 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	};
 
 	const filterSessions = (value: string) => {
+		setStateFilter(value);
 		if (value === "all") {
 			sendMessage(MessageType.setSessionsStateFilter, undefined);
 			return;
 		}
 		sendMessage(MessageType.setSessionsStateFilter, value);
-		setStateFilter(value);
 	};
 
 	return (
