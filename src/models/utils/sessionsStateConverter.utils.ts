@@ -8,3 +8,10 @@ export const sessionStateConverter = (sessionState: number): SessionStateType | 
 	const sessionStateType = ProtoSessionStateType[sessionState].toLowerCase();
 	return SessionStateType[sessionStateType as keyof typeof SessionStateType];
 };
+export const reverseSessionStateConverter = (sessionState: SessionStateType): number | undefined => {
+	if (!(sessionState in SessionStateType)) {
+		return;
+	}
+	const sessionStateType = ProtoSessionStateType[sessionState.toUpperCase() as keyof typeof ProtoSessionStateType];
+	return sessionStateType;
+};

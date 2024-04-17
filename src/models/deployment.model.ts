@@ -1,5 +1,5 @@
 import { Deployment as ProtoDeployment } from "@ak-proto-ts/deployments/v1/deployment_pb";
-import { sessionStateConverter } from "@models/utils/sessionsStateConverter.utils";
+import { sessionStateConverter } from "@models/utils";
 import { Deployment } from "@type/models";
 import { convertTimestampToDate } from "@utilities";
 

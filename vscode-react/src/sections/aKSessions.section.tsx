@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { SessionStateType } from "@enums";
 import { translate } from "@i18n";
+import { reverseSessionStateConverter } from "@models/utils";
 import { SessionSectionViewModel } from "@models/views";
 import { AKSessionsTableHeader } from "@react-components";
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
@@ -26,12 +28,27 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 
 	useForceRerender();
 
+	const capitalizeFirstLetter = (str: string) => {
+		return str.charAt(0).toUpperCase() + str.slice(1);
+	};
+
 	return (
 		<div style={{ height }}>
 			<AKTable>
 				<AKTableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-30">
-					<AKTableHeaderCell className="text-lg font-extralight pt-5" colSpan={4}>
+					<AKTableHeaderCell className="text-lg font-extralight pt-5" colSpan={3}>
 						{`${translate().t("reactApp.sessions.tableTitle")} (${totalSessions})`}
+					</AKTableHeaderCell>
+					<AKTableHeaderCell className="flex justify-end text-xs font-extralight pt-3">
+						<div className="codicon codicon-filter text-xs mr-1" />
+						<select className="text-white bg-black rounded">
+							<option value="All">All</option>
+							{(Object.keys(SessionStateType) as Array<keyof typeof SessionStateType>).map((sessionState) => (
+								<option value={reverseSessionStateConverter(sessionState as SessionStateType)}>
+									{capitalizeFirstLetter(sessionState)}
+								</option>
+							))}
+						</select>
 					</AKTableHeaderCell>
 				</AKTableHeader>
 				<AKSessionsTableHeader />
