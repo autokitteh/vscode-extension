@@ -48,5 +48,5 @@
 	"projectPathCopiedError": "Error copying project path to clipboard for project: {{projectName}}",
 	"projectPathCopiedErrorEnriched": "Error copying project path to clipboard - project: {{projectName}}, error: {{error}}",
 	"sessionStartFailedExtended": "Error running session execution: {{error}} for build id: {{buildId}}",
-	"sessionLogRecordMultipleProps": "Session log record type not found: {{props}}"
+	"sessionLogRecordTypeNotFound": "Session log record type not found: {{props}}"
 }

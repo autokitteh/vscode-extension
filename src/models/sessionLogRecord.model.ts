@@ -24,7 +24,7 @@ export class SessionLogRecord {
 		if (!logRecordType) {
 			LoggerService.error(
 				namespaces.sessionsHistory,
-				translate().t("errors.sessionLogRecordMultipleProps", { props: Object.keys(props).join(", ") })
+				translate().t("errors.sessionLogRecordTypeNotFound", { props: Object.keys(props).join(", ") })
 			);
 			return;
 		}
