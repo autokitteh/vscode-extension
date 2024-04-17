@@ -64,7 +64,7 @@ function App() {
 							) : (
 								<AKButton
 									onClick={() => setSettingsPopperVisible(true)}
-									title={translate().t("reactApp.settings.viewProjectResourcesDirectory")}
+									title={translate().t("reactApp.settings.viewProjectSettings")}
 								>
 									<div className="codicon codicon-gear text-vscode-background" ref={pathPopperElementRef}></div>
 								</AKButton>
