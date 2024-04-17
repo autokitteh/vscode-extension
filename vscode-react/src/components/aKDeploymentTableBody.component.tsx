@@ -78,6 +78,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const getSessionsByDeploymentId = (deploymentId: string) => {
 		sendMessage(MessageType.selectDeployment, deploymentId);
 		setSelectedDeployment(deploymentId);
+		dispatch({ type: "SET_SELECTED_DEPLOYMENT", payload: deploymentId });
 	};
 
 	const isActive = (deploymentState: DeploymentState) => deploymentState === DeploymentState.ACTIVE_DEPLOYMENT;
@@ -135,6 +136,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	useEffect(() => {
 		if (typeof selectedDeploymentId === "string") {
 			setSelectedDeployment(selectedDeploymentId);
+			dispatch({ type: "SET_SELECTED_DEPLOYMENT", payload: selectedDeploymentId });
 		}
 	}, [selectedDeploymentId]);
 

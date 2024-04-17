@@ -5,6 +5,7 @@ import { SessionSectionViewModel } from "@models/views";
 import { AKSessionsTableHeader } from "@react-components";
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
 import { AKTable, AKTableHeader, AKTableHeaderCell, AKTableMessage } from "@react-components/AKTable";
+import { useAppState } from "@react-context";
 import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 
@@ -12,6 +13,8 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
+	const [stateFilter, setStateFilter] = useState<string>();
+	const [{ selectedDeploymentId }] = useAppState();
 
 	const { sessions, totalSessions } = sessionsSection || {};
 
@@ -26,14 +29,24 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 		}
 	}, [sessions]);
 
+	useEffect(() => {
+		setStateFilter("all");
+		sendMessage(MessageType.setSessionsStateFilter, undefined);
+	}, [selectedDeploymentId]);
+
 	useForceRerender();
 
 	const capitalizeFirstLetter = (str: string) => {
 		return str.charAt(0).toUpperCase() + str.slice(1);
 	};
 
-	const filterSessions = (value: any) => {
+	const filterSessions = (value: string) => {
+		if (value === "all") {
+			sendMessage(MessageType.setSessionsStateFilter, undefined);
+			return;
+		}
 		sendMessage(MessageType.setSessionsStateFilter, value);
+		setStateFilter(value);
 	};
 
 	return (
@@ -45,8 +58,12 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 					</AKTableHeaderCell>
 					<AKTableHeaderCell className="flex justify-end text-xs font-extralight pt-3">
 						<div className="codicon codicon-filter text-xs mr-1" />
-						<select className="text-white bg-black rounded" onChange={(value) => filterSessions(value.target.value)}>
-							<option value={undefined}>All</option>
+						<select
+							className="text-white bg-black rounded"
+							onChange={(value) => filterSessions(value.target.value)}
+							value={stateFilter}
+						>
+							<option value="all">All</option>
 							{(Object.keys(SessionStateType) as Array<keyof typeof SessionStateType>).map((sessionState) => (
 								<option value={sessionState}>{capitalizeFirstLetter(sessionState)}</option>
 							))}
