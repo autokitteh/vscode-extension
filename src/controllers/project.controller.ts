@@ -3,10 +3,11 @@ import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
-import { MessageType, ProjectIntervalTypes } from "@enums";
+import { MessageType, ProjectIntervalTypes, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
+import { reverseSessionStateConverter } from "@models/utils";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
 import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
@@ -31,6 +32,7 @@ export class ProjectController {
 	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
 	private selectedSessionId?: string;
+	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectIntervalTypes, boolean> = new Map();
 
 	constructor(
@@ -185,10 +187,19 @@ export class ProjectController {
 		});
 	}
 
-	async selectDeployment(deploymentId: string): Promise<void> {
-		this.selectedDeploymentId = deploymentId;
+	setSessionsStateFilter(filterState: string) {
+		this.filterSessionsState = filterState;
+		this.fetchSessions();
+	}
 
-		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
+	async fetchSessions() {
+		if (!this.selectedDeploymentId) {
+			return;
+		}
+		const { data: sessions, error } = await SessionsService.listByDeploymentId(
+			this.selectedDeploymentId,
+			reverseSessionStateConverter(this.filterSessionsState as SessionStateType)
+		);
 
 		if (error) {
 			const log = `${translate().t("errors.sessionFetchFailed")} - ${(error as Error).message}`;
@@ -212,11 +223,6 @@ export class ProjectController {
 			payload: sessionsViewObject,
 		});
 
-		this.view.update({
-			type: MessageType.selectDeployment,
-			payload: deploymentId,
-		});
-
 		if (sessions?.length) {
 			this.view.update({
 				type: MessageType.selectSession,
@@ -225,6 +231,17 @@ export class ProjectController {
 
 			this.displaySessionLogs(sessions![0].sessionId);
 		}
+	}
+
+	async selectDeployment(deploymentId: string): Promise<void> {
+		this.selectedDeploymentId = deploymentId;
+
+		await this.fetchSessions();
+
+		this.view.update({
+			type: MessageType.selectDeployment,
+			payload: deploymentId,
+		});
 	}
 
 	printFinishedSessionLogs(lastState: SessionLogRecord) {

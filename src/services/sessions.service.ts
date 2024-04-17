@@ -2,6 +2,7 @@ import {
 	Session as ProtoSession,
 	SessionLogRecord as ProtoSessionLogRecord,
 } from "@ak-proto-ts/sessions/v1/session_pb";
+import { SessionStateType as ProtoSessionStateType } from "@ak-proto-ts/sessions/v1/session_pb";
 import { StartRequest } from "@ak-proto-ts/sessions/v1/svc_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
@@ -23,9 +24,15 @@ export class SessionsService {
 		}
 	}
 
-	static async listByDeploymentId(deploymentId: string): Promise<ServiceResponse<Session[]>> {
+	static async listByDeploymentId(
+		deploymentId: string,
+		sessionState?: ProtoSessionStateType
+	): Promise<ServiceResponse<Session[]>> {
 		try {
-			const { sessions: sessionsResponse } = await sessionsClient.list({ deploymentId });
+			const { sessions: sessionsResponse } = await sessionsClient.list({
+				deploymentId,
+				stateType: sessionState,
+			});
 			const sessions = sessionsResponse.map((session: ProtoSession) => convertSessionProtoToModel(session));
 			return { data: sessions, error: undefined };
 		} catch (error) {
