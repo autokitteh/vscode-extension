@@ -207,7 +207,7 @@ export class ProjectController {
 			}
 			LoggerService.error(
 				namespaces.projectController,
-				translate().t("errors.sessionStateFilterConversionErrorExtended", {
+				translate().t("errors.sessionStateFilterConversionError", {
 					error: (error as Error).message,
 					stateType: this.filterSessionsState,
 				})
