@@ -1,8 +1,7 @@
 import {
-	Session as ProtoSession,
 	SessionLogRecord as ProtoSessionLogRecord,
+	Session as ProtoSession,
 } from "@ak-proto-ts/sessions/v1/session_pb";
-import { SessionStateType as ProtoSessionStateType } from "@ak-proto-ts/sessions/v1/session_pb";
 import { StartRequest } from "@ak-proto-ts/sessions/v1/svc_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
@@ -10,7 +9,7 @@ import { translate } from "@i18n";
 import { SessionLogRecord, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse, StartSessionArgsType } from "@type";
-import { Session } from "@type/models";
+import { Session, SessionFilter } from "@type/models";
 
 export class SessionsService {
 	static async listByEnvironmentId(environmentId: string): Promise<ServiceResponse<Session[]>> {
@@ -24,14 +23,11 @@ export class SessionsService {
 		}
 	}
 
-	static async listByDeploymentId(
-		deploymentId: string,
-		sessionState?: ProtoSessionStateType
-	): Promise<ServiceResponse<Session[]>> {
+	static async listByDeploymentId(deploymentId: string, filter: SessionFilter): Promise<ServiceResponse<Session[]>> {
 		try {
 			const { sessions: sessionsResponse } = await sessionsClient.list({
 				deploymentId,
-				stateType: sessionState,
+				stateType: filter.stateType,
 			});
 			const sessions = sessionsResponse.map((session: ProtoSession) => convertSessionProtoToModel(session));
 			return { data: sessions, error: undefined };

@@ -196,10 +196,11 @@ export class ProjectController {
 		if (!this.selectedDeploymentId) {
 			return;
 		}
-		const { data: sessions, error } = await SessionsService.listByDeploymentId(
-			this.selectedDeploymentId,
-			reverseSessionStateConverter(this.filterSessionsState as SessionStateType)
-		);
+
+		const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
+		const { data: sessions, error } = await SessionsService.listByDeploymentId(this.selectedDeploymentId, {
+			stateType: selectedSessionStateFilter,
+		});
 
 		if (error) {
 			const log = `${translate().t("errors.sessionFetchFailed")} - ${(error as Error).message}`;
