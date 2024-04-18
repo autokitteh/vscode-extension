@@ -202,15 +202,12 @@ export class ProjectController {
 			selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
 		} catch (error) {
 			if (!this.hasDisplayedError.get("sessionConverter")) {
-				commands.executeCommand(
-					vsCommands.showErrorMessage,
-					translate().t("errors.sessionStateFilterConversionErrorExtended", { stateType: this.filterSessionsState })
-				);
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.internalErrorUpdate"));
 				this.hasDisplayedError.set("sessionConverter", true);
 			}
 			LoggerService.error(
 				namespaces.projectController,
-				translate().t("errors.sessionStateFilterConversionError", {
+				translate().t("errors.sessionStateFilterConversionErrorExtended", {
 					error: (error as Error).message,
 					stateType: this.filterSessionsState,
 				})
