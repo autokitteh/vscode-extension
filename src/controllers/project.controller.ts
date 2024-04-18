@@ -33,7 +33,7 @@ export class ProjectController {
 	private selectedDeploymentId?: string;
 	private selectedSessionId?: string;
 	private filterSessionsState?: string;
-	private hasDisplayedError: Map<ProjectIntervalTypes, boolean> = new Map();
+	private hasDisplayedError: Map<string, boolean> = new Map();
 
 	constructor(
 		projectView: IProjectView,
@@ -123,9 +123,9 @@ export class ProjectController {
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
 		if (error) {
 			const notification = translate().t("errors.noResponse");
-			if (!this.hasDisplayedError.get(ProjectIntervalTypes.deployments)) {
+			if (!this.hasDisplayedError.get(ProjectIntervalTypes.deployments.toString())) {
 				commands.executeCommand(vsCommands.showErrorMessage, notification);
-				this.hasDisplayedError.set(ProjectIntervalTypes.deployments, true);
+				this.hasDisplayedError.set(ProjectIntervalTypes.deployments.toString(), true);
 			}
 
 			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
@@ -197,7 +197,26 @@ export class ProjectController {
 			return;
 		}
 
-		const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
+		let selectedSessionStateFilter;
+		try {
+			selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
+		} catch (error) {
+			if (!this.hasDisplayedError.get("sessionConverter")) {
+				commands.executeCommand(
+					vsCommands.showErrorMessage,
+					translate().t("errors.sessionStateFilterConversionErrorExtended", { stateType: this.filterSessionsState })
+				);
+				this.hasDisplayedError.set("sessionConverter", true);
+			}
+			LoggerService.error(
+				namespaces.projectController,
+				translate().t("errors.sessionStateFilterConversionError", {
+					error: (error as Error).message,
+					stateType: this.filterSessionsState,
+				})
+			);
+			return;
+		}
 		const { data: sessions, error } = await SessionsService.listByDeploymentId(this.selectedDeploymentId, {
 			stateType: selectedSessionStateFilter,
 		});
