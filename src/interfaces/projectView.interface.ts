@@ -20,6 +20,7 @@ export interface IProjectViewDelegate {
 	copyProjectPath?: Callback<string>;
 	openProjectResourcesDirectory?: Callback<string>;
 	deleteProject?: Callback;
+	setProjectResourcesDirectory?: Callback<string>;
 }
 
 export interface IProjectView {

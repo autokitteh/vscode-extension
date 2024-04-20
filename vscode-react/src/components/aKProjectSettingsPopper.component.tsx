@@ -2,6 +2,7 @@ import React from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import DownloadIcon from "@react-assets/icons/download.svg?react";
+import ImportIcon from "@react-assets/icons/file-import.svg?react";
 import { AKButton } from "@react-components/aKButton.component";
 import { sendMessage } from "@react-utilities";
 
@@ -47,6 +48,13 @@ export const ProjectSettingsPopper = ({
 					title={translate().t("reactApp.settings.openProjectResourcesDirectory")}
 				>
 					<div className="codicon codicon-folder-opened text-vscode-foreground"></div>
+				</AKButton>
+				<AKButton
+					onClick={() => postMessage(MessageType.setProjectResourcesDirectory, resourcesDir)}
+					classes="ml-4 w-1/4"
+					title={translate().t("reactApp.settings.setProjectResourcesDirectory")}
+				>
+					<ImportIcon className="text-vscode-background text-vscode-foreground" />
 				</AKButton>
 				<AKButton
 					onClick={() => postMessage(MessageType.onClickSetResourcesDirectory, undefined)}

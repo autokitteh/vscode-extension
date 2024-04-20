@@ -14,7 +14,7 @@ import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import { createDirectory, openFileExplorer } from "@utilities";
 import isEqual from "lodash.isequal";
-import { commands, OpenDialogOptions, window, env } from "vscode";
+import { commands, OpenDialogOptions, window, env, Uri } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
@@ -698,14 +698,6 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, log);
 	}
 
-	async promptUserToDownloadResources(): Promise<string | undefined> {
-		return await window.showInformationMessage(
-			translate().t("projects.downloadResourcesDirectory", { projectName: this.project!.name }),
-			translate().t("projects.downloadResourcesDirectoryApprove"),
-			translate().t("projects.downloadResourcesDirectoryDismiss")
-		);
-	}
-
 	async copyProjectPath(projectPathToCopy: string): Promise<void> {
 		try {
 			await env.clipboard.writeText(projectPathToCopy);
@@ -742,6 +734,47 @@ export class ProjectController {
 			commands.executeCommand(
 				vsCommands.showErrorMessage,
 				translate().t("errors.errorOpeningFileExplorerShort", { projectName: this.project?.name })
+			);
+		}
+	}
+
+	async setProjectResourcesDirectory(resourcesPath: string): Promise<void> {
+		try {
+			const newDirectoryUri = Uri.file(resourcesPath);
+			const newLocalResourcesPath = await window.showOpenDialog({
+				canSelectFolders: true,
+				canSelectFiles: false,
+				defaultUri: newDirectoryUri,
+
+				openLabel: translate().t("projects.setResourcesDirectory"),
+			});
+
+			if (newLocalResourcesPath === undefined || newLocalResourcesPath.length === 0) {
+				return;
+			}
+			const savePath = newLocalResourcesPath[0].fsPath;
+
+			await commands.executeCommand(vsCommands.setContext, this.projectId, { path: savePath });
+
+			const successMessage = translate().t("projects.setResourcesDirectorySuccess", {
+				projectName: this.project?.name,
+			});
+			LoggerService.info(namespaces.projectController, successMessage);
+			commands.executeCommand(vsCommands.showInfoMessage, successMessage);
+
+			this.notifyViewResourcesPathChanged();
+		} catch (error) {
+			LoggerService.error(
+				namespaces.projectController,
+				translate().t("projects.setResourcesDirectoryFailure", {
+					error: (error as Error).message,
+					projectName: this.project?.name,
+				})
+			);
+
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				translate().t("errors.setResourcesDirectoryFailureShort", { projectName: this.project?.name })
 			);
 		}
 	}

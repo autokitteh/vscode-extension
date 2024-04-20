@@ -10,10 +10,7 @@
 	"fetchProjectsFailed": "Projects fetch failed",
 	"fetchProjectsFailedError": "Projects fetch failed - error: {{error}}",
 	"resourcesDirectoryMissing": "Resources directory missing",
-	"downloadResourcesDirectory": "Download resources from the server - Project: {{projectName}}",
 	"downloadResourcesDirectoryNoResources": "There are no resources to download from the server",
-	"downloadResourcesDirectoryApprove": "Download",
-	"downloadResourcesDirectoryDismiss": "Dismiss",
 	"downloadResourcesSelectDirectory": "Select folder",
 	"downloadResourcesDirectoryErrorForProject": "Error downloading project resources for project: {{projectName}}",
 	"downloadResourcesDirectoryError": "Error downloading project resources: {{error}} for project: {{projectName}}",
@@ -24,5 +21,9 @@
 	"projectPathCopied": "Project {{projectName}} path copied to clipboard",
 	"deleteFailed": "Project deletion failed - project name: {{projectName}}",
 	"deleteFailedError": "Project deletion failed - project name: {{projectName}}, error: {{error}}",
-	"deleteSucceed": "Project deletion succeed - project name: {{projectName}}"
+	"deleteSucceed": "Project deletion succeed - project name: {{projectName}}",
+	"setResourcesDirectory": "Select folder",
+	"setResourcesDirectorySuccess": "Project resources directory successfully changed for project: {{projectName}}",
+	"setResourcesDirectoryFailure": "Changing project resources directory failed for project: {{projectName}}, error: {{error}}",
+	"setResourcesDirectoryFailureShort": "Changing project resources directory failed for project: {{projectName}}"
 }
