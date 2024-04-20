@@ -35,6 +35,7 @@ export class ProjectController {
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedFirstSessionPerDeployment: Map<string, boolean> = new Map();
+	private selectedSessionPerDeployment: Map<string, string> = new Map();
 
 	constructor(
 		projectView: IProjectView,
@@ -259,7 +260,14 @@ export class ProjectController {
 			});
 
 			this.displaySessionLogs(sessions![0].sessionId);
-			this.selectedFirstSessionPerDeployment.set(this.selectedDeploymentId, true);
+			this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessions![0].sessionId);
+		} else if (sessions?.length && this.selectedSessionPerDeployment.get(this.selectedDeploymentId)) {
+			this.view.update({
+				type: MessageType.selectSession,
+				payload: this.selectedSessionPerDeployment.get(this.selectedDeploymentId),
+			});
+
+			this.displaySessionLogs(this.selectedSessionPerDeployment.get(this.selectedDeploymentId)!);
 		}
 	}
 
@@ -337,6 +345,8 @@ export class ProjectController {
 	async displaySessionLogs(sessionId: string): Promise<void> {
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+
+		this.selectedSessionPerDeployment.set(this.selectedDeploymentId!, sessionId);
 
 		this.selectedSessionId = sessionId;
 		this.initSessionLogsDisplay(sessionId);
@@ -648,10 +658,14 @@ export class ProjectController {
 		});
 
 		this.selectedDeploymentId = startSessionArgs.deploymentId;
+
+		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessionId!);
+
 		this.view.update({
 			type: MessageType.selectDeployment,
 			payload: startSessionArgs.deploymentId,
 		});
+
 		this.displaySessionLogs(sessionId!);
 	}
 
