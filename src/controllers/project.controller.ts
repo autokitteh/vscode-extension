@@ -34,6 +34,7 @@ export class ProjectController {
 	private selectedSessionId?: string;
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
+	private selectedFirstSessionPerDeployment: Map<string, boolean> = new Map();
 
 	constructor(
 		projectView: IProjectView,
@@ -246,13 +247,19 @@ export class ProjectController {
 			payload: sessionsViewObject,
 		});
 
-		if (sessions?.length) {
+		this.view.update({
+			type: MessageType.selectDeployment,
+			payload: this.selectedDeploymentId,
+		});
+
+		if (sessions?.length && !this.selectedFirstSessionPerDeployment.get(this.selectedDeploymentId)) {
 			this.view.update({
 				type: MessageType.selectSession,
 				payload: sessions[0].sessionId,
 			});
 
 			this.displaySessionLogs(sessions![0].sessionId);
+			this.selectedFirstSessionPerDeployment.set(this.selectedDeploymentId, true);
 		}
 	}
 
