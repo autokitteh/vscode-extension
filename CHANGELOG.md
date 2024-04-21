@@ -1,3 +1,10 @@
+# [0.12.0-dev.16](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.15...v0.12.0-dev.16) (2024-04-21)
+
+
+### Features
+
+* set manifest yaml schema from autokitteh submodule (UI-257) ([#259](https://github.com/autokitteh/vscode-extension/issues/259)) ([678dee1](https://github.com/autokitteh/vscode-extension/commit/678dee1645f5d3ef5fffcf53024c4b004a6cf4be))
+
 # [0.12.0-dev.15](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.14...v0.12.0-dev.15) (2024-04-21)
 
 
