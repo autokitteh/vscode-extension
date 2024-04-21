@@ -34,7 +34,6 @@ export class ProjectController {
 	private selectedSessionId?: string;
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
-	private selectedFirstSessionPerDeployment: Map<string, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
 
 	constructor(
@@ -253,7 +252,7 @@ export class ProjectController {
 			payload: this.selectedDeploymentId,
 		});
 
-		if (sessions?.length && !this.selectedFirstSessionPerDeployment.get(this.selectedDeploymentId)) {
+		if (sessions?.length && !this.selectedSessionPerDeployment.get(this.selectedDeploymentId)) {
 			this.view.update({
 				type: MessageType.selectSession,
 				payload: sessions[0].sessionId,
@@ -262,12 +261,18 @@ export class ProjectController {
 			this.displaySessionLogs(sessions![0].sessionId);
 			this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessions![0].sessionId);
 		} else if (sessions?.length && this.selectedSessionPerDeployment.get(this.selectedDeploymentId)) {
-			this.view.update({
-				type: MessageType.selectSession,
-				payload: this.selectedSessionPerDeployment.get(this.selectedDeploymentId),
-			});
+			const isCurrentSelectedSessionDisplayed = sessions.find(
+				(session) => session.sessionId === this.selectedSessionPerDeployment.get(this.selectedDeploymentId!)
+			);
 
-			this.displaySessionLogs(this.selectedSessionPerDeployment.get(this.selectedDeploymentId)!);
+			if (isCurrentSelectedSessionDisplayed) {
+				this.view.update({
+					type: MessageType.selectSession,
+					payload: isCurrentSelectedSessionDisplayed.sessionId,
+				});
+				this.displaySessionLogs(isCurrentSelectedSessionDisplayed?.sessionId!);
+			}
+			LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		}
 	}
 
