@@ -33,7 +33,7 @@ export class ProjectController {
 	private selectedDeploymentId?: string;
 	private selectedSessionId?: string;
 	private filterSessionsState?: string;
-	private hasDisplayedError: Map<string, boolean> = new Map();
+	private hasDisplayedError: Map<ProjectIntervalTypes, boolean> = new Map();
 
 	constructor(
 		projectView: IProjectView,
@@ -123,9 +123,9 @@ export class ProjectController {
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
 		if (error) {
 			const notification = translate().t("errors.noResponse");
-			if (!this.hasDisplayedError.get(ProjectIntervalTypes.deployments.toString())) {
+			if (!this.hasDisplayedError.get(ProjectIntervalTypes.deployments)) {
 				commands.executeCommand(vsCommands.showErrorMessage, notification);
-				this.hasDisplayedError.set(ProjectIntervalTypes.deployments.toString(), true);
+				this.hasDisplayedError.set(ProjectIntervalTypes.deployments, true);
 			}
 
 			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
@@ -201,9 +201,9 @@ export class ProjectController {
 		try {
 			selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
 		} catch (error) {
-			if (!this.hasDisplayedError.get("sessionConverter")) {
+			if (!this.hasDisplayedError.get(ProjectIntervalTypes.sessionHistory)) {
 				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.internalErrorUpdate"));
-				this.hasDisplayedError.set("sessionConverter", true);
+				this.hasDisplayedError.set(ProjectIntervalTypes.sessionHistory, true);
 			}
 			LoggerService.error(
 				namespaces.projectController,
