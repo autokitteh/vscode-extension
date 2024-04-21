@@ -201,9 +201,9 @@ export class ProjectController {
 		try {
 			selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
 		} catch (error) {
-			if (!this.hasDisplayedError.get(ProjectIntervalTypes.sessionHistory)) {
+			if (!this.hasDisplayedError.get(ProjectIntervalTypes.sessions)) {
 				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.internalErrorUpdate"));
-				this.hasDisplayedError.set(ProjectIntervalTypes.sessionHistory, true);
+				this.hasDisplayedError.set(ProjectIntervalTypes.sessions, true);
 			}
 			LoggerService.error(
 				namespaces.projectController,
