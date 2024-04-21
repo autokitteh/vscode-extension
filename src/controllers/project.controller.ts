@@ -192,7 +192,7 @@ export class ProjectController {
 		this.fetchSessions();
 	}
 
-	async fetchSessions() {
+	async fetchSessions(resetFilter: boolean = false) {
 		if (!this.selectedDeploymentId) {
 			return;
 		}
@@ -214,8 +214,11 @@ export class ProjectController {
 			);
 			return;
 		}
+
+		const stateFilter = resetFilter ? undefined : selectedSessionStateFilter;
+
 		const { data: sessions, error } = await SessionsService.listByDeploymentId(this.selectedDeploymentId, {
-			stateType: selectedSessionStateFilter,
+			stateType: stateFilter,
 		});
 
 		if (error) {
@@ -253,7 +256,7 @@ export class ProjectController {
 	async selectDeployment(deploymentId: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
 
-		await this.fetchSessions();
+		await this.fetchSessions(true);
 
 		this.view.update({
 			type: MessageType.selectDeployment,
