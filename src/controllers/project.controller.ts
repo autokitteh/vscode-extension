@@ -3,10 +3,11 @@ import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
-import { MessageType, ProjectIntervalTypes } from "@enums";
+import { MessageType, ProjectIntervalTypes, ProjectRecurringErrorMessages, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
+import { reverseSessionStateConverter } from "@models/utils";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
 import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
@@ -31,7 +32,8 @@ export class ProjectController {
 	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
 	private selectedSessionId?: string;
-	private hasDisplayedError: Map<ProjectIntervalTypes, boolean> = new Map();
+	private filterSessionsState?: string;
+	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 
 	constructor(
 		projectView: IProjectView,
@@ -121,9 +123,9 @@ export class ProjectController {
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
 		if (error) {
 			const notification = translate().t("errors.noResponse");
-			if (!this.hasDisplayedError.get(ProjectIntervalTypes.deployments)) {
+			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.deployments)) {
 				commands.executeCommand(vsCommands.showErrorMessage, notification);
-				this.hasDisplayedError.set(ProjectIntervalTypes.deployments, true);
+				this.hasDisplayedError.set(ProjectRecurringErrorMessages.deployments, true);
 			}
 
 			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
@@ -185,12 +187,44 @@ export class ProjectController {
 		});
 	}
 
-	async selectDeployment(deploymentId: string): Promise<void> {
-		this.selectedDeploymentId = deploymentId;
+	setSessionsStateFilter(filterState: string) {
+		this.filterSessionsState = filterState;
+		this.fetchSessions();
+	}
 
-		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
+	async fetchSessions() {
+		if (!this.selectedDeploymentId) {
+			return;
+		}
+
+		let selectedSessionStateFilter;
+		try {
+			selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
+		} catch (error) {
+			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionStateConverter)) {
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.internalErrorUpdate"));
+				this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessionStateConverter, true);
+			}
+			LoggerService.error(
+				namespaces.projectController,
+				translate().t("errors.sessionStateFilterConversionError", {
+					error: (error as Error).message,
+					stateType: this.filterSessionsState,
+				})
+			);
+			return;
+		}
+
+		const { data: sessions, error } = await SessionsService.listByDeploymentId(this.selectedDeploymentId, {
+			stateType: selectedSessionStateFilter,
+		});
 
 		if (error) {
+			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessions)) {
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.internalErrorUpdate"));
+				this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessions, true);
+			}
+
 			const log = `${translate().t("errors.sessionFetchFailed")} - ${(error as Error).message}`;
 			LoggerService.error(namespaces.projectController, log);
 			return;
@@ -212,11 +246,6 @@ export class ProjectController {
 			payload: sessionsViewObject,
 		});
 
-		this.view.update({
-			type: MessageType.selectDeployment,
-			payload: deploymentId,
-		});
-
 		if (sessions?.length) {
 			this.view.update({
 				type: MessageType.selectSession,
@@ -225,6 +254,17 @@ export class ProjectController {
 
 			this.displaySessionLogs(sessions![0].sessionId);
 		}
+	}
+
+	async selectDeployment(deploymentId: string): Promise<void> {
+		this.selectedDeploymentId = deploymentId;
+
+		await this.fetchSessions();
+
+		this.view.update({
+			type: MessageType.selectDeployment,
+			payload: deploymentId,
+		});
 	}
 
 	printFinishedSessionLogs(lastState: SessionLogRecord) {

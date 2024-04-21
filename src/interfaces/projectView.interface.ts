@@ -21,6 +21,7 @@ export interface IProjectViewDelegate {
 	openProjectResourcesDirectory?: Callback<string>;
 	deleteProject?: Callback;
 	setProjectResourcesDirectory?: Callback<string>;
+	setSessionsStateFilter?: Callback<string>;
 }
 
 export interface IProjectView {

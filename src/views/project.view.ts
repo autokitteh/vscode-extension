@@ -75,6 +75,9 @@ export class ProjectView implements IProjectView {
 					case MessageType.deleteProject:
 						this.delegate?.deleteProject?.();
 						break;
+					case MessageType.setSessionsStateFilter:
+						this.delegate?.setSessionsStateFilter?.(message.payload as string);
+						break;
 					default:
 				}
 			},
