@@ -755,6 +755,8 @@ export class ProjectController {
 				vsCommands.showErrorMessage,
 				translate().t("errors.setResourcesDirectoryFailureShort", { projectName: this.project?.name })
 			);
+
+			return;
 		}
 
 		let newLocalResourcesPath;
@@ -779,6 +781,7 @@ export class ProjectController {
 				vsCommands.showErrorMessage,
 				translate().t("errors.setResourcesDirectoryFailureShort", { projectName: this.project?.name })
 			);
+			return;
 		}
 
 		if (newLocalResourcesPath === undefined || newLocalResourcesPath.length === 0) {
