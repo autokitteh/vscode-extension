@@ -1,3 +1,10 @@
+# [0.12.0-dev.18](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.17...v0.12.0-dev.18) (2024-04-21)
+
+
+### Features
+
+* filter session types (UI-242) ([#254](https://github.com/autokitteh/vscode-extension/issues/254)) ([eaf5f16](https://github.com/autokitteh/vscode-extension/commit/eaf5f16642f0e8fe01afb8e4c6a2b3fcb42a72fd))
+
 # [0.12.0-dev.17](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.16...v0.12.0-dev.17) (2024-04-21)
 
 
