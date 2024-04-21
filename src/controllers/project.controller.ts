@@ -886,6 +886,18 @@ export class ProjectController {
 
 			return;
 		}
+
+		if (this.selectedSessionId === sessionId) {
+			let sessionIndex = this.sessions?.findIndex((session) => session.sessionId === sessionId);
+
+			if (sessionIndex === this.sessions!.length - 1) {
+				sessionIndex = this.sessions!.length - 3;
+			}
+
+			const selectedSessionId = this.sessions?.[sessionIndex! + 1]?.sessionId;
+			this.displaySessionLogs(selectedSessionId!);
+		}
+
 		this.view.update({
 			type: MessageType.deleteSessionResponse,
 		});
