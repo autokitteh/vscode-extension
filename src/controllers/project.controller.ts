@@ -254,8 +254,6 @@ export class ProjectController {
 	async selectDeployment(deploymentId: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
 
-		this.filterSessionsState = undefined;
-
 		await this.fetchSessions();
 
 		this.view.update({

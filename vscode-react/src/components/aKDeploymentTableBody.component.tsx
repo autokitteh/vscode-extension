@@ -134,13 +134,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	// useEffects Section
 	useEffect(() => {
-		if (typeof selectedDeploymentId === "string") {
-			setSelectedDeployment(selectedDeploymentId);
-			dispatch({ type: "SET_SELECTED_DEPLOYMENT", payload: selectedDeploymentId });
-		}
-	}, [selectedDeploymentId]);
-
-	useEffect(() => {
 		hidePopper();
 	}, []);
 

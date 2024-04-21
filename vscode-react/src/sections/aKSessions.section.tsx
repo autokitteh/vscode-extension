@@ -5,7 +5,6 @@ import { SessionSectionViewModel } from "@models/views";
 import { AKSessionsTableHeader } from "@react-components";
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
 import { AKTable, AKTableHeader, AKTableHeaderCell, AKTableMessage } from "@react-components/AKTable";
-import { useAppState } from "@react-context";
 import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 
@@ -14,7 +13,6 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [stateFilter, setStateFilter] = useState<string>();
-	const [{ selectedDeploymentId }] = useAppState();
 
 	const { sessions, totalSessions } = sessionsSection || {};
 
@@ -28,11 +26,6 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 			setIsLoading(false);
 		}
 	}, [sessions]);
-
-	useEffect(() => {
-		setStateFilter("all");
-		sendMessage(MessageType.setSessionsStateFilter, undefined);
-	}, [selectedDeploymentId]);
 
 	useForceRerender();
 
