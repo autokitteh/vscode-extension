@@ -10,6 +10,8 @@ dist/test/**
 
 # Ignore source code
 src/**
+!src/autokitteh/manifest.schema.yaml
+
 node_modules/**
 !node_modules/module-alias/**
 !node_modules/adm-zip/**
