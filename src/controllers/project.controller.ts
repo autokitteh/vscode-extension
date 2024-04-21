@@ -220,6 +220,11 @@ export class ProjectController {
 		});
 
 		if (error) {
+			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessions)) {
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.internalErrorUpdate"));
+				this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessions, true);
+			}
+
 			const log = `${translate().t("errors.sessionFetchFailed")} - ${(error as Error).message}`;
 			LoggerService.error(namespaces.projectController, log);
 			return;
