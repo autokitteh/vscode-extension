@@ -24,6 +24,7 @@
 	"deleteSucceed": "Project deletion succeed - project name: {{projectName}}",
 	"setResourcesDirectory": "Select folder",
 	"setResourcesDirectorySuccess": "Project resources directory successfully changed for project: {{projectName}}",
-	"setResourcesDirectoryFailure": "Changing project resources directory failed for project: {{projectName}}, error: {{error}}",
+	"setResourcesDirectoryCurrentUriFailure": "Changing project resources directory failed on getting the current directory path for project: {{projectName}}, error: {{error}}",
+	"setResourcesDirectorGetPathFromDialogFailure": "Changing project resources directory failed on getting the new path for project in user dialog: {{projectName}}, error: {{error}}",
 	"setResourcesDirectoryFailureShort": "Changing project resources directory failed for project: {{projectName}}"
 }

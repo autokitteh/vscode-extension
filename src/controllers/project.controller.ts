@@ -739,34 +739,13 @@ export class ProjectController {
 	}
 
 	async setProjectResourcesDirectory(resourcesPath: string): Promise<void> {
+		let currentDirectoryUri;
 		try {
-			const newDirectoryUri = Uri.file(resourcesPath);
-			const newLocalResourcesPath = await window.showOpenDialog({
-				canSelectFolders: true,
-				canSelectFiles: false,
-				defaultUri: newDirectoryUri,
-
-				openLabel: translate().t("projects.setResourcesDirectory"),
-			});
-
-			if (newLocalResourcesPath === undefined || newLocalResourcesPath.length === 0) {
-				return;
-			}
-			const savePath = newLocalResourcesPath[0].fsPath;
-
-			await commands.executeCommand(vsCommands.setContext, this.projectId, { path: savePath });
-
-			const successMessage = translate().t("projects.setResourcesDirectorySuccess", {
-				projectName: this.project?.name,
-			});
-			LoggerService.info(namespaces.projectController, successMessage);
-			commands.executeCommand(vsCommands.showInfoMessage, successMessage);
-
-			this.notifyViewResourcesPathChanged();
+			currentDirectoryUri = Uri.file(resourcesPath);
 		} catch (error) {
 			LoggerService.error(
 				namespaces.projectController,
-				translate().t("projects.setResourcesDirectoryFailure", {
+				translate().t("projects.setResourcesDirectoryCurrentUriFailure", {
 					error: (error as Error).message,
 					projectName: this.project?.name,
 				})
@@ -777,6 +756,50 @@ export class ProjectController {
 				translate().t("errors.setResourcesDirectoryFailureShort", { projectName: this.project?.name })
 			);
 		}
+
+		let newLocalResourcesPath;
+		try {
+			newLocalResourcesPath = await window.showOpenDialog({
+				canSelectFolders: true,
+				canSelectFiles: false,
+				defaultUri: currentDirectoryUri,
+
+				openLabel: translate().t("projects.setResourcesDirectory"),
+			});
+		} catch (error) {
+			LoggerService.error(
+				namespaces.projectController,
+				translate().t("projects.setResourcesDirectorGetPathFromDialogFailure", {
+					error: (error as Error).message,
+					projectName: this.project?.name,
+				})
+			);
+
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				translate().t("errors.setResourcesDirectoryFailureShort", { projectName: this.project?.name })
+			);
+		}
+
+		if (newLocalResourcesPath === undefined || newLocalResourcesPath.length === 0) {
+			return;
+		}
+
+		const currentProjectDirectory = await commands.executeCommand(vsCommands.getContext, this.projectId);
+
+		const savePath = newLocalResourcesPath[0].fsPath;
+
+		if (currentProjectDirectory && (currentProjectDirectory as { path: string }).path !== savePath) {
+			await commands.executeCommand(vsCommands.setContext, this.projectId, { path: savePath });
+		}
+
+		const successMessage = translate().t("projects.setResourcesDirectorySuccess", {
+			projectName: this.project?.name,
+		});
+		LoggerService.info(namespaces.projectController, successMessage);
+		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
+
+		await this.notifyViewResourcesPathChanged();
 	}
 
 	async deleteSession(sessionId: string) {
