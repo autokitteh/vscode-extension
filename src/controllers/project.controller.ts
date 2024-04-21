@@ -189,6 +189,9 @@ export class ProjectController {
 	}
 
 	setSessionsStateFilter(filterState: string) {
+		if (this.filterSessionsState === filterState) {
+			return;
+		}
 		this.filterSessionsState = filterState;
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		this.fetchSessions();
