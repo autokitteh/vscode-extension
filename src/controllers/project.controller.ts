@@ -88,7 +88,10 @@ export class ProjectController {
 			await SessionsService.getLogRecordsBySessionId(sessionId);
 
 		if (sessionsError) {
-			commands.executeCommand(vsCommands.showErrorMessage, (sessionsError as Error).message);
+			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionHistory)) {
+				commands.executeCommand(vsCommands.showErrorMessage, (sessionsError as Error).message);
+				this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessionHistory, true);
+			}
 			LoggerService.error(namespaces.projectController, (sessionsError as Error).message);
 			return;
 		}
