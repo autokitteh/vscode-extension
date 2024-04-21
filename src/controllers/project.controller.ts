@@ -733,7 +733,7 @@ export class ProjectController {
 			openFileExplorer(resourcesPath);
 		} catch (error) {
 			LoggerService.error(
-				namespaces.sessionsService,
+				namespaces.projectController,
 				translate().t("errors.errorOpeningFileExplorerError", {
 					projectName: this.project?.name,
 					error: (error as Error).message,
@@ -758,7 +758,7 @@ export class ProjectController {
 				projectId: this.projectId,
 				deploymentId: this.selectedDeploymentId,
 			});
-			LoggerService.error(namespaces.sessionsService, log);
+			LoggerService.error(namespaces.projectController, log);
 
 			this.view.update({
 				type: MessageType.deleteSessionResponse,
