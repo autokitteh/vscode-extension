@@ -792,7 +792,7 @@ export class ProjectController {
 
 		const savePath = newLocalResourcesPath[0].fsPath;
 
-		if (currentProjectDirectory && (currentProjectDirectory as { path: string }).path !== savePath) {
+		if (currentProjectDirectory && (currentProjectDirectory as { path: string })?.path !== savePath) {
 			await commands.executeCommand(vsCommands.setContext, this.projectId, { path: savePath });
 		}
 
