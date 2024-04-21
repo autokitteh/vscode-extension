@@ -89,7 +89,10 @@ export class ProjectController {
 
 		if (sessionsError) {
 			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionHistory)) {
-				commands.executeCommand(vsCommands.showErrorMessage, (sessionsError as Error).message);
+				const notificationErrorMessage = translate().t("errors.sessionLogRecordFetchFailed", {
+					deploymentId: this.selectedDeploymentId,
+				});
+				commands.executeCommand(vsCommands.showErrorMessage, notificationErrorMessage);
 				this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessionHistory, true);
 			}
 			LoggerService.error(namespaces.projectController, (sessionsError as Error).message);

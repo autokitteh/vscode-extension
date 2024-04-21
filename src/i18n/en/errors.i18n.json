@@ -49,5 +49,6 @@
 	"projectPathCopiedErrorEnriched": "Error copying project path to clipboard - project: {{projectName}}, error: {{error}}",
 	"sessionStartFailedExtended": "Error running session execution: {{error}} for build id: {{buildId}}",
 	"sessionLogRecordTypeNotFound": "Session log record type not found: {{props}}",
-	"internalErrorUpdate": "Internal error, update the extension"
+	"internalErrorUpdate": "Internal error, update the extension",
+	"sessionStateFilterConversionError": "Session state filter conversion error: {{error}} for state type: {{stateType}}"
 }
