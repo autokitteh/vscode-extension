@@ -1,3 +1,10 @@
+# [0.12.0-dev.15](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.14...v0.12.0-dev.15) (2024-04-21)
+
+
+### Features
+
+* remove redhat-yaml extension dependency ([#258](https://github.com/autokitteh/vscode-extension/issues/258)) ([63c6fe4](https://github.com/autokitteh/vscode-extension/commit/63c6fe4b6dd7f3a15a591d9643a6ba256f92ae18))
+
 # [0.12.0-dev.14](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.13...v0.12.0-dev.14) (2024-04-17)
 
 
