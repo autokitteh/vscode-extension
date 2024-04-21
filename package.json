@@ -31,19 +31,19 @@
 		"yamlValidation": [
 			{
 				"fileMatch": "*.ak.yaml",
-				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
+				"url": "./src/autokitteh/manifest.schema.yaml"
 			},
 			{
 				"fileMatch": "*.ak.yml",
-				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
+				"url": "./src/autokitteh/manifest.schema.yaml"
 			},
 			{
 				"fileMatch": "autokitteh.yaml",
-				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
+				"url": "./src/autokitteh/manifest.schema.yaml"
 			},
 			{
 				"fileMatch": "autokitteh.yml",
-				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
+				"url": "./src/autokitteh/manifest.schema.yaml"
 			}
 		],
 		"commands": [
