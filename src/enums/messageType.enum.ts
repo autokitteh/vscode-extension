@@ -23,5 +23,6 @@ export enum MessageType {
 	stopSession = "STOP_SESSION",
 	copyProjectPath = "COPY_PROJECT_PATH",
 	openProjectResourcesDirectory = "OPEN_PROJECT_RESOURCES_DIRECTORY",
+	setProjectResourcesDirectory = "SET_PROJECT_RESOURCES_DIRECTORY",
 	deleteProject = "DELETE_PROJECT",
 }
