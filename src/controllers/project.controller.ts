@@ -3,7 +3,7 @@ import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
-import { MessageType, ProjectIntervalTypes, SessionStateType } from "@enums";
+import { MessageType, ProjectIntervalTypes, ProjectRecurringErrorMessages, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
@@ -33,7 +33,7 @@ export class ProjectController {
 	private selectedDeploymentId?: string;
 	private selectedSessionId?: string;
 	private filterSessionsState?: string;
-	private hasDisplayedError: Map<ProjectIntervalTypes, boolean> = new Map();
+	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 
 	constructor(
 		projectView: IProjectView,
@@ -123,9 +123,9 @@ export class ProjectController {
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
 		if (error) {
 			const notification = translate().t("errors.noResponse");
-			if (!this.hasDisplayedError.get(ProjectIntervalTypes.deployments)) {
+			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.deployments)) {
 				commands.executeCommand(vsCommands.showErrorMessage, notification);
-				this.hasDisplayedError.set(ProjectIntervalTypes.deployments, true);
+				this.hasDisplayedError.set(ProjectRecurringErrorMessages.deployments, true);
 			}
 
 			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
@@ -201,9 +201,9 @@ export class ProjectController {
 		try {
 			selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
 		} catch (error) {
-			if (!this.hasDisplayedError.get(ProjectIntervalTypes.sessions)) {
+			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionStateConverter)) {
 				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.internalErrorUpdate"));
-				this.hasDisplayedError.set(ProjectIntervalTypes.sessions, true);
+				this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessionStateConverter, true);
 			}
 			LoggerService.error(
 				namespaces.projectController,
