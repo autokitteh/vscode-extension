@@ -190,6 +190,7 @@ export class ProjectController {
 
 	setSessionsStateFilter(filterState: string) {
 		this.filterSessionsState = filterState;
+		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		this.fetchSessions();
 	}
 
@@ -656,22 +657,6 @@ export class ProjectController {
 		}
 		const successMessage = translate().t("sessions.executionSucceed", { sessionId });
 		LoggerService.info(namespaces.projectController, successMessage);
-
-		this.view.update({
-			type: MessageType.selectSession,
-			payload: sessionId,
-		});
-
-		this.selectedDeploymentId = startSessionArgs.deploymentId;
-
-		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessionId!);
-
-		this.view.update({
-			type: MessageType.selectDeployment,
-			payload: startSessionArgs.deploymentId,
-		});
-
-		this.displaySessionLogs(sessionId!);
 	}
 
 	async deactivateDeployment(deploymentId: string) {
