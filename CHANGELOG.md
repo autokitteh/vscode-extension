@@ -1,3 +1,10 @@
+# [0.12.0-dev.17](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.16...v0.12.0-dev.17) (2024-04-21)
+
+
+### Features
+
+* set project directory locally (UI-232) ([#256](https://github.com/autokitteh/vscode-extension/issues/256)) ([10a9584](https://github.com/autokitteh/vscode-extension/commit/10a9584b8734e0b8479cb9a7972ddde4a48afb31))
+
 # [0.12.0-dev.16](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.15...v0.12.0-dev.16) (2024-04-21)
 
 
