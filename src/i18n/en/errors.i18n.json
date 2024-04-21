@@ -50,5 +50,5 @@
 	"sessionStartFailedExtended": "Error running session execution: {{error}} for build id: {{buildId}}",
 	"sessionLogRecordTypeNotFound": "Session log record type not found: {{props}}",
 	"internalErrorUpdate": "Internal error, update the extension",
-	"sessionStateFilterConversionError": "Session state filter conversion error: {{error}} for state type: {{stateType}}"
+	"sessionStateFilterConversionError": "Session state filter conversion error: {{error}} for state type: {{stateType}}"	"sessionLogRecordFetchFailed": "Session log fetch failed for deployment ID: {{deploymentId}}"
 }
