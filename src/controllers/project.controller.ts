@@ -142,6 +142,18 @@ export class ProjectController {
 
 			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
 			LoggerService.error(namespaces.projectController, log);
+
+			this.deployments = undefined;
+
+			const deploymentsViewObject: DeploymentSectionViewModel = {
+				deployments: undefined,
+				totalDeployments: 0,
+			};
+			this.view.update({
+				type: MessageType.setDeployments,
+				payload: deploymentsViewObject,
+			});
+
 			return;
 		}
 
