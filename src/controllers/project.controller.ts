@@ -34,6 +34,7 @@ export class ProjectController {
 	private selectedSessionId?: string;
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
+	private selectedSessionPerDeployment: Map<string, string> = new Map();
 
 	constructor(
 		projectView: IProjectView,
@@ -187,9 +188,13 @@ export class ProjectController {
 		});
 	}
 
-	setSessionsStateFilter(filterState: string) {
+	async setSessionsStateFilter(filterState: string) {
+		if (this.filterSessionsState === filterState) {
+			return;
+		}
 		this.filterSessionsState = filterState;
-		this.fetchSessions();
+		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+		await this.fetchSessions();
 	}
 
 	async fetchSessions() {
@@ -197,23 +202,7 @@ export class ProjectController {
 			return;
 		}
 
-		let selectedSessionStateFilter;
-		try {
-			selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
-		} catch (error) {
-			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionStateConverter)) {
-				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.internalErrorUpdate"));
-				this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessionStateConverter, true);
-			}
-			LoggerService.error(
-				namespaces.projectController,
-				translate().t("errors.sessionStateFilterConversionError", {
-					error: (error as Error).message,
-					stateType: this.filterSessionsState,
-				})
-			);
-			return;
-		}
+		const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
 
 		const { data: sessions, error } = await SessionsService.listByDeploymentId(this.selectedDeploymentId, {
 			stateType: selectedSessionStateFilter,
@@ -246,14 +235,37 @@ export class ProjectController {
 			payload: sessionsViewObject,
 		});
 
-		if (sessions?.length) {
-			this.view.update({
-				type: MessageType.selectSession,
-				payload: sessions[0].sessionId,
-			});
+		this.view.update({
+			type: MessageType.selectDeployment,
+			payload: this.selectedDeploymentId,
+		});
 
-			this.displaySessionLogs(sessions![0].sessionId);
+		if (!sessions?.length) {
+			return;
 		}
+
+		if (this.selectedSessionPerDeployment.get(this.selectedDeploymentId)) {
+			const isCurrentSelectedSessionDisplayed = sessions.find(
+				(session) => session.sessionId === this.selectedSessionPerDeployment.get(this.selectedDeploymentId!)
+			);
+
+			if (isCurrentSelectedSessionDisplayed) {
+				this.view.update({
+					type: MessageType.selectSession,
+					payload: isCurrentSelectedSessionDisplayed.sessionId,
+				});
+				this.displaySessionLogs(isCurrentSelectedSessionDisplayed?.sessionId!);
+			}
+			return;
+		}
+
+		this.view.update({
+			type: MessageType.selectSession,
+			payload: sessions[0].sessionId,
+		});
+
+		this.displaySessionLogs(sessions![0].sessionId);
+		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessions![0].sessionId);
 	}
 
 	async selectDeployment(deploymentId: string): Promise<void> {
@@ -330,6 +342,8 @@ export class ProjectController {
 	async displaySessionLogs(sessionId: string): Promise<void> {
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+
+		this.selectedSessionPerDeployment.set(this.selectedDeploymentId!, sessionId);
 
 		this.selectedSessionId = sessionId;
 		this.initSessionLogsDisplay(sessionId);
@@ -634,18 +648,6 @@ export class ProjectController {
 		}
 		const successMessage = translate().t("sessions.executionSucceed", { sessionId });
 		LoggerService.info(namespaces.projectController, successMessage);
-
-		this.view.update({
-			type: MessageType.selectSession,
-			payload: sessionId,
-		});
-
-		this.selectedDeploymentId = startSessionArgs.deploymentId;
-		this.view.update({
-			type: MessageType.selectDeployment,
-			payload: startSessionArgs.deploymentId,
-		});
-		this.displaySessionLogs(sessionId!);
 	}
 
 	async deactivateDeployment(deploymentId: string) {
@@ -865,6 +867,31 @@ export class ProjectController {
 
 			return;
 		}
+
+		if (this.selectedSessionId === sessionId && this.sessions) {
+			const sessionIndex = this.sessions.findIndex((session) => session.sessionId === sessionId);
+			if (sessionIndex === -1 || this.sessions.length === 1) {
+				LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+				return;
+			}
+
+			await this.fetchSessions();
+
+			let followingSessionIdAfterDelete =
+				sessionIndex < this.sessions.length - 1
+					? this.sessions[sessionIndex].sessionId
+					: this.sessions[sessionIndex - 1]?.sessionId;
+
+			this.selectedSessionId = followingSessionIdAfterDelete;
+			this.displaySessionLogs(this.selectedSessionId);
+			this.selectedSessionPerDeployment.set(this.selectedDeploymentId!, followingSessionIdAfterDelete);
+
+			this.view.update({
+				type: MessageType.selectSession,
+				payload: followingSessionIdAfterDelete,
+			});
+		}
+
 		this.view.update({
 			type: MessageType.deleteSessionResponse,
 		});
