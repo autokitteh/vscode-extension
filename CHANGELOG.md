@@ -1,3 +1,10 @@
+# [0.12.0-dev.19](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.18...v0.12.0-dev.19) (2024-04-22)
+
+
+### Features
+
+* disable session auto-select the last one on change (UI-237) ([#257](https://github.com/autokitteh/vscode-extension/issues/257)) ([aeb2fc7](https://github.com/autokitteh/vscode-extension/commit/aeb2fc78cf18defb699cd0d9eac160540477c6e0))
+
 # [0.12.0-dev.18](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.17...v0.12.0-dev.18) (2024-04-21)
 
 
