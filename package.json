@@ -156,6 +156,36 @@
 			}
 		],
 		"menus": {
+			"commandPalette": [
+				{
+					"command": "autokitteh.myCommand",
+					"when": "false"
+				},
+				{
+					"command": "autokitteh.buildFolder",
+					"when": "false"
+				},
+				{
+					"command": "autokitteh.enable",
+					"when": "false"
+				},
+				{
+					"command": "autokitteh.addConnections",
+					"when": "false"
+				},
+				{
+					"command": "autokitteh.disable",
+					"when": "false"
+				},
+				{
+					"command": "autokitteh.buildProject",
+					"when": "false"
+				},
+				{
+					"command": "autokitteh.runProject",
+					"when": "false"
+				}
+			],
 			"explorer/context": [
 				{
 					"command": "autokitteh.buildFolder",
