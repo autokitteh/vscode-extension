@@ -1,3 +1,10 @@
+# [0.12.0-dev.20](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.19...v0.12.0-dev.20) (2024-04-22)
+
+
+### Bug Fixes
+
+* avoid repeating notifications when session history pulled on server down  (UI-259) ([#260](https://github.com/autokitteh/vscode-extension/issues/260)) ([66a8683](https://github.com/autokitteh/vscode-extension/commit/66a8683eee12504ed9fe9276e6197a17640634dd))
+
 # [0.12.0-dev.19](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.18...v0.12.0-dev.19) (2024-04-22)
 
 
