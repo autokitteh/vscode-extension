@@ -406,10 +406,19 @@ export class ProjectController {
 		if (error) {
 			LoggerService.error(namespaces.projectController, (error as Error).message);
 			commands.executeCommand(vsCommands.showErrorMessage, log);
+			this.view.update({
+				type: MessageType.setProjectLoadError,
+				payload: translate().t("errors.cantLoadProject"),
+			});
 			return;
 		}
 		if (!project) {
 			LoggerService.error(namespaces.projectController, log);
+			this.view.update({
+				type: MessageType.setProjectLoadError,
+				payload: translate().t("errors.cantLoadProject"),
+			});
+			return;
 		}
 
 		this.project = project;

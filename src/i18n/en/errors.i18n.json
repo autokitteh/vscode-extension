@@ -51,5 +51,6 @@
 	"sessionLogRecordTypeNotFound": "Session log record type not found: {{props}}",
 	"internalErrorUpdate": "Internal error, update the extension",
 	"sessionLogRecordFetchFailedShort": "Session log fetch failed for deployment ID: {{deploymentId}}",
-	"sessionLogRecordFetchFailed": "Session log fetch failed for deployment ID: {{deploymentId}}, error: {{error}}"
+	"sessionLogRecordFetchFailed": "Session log fetch failed for deployment ID: {{deploymentId}}, error: {{error}}",
+	"cantLoadProject": "Couldn't load project, review the output and reload the project"
 }

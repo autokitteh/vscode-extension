@@ -17,6 +17,7 @@ function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [resourcesDir, setResourcesDir] = useState<string>("");
+	const [projectLoadError, setProjectLoadError] = useState<string>("");
 	const [settingsPopperVisible, setSettingsPopperVisible] = useState<boolean>(false);
 	const pathPopperElementRef = useRef<HTMLDivElement | null>(null);
 
@@ -24,12 +25,13 @@ function App() {
 		setProjectName,
 		setThemeVisualType,
 		setResourcesDir,
+		setProjectLoadError,
 	});
 	const [sizes, setSizes] = useState<(number | string)[]>(["50%", "50%"]);
 
 	return (
 		<main>
-			{!!projectName ? (
+			{!projectLoadError ? (
 				<div className="flex flex-col w-full">
 					<div className="flex items-center w-full">
 						<AKLogo className="w-12 h-12" themeVisualType={themeVisualType} />
@@ -98,8 +100,9 @@ function App() {
 					</AppStateProvider>
 				</div>
 			) : (
-				<div className="flex justify-center items-center h-screen w-screen">
-					<Player src={loaderAnimation} className="player" loop autoplay />
+				<div className="flex flex-col items-center justify-center h-[calc(100vh-2rem)] w-[calc(100vw-2rem)]">
+					<Player src={loaderAnimation} autoplay loop style={{ width: "300px", height: "200px" }} />
+					<div className="text-xl font-bold">{projectLoadError}</div>
 				</div>
 			)}
 		</main>
