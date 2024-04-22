@@ -18,7 +18,7 @@ export const ProjectSettingsPopper = ({
 		closePopper();
 	};
 
-	const formatPath = (path: string, maxLength: number = 40): string => {
+	const formatPath = (path: string, maxLength: number = 30): string => {
 		const prefix = "...";
 
 		if (path.length > maxLength) {
