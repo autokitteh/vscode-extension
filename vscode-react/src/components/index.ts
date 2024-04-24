@@ -12,3 +12,4 @@ export { DeletePopper } from "@react-components/aKDeletePopper.component";
 export { PopperComponent } from "@react-components/aKPopper.component";
 export { ProjectSettingsPopper } from "@react-components/aKProjectSettingsPopper.component";
 export { AKOverlay } from "@react-components/aKOverlay.component";
+export { AKHeader } from "@react-components/aKHeader.component";

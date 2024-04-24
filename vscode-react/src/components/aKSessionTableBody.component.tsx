@@ -21,7 +21,6 @@ export const AKSessionsTableBody = ({
 }) => {
 	// State Section
 	const [{ modalName, lastDeployment }, dispatch] = useAppState();
-	const [isDeletingInProcess, setIsDeletingInProgress] = useState(false);
 	const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [inputsModalVisible, setInputsModalVisible] = useState(false);
@@ -38,7 +37,8 @@ export const AKSessionsTableBody = ({
 
 	// Incoming Messages Handler
 	const handleSessionDeletedResponse = () => {
-		setIsDeletingInProgress(false);
+		dispatch({ type: "SET_LOADING", payload: false });
+
 		hidePopper();
 	};
 
@@ -84,12 +84,12 @@ export const AKSessionsTableBody = ({
 
 	const deleteSessionConfirmed = () => {
 		sendMessage(MessageType.deleteSession, deleteSessionId);
-		setIsDeletingInProgress(true);
+		dispatch({ type: "SET_LOADING", payload: true });
 		return;
 	};
 
 	const deleteSessionDismissed = () => {
-		setIsDeletingInProgress(false);
+		dispatch({ type: "SET_LOADING", payload: false });
 		setDeleteSessionId("");
 		hidePopper();
 	};
@@ -176,7 +176,6 @@ export const AKSessionsTableBody = ({
 
 									<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
 										<DeletePopper
-											isDeletingInProcess={isDeletingInProcess}
 											onConfirm={() => deleteSessionConfirmed()}
 											onDismiss={() => deleteSessionDismissed()}
 											translations={deleteSessionPopperTranslations}
