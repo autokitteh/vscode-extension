@@ -158,23 +158,11 @@
 		"menus": {
 			"commandPalette": [
 				{
-					"command": "autokitteh.myCommand",
-					"when": "false"
-				},
-				{
 					"command": "autokitteh.buildFolder",
 					"when": "false"
 				},
 				{
-					"command": "autokitteh.enable",
-					"when": "false"
-				},
-				{
 					"command": "autokitteh.addConnections",
-					"when": "false"
-				},
-				{
-					"command": "autokitteh.disable",
 					"when": "false"
 				},
 				{
