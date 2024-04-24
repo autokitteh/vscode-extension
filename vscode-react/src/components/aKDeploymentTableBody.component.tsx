@@ -23,7 +23,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const [selectedDeployment, setSelectedDeployment] = useState("");
 	const [files, setFiles] = useState<Record<string, SessionEntrypoint[]>>();
 	const [functions, setFunctions] = useState<SessionEntrypoint[]>();
-	const [isDeletingInProcess, setIsDeletingInProgress] = useState(false);
 	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
 
@@ -35,7 +34,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	// Incoming Messages Handler
 	const handleDeploymentDeletedResponse = () => {
-		setIsDeletingInProgress(false);
+		dispatch({ type: "SET_LOADING", payload: false });
 		hidePopper();
 	};
 
@@ -111,11 +110,11 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	const deleteDeploymentConfirmed = () => {
 		sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
-		setIsDeletingInProgress(true);
+		dispatch({ type: "SET_LOADING", payload: true });
 	};
 
 	const deleteDeploymentDismissed = () => {
-		setIsDeletingInProgress(false);
+		dispatch({ type: "SET_LOADING", payload: false });
 		setDeleteDeploymentId("");
 		hidePopper();
 	};
@@ -221,7 +220,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 							/>
 							<PopperComponent visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
 								<DeletePopper
-									isDeletingInProcess={isDeletingInProcess}
 									onConfirm={() => deleteDeploymentConfirmed()}
 									onDismiss={() => deleteDeploymentDismissed()}
 									translations={deleteDeploymentPopperTranslations}
