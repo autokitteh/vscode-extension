@@ -26,5 +26,4 @@ export enum MessageType {
 	setProjectResourcesDirectory = "SET_PROJECT_RESOURCES_DIRECTORY",
 	deleteProject = "DELETE_PROJECT",
 	setSessionsStateFilter = "SET_SESSIONS_STATE_FILTER",
-	setProjectLoadError = "SET_PROJECT_LOAD_ERROR",
 }

@@ -51,7 +51,7 @@ export class ProjectController {
 
 	reveal(): void {
 		if (!this.project) {
-			const projectNotFoundMessage = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
+			const projectNotFoundMessage = translate().t("projects.projectNotFoundWithID", { projectId: this.projectId });
 			commands.executeCommand(vsCommands.showErrorMessage, projectNotFoundMessage);
 			LoggerService.error(namespaces.projectController, projectNotFoundMessage);
 			return;
@@ -402,22 +402,14 @@ export class ProjectController {
 		this.onProjectDisposeCB = onProjectDisposeCB;
 		this.onProjectDeleteCB = onProjectDeleteCB;
 		const { data: project, error } = await ProjectsService.get(this.projectId);
-		const log = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
+		const log = translate().t("projects.projectNotFoundWithID", { projectId: this.projectId });
 		if (error) {
 			LoggerService.error(namespaces.projectController, (error as Error).message);
 			commands.executeCommand(vsCommands.showErrorMessage, log);
-			this.view.update({
-				type: MessageType.setProjectLoadError,
-				payload: translate().t("errors.cantLoadProject"),
-			});
 			return;
 		}
 		if (!project) {
 			LoggerService.error(namespaces.projectController, log);
-			this.view.update({
-				type: MessageType.setProjectLoadError,
-				payload: translate().t("errors.cantLoadProject"),
-			});
 			return;
 		}
 

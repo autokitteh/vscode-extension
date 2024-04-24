@@ -1,9 +1,7 @@
 import { useRef, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
-import { Player } from "@lottiefiles/react-lottie-player";
 import DownloadIcon from "@react-assets/icons/download.svg?react";
-import loaderAnimation from "@react-assets/media/catto-loader.json";
 import { AKButton, AKLogo, AKOverlay, ProjectSettingsPopper, PopperComponent } from "@react-components";
 import { AppStateProvider } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
@@ -17,7 +15,6 @@ function App() {
 	const [projectName, setProjectName] = useState<string | undefined>();
 	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [resourcesDir, setResourcesDir] = useState<string>("");
-	const [projectLoadError, setProjectLoadError] = useState<string>("");
 	const [settingsPopperVisible, setSettingsPopperVisible] = useState<boolean>(false);
 	const pathPopperElementRef = useRef<HTMLDivElement | null>(null);
 
@@ -25,86 +22,75 @@ function App() {
 		setProjectName,
 		setThemeVisualType,
 		setResourcesDir,
-		setProjectLoadError,
 	});
 	const [sizes, setSizes] = useState<(number | string)[]>(["50%", "50%"]);
 
 	return (
 		<main>
-			{!projectLoadError ? (
-				<div className="flex flex-col w-full">
-					<div className="flex items-center w-full">
-						<AKLogo className="w-12 h-12" themeVisualType={themeVisualType} />
-						<div className="text-vscode-input-foreground font-bold ml-4 text-lg">{projectName}</div>
-						<AKButton
-							classes="mx-4"
-							onClick={() => sendMessage(MessageType.buildProject)}
-							disabled={!resourcesDir}
-							title={translate().t("reactApp.general.build")}
-						>
-							<div className="codicon codicon-tools mr-2"></div>
-							{translate().t("reactApp.general.build")}
-						</AKButton>
-						<AKButton
-							onClick={() => sendMessage(MessageType.runProject)}
-							disabled={!resourcesDir}
-							title={translate().t("reactApp.general.deploy")}
-						>
-							<div className="codicon codicon-rocket mr-2"></div>
-							{translate().t("reactApp.general.deploy")}
-						</AKButton>
-						<div className="flex-grow"></div>
-						<div className="flex-col">
-							{!resourcesDir ? (
-								<AKButton
-									onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
-									classes="flex relative z-30"
-									title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
-								>
-									<DownloadIcon className="text-vscode-background" />
-								</AKButton>
-							) : (
-								<AKButton
-									onClick={() => setSettingsPopperVisible(true)}
-									title={translate().t("reactApp.settings.viewProjectSettings")}
-								>
-									<div className="codicon codicon-gear text-vscode-background" ref={pathPopperElementRef}></div>
-								</AKButton>
-							)}
-							<AKOverlay isVisibile={settingsPopperVisible} onOverlayClick={() => setSettingsPopperVisible(false)} />
-
-							<PopperComponent visible={settingsPopperVisible} referenceRef={pathPopperElementRef}>
-								<ProjectSettingsPopper
-									resourcesDir={resourcesDir}
-									closePopper={() => setSettingsPopperVisible(false)}
-								/>
-							</PopperComponent>
-						</div>
-					</div>
-					<AppStateProvider>
-						<div className="h-[calc(100vh-6vh)]">
-							<SplitPane
-								split="horizontal"
-								sizes={sizes}
-								onChange={setSizes}
-								sashRender={() => <hr className="bg-vscode-editor-background h-3" />}
+			<div className="flex flex-col w-full">
+				<div className="flex items-center w-full">
+					<AKLogo className="w-12 h-12" themeVisualType={themeVisualType} />
+					<div className="text-vscode-input-foreground font-bold ml-4 text-lg">{projectName}</div>
+					<AKButton
+						classes="mx-4"
+						onClick={() => sendMessage(MessageType.buildProject)}
+						disabled={!resourcesDir}
+						title={translate().t("reactApp.general.build")}
+					>
+						<div className="codicon codicon-tools mr-2"></div>
+						{translate().t("reactApp.general.build")}
+					</AKButton>
+					<AKButton
+						onClick={() => sendMessage(MessageType.runProject)}
+						disabled={!resourcesDir}
+						title={translate().t("reactApp.general.deploy")}
+					>
+						<div className="codicon codicon-rocket mr-2"></div>
+						{translate().t("reactApp.general.deploy")}
+					</AKButton>
+					<div className="flex-grow"></div>
+					<div className="flex-col">
+						{!resourcesDir ? (
+							<AKButton
+								onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
+								classes="flex relative z-30"
+								title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
 							>
-								<div>
-									<AKDeployments height={sizes[0]} />
-								</div>
-								<div>
-									<AKSessions height={sizes[1]} />
-								</div>
-							</SplitPane>
-						</div>
-					</AppStateProvider>
+								<DownloadIcon className="text-vscode-background" />
+							</AKButton>
+						) : (
+							<AKButton
+								onClick={() => setSettingsPopperVisible(true)}
+								title={translate().t("reactApp.settings.viewProjectSettings")}
+							>
+								<div className="codicon codicon-gear text-vscode-background" ref={pathPopperElementRef}></div>
+							</AKButton>
+						)}
+						<AKOverlay isVisibile={settingsPopperVisible} onOverlayClick={() => setSettingsPopperVisible(false)} />
+
+						<PopperComponent visible={settingsPopperVisible} referenceRef={pathPopperElementRef}>
+							<ProjectSettingsPopper resourcesDir={resourcesDir} closePopper={() => setSettingsPopperVisible(false)} />
+						</PopperComponent>
+					</div>
 				</div>
-			) : (
-				<div className="flex flex-col items-center justify-center h-[calc(100vh-2rem)] w-[calc(100vw-2rem)]">
-					<Player src={loaderAnimation} autoplay loop style={{ width: "300px", height: "200px" }} />
-					<div className="text-xl font-bold">{projectLoadError}</div>
-				</div>
-			)}
+				<AppStateProvider>
+					<div className="h-[calc(100vh-6vh)]">
+						<SplitPane
+							split="horizontal"
+							sizes={sizes}
+							onChange={setSizes}
+							sashRender={() => <hr className="bg-vscode-editor-background h-3" />}
+						>
+							<div>
+								<AKDeployments height={sizes[0]} />
+							</div>
+							<div>
+								<AKSessions height={sizes[1]} />
+							</div>
+						</SplitPane>
+					</div>
+				</AppStateProvider>
+			</div>
 		</main>
 	);
 }

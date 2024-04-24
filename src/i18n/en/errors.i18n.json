@@ -1,6 +1,6 @@
 {
 	"projectNotFound": "Couldn't fetch the project details",
-	"projectNotFoundWithID": "Couldn't fetch the project details, project ID: {{id}}",
+	"projectNotFoundWithID": "Couldn't fetch the project details, project ID: {{projectId}}",
 	"showProjectDetails": "Click on a project to show its details",
 	"environmentsNotDefinedForProject": "Environments not defined for this project",
 	"deploymentsNotDefinedForProject": "Deployments not defined for this project",
@@ -51,6 +51,5 @@
 	"sessionLogRecordTypeNotFound": "Session log record type not found: {{props}}",
 	"internalErrorUpdate": "Internal error, update the extension",
 	"sessionLogRecordFetchFailedShort": "Session log fetch failed for deployment ID: {{deploymentId}}",
-	"sessionLogRecordFetchFailed": "Session log fetch failed for deployment ID: {{deploymentId}}, error: {{error}}",
-	"cantLoadProject": "Couldn't load project, review the output and reload the project"
+	"sessionLogRecordFetchFailed": "Session log fetch failed for deployment ID: {{deploymentId}}, error: {{error}}"
 }

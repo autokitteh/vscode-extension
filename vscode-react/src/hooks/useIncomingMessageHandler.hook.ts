@@ -41,9 +41,6 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 				case MessageType.selectSession:
 					handlers.setSelectedSession?.(payload as string);
 					break;
-				case MessageType.setProjectLoadError:
-					handlers.setProjectLoadError?.(payload as string);
-					break;
 			}
 		};
 
