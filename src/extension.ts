@@ -50,17 +50,17 @@ export async function activate(context: ExtensionContext) {
 	const tabsManager = new TabsManagerController(context);
 
 	context.subscriptions.push(
-		commands.registerCommand(vsCommands.enable, async () => {
-			sidebarController.enable();
-			tabsManager.enable();
+		commands.registerCommand(vsCommands.connect, async () => {
+			sidebarController.connect();
+			tabsManager.connect();
 			await AppStateHandler.set(true);
 		})
 	);
 
 	context.subscriptions.push(
-		commands.registerCommand(vsCommands.disable, async () => {
-			sidebarController.disable();
-			tabsManager.disable();
+		commands.registerCommand(vsCommands.connect, async () => {
+			sidebarController.disconnect();
+			tabsManager.disconnect();
 			await AppStateHandler.set(false);
 		})
 	);
@@ -76,7 +76,7 @@ export async function activate(context: ExtensionContext) {
 	const isAppOn = await AppStateHandler.get();
 
 	if (isAppOn) {
-		commands.executeCommand(vsCommands.enable);
+		commands.executeCommand(vsCommands.connect);
 	}
 
 	const initStarlarkLSP = async () => {

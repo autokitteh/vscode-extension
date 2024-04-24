@@ -110,7 +110,7 @@ export class ProjectController {
 		return sessionHistoryStates;
 	}
 
-	public enable = async () => {
+	public connect = async () => {
 		this.setProjectNameInView();
 		this.startInterval(
 			ProjectIntervalTypes.deployments,
@@ -123,7 +123,7 @@ export class ProjectController {
 		}
 	};
 
-	public disable = async () => {
+	public disconnect = async () => {
 		this.stopInterval(ProjectIntervalTypes.deployments);
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		this.deployments = undefined;
@@ -510,11 +510,11 @@ export class ProjectController {
 	}
 
 	onBlur() {
-		this.disable();
+		this.disconnect();
 	}
 
 	onFocus() {
-		this.enable();
+		this.connect();
 	}
 
 	onClose() {

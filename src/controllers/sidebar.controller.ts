@@ -21,7 +21,7 @@ export class SidebarController {
 		this.refreshRate = refreshRate;
 	}
 
-	public enable = async () => {
+	public connect = async () => {
 		this.refreshProjects();
 
 		this.startInterval();
@@ -125,7 +125,7 @@ export class SidebarController {
 		this.view.refresh([]);
 	};
 
-	public disable = () => {
+	public disconnect = () => {
 		this.stopInterval();
 		this.resetSidebar();
 	};

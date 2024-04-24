@@ -56,9 +56,9 @@
 				"title": "Build autokitteh"
 			},
 			{
-				"command": "autokitteh.enable",
+				"command": "autokitteh.connect",
 				"icon": "./resources/sidebar/top-panel-connect.svg",
-				"title": "autokitteh: Enable"
+				"title": "autokitteh: Connect"
 			},
 			{
 				"command": "autokitteh.addConnections",
@@ -69,9 +69,9 @@
 				"title": "autokitteh: Add connection"
 			},
 			{
-				"command": "autokitteh.disable",
+				"command": "autokitteh.disconnect",
 				"icon": "./resources/sidebar/top-panel-disconnect.svg",
-				"title": "autokitteh: Disable"
+				"title": "autokitteh: Disconnect"
 			},
 			{
 				"command": "autokitteh.buildProject",
@@ -174,7 +174,7 @@
 					"when": "view == autokittehSidebarTree"
 				},
 				{
-					"command": "autokitteh.disable",
+					"command": "autokitteh.disconnect",
 					"group": "navigation",
 					"when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled"
 				}

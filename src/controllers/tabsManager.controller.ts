@@ -36,7 +36,7 @@ export class TabsManagerController {
 		}
 	}
 
-	public enable() {
+	public connect() {
 		for (const key in this.openWebviews) {
 			this.openWebviews[key].enable();
 		}
@@ -46,9 +46,9 @@ export class TabsManagerController {
 		this.openWebviews[controllerId].view.panel.dispose();
 	}
 
-	public disable() {
+	public disconnect() {
 		for (const key in this.openWebviews) {
-			this.openWebviews[key].disable();
+			this.openWebviews[key].disconnect();
 		}
 	}
 
