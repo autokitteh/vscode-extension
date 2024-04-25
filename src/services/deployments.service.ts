@@ -8,7 +8,6 @@ import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
 import { Deployment } from "@type/models";
 import { flattenArray, getIds, sortArray } from "@utilities";
-import { get } from "lodash";
 
 export class DeploymentsService {
 	static async listByEnvironmentIds(environmentsIds: string[]): Promise<ServiceResponse<Deployment[]>> {
@@ -25,7 +24,7 @@ export class DeploymentsService {
 			const deploymentsSettled = flattenArray<Deployment>(
 				deploymentsResponses
 					.filter((response): response is PromiseFulfilledResult<ListResponse> => response.status === "fulfilled")
-					.map((response) => get(response, "value.deployments", []).map(convertDeploymentProtoToModel))
+					.map((response) => (response?.value.deployments || []).map(convertDeploymentProtoToModel))
 			);
 
 			const unsettledResponses = deploymentsResponses
@@ -112,7 +111,7 @@ export class DeploymentsService {
 			});
 			LoggerService.error(namespaces.deploymentsService, errorMessage);
 
-			return { data: undefined, error: errorMessage };
+			return { data: undefined, error };
 		}
 	}
 }

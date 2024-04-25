@@ -15,9 +15,6 @@
 		"@views": "dist/src/views",
 		"@vscommands": "dist/src/vscommands"
 	},
-	"extensionDependencies": [
-		"redhat.vscode-yaml"
-	],
 	"optionalDependencies": {
 		"@rollup/rollup-linux-x64-gnu": "4.6.1"
 	},
@@ -34,19 +31,19 @@
 		"yamlValidation": [
 			{
 				"fileMatch": "*.ak.yaml",
-				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
+				"url": "./src/autokitteh/manifest.schema.yaml"
 			},
 			{
 				"fileMatch": "*.ak.yml",
-				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
+				"url": "./src/autokitteh/manifest.schema.yaml"
 			},
 			{
 				"fileMatch": "autokitteh.yaml",
-				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
+				"url": "./src/autokitteh/manifest.schema.yaml"
 			},
 			{
 				"fileMatch": "autokitteh.yml",
-				"url": "./resources/yaml-autocompletion-scheme/manifest.schema.json"
+				"url": "./src/autokitteh/manifest.schema.yaml"
 			}
 		],
 		"commands": [
@@ -159,6 +156,24 @@
 			}
 		],
 		"menus": {
+			"commandPalette": [
+				{
+					"command": "autokitteh.buildFolder",
+					"when": "false"
+				},
+				{
+					"command": "autokitteh.addConnections",
+					"when": "false"
+				},
+				{
+					"command": "autokitteh.buildProject",
+					"when": "false"
+				},
+				{
+					"command": "autokitteh.runProject",
+					"when": "false"
+				}
+			],
 			"explorer/context": [
 				{
 					"command": "autokitteh.buildFolder",
@@ -261,11 +276,13 @@
 	"dependencies": {
 		"@connectrpc/connect": "^1.3.0",
 		"@connectrpc/connect-node": "^1.3.0",
+		"@types/cross-spawn": "^6.0.6",
 		"@vscode/codicons": "^0.0.35",
 		"adm-zip": "^0.5.10",
 		"axios": "^1.6.7",
+		"cross-spawn": "^7.0.3",
 		"i18next": "^23.8.2",
-		"lodash": "^4.17.21",
+		"lodash.isequal": "^4.5.0",
 		"module-alias": "^2.2.3",
 		"moment": "^2.30.1",
 		"tar": "^6.2.0",
@@ -287,7 +304,7 @@
 		"@semantic-release/release-notes-generator": "^12.1.0",
 		"@types/adm-zip": "^0.5.5",
 		"@types/glob": "^8.1.0",
-		"@types/lodash": "^4.14.202",
+		"@types/lodash.isequal": "^4.5.8",
 		"@types/node": "^20.11.19",
 		"@types/sinon": "^17.0.3",
 		"@types/tar": "^6.1.11",
@@ -296,7 +313,7 @@
 		"@types/winattr": "^3.0.0",
 		"@typescript-eslint/eslint-plugin": "^7.0.1",
 		"@typescript-eslint/parser": "^7.0.1",
-		"@vscode/vsce": "^2.23.0",
+		"@vscode/vsce": "^2.25.0",
 		"esbuild": "0.20.0",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
@@ -362,9 +379,10 @@
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
 		"package": "vsce package",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"source-map-explorer": "npx source-map-explorer dist/main.js dist/main.js.map --no-border-checks"
 	},
-	"version": "0.11.0",
+	"version": "0.12.0-dev.21",
 	"workspaces": [
 		"vscode-react"
 	]

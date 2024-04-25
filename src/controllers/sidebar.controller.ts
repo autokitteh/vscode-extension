@@ -1,10 +1,11 @@
+import { Code, ConnectError } from "@connectrpc/connect";
 import { namespaces, vsCommands } from "@constants";
-import { getResources } from "@controllers/utilities";
+import { getLocalResources } from "@controllers/utilities";
 import { translate } from "@i18n";
 import { LoggerService, ProjectsService } from "@services";
 import { SidebarTreeItem } from "@type/views";
 import { ISidebarView } from "interfaces";
-import isEqual from "lodash/isEqual";
+import isEqual from "lodash.isequal";
 import { commands, window } from "vscode";
 
 export class SidebarController {
@@ -40,7 +41,11 @@ export class SidebarController {
 				namespaces.projectSidebarController,
 				translate().t("projects.fetchProjectsFailedError", { error: (error as Error).message })
 			);
-			return;
+			if ((error as ConnectError).code === Code.Unavailable || (error as ConnectError).code === Code.Aborted) {
+				return [{ label: translate().t("general.reconnecting"), key: undefined }];
+			} else {
+				return [{ label: translate().t("general.internalError"), key: undefined }];
+			}
 		}
 		if (projects!.length) {
 			return projects!.map((project) => ({
@@ -66,7 +71,7 @@ export class SidebarController {
 	}
 
 	async buildProject(projectId: string) {
-		const { data: mappedResources, error: resourcesError } = await getResources(projectId);
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(projectId);
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
@@ -89,7 +94,7 @@ export class SidebarController {
 	}
 
 	async runProject(projectId: string) {
-		const { data: mappedResources, error: resourcesError } = await getResources(projectId);
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(projectId);
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);

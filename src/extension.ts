@@ -49,16 +49,21 @@ export async function activate(context: ExtensionContext) {
 	const sidebarController = new SidebarController(sidebarView, sidebarControllerRefreshRate);
 	const tabsManager = new TabsManagerController(context);
 
-	commands.registerCommand(vsCommands.enable, async () => {
-		sidebarController.enable();
-		tabsManager.enable();
-		await AppStateHandler.set(true);
-	});
-	commands.registerCommand(vsCommands.disable, async () => {
-		sidebarController.disable();
-		tabsManager.disable();
-		await AppStateHandler.set(false);
-	});
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.enable, async () => {
+			sidebarController.enable();
+			tabsManager.enable();
+			await AppStateHandler.set(true);
+		})
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.disable, async () => {
+			sidebarController.disable();
+			tabsManager.disable();
+			await AppStateHandler.set(false);
+		})
+	);
 
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {
@@ -115,7 +120,7 @@ export async function activate(context: ExtensionContext) {
 					namespaces.startlarkLSPServer,
 					translate().t("starlark.executableFetchError", { error: error.message })
 				);
-				commands.executeCommand(vsCommands.showErrorMessage, translate().t("starlark.executableFetchError"));
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("starlark.executableFetch"));
 				return;
 			}
 

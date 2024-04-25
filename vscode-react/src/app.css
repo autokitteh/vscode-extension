@@ -9,3 +9,7 @@ main {
 	align-items: flex-start;
 	height: 100%;
 }
+
+.react-split__pane {
+	overflow-y: auto !important;
+}

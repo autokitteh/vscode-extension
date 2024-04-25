@@ -10,7 +10,7 @@ const getResourcesPath = async (projectId: string) => {
 	return path;
 };
 
-export const getResources = async (
+export const getLocalResources = async (
 	projectId: string
 ): Promise<{ data?: Record<string, Uint8Array>; error?: Error }> => {
 	const resourcesPath = await getResourcesPath(projectId);
@@ -21,7 +21,7 @@ export const getResources = async (
 
 	const stats = fs.statSync(resourcesPath);
 	if (!stats) {
-		const errorMsg = translate().t("projects.errorReadingResource");
+		const errorMsg = translate().t("projects.errorReadingResource", { projectId });
 
 		return { error: new Error(errorMsg) };
 	}
@@ -32,7 +32,9 @@ export const getResources = async (
 			const fileBuffer = fs.readFileSync(resourcesPath);
 			const mappedResources = { [fileName]: fileBuffer };
 			return { data: mappedResources };
-		} catch (error) {}
+		} catch (error) {
+			return { error: error as Error };
+		}
 	}
 	const mappedResources = stats.isFile()
 		? await mapFilesToContentInBytes(resourcesPath, [resourcesPath])

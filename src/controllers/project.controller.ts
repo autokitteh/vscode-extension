@@ -2,23 +2,26 @@ import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels } from "@constants";
-import { convertBuildRuntimesToViewTriggers, getResources } from "@controllers/utilities";
-import { MessageType, ProjectIntervalTypes } from "@enums";
+import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
+import { MessageType, ProjectIntervalTypes, ProjectRecurringErrorMessages, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
+import { reverseSessionStateConverter } from "@models/utils";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
 import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
-import isEqual from "lodash/isEqual";
-import { commands, OpenDialogOptions, window } from "vscode";
+import { createDirectory, openFileExplorer } from "@utilities";
+import isEqual from "lodash.isequal";
+import { commands, OpenDialogOptions, window, env, Uri } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
 	private intervalKeeper: Map<ProjectIntervalTypes, NodeJS.Timeout> = new Map();
-	private disposeCB?: Callback<string>;
+	private onProjectDisposeCB?: Callback<string>;
+	private onProjectDeleteCB?: Callback<string>;
 	public projectId: string;
 	public project?: Project;
 	private sessions?: Session[] = [];
@@ -29,7 +32,9 @@ export class ProjectController {
 	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
 	private selectedSessionId?: string;
-	private hasDisplayedError: Map<ProjectIntervalTypes, boolean> = new Map();
+	private filterSessionsState?: string;
+	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
+	private selectedSessionPerDeployment: Map<string, string> = new Map();
 
 	constructor(
 		projectView: IProjectView,
@@ -42,7 +47,6 @@ export class ProjectController {
 		this.view.delegate = this;
 		this.deploymentsRefreshRate = deploymentsRefreshRate;
 		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
-		this.setProjectNameInView();
 	}
 
 	reveal(): void {
@@ -64,13 +68,39 @@ export class ProjectController {
 		});
 	}
 
+	async deleteProject() {
+		const { error } = await ProjectsService.delete(this.projectId);
+		if (error) {
+			const notification = translate().t("projects.deleteFailed", { projectName: this.project?.name });
+			const log = translate().t("projects.deleteFailedError", { projectName: this.project?.name, error });
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.projectController, log);
+			return;
+		}
+		const successMessage = translate().t("projects.deleteSucceed", { projectName: this.project?.name });
+		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
+		LoggerService.info(namespaces.projectController, successMessage);
+		this.onProjectDeleteCB?.(this.projectId);
+	}
+
 	async getSessionHistory(sessionId: string) {
 		const { data: sessionHistoryStates, error: sessionsError } =
 			await SessionsService.getLogRecordsBySessionId(sessionId);
 
 		if (sessionsError) {
-			commands.executeCommand(vsCommands.showErrorMessage, (sessionsError as Error).message);
-			LoggerService.error(namespaces.projectController, (sessionsError as Error).message);
+			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionHistory)) {
+				const notificationErrorMessage = translate().t("errors.sessionLogRecordFetchFailedShort", {
+					deploymentId: this.selectedDeploymentId,
+				});
+				commands.executeCommand(vsCommands.showErrorMessage, notificationErrorMessage);
+				this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessionHistory, true);
+			}
+
+			const logErrorMessage = translate().t("errors.sessionLogRecordFetchFailed", {
+				deploymentId: this.selectedDeploymentId,
+				error: (sessionsError as Error).message,
+			});
+			LoggerService.error(namespaces.projectController, logErrorMessage);
 			return;
 		}
 		if (!sessionHistoryStates?.length || !sessionHistoryStates) {
@@ -105,9 +135,9 @@ export class ProjectController {
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
 		if (error) {
 			const notification = translate().t("errors.noResponse");
-			if (!this.hasDisplayedError.get(ProjectIntervalTypes.deployments)) {
+			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.deployments)) {
 				commands.executeCommand(vsCommands.showErrorMessage, notification);
-				this.hasDisplayedError.set(ProjectIntervalTypes.deployments, true);
+				this.hasDisplayedError.set(ProjectRecurringErrorMessages.deployments, true);
 			}
 
 			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
@@ -158,7 +188,7 @@ export class ProjectController {
 		}
 		let buildInfo;
 		try {
-			buildInfo = JSON.parse(buildDescription!.descriptionJson);
+			buildInfo = JSON.parse(buildDescription!);
 		} catch (error) {
 			LoggerService.error(namespaces.projectController, translate().t("errors.buildInformationForSingleshotNotParsed"));
 			return;
@@ -169,12 +199,32 @@ export class ProjectController {
 		});
 	}
 
-	async selectDeployment(deploymentId: string): Promise<void> {
-		this.selectedDeploymentId = deploymentId;
+	async setSessionsStateFilter(filterState: string) {
+		if (this.filterSessionsState === filterState) {
+			return;
+		}
+		this.filterSessionsState = filterState;
+		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+		await this.fetchSessions();
+	}
 
-		const { data: sessions, error } = await SessionsService.listByDeploymentId(deploymentId);
+	async fetchSessions() {
+		if (!this.selectedDeploymentId) {
+			return;
+		}
+
+		const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
+
+		const { data: sessions, error } = await SessionsService.listByDeploymentId(this.selectedDeploymentId, {
+			stateType: selectedSessionStateFilter,
+		});
 
 		if (error) {
+			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessions)) {
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.internalErrorUpdate"));
+				this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessions, true);
+			}
+
 			const log = `${translate().t("errors.sessionFetchFailed")} - ${(error as Error).message}`;
 			LoggerService.error(namespaces.projectController, log);
 			return;
@@ -198,17 +248,46 @@ export class ProjectController {
 
 		this.view.update({
 			type: MessageType.selectDeployment,
-			payload: deploymentId,
+			payload: this.selectedDeploymentId,
 		});
 
-		if (sessions?.length) {
-			this.view.update({
-				type: MessageType.selectSession,
-				payload: sessions[0].sessionId,
-			});
-
-			this.displaySessionLogs(sessions![0].sessionId);
+		if (!sessions?.length) {
+			return;
 		}
+
+		if (this.selectedSessionPerDeployment.get(this.selectedDeploymentId)) {
+			const isCurrentSelectedSessionDisplayed = sessions.find(
+				(session) => session.sessionId === this.selectedSessionPerDeployment.get(this.selectedDeploymentId!)
+			);
+
+			if (isCurrentSelectedSessionDisplayed) {
+				this.view.update({
+					type: MessageType.selectSession,
+					payload: isCurrentSelectedSessionDisplayed.sessionId,
+				});
+				this.displaySessionLogs(isCurrentSelectedSessionDisplayed?.sessionId!);
+			}
+			return;
+		}
+
+		this.view.update({
+			type: MessageType.selectSession,
+			payload: sessions[0].sessionId,
+		});
+
+		this.displaySessionLogs(sessions![0].sessionId);
+		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessions![0].sessionId);
+	}
+
+	async selectDeployment(deploymentId: string): Promise<void> {
+		this.selectedDeploymentId = deploymentId;
+
+		await this.fetchSessions();
+
+		this.view.update({
+			type: MessageType.selectDeployment,
+			payload: deploymentId,
+		});
 	}
 
 	printFinishedSessionLogs(lastState: SessionLogRecord) {
@@ -275,6 +354,8 @@ export class ProjectController {
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
+		this.selectedSessionPerDeployment.set(this.selectedDeploymentId!, sessionId);
+
 		this.selectedSessionId = sessionId;
 		this.initSessionLogsDisplay(sessionId);
 	}
@@ -317,8 +398,9 @@ export class ProjectController {
 		this.intervalKeeper.delete(intervalKey);
 	}
 
-	public async openProject(disposeCB: Callback<string>) {
-		this.disposeCB = disposeCB;
+	public async openProject(onProjectDisposeCB: Callback<string>, onProjectDeleteCB: Callback<string>) {
+		this.onProjectDisposeCB = onProjectDisposeCB;
+		this.onProjectDeleteCB = onProjectDeleteCB;
 		const { data: project, error } = await ProjectsService.get(this.projectId);
 		const log = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
 		if (error) {
@@ -332,6 +414,7 @@ export class ProjectController {
 
 		this.project = project;
 		this.view.show(project!.name);
+		this.setProjectNameInView();
 
 		this.startInterval(
 			ProjectIntervalTypes.deployments,
@@ -345,22 +428,29 @@ export class ProjectController {
 			this.notifyViewResourcesPathChanged();
 			return;
 		}
-
-		const userResponse = await this.promptUserToDownloadResources();
-		if (userResponse !== translate().t("projects.downloadResourcesDirectoryApprove")) {
-			return;
-		}
-		await this.downloadResources();
 	}
 
 	displayErrorWithoutActionButton(errorMessage: string) {
 		commands.executeCommand(vsCommands.showErrorMessage, errorMessage, false);
 	}
 
-	async downloadResources() {
-		const { data: existingResources } = await ProjectsService.getResources(this.projectId);
+	async downloadResources(downloadPath?: string) {
+		const { data: existingResources, error } = await ProjectsService.getResources(this.projectId);
 
-		if (!existingResources) {
+		if (error) {
+			const notification = translate().t("projects.downloadResourcesDirectoryErrorForProject", {
+				projectName: this.project?.name,
+			});
+			const log = translate().t("projects.downloadResourcesDirectoryError", {
+				projectName: this.project?.name,
+				error: (error as Error).message,
+			});
+			LoggerService.error(namespaces.projectController, log);
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			return;
+		}
+
+		if (!existingResources || !Object.keys(existingResources).length) {
 			commands.executeCommand(
 				vsCommands.showInfoMessage,
 				translate().t("projects.downloadResourcesDirectoryNoResources")
@@ -370,18 +460,22 @@ export class ProjectController {
 			return;
 		}
 
-		const newLocalResourcesPath = await window.showOpenDialog({
-			canSelectFolders: true,
-			openLabel: translate().t("projects.downloadResourcesSelectDirectory"),
-		});
+		let savePath = downloadPath;
 
-		if (!newLocalResourcesPath || !newLocalResourcesPath.length) {
-			return;
+		if (!savePath) {
+			const newLocalResourcesPath = await window.showOpenDialog({
+				canSelectFolders: true,
+				openLabel: translate().t("projects.downloadResourcesSelectDirectory"),
+			});
+
+			if (!newLocalResourcesPath || !newLocalResourcesPath.length) {
+				return;
+			}
+			savePath = newLocalResourcesPath[0].fsPath;
 		}
 
-		const savePath = newLocalResourcesPath[0].fsPath;
 		Object.keys(existingResources).map(async (resource) => {
-			const fullPath: string = path.join(savePath, resource);
+			const fullPath: string = path.join(savePath!, resource);
 			const data: Uint8Array = existingResources[resource] as Uint8Array;
 			try {
 				await fsPromises.writeFile(fullPath, Buffer.from(data));
@@ -396,7 +490,7 @@ export class ProjectController {
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
 					translate().t("projects.downloadResourcesDirectoryErrorProjectId", {
-						projectId: this.projectId,
+						projectName: this.project?.name,
 						fileName: resource,
 					})
 				);
@@ -404,11 +498,13 @@ export class ProjectController {
 			}
 		});
 
-		const successMessage = translate().t("projects.downloadResourcesDirectorySuccess", { projectId: this.projectId });
+		const successMessage = translate().t("projects.downloadResourcesDirectorySuccess", {
+			projectName: this.project?.name,
+		});
 		LoggerService.info(namespaces.projectController, successMessage);
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
-		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: newLocalResourcesPath[0].fsPath });
+		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: savePath });
 
 		this.notifyViewResourcesPathChanged();
 	}
@@ -424,12 +520,13 @@ export class ProjectController {
 	onClose() {
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		this.stopInterval(ProjectIntervalTypes.deployments);
-		this.disposeCB?.(this.projectId);
+		this.onProjectDisposeCB?.(this.projectId);
 		this.hasDisplayedError = new Map();
 	}
 
 	async build() {
-		const { data: mappedResources, error: resourcesError } = await getResources(this.projectId);
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(this.projectId);
+
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
@@ -460,13 +557,31 @@ export class ProjectController {
 			openLabel: translate().t("resources.selectResourcesFolder"),
 		};
 
-		const uri = await window.showOpenDialog(options);
-		if (!uri || uri.length === 0) {
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("resources.setResourcesFailed"));
+		const newDirectoryPath = await window.showOpenDialog(options);
+		if (!newDirectoryPath || newDirectoryPath.length === 0) {
 			return;
 		}
 
-		const resourcePath = uri[0].fsPath;
+		const resourcePath = path.join(newDirectoryPath[0].fsPath, this.project!.name);
+		try {
+			createDirectory(resourcePath);
+		} catch (error) {
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				translate().t("errors.creatingDirectory", { projectName: this.project?.name })
+			);
+
+			LoggerService.error(
+				namespaces.projectController,
+				translate().t("errors.creatingDirectoryExtended", {
+					projectName: this.project?.name,
+					error: (error as Error).message,
+				})
+			);
+			return;
+		}
+		await this.downloadResources(resourcePath);
+
 		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: resourcePath });
 
 		this.notifyViewResourcesPathChanged();
@@ -474,7 +589,7 @@ export class ProjectController {
 	}
 
 	async run() {
-		const { data: mappedResources, error: resourcesError } = await getResources(this.projectId);
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(this.projectId);
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
@@ -544,18 +659,6 @@ export class ProjectController {
 		}
 		const successMessage = translate().t("sessions.executionSucceed", { sessionId });
 		LoggerService.info(namespaces.projectController, successMessage);
-
-		this.view.update({
-			type: MessageType.selectSession,
-			payload: sessionId,
-		});
-
-		this.selectedDeploymentId = startSessionArgs.deploymentId;
-		this.view.update({
-			type: MessageType.selectDeployment,
-			payload: startSessionArgs.deploymentId,
-		});
-		this.displaySessionLogs(sessionId!);
 	}
 
 	async deactivateDeployment(deploymentId: string) {
@@ -587,15 +690,16 @@ export class ProjectController {
 
 		if (resourcesPath) {
 			this.view.update({
-				type: MessageType.setResourcesDirState,
-				payload: true,
+				type: MessageType.setResourcesDir,
+				payload: resourcesPath,
 			});
-		} else {
-			this.view.update({
-				type: MessageType.setResourcesDirState,
-				payload: false,
-			});
+			return;
 		}
+
+		this.view.update({
+			type: MessageType.setResourcesDir,
+			payload: "",
+		});
 	}
 
 	async getResourcesPathFromContext() {
@@ -647,13 +751,113 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, log);
 	}
 
-	async promptUserToDownloadResources(): Promise<string | undefined> {
-		return await window.showInformationMessage(
-			translate().t("projects.downloadResourcesDirectory", { projectName: this.project!.name }),
-			translate().t("projects.downloadResourcesDirectoryApprove"),
-			translate().t("projects.downloadResourcesDirectoryDismiss")
-		);
+	async copyProjectPath(projectPathToCopy: string): Promise<void> {
+		try {
+			await env.clipboard.writeText(projectPathToCopy);
+			commands.executeCommand(
+				vsCommands.showInfoMessage,
+				translate().t("projects.projectPathCopied", { projectName: this.project?.name })
+			);
+		} catch (error) {
+			commands.executeCommand(
+				vsCommands.showInfoMessage,
+				translate().t("errors.projectPathCopiedError", { projectName: this.project?.name })
+			);
+			LoggerService.error(
+				namespaces.projectController,
+				translate().t("errors.projectPathCopiedErrorEnriched", {
+					error: (error as Error).message,
+					projectName: this.project?.name,
+				})
+			);
+		}
 	}
+
+	async openProjectResourcesDirectory(resourcesPath: string): Promise<void> {
+		try {
+			openFileExplorer(resourcesPath);
+		} catch (error) {
+			LoggerService.error(
+				namespaces.projectController,
+				translate().t("errors.errorOpeningFileExplorerError", {
+					projectName: this.project?.name,
+					error: (error as Error).message,
+				})
+			);
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				translate().t("errors.errorOpeningFileExplorerShort", { projectName: this.project?.name })
+			);
+		}
+	}
+
+	async setProjectResourcesDirectory(resourcesPath: string): Promise<void> {
+		let currentDirectoryUri;
+		try {
+			currentDirectoryUri = Uri.file(resourcesPath);
+		} catch (error) {
+			LoggerService.error(
+				namespaces.projectController,
+				translate().t("projects.setResourcesDirectoryCurrentUriFailure", {
+					error: (error as Error).message,
+					projectName: this.project?.name,
+				})
+			);
+
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				translate().t("errors.setResourcesDirectoryFailureShort", { projectName: this.project?.name })
+			);
+
+			return;
+		}
+
+		let newLocalResourcesPath;
+		try {
+			newLocalResourcesPath = await window.showOpenDialog({
+				canSelectFolders: true,
+				canSelectFiles: false,
+				defaultUri: currentDirectoryUri,
+
+				openLabel: translate().t("projects.setResourcesDirectory"),
+			});
+		} catch (error) {
+			LoggerService.error(
+				namespaces.projectController,
+				translate().t("projects.setResourcesDirectorGetPathFromDialogFailure", {
+					error: (error as Error).message,
+					projectName: this.project?.name,
+				})
+			);
+
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				translate().t("errors.setResourcesDirectoryFailureShort", { projectName: this.project?.name })
+			);
+			return;
+		}
+
+		if (newLocalResourcesPath === undefined || newLocalResourcesPath.length === 0) {
+			return;
+		}
+
+		const currentProjectDirectory = await commands.executeCommand(vsCommands.getContext, this.projectId);
+
+		const savePath = newLocalResourcesPath[0].fsPath;
+
+		if (currentProjectDirectory && (currentProjectDirectory as { path: string })?.path !== savePath) {
+			await commands.executeCommand(vsCommands.setContext, this.projectId, { path: savePath });
+		}
+
+		const successMessage = translate().t("projects.setResourcesDirectorySuccess", {
+			projectName: this.project?.name,
+		});
+		LoggerService.info(namespaces.projectController, successMessage);
+		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
+
+		await this.notifyViewResourcesPathChanged();
+	}
+
 	async deleteSession(sessionId: string) {
 		const { error } = await SessionsService.deleteSession(sessionId);
 		if (error) {
@@ -666,7 +870,7 @@ export class ProjectController {
 				projectId: this.projectId,
 				deploymentId: this.selectedDeploymentId,
 			});
-			LoggerService.error(namespaces.sessionsService, log);
+			LoggerService.error(namespaces.projectController, log);
 
 			this.view.update({
 				type: MessageType.deleteSessionResponse,
@@ -674,6 +878,31 @@ export class ProjectController {
 
 			return;
 		}
+
+		if (this.selectedSessionId === sessionId && this.sessions) {
+			const sessionIndex = this.sessions.findIndex((session) => session.sessionId === sessionId);
+			if (sessionIndex === -1 || this.sessions.length === 1) {
+				LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+				return;
+			}
+
+			await this.fetchSessions();
+
+			let followingSessionIdAfterDelete =
+				sessionIndex < this.sessions.length - 1
+					? this.sessions[sessionIndex].sessionId
+					: this.sessions[sessionIndex - 1]?.sessionId;
+
+			this.selectedSessionId = followingSessionIdAfterDelete;
+			this.displaySessionLogs(this.selectedSessionId);
+			this.selectedSessionPerDeployment.set(this.selectedDeploymentId!, followingSessionIdAfterDelete);
+
+			this.view.update({
+				type: MessageType.selectSession,
+				payload: followingSessionIdAfterDelete,
+			});
+		}
+
 		this.view.update({
 			type: MessageType.deleteSessionResponse,
 		});

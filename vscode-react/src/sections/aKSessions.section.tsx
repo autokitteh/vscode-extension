@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
+import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
-import { AKMonacoEditorModal, AKSessionsTableHeader } from "@react-components";
+import { AKSessionsTableHeader } from "@react-components";
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
-import { AKTable, AKTableMessage } from "@react-components/AKTable";
-import { useCloseOnEscape, useIncomingMessageHandler, useForceRerender } from "@react-hooks";
+import { AKTable, AKTableHeader, AKTableHeaderCell, AKTableMessage } from "@react-components/AKTable";
+import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
+import { sendMessage } from "@react-utilities";
 
-export const AKSessions = () => {
-	const [modal, setModal] = useState(false);
-
+export const AKSessions = ({ height }: { height: string | number }) => {
 	const [isLoading, setIsLoading] = useState(true);
-	const [sessionInputs, setSessionInputs] = useState<string>();
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
+	const [stateFilter, setStateFilter] = useState<string>();
 
 	const { sessions, totalSessions } = sessionsSection || {};
 
@@ -27,24 +27,44 @@ export const AKSessions = () => {
 		}
 	}, [sessions]);
 
-	useCloseOnEscape(() => setModal(false));
 	useForceRerender();
 
-	const displayInputsModal = (sessionInputs: string) => {
-		setSessionInputs(sessionInputs);
-		setModal(true);
+	const capitalizeFirstLetter = (str: string) => {
+		return str.charAt(0).toUpperCase() + str.slice(1);
+	};
+
+	const filterSessions = (value: string) => {
+		setStateFilter(value);
+		if (value === "all") {
+			sendMessage(MessageType.setSessionsStateFilter, undefined);
+			return;
+		}
+		sendMessage(MessageType.setSessionsStateFilter, value);
 	};
 
 	return (
-		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
-			<div className="flex items-baseline">
-				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.sessions.tableTitle")}</h1>
-				<div className="ml-1 text-lg font-extralight">({totalSessions})</div>
-			</div>
+		<div style={{ height }}>
 			<AKTable>
+				<AKTableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-30">
+					<AKTableHeaderCell className="text-lg font-extralight pt-5" colSpan={3}>
+						{`${translate().t("reactApp.sessions.tableTitle")} (${totalSessions})`}
+					</AKTableHeaderCell>
+					<AKTableHeaderCell className="flex justify-end text-xs font-extralight pt-3">
+						<div className="codicon codicon-filter text-xs mr-1" />
+						<select
+							className="text-white bg-black rounded"
+							onChange={(value) => filterSessions(value.target.value)}
+							value={stateFilter}
+						>
+							<option value="all">All</option>
+							{(Object.keys(SessionStateType) as Array<keyof typeof SessionStateType>).map((sessionState) => (
+								<option value={sessionState}>{capitalizeFirstLetter(sessionState)}</option>
+							))}
+						</select>
+					</AKTableHeaderCell>
+				</AKTableHeader>
 				<AKSessionsTableHeader />
 				<AKSessionsTableBody
-					displayInputsModal={displayInputsModal}
 					sessions={sessions}
 					selectedSession={selectedSession}
 					setSelectedSession={setSelectedSession}
@@ -57,8 +77,6 @@ export const AKSessions = () => {
 			{sessions && sessions.length === 0 && (
 				<AKTableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</AKTableMessage>
 			)}
-
-			{modal && <AKMonacoEditorModal content={sessionInputs} setModal={setModal} />}
 		</div>
 	);
 };

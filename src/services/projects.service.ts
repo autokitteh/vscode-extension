@@ -21,6 +21,14 @@ export class ProjectsService {
 			return { data: undefined, error };
 		}
 	}
+	static async delete(projectId: string): Promise<ServiceResponse<undefined>> {
+		try {
+			await projectsClient.delete({ projectId });
+			return { data: undefined, error: undefined };
+		} catch (error) {
+			return { data: undefined, error };
+		}
+	}
 
 	static async list(): Promise<ServiceResponse<Project[]>> {
 		try {
@@ -62,10 +70,6 @@ export class ProjectsService {
 			const { resources } = await projectsClient.downloadResources({ projectId });
 			return { data: resources, error: undefined };
 		} catch (error) {
-			LoggerService.error(
-				namespaces.projectService,
-				translate().t("errors.downloadResourcesDirectoryErrorExtended", { projectId, error: (error as Error).message })
-			);
 			return { data: undefined, error: (error as Error).message };
 		}
 	}

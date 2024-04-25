@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
 import { AKDeploymentTableBody, AKDeploymentTableHeader } from "@react-components";
-import { AKTable, AKTableMessage } from "@react-components/AKTable";
+import { AKTable, AKTableHeader, AKTableHeaderCell, AKTableMessage } from "@react-components/AKTable";
 import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { Deployment } from "@type/models";
 
-export const AKDeployments = () => {
+export const AKDeployments = ({ height }: { height: string | number }) => {
 	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel>();
 	const [isLoading, setIsLoading] = useState(true);
 	const [totalDeployments, setTotalDeployments] = useState<number>();
@@ -35,12 +35,13 @@ export const AKDeployments = () => {
 	}, [deploymentsSection]);
 
 	return (
-		<div className="mt-4 h-[43vh] overflow-y-auto overflow-x-hidden">
-			<div className="flex items-baseline">
-				<h1 className="flex text-lg font-extralight mb-2">{translate().t("reactApp.deployments.tableTitle")}</h1>
-				<div className="ml-1 text-lg font-extralight">({totalDeployments})</div>
-			</div>
+		<div style={{ height }}>
 			<AKTable>
+				<AKTableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-30">
+					<AKTableHeaderCell className="text-lg font-extralight pt-5" colSpan={8}>
+						{`${translate().t("reactApp.deployments.tableTitle")} (${totalDeployments})`}
+					</AKTableHeaderCell>
+				</AKTableHeader>
 				<AKDeploymentTableHeader />
 				<AKDeploymentTableBody deployments={deployments} />
 			</AKTable>

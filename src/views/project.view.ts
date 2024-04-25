@@ -63,6 +63,21 @@ export class ProjectView implements IProjectView {
 					case MessageType.stopSession:
 						this.delegate?.stopSession?.(message.payload as string);
 						break;
+					case MessageType.copyProjectPath:
+						this.delegate?.copyProjectPath?.(message.payload as string);
+						break;
+					case MessageType.openProjectResourcesDirectory:
+						this.delegate?.openProjectResourcesDirectory?.(message.payload as string);
+						break;
+					case MessageType.setProjectResourcesDirectory:
+						this.delegate?.setProjectResourcesDirectory?.(message.payload as string);
+						break;
+					case MessageType.deleteProject:
+						this.delegate?.deleteProject?.();
+						break;
+					case MessageType.setSessionsStateFilter:
+						this.delegate?.setSessionsStateFilter?.(message.payload as string);
+						break;
 					default:
 				}
 			},
@@ -113,11 +128,6 @@ export class ProjectView implements IProjectView {
 		this.setupWebviewMessageListener();
 
 		this.panel.webview.html = this.getWebviewContent();
-
-		this.panel.webview.postMessage?.({
-			type: MessageType.setProjectName,
-			payload: projectName,
-		});
 
 		const themeKind = window.activeColorTheme.kind as number as Theme;
 		this.changeTheme(themeKind);

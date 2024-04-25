@@ -65,3 +65,10 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ github.ref == 'refs/heads/main' && secrets.SLACK_WEBHOOK_URL || github.ref == 'refs/heads/dev' && secrets.SLACK_WEBHOOK_URL_BETA }}
         run: npx semantic-release
+      - name: Publish to VSCode Marketplace
+        uses: lannonbr/vsce-action@3.0.0
+        if: github.ref == 'refs/heads/main'
+        with:
+          args: "publish -p $VSCE_TOKEN"
+        env:
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}

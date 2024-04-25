@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
-import { AKDeploymentState } from "@react-components";
+import { AKDeploymentState, AKOverlay } from "@react-components";
 import { DeletePopper, ExecutePopper, PopperComponent } from "@react-components";
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
 import { useAppState } from "@react-context/appState.context";
@@ -9,6 +9,7 @@ import { useDeployments } from "@react-hooks";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment, SessionEntrypoint } from "@type/models";
+import { createPortal } from "react-dom";
 
 export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
 	// State Hooks Section
@@ -80,6 +81,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	};
 
 	const isActive = (deploymentState: DeploymentState) => deploymentState === DeploymentState.ACTIVE_DEPLOYMENT;
+	const isLastDeployment = (deploymentId: string) => deploymentId === deployments?.[0]?.deploymentId;
 
 	const startSession = () => {
 		const lastDeployment = deployments![0];
@@ -131,12 +133,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	// useEffects Section
 	useEffect(() => {
-		if (typeof selectedDeploymentId === "string") {
-			setSelectedDeployment(selectedDeploymentId);
-		}
-	}, [selectedDeploymentId]);
-
-	useEffect(() => {
 		hidePopper();
 	}, []);
 
@@ -158,7 +154,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	return (
 		deployments &&
-		deployments.map((deployment: Deployment) => (
+		deployments.map((deployment: Deployment, index: number) => (
 			<AKTableRow key={deployment.deploymentId} isSelected={selectedDeployment === deployment.deploymentId}>
 				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getTimePassed(deployment.createdAt)}
@@ -184,62 +180,69 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 					{deployment.buildId}
 				</AKTableCell>
 				<AKTableCell>
-					{deployment.deploymentId === deployments?.[0]?.deploymentId && (
+					<div className="flex justify-center">
 						<div
-							className="codicon codicon-redo mr-2 cursor-pointer"
-							ref={executePopperElementRef}
+							className={`codicon codicon-debug-rerun mr-2 cursor-pointer 
+							${isLastDeployment(deployment.deploymentId) ? "" : "invisible"}`}
+							ref={isLastDeployment(deployment.deploymentId) ? executePopperElementRef : null}
 							title={translate().t("reactApp.deployments.execute")}
 							onClick={() => showPopper("deploymentExecute")}
 						></div>
-					)}
-					{isDeploymentStateStartable(deployment.state) ? (
+						{isDeploymentStateStartable(deployment.state) ? (
+							<div
+								className="codicon codicon-debug-start cursor-pointer text-green-500"
+								title={translate().t("reactApp.deployments.activate")}
+								onClick={() => activateBuild(deployment.deploymentId)}
+							></div>
+						) : (
+							<div
+								className="codicon codicon-debug-stop cursor-pointer text-red-500"
+								title={translate().t("reactApp.deployments.deactivate")}
+								onClick={() => deactivateBuild(deployment.deploymentId)}
+							></div>
+						)}
 						<div
-							className="codicon codicon-debug-start cursor-pointer text-green-500"
-							onClick={() => activateBuild(deployment.deploymentId)}
+							className={`relative codicon codicon-trash ${
+								isActive(deployment.state) ? "cursor-not-allowed" : "cursor-pointer"
+							} ml-2 z-20`}
+							title={
+								isActive(deployment.state)
+									? translate().t("reactApp.deployments.deleteDisabled")
+									: translate().t("reactApp.deployments.delete")
+							}
+							onClick={(event) => showDeleteDeploymentPopper(event, deployment)}
 						></div>
-					) : (
-						<div
-							className="codicon codicon-debug-stop cursor-pointer text-red-500"
-							onClick={() => deactivateBuild(deployment.deploymentId)}
-						></div>
+					</div>
+					{createPortal(
+						<div>
+							<AKOverlay
+								isVisibile={index === 0 && (modalName === "deploymentDelete" || modalName === "deploymentExecute")}
+								onOverlayClick={() => hidePopper()}
+							/>
+							<PopperComponent visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
+								<DeletePopper
+									isDeletingInProcess={isDeletingInProcess}
+									onConfirm={() => deleteDeploymentConfirmed()}
+									onDismiss={() => deleteDeploymentDismissed()}
+									translations={deleteDeploymentPopperTranslations}
+								/>
+							</PopperComponent>
+							<PopperComponent visible={modalName === "deploymentExecute"} referenceRef={executePopperElementRef}>
+								<ExecutePopper
+									files={files!}
+									functions={functions!}
+									selectedFile={selectedFile}
+									selectedFunction={selectedFunction}
+									onFileChange={setSelectedFile}
+									onFunctionChange={handleFunctionChange}
+									onStartSession={startSession}
+									onClose={() => hidePopper()}
+									displayedErrors={displayedErrors}
+								/>
+							</PopperComponent>
+						</div>,
+						document.body
 					)}
-					<div
-						className={`relative codicon codicon-trash ${
-							isActive(deployment.state) ? "cursor-not-allowed" : "cursor-pointer"
-						} ml-2 z-20`}
-						title={
-							isActive(deployment.state)
-								? translate().t("reactApp.deployments.deleteDisabled")
-								: translate().t("reactApp.deployments.delete")
-						}
-						onClick={(event) => showDeleteDeploymentPopper(event, deployment)}
-					></div>
-
-					{(modalName === "deploymentDelete" || modalName === "deploymentExecute") && (
-						<div className="absolute h-screen w-screen top-0 left-0 z-10" onClick={() => hidePopper()}></div>
-					)}
-
-					<PopperComponent visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
-						<DeletePopper
-							isDeletingInProcess={isDeletingInProcess}
-							onConfirm={() => deleteDeploymentConfirmed()}
-							onDismiss={() => deleteDeploymentDismissed()}
-							translations={deleteDeploymentPopperTranslations}
-						/>
-					</PopperComponent>
-					<PopperComponent visible={modalName === "deploymentExecute"} referenceRef={executePopperElementRef}>
-						<ExecutePopper
-							files={files!}
-							functions={functions!}
-							selectedFile={selectedFile}
-							selectedFunction={selectedFunction}
-							onFileChange={setSelectedFile}
-							onFunctionChange={handleFunctionChange}
-							onStartSession={startSession}
-							onClose={() => hidePopper()}
-							displayedErrors={displayedErrors}
-						/>
-					</PopperComponent>
 				</AKTableCell>
 			</AKTableRow>
 		))

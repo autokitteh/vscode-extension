@@ -1,7 +1,6 @@
-import { error } from "console";
 import {
-	Session as ProtoSession,
 	SessionLogRecord as ProtoSessionLogRecord,
+	Session as ProtoSession,
 } from "@ak-proto-ts/sessions/v1/session_pb";
 import { StartRequest } from "@ak-proto-ts/sessions/v1/svc_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
@@ -10,9 +9,7 @@ import { translate } from "@i18n";
 import { SessionLogRecord, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse, StartSessionArgsType } from "@type";
-import { Session } from "@type/models";
-import { flattenArray } from "@utilities";
-import { get } from "lodash";
+import { Session, SessionFilter } from "@type/models";
 
 export class SessionsService {
 	static async listByEnvironmentId(environmentId: string): Promise<ServiceResponse<Session[]>> {
@@ -26,9 +23,12 @@ export class SessionsService {
 		}
 	}
 
-	static async listByDeploymentId(deploymentId: string): Promise<ServiceResponse<Session[]>> {
+	static async listByDeploymentId(deploymentId: string, filter: SessionFilter): Promise<ServiceResponse<Session[]>> {
 		try {
-			const { sessions: sessionsResponse } = await sessionsClient.list({ deploymentId });
+			const { sessions: sessionsResponse } = await sessionsClient.list({
+				deploymentId,
+				stateType: filter.stateType,
+			});
 			const sessions = sessionsResponse.map((session: ProtoSession) => convertSessionProtoToModel(session));
 			return { data: sessions, error: undefined };
 		} catch (error) {
@@ -84,44 +84,9 @@ export class SessionsService {
 			const { sessionId } = await sessionsClient.start(sessionAsStartRequest);
 			return { data: sessionId, error: undefined };
 		} catch (error) {
-			// eslint-disable-next-line max-len
-			const log = `Error running session execution: ${(error as Error).message} for deployment id: ${startSessionArgs.buildId}`;
+			const log = translate().t("errors.sessionStartFailedExtended", { error, buildId: startSessionArgs.buildId });
 			LoggerService.error(namespaces.sessionsService, log);
 			return { data: undefined, error: log };
-		}
-	}
-
-	static async listByProjectId(projectId: string): Promise<ServiceResponse<Session[]>> {
-		try {
-			const { data: projectEnvironments, error: environmentsError } =
-				await EnvironmentsService.listByProjectId(projectId);
-
-			if (environmentsError) {
-				LoggerService.error(namespaces.sessionsService, (environmentsError as Error).message);
-
-				return { data: undefined, error };
-			}
-			const sessionsPromises = (projectEnvironments || []).map(async (environment) => {
-				const sessions = await this.listByEnvironmentId(environment.envId);
-				return sessions;
-			});
-
-			const sessionsResponses = await Promise.allSettled(sessionsPromises);
-
-			const sessions = flattenArray<Session>(
-				sessionsResponses
-					.filter((response) => response.status === "fulfilled")
-					.map((response) => get(response, "value.sessions", []).map((session) => convertSessionProtoToModel(session)))
-			);
-
-			return { data: sessions, error: undefined };
-		} catch (error) {
-			LoggerService.error(namespaces.sessionsService, (error as Error).message);
-
-			return {
-				data: undefined,
-				error,
-			};
 		}
 	}
 

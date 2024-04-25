@@ -5,6 +5,7 @@
 
 vscode-react/build*
 vscode-react/index.html
+vscode-react/stats.html
 src/autokitteh*
 
 package-lock.json

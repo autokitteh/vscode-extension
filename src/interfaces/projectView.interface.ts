@@ -17,6 +17,11 @@ export interface IProjectViewDelegate {
 	deleteSession?: Callback<string>;
 	displayErrorWithoutActionButton?: Callback<string>;
 	stopSession?: Callback<string>;
+	copyProjectPath?: Callback<string>;
+	openProjectResourcesDirectory?: Callback<string>;
+	deleteProject?: Callback;
+	setProjectResourcesDirectory?: Callback<string>;
+	setSessionsStateFilter?: Callback<string>;
 }
 
 export interface IProjectView {
