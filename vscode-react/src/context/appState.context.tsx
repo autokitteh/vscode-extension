@@ -4,8 +4,8 @@ import { Action } from "src/types";
 
 type State = {
 	modalName: string;
-	lastDeployment: Deployment | null;
 	loading: boolean;
+	selectedDeploymentId?: string;
 };
 
 const AppStateContext = createContext<[State, React.Dispatch<Action>] | undefined>(undefined);
@@ -14,10 +14,10 @@ export const appStateReducer = (state: State, action: Action): State => {
 	switch (action.type) {
 		case "SET_MODAL_NAME":
 			return { ...state, modalName: action.payload };
-		case "SET_LAST_DEPLOYMENT":
-			return { ...state, lastDeployment: action.payload };
 		case "SET_LOADER":
 			return { ...state, loading: action.payload };
+		case "SET_SELECTED_DEPLOYMENT":
+			return { ...state, selectedDeploymentId: action.payload };
 		default:
 			return state;
 	}
@@ -26,8 +26,8 @@ export const appStateReducer = (state: State, action: Action): State => {
 export const AppStateProvider = ({ children }: { children: ReactNode }) => {
 	const initialState: State = {
 		modalName: "",
-		lastDeployment: null,
 		loading: true,
+		selectedDeploymentId: undefined,
 	};
 
 	const [state, dispatch] = useReducer(appStateReducer, initialState);

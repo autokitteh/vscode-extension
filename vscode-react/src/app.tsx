@@ -8,6 +8,7 @@ import "split-pane-react/esm/themes/default.css";
 
 function App() {
 	const [sizes, setSizes] = useState<(number | string)[]>(["50%", "50%"]);
+
 	return (
 		<AppStateProvider>
 			<main>

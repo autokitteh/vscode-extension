@@ -37,8 +37,8 @@ export class ProjectView implements IProjectView {
 					case MessageType.selectDeployment:
 						this.delegate?.selectDeployment?.(message.payload as string);
 						break;
-					case MessageType.displaySessionLogs:
-						this.delegate?.displaySessionLogs?.(message.payload as string);
+					case MessageType.displaySessionLogsAndStop:
+						this.delegate?.displaySessionLogsAndStop?.(message.payload as string);
 						break;
 					case MessageType.activateDeployment:
 						this.delegate?.activateDeployment?.(message.payload as string);
@@ -80,6 +80,13 @@ export class ProjectView implements IProjectView {
 						break;
 					case MessageType.loadInitialDataOnceViewReady:
 						this.delegate?.loadInitialDataOnceViewReady?.();
+						break;
+					case MessageType.loadMoreSessions:
+						this.delegate?.loadMoreSessions?.();
+						break;
+					case MessageType.toggleSessionsLiveTail:
+						this.delegate?.toggleSessionsLiveTail?.(message.payload as boolean);
+
 						break;
 					default:
 				}

@@ -9,7 +9,7 @@ export enum MessageType {
 	setSessionsSection = "SET_SESSIONS_SECTION",
 	selectDeployment = "SELECT_DEPLOYMENT",
 	selectSession = "SELECT_SESSION",
-	displaySessionLogs = "DISPLAY_SESSION_LOGS",
+	displaySessionLogsAndStop = "DISPLAY_SESSION_LOGS_AND_STOP",
 	deactivateDeployment = "DEACTIVATE_DEPLOYMENT",
 	activateDeployment = "ACTIVATE_DEPLOYMENT",
 	startSession = "START_SESSION",
@@ -27,4 +27,6 @@ export enum MessageType {
 	loadInitialDataOnceViewReady = "LOAD_INITIAL_DATA_ONCE_VIEW_READY",
 	startLoader = "START_LOADER",
 	stopLoader = "STOP_LOADER",
+	loadMoreSessions = "LOAD_MORE_SESSIONS",
+	toggleSessionsLiveTail = "TOGGLE_SESSIONS_LIVE_TAIL",
 }

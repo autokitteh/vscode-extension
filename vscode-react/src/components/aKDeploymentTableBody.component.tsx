@@ -5,31 +5,39 @@ import { AKDeploymentState, AKOverlay } from "@react-components";
 import { DeletePopper, ExecutePopper, PopperComponent } from "@react-components";
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
 import { useAppState } from "@react-context/appState.context";
-import { useDeployments } from "@react-hooks";
+import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment, SessionEntrypoint } from "@type/models";
 import { createPortal } from "react-dom";
 
 export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
 	// State Hooks Section
-	const { selectedDeploymentId, entrypoints } = useDeployments();
 	const [{ modalName }, dispatch] = useAppState();
 	const executePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [selectedFile, setSelectedFile] = useState<string>("");
 	const [selectedFunction, setSelectedFunction] = useState<string>("");
 	const [selectedEntrypoint, setSelectedEntrypoint] = useState<SessionEntrypoint>();
-	const [selectedDeployment, setSelectedDeployment] = useState("");
 	const [files, setFiles] = useState<Record<string, SessionEntrypoint[]>>();
 	const [functions, setFunctions] = useState<SessionEntrypoint[]>();
 	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
+	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string>();
+	const [entrypoints, setEntrypoints] = useState<Record<string, SessionEntrypoint[]>>();
 
 	// Local variable
 	const deleteDeploymentPopperTranslations = {
 		title: translate().t("reactApp.deployments.deletionApprovalQuestion"),
 		subtitle: translate().t("reactApp.deployments.deletionApprovalQuestionSubtitle"),
 	};
+
+	useEffect(() => {
+		if (selectedDeploymentId) {
+			dispatch({ type: "SET_SELECTED_DEPLOYMENT", payload: selectedDeploymentId });
+		}
+	}, [selectedDeploymentId]);
+
+	useIncomingMessageHandler({ setSelectedDeploymentId, setEntrypoints });
 
 	// Functions Section
 	const showPopper = (popperId: string) => dispatch({ type: "SET_MODAL_NAME", payload: popperId });
@@ -67,7 +75,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	const getSessionsByDeploymentId = (deploymentId: string) => {
 		sendMessage(MessageType.selectDeployment, deploymentId);
-		setSelectedDeployment(deploymentId);
 	};
 
 	const isActive = (deploymentState: DeploymentState) => deploymentState === DeploymentState.ACTIVE_DEPLOYMENT;
@@ -135,16 +142,10 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		}
 	}, [entrypoints]);
 
-	useEffect(() => {
-		if (typeof selectedDeploymentId === "string") {
-			setSelectedDeployment(selectedDeploymentId);
-		}
-	}, [selectedDeploymentId]);
-
 	return (
 		deployments &&
 		deployments.map((deployment: Deployment, index: number) => (
-			<AKTableRow key={deployment.deploymentId} isSelected={selectedDeployment === deployment.deploymentId}>
+			<AKTableRow key={deployment.deploymentId} isSelected={selectedDeploymentId === deployment.deploymentId}>
 				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getTimePassed(deployment.createdAt)}
 				</AKTableCell>

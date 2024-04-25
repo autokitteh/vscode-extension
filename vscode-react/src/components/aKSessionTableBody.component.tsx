@@ -1,31 +1,44 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
-import { AKMonacoEditorModal, AKOverlay, AKSessionState, DeletePopper, PopperComponent } from "@react-components";
-import { AKTableRow, AKTableCell } from "@react-components/AKTable";
+import { AKMonacoEditorModal, AKSessionsTableRow } from "@react-components";
+import { AKTable, AKTableHeader, AKTableHeaderCell } from "@react-components/AKTable";
 import { useAppDispatch, useAppState } from "@react-context";
 import { SessionState } from "@react-enums";
 import { useCloseOnEscape } from "@react-hooks";
-import { getTimePassed, sendMessage } from "@react-utilities";
-import { Session } from "@type/models";
+import { AKSessionsTableRowProps } from "@react-types";
+import { sendMessage, getSessionActions } from "@react-utilities";
+import { Deployment, Session } from "@type/models";
 import { createPortal } from "react-dom";
+import { FixedSizeList as List, ListOnItemsRenderedProps, ListOnScrollProps } from "react-window";
 
 export const AKSessionsTableBody = ({
 	sessions,
 	selectedSession,
 	setSelectedSession,
+	heightProp,
+	widthProp,
+	disableLiveTail,
+	liveTailState,
+	lastDeployment,
 }: {
 	sessions?: Session[];
 	selectedSession?: string;
 	setSelectedSession: (sessionId: string) => void;
+	heightProp: string | number;
+	widthProp: string | number;
+	disableLiveTail: () => void;
+	liveTailState: boolean;
+	lastDeployment?: Deployment;
 }) => {
 	// State Section
-	const [{ modalName, lastDeployment }] = useAppState();
+	const [{ modalName }] = useAppState();
 	const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [inputsModalVisible, setInputsModalVisible] = useState(false);
 	const [sessionInputs, setSessionInputs] = useState<string>();
 	const { setModalName } = useAppDispatch();
+	const listRef = useRef<List>(null);
 
 	// Hooks Section
 	useCloseOnEscape(() => setInputsModalVisible(false));
@@ -43,34 +56,12 @@ export const AKSessionsTableBody = ({
 		setInputsModalVisible(true);
 	};
 
-	const getStopSessionClass = (sessionState: SessionState) => {
-		const isRunningClass =
-			sessionState === SessionState.RUNNING ? "text-red-500 cursor-pointer" : "text-gray-500 cursor-not-allowed";
-		return `codicon codicon-debug-stop mr-2 ${isRunningClass}`;
-	};
-
 	const showPopper = () => setModalName("sessionDelete");
 	const hidePopper = () => setModalName("");
-	const startSession = (session: Session) => {
-		const startSessionArgs = {
-			sessionId: session.sessionId,
-			buildId: lastDeployment?.buildId,
-			deploymentId: lastDeployment?.deploymentId,
-			entrypoint: session.entrypoint,
-		};
-
-		sendMessage(MessageType.startSession, startSessionArgs);
-	};
-
-	const stopSession = (session: Session) => {
-		if (session.state !== SessionState.RUNNING) {
-			return;
-		}
-		sendMessage(MessageType.stopSession, session.sessionId);
-	};
 
 	const displaySessionLogs = (sessionId: string) => {
-		sendMessage(MessageType.displaySessionLogs, sessionId);
+		sendMessage(MessageType.displaySessionLogsAndStop, sessionId);
+		disableLiveTail();
 		setSelectedSession(sessionId);
 	};
 
@@ -98,14 +89,51 @@ export const AKSessionsTableBody = ({
 		setDeleteSessionId(session.sessionId);
 	};
 
-	const isRunning = (sessionState: SessionState) => sessionState === SessionState.RUNNING;
-
-	const isLastDeployment = (deploymentId: string) => deploymentId === lastDeployment?.deploymentId;
-
 	// useEffects Section
 	useEffect(() => {
 		hidePopper();
 	}, []);
+
+	useEffect(() => {
+		if (listRef.current && liveTailState) {
+			listRef.current.scrollTo(0); // Scroll to the top
+		}
+	}, [liveTailState]);
+
+	const handleItemsRendered = ({ visibleStopIndex }: ListOnItemsRenderedProps) => {
+		if (visibleStopIndex >= (sessions?.length || 0) - 1) {
+			sendMessage(MessageType.loadMoreSessions);
+			return;
+		}
+	};
+
+	const handleScroll = useCallback(({ scrollOffset }: ListOnScrollProps) => {
+		if (scrollOffset !== 0) {
+			disableLiveTail();
+		}
+	}, []);
+
+	const sessionActions = {
+		displayInputsModal,
+		displaySessionDeletePopper,
+		...getSessionActions(lastDeployment!),
+	};
+
+	const itemData = useMemo(
+		() => ({
+			sessions,
+			sessionActions,
+			selectedSessionId: selectedSession,
+			displaySessionLogs,
+			modalName,
+			hidePopper,
+			deleteSessionConfirmed,
+			deleteSessionDismissed,
+			deleteSessionPopperTranslations,
+			deletePopperElementRef,
+		}),
+		[sessions, selectedSession, lastDeployment, modalName]
+	);
 
 	return (
 		<>
@@ -114,69 +142,35 @@ export const AKSessionsTableBody = ({
 					<AKMonacoEditorModal content={sessionInputs} onCloseClicked={() => setInputsModalVisible(false)} />,
 					document.body
 				)}
-			{sessions &&
-				sessions.map((session: Session, index: number) => (
-					<AKTableRow key={session.sessionId} isSelected={selectedSession === session.sessionId}>
-						<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
-							{getTimePassed(session.createdAt)}
-						</AKTableCell>
-						<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
-							<AKSessionState sessionState={session.state} />
-						</AKTableCell>
-						<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
-							{session.sessionId}
-						</AKTableCell>
-						<AKTableCell>
-							{isLastDeployment(session.deploymentId) && (
-								<div
-									className="codicon codicon-debug-rerun mr-2 cursor-pointer"
-									title={translate().t("reactApp.sessions.startSession")}
-									onClick={() => startSession(session)}
-								></div>
-							)}
-							<div
-								className={getStopSessionClass(session.state)}
-								title={translate().t("reactApp.sessions.stopSession")}
-								onClick={() => stopSession(session)}
-							></div>
-							{isLastDeployment(session.deploymentId) && (
-								<div
-									className="codicon codicon-symbol-namespace mr-2 cursor-pointer"
-									title={translate().t("reactApp.sessions.showSessionProps")}
-									onClick={() => displayInputsModal(JSON.stringify(session.inputs, null, 2))}
-								></div>
-							)}
-							<div
-								className={`codicon codicon-trash mr-2 z-20 ${
-									isRunning(session.state) ? "cursor-not-allowed" : "cursor-pointer"
-								}`}
-								title={
-									isRunning(session.state)
-										? translate().t("reactApp.sessions.deleteSessionDisabled")
-										: translate().t("reactApp.sessions.delete")
-								}
-								onClick={(event) => displaySessionDeletePopper(event, session)}
-							></div>
-							{createPortal(
-								<div>
-									<AKOverlay
-										isVisibile={modalName === "sessionDelete" && index === 0}
-										onOverlayClick={() => hidePopper()}
-									/>
-
-									<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
-										<DeletePopper
-											onConfirm={() => deleteSessionConfirmed()}
-											onDismiss={() => deleteSessionDismissed()}
-											translations={deleteSessionPopperTranslations}
-										/>
-									</PopperComponent>
-								</div>,
-								document.body
-							)}
-						</AKTableCell>
-					</AKTableRow>
-				))}
+			<AKTable>
+				<AKTableHeader classes="flex justify-around pr-4">
+					<AKTableHeaderCell className="flex justify-center w-64">
+						{translate().t("reactApp.sessions.time")}
+					</AKTableHeaderCell>
+					<AKTableHeaderCell className="flex justify-center w-32">
+						{translate().t("reactApp.sessions.status")}
+					</AKTableHeaderCell>
+					<AKTableHeaderCell className="flex justify-center w-64">
+						{translate().t("reactApp.sessions.sessionId")}
+					</AKTableHeaderCell>
+					<AKTableHeaderCell className="flex justify-center w-32">
+						{translate().t("reactApp.sessions.actions")}
+					</AKTableHeaderCell>
+				</AKTableHeader>
+				<List
+					height={heightProp}
+					width={widthProp}
+					itemCount={sessions?.length || 0}
+					itemSize={30}
+					itemData={itemData as AKSessionsTableRowProps}
+					onItemsRendered={handleItemsRendered}
+					onScroll={handleScroll}
+					itemKey={(index) => sessions?.[index]?.sessionId || 0}
+					ref={listRef}
+				>
+					{AKSessionsTableRow}
+				</List>
+			</AKTable>
 		</>
 	);
 };

@@ -4,7 +4,7 @@ import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
 import { AKDeploymentTableBody, AKDeploymentTableHeader } from "@react-components";
 import { AKTable, AKTableHeader, AKTableHeaderCell, AKTableMessage } from "@react-components/AKTable";
-import { useAppDispatch } from "@react-context";
+import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import { Deployment } from "@type/models";
@@ -13,8 +13,8 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel>();
 	const [totalDeployments, setTotalDeployments] = useState<number>();
 	const [deployments, setDeployments] = useState<Deployment[]>();
-	const { setLastDeployment } = useAppDispatch();
 	const [isLoading, setIsLoading] = useState(true);
+	const [, dispatch] = useAppState();
 
 	useIncomingMessageHandler({
 		setDeploymentsSection,
@@ -25,9 +25,6 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 	}, []);
 
 	useEffect(() => {
-		if (deployments && deployments.length) {
-			setLastDeployment(deployments[0]);
-		}
 		if (deployments && isLoading) {
 			setIsLoading(false);
 		}
@@ -37,6 +34,9 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 		if (deploymentsSection) {
 			setTotalDeployments(deploymentsSection.totalDeployments);
 			setDeployments(deploymentsSection?.deployments);
+			if (deploymentsSection?.selectedDeploymentId) {
+				dispatch({ type: "SET_SELECTED_DEPLOYMENT", payload: deploymentsSection.selectedDeploymentId });
+			}
 		}
 	}, [deploymentsSection]);
 
