@@ -19,10 +19,6 @@
 		"@rollup/rollup-linux-x64-gnu": "4.6.1"
 	},
 	"contributes": {
-		"activationEvents": [
-			"onCommand:autokitteh.buildProject",
-			"onCommand:autokitteh.runProject"
-		],
 		"breakpoints": [
 			{
 				"language": "starlark"
@@ -313,7 +309,7 @@
 		"@types/winattr": "^3.0.0",
 		"@typescript-eslint/eslint-plugin": "^7.0.1",
 		"@typescript-eslint/parser": "^7.0.1",
-		"@vscode/vsce": "^2.25.0",
+		"@vscode/vsce": "^2.26.0",
 		"esbuild": "0.20.0",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
