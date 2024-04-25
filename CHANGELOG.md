@@ -1,3 +1,10 @@
+## [0.12.1](https://github.com/autokitteh/vscode-extension/compare/v0.12.0...v0.12.1) (2024-04-25)
+
+
+### Bug Fixes
+
+* modify package.json to fix release on merge to main ([#272](https://github.com/autokitteh/vscode-extension/issues/272)) ([35b0fa8](https://github.com/autokitteh/vscode-extension/commit/35b0fa8e4f804b813863b3bfee5185d7d0a40722))
+
 # [0.12.0](https://github.com/autokitteh/vscode-extension/compare/v0.11.0...v0.12.0) (2024-04-25)
 
 
