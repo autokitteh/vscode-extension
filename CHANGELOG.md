@@ -1,3 +1,10 @@
+# [0.12.0-dev.21](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.20...v0.12.0-dev.21) (2024-04-25)
+
+
+### Features
+
+* release new version to extension market on merge to main (UI-262) ([#269](https://github.com/autokitteh/vscode-extension/issues/269)) ([cbec0e8](https://github.com/autokitteh/vscode-extension/commit/cbec0e89b297a397d5c0584bc75578795bbaa3e5))
+
 # [0.12.0-dev.20](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.19...v0.12.0-dev.20) (2024-04-22)
 
 
