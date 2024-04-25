@@ -1,3 +1,10 @@
+## [0.12.3](https://github.com/autokitteh/vscode-extension/compare/v0.12.2...v0.12.3) (2024-04-25)
+
+
+### Bug Fixes
+
+* publish to marketplace - local paths issue in package.json ([#274](https://github.com/autokitteh/vscode-extension/issues/274)) ([1d31306](https://github.com/autokitteh/vscode-extension/commit/1d31306ef83184df45b9efe99e293cc7b88a7cb5))
+
 ## [0.12.2](https://github.com/autokitteh/vscode-extension/compare/v0.12.1...v0.12.2) (2024-04-25)
 
 
