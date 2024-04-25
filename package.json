@@ -334,7 +334,7 @@
 		"vscode": "^1.86.0"
 	},
 	"homepage": "https://autokitteh.com",
-	"icon": "./resources/extensions-marketplace/ak-extension-icon.png",
+	"icon": "resources/extensions-marketplace/ak-extension-icon.png",
 	"license": "SEE LICENSE IN LICENSE.md",
 	"lint-staged": {
 		"*.{ts,tsx}": [
