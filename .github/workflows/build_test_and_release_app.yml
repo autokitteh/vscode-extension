@@ -65,3 +65,8 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ github.ref == 'refs/heads/main' && secrets.SLACK_WEBHOOK_URL || github.ref == 'refs/heads/dev' && secrets.SLACK_WEBHOOK_URL_BETA }}
         run: npx semantic-release
+      - uses: lannonbr/vsce-action@3.0.0
+        with:
+          args: "publish -p $VSCE_TOKEN"
+        env:
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
