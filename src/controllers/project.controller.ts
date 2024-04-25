@@ -35,6 +35,8 @@ export class ProjectController {
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
+	private sessionsNextPageToken?: string;
+	private displayedSessionsCount: number = 0;
 
 	constructor(
 		projectView: IProjectView,
@@ -215,10 +217,9 @@ export class ProjectController {
 
 		const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
 
-		const { data: sessions, error } = await SessionsService.listByDeploymentId(this.selectedDeploymentId, {
+		const { data, error } = await SessionsService.listByDeploymentId(this.selectedDeploymentId, {
 			stateType: selectedSessionStateFilter,
 		});
-
 		if (error) {
 			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessions)) {
 				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.internalErrorUpdate"));
@@ -230,15 +231,19 @@ export class ProjectController {
 			return;
 		}
 
+		const { sessions, count, nextPageToken } = data!;
+
 		if (isEqual(this.sessions, sessions) && this.sessions?.length) {
 			return;
 		}
 
 		this.sessions = sessions;
+		this.sessionsNextPageToken = nextPageToken;
+		this.displayedSessionsCount = count;
 
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions,
-			totalSessions: sessions?.length || 0,
+			totalSessions: this.displayedSessionsCount,
 		};
 
 		this.view.update({
@@ -357,6 +362,7 @@ export class ProjectController {
 		this.selectedSessionPerDeployment.set(this.selectedDeploymentId!, sessionId);
 
 		this.selectedSessionId = sessionId;
+		this.stopInterval(ProjectIntervalTypes.sessions);
 		this.initSessionLogsDisplay(sessionId);
 	}
 
@@ -913,5 +919,48 @@ export class ProjectController {
 			projectId: this.projectId,
 		});
 		LoggerService.info(namespaces.projectController, log);
+	}
+
+	async loadMoreSessions() {
+		this.stopInterval(ProjectIntervalTypes.sessions);
+
+		if (this.sessionsNextPageToken) {
+			const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
+
+			const { data, error } = await SessionsService.listByDeploymentId(
+				this.selectedDeploymentId!,
+				{
+					stateType: selectedSessionStateFilter,
+				},
+				this.sessionsNextPageToken
+			);
+			if (error) {
+				if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessions)) {
+					commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.internalErrorUpdate"));
+					this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessions, true);
+				}
+
+				const log = `${translate().t("errors.sessionFetchFailed")} - ${(error as Error).message}`;
+				LoggerService.error(namespaces.projectController, log);
+				return;
+			}
+
+			const { sessions, count, nextPageToken } = data!;
+
+			this.displayedSessionsCount += count;
+
+			this.sessions = [...this.sessions!, ...sessions];
+			this.sessionsNextPageToken = nextPageToken;
+
+			const sessionsViewObject: SessionSectionViewModel = {
+				sessions: this.sessions,
+				totalSessions: this.displayedSessionsCount,
+			};
+
+			this.view.update({
+				type: MessageType.setSessionsSection,
+				payload: sessionsViewObject,
+			});
+		}
 	}
 }
