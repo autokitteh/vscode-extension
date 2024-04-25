@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import { Player } from "@lottiefiles/react-lottie-player";
@@ -25,10 +25,18 @@ function App() {
 		setThemeVisualType,
 		setResourcesDir,
 	});
-	const [sizes, setSizes] = useState<(number | string)[]>(["50%", "50%"]);
+	const [sizes, setSizes] = useState<(number | string)[]>([]);
+
+	const [divHeight, setDivHeight] = useState(0);
+	const ref = useRef(null);
+	useEffect(() => {
+		// setDivHeight(ref.current.clientHeight);
+		console.log("ref.current.clientHeight", ref.current.clientHeight);
+		setSizes([ref.current.clientHeight * 0.45, ref.current.clientHeight * 0.45]);
+	}, []);
 
 	return (
-		<main>
+		<main ref={ref}>
 			{!!projectName ? (
 				<div className="flex flex-col w-full">
 					<div className="flex items-center w-full">
@@ -87,7 +95,7 @@ function App() {
 								onChange={setSizes}
 								sashRender={() => <hr className="bg-vscode-editor-background h-3" />}
 							>
-								<div>
+								<div className="h-">
 									<AKDeployments height={sizes[0]} />
 								</div>
 								<div>

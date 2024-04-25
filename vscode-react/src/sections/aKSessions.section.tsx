@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
@@ -42,8 +42,14 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 		sendMessage(MessageType.setSessionsStateFilter, value);
 	};
 
+	const [divHeight, setDivHeight] = useState(0);
+	const ref = useRef(null);
+	useEffect(() => {
+		setDivHeight(ref.current.clientHeight);
+	});
+
 	return (
-		<div style={{ height }}>
+		<div style={{ height }} ref={ref}>
 			<AKTable>
 				<AKTableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-30">
 					<AKTableHeaderCell className="text-lg font-extralight pt-5" colSpan={3}>
@@ -68,6 +74,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 					sessions={sessions}
 					selectedSession={selectedSession}
 					setSelectedSession={setSelectedSession}
+					heightProp={divHeight}
 				/>
 			</AKTable>
 			{isLoading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}

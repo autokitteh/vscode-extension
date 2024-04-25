@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { AKMonacoEditorModal, AKOverlay, AKSessionState, DeletePopper, PopperComponent } from "@react-components";
@@ -9,15 +9,19 @@ import { useCloseOnEscape, useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
 import { createPortal } from "react-dom";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { FixedSizeList as List } from "react-window";
 
 export const AKSessionsTableBody = ({
 	sessions,
 	selectedSession,
 	setSelectedSession,
+	heightProp,
 }: {
 	sessions?: Session[];
 	selectedSession?: string;
 	setSelectedSession: (sessionId: string) => void;
+	heightProp: string | number;
 }) => {
 	// State Section
 	const [{ modalName, lastDeployment }, dispatch] = useAppState();
@@ -117,77 +121,44 @@ export const AKSessionsTableBody = ({
 		hidePopper();
 	}, []);
 
+	const Row = ({ index, style, data }) => (
+		<div style={style}>
+			{data[index] ? `Session ID: ${data[index].sessionId}, State: ${data[index].state}` : "Loading..."}
+		</div>
+	);
+
+	const handleItemsRendered = ({ visibleStopIndex }) => {
+		if (visibleStopIndex >= 30 - 2) {
+			// Load more items when close to the end
+			console.log("Load more items");
+		}
+	};
+
+	const handleScroll = useCallback(({ scrollDirection, scrollOffset, scrollUpdateWasRequested }) => {
+		if (scrollOffset === 0) {
+			console.log("Scrolled to the top!");
+		}
+	}, []);
+
+	console.log("heightProp", heightProp);
+
 	return (
 		<>
-			{inputsModalVisible &&
-				createPortal(
-					<AKMonacoEditorModal content={sessionInputs} onCloseClicked={() => setInputsModalVisible(false)} />,
-					document.body
+			<AutoSizer>
+				{({ height, width }) => (
+					<List
+						height={heightProp - 70}
+						itemCount={30}
+						itemSize={50} // Adjust based on your row height
+						width={width}
+						itemData={sessions || []}
+						onItemsRendered={handleItemsRendered}
+						onScroll={handleScroll}
+					>
+						{Row}
+					</List>
 				)}
-			{sessions &&
-				sessions.map((session: Session, index: number) => (
-					<AKTableRow key={session.sessionId} isSelected={selectedSession === session.sessionId}>
-						<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
-							{getTimePassed(session.createdAt)}
-						</AKTableCell>
-						<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
-							<AKSessionState sessionState={session.state} />
-						</AKTableCell>
-						<AKTableCell onClick={() => displaySessionLogs(session.sessionId)} classes={["cursor-pointer"]}>
-							{session.sessionId}
-						</AKTableCell>
-						<AKTableCell>
-							{isLastDeployment(session.deploymentId) && (
-								<div
-									className="codicon codicon-debug-rerun mr-2 cursor-pointer"
-									title={translate().t("reactApp.sessions.startSession")}
-									onClick={() => startSession(session)}
-								></div>
-							)}
-							<div
-								className={getStopSessionClass(session.state)}
-								title={translate().t("reactApp.sessions.stopSession")}
-								onClick={() => stopSession(session)}
-							></div>
-							{isLastDeployment(session.deploymentId) && (
-								<div
-									className="codicon codicon-symbol-namespace mr-2 cursor-pointer"
-									title={translate().t("reactApp.sessions.showSessionProps")}
-									onClick={() => displayInputsModal(JSON.stringify(session.inputs, null, 2))}
-								></div>
-							)}
-							<div
-								className={`codicon codicon-trash mr-2 z-20 ${
-									isRunning(session.state) ? "cursor-not-allowed" : "cursor-pointer"
-								}`}
-								title={
-									isRunning(session.state)
-										? translate().t("reactApp.sessions.deleteSessionDisabled")
-										: translate().t("reactApp.sessions.delete")
-								}
-								onClick={(event) => displaySessionDeletePopper(event, session)}
-							></div>
-							{createPortal(
-								<div>
-									<AKOverlay
-										isVisibile={modalName === "sessionDelete" && index === 0}
-										onOverlayClick={() => hidePopper()}
-									/>
-
-									<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
-										<DeletePopper
-											isDeletingInProcess={isDeletingInProcess}
-											onConfirm={() => deleteSessionConfirmed()}
-											onDismiss={() => deleteSessionDismissed()}
-											translations={deleteSessionPopperTranslations}
-										/>
-									</PopperComponent>
-								</div>,
-								document.body
-							)}
-						</AKTableCell>
-					</AKTableRow>
-				))}
+			</AutoSizer>
 		</>
 	);
 };
