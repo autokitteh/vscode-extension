@@ -54,36 +54,36 @@
 			},
 			{
 				"command": "autokitteh.enable",
-				"icon": "./resources/sidebar/top-panel-connect.svg",
+				"icon": "resources/sidebar/top-panel-connect.svg",
 				"title": "autokitteh: Enable"
 			},
 			{
 				"command": "autokitteh.addConnections",
 				"icon": {
-					"dark": "./resources/sidebar/icons/dark/cloud-upload.svg",
-					"light": "./resources/sidebar/icons/light/cloud-upload.svg"
+					"dark": "resources/sidebar/icons/dark/cloud-upload.svg",
+					"light": "resources/sidebar/icons/light/cloud-upload.svg"
 				},
 				"title": "autokitteh: Add connection"
 			},
 			{
 				"command": "autokitteh.disable",
-				"icon": "./resources/sidebar/top-panel-disconnect.svg",
+				"icon": "resources/sidebar/top-panel-disconnect.svg",
 				"title": "autokitteh: Disable"
 			},
 			{
 				"command": "autokitteh.buildProject",
 				"title": "autokitteh: Build Project",
 				"icon": {
-					"dark": "./resources/sidebar/icons/dark/tools.svg",
-					"light": "./resources/sidebar/icons/light/tools.svg"
+					"dark": "resources/sidebar/icons/dark/tools.svg",
+					"light": "resources/sidebar/icons/light/tools.svg"
 				}
 			},
 			{
 				"command": "autokitteh.runProject",
 				"title": "autokitteh: Run Project",
 				"icon": {
-					"dark": "./resources/sidebar/icons/dark/rocket.svg",
-					"light": "./resources/sidebar/icons/light/rocket.svg"
+					"dark": "resources/sidebar/icons/dark/rocket.svg",
+					"light": "resources/sidebar/icons/light/rocket.svg"
 				}
 			}
 		],
@@ -218,7 +218,7 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"icon": "./resources/sidebar/ak-sidebar-icon.png",
+					"icon": "resources/sidebar/ak-sidebar-icon.png",
 					"id": "autokittehSidebarTree",
 					"title": "autokitteh"
 				}
@@ -334,7 +334,7 @@
 		"vscode": "^1.86.0"
 	},
 	"homepage": "https://autokitteh.com",
-	"icon": "./resources/extensions-marketplace/ak-extension-icon.png",
+	"icon": "resources/extensions-marketplace/ak-extension-icon.png",
 	"license": "SEE LICENSE IN LICENSE.md",
 	"lint-staged": {
 		"*.{ts,tsx}": [
