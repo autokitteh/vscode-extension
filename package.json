@@ -18,11 +18,8 @@
 	"optionalDependencies": {
 		"@rollup/rollup-linux-x64-gnu": "4.6.1"
 	},
+	"activationEvents": [],
 	"contributes": {
-		"activationEvents": [
-			"onCommand:autokitteh.buildProject",
-			"onCommand:autokitteh.runProject"
-		],
 		"breakpoints": [
 			{
 				"language": "starlark"
@@ -57,36 +54,36 @@
 			},
 			{
 				"command": "autokitteh.enable",
-				"icon": "./resources/sidebar/top-panel-connect.svg",
+				"icon": "resources/sidebar/top-panel-connect.svg",
 				"title": "autokitteh: Enable"
 			},
 			{
 				"command": "autokitteh.addConnections",
 				"icon": {
-					"dark": "./resources/sidebar/icons/dark/cloud-upload.svg",
-					"light": "./resources/sidebar/icons/light/cloud-upload.svg"
+					"dark": "resources/sidebar/icons/dark/cloud-upload.svg",
+					"light": "resources/sidebar/icons/light/cloud-upload.svg"
 				},
 				"title": "autokitteh: Add connection"
 			},
 			{
 				"command": "autokitteh.disable",
-				"icon": "./resources/sidebar/top-panel-disconnect.svg",
+				"icon": "resources/sidebar/top-panel-disconnect.svg",
 				"title": "autokitteh: Disable"
 			},
 			{
 				"command": "autokitteh.buildProject",
 				"title": "autokitteh: Build Project",
 				"icon": {
-					"dark": "./resources/sidebar/icons/dark/tools.svg",
-					"light": "./resources/sidebar/icons/light/tools.svg"
+					"dark": "resources/sidebar/icons/dark/tools.svg",
+					"light": "resources/sidebar/icons/light/tools.svg"
 				}
 			},
 			{
 				"command": "autokitteh.runProject",
 				"title": "autokitteh: Run Project",
 				"icon": {
-					"dark": "./resources/sidebar/icons/dark/rocket.svg",
-					"light": "./resources/sidebar/icons/light/rocket.svg"
+					"dark": "resources/sidebar/icons/dark/rocket.svg",
+					"light": "resources/sidebar/icons/light/rocket.svg"
 				}
 			}
 		],
@@ -221,7 +218,7 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"icon": "./resources/sidebar/ak-sidebar-icon.png",
+					"icon": "resources/sidebar/ak-sidebar-icon.png",
 					"id": "autokittehSidebarTree",
 					"title": "autokitteh"
 				}
@@ -313,7 +310,11 @@
 		"@types/winattr": "^3.0.0",
 		"@typescript-eslint/eslint-plugin": "^7.0.1",
 		"@typescript-eslint/parser": "^7.0.1",
+<<<<<<< HEAD
 		"@vscode/vsce": "^2.25.0",
+=======
+		"@vscode/vsce": "^2.26.0",
+>>>>>>> main
 		"esbuild": "0.20.0",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
@@ -337,7 +338,7 @@
 		"vscode": "^1.86.0"
 	},
 	"homepage": "https://autokitteh.com",
-	"icon": "./resources/extensions-marketplace/ak-extension-icon.png",
+	"icon": "resources/extensions-marketplace/ak-extension-icon.png",
 	"license": "SEE LICENSE IN LICENSE.md",
 	"lint-staged": {
 		"*.{ts,tsx}": [
@@ -382,7 +383,11 @@
 		"prepare": "husky install",
 		"source-map-explorer": "npx source-map-explorer dist/main.js dist/main.js.map --no-border-checks"
 	},
+<<<<<<< HEAD
 	"version": "0.12.0-dev.21",
+=======
+	"version": "0.12.3",
+>>>>>>> main
 	"workspaces": [
 		"vscode-react"
 	]

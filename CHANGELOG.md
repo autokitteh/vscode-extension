@@ -1,3 +1,31 @@
+## [0.12.3](https://github.com/autokitteh/vscode-extension/compare/v0.12.2...v0.12.3) (2024-04-25)
+
+
+### Bug Fixes
+
+* publish to marketplace - local paths issue in package.json ([#274](https://github.com/autokitteh/vscode-extension/issues/274)) ([1d31306](https://github.com/autokitteh/vscode-extension/commit/1d31306ef83184df45b9efe99e293cc7b88a7cb5))
+
+## [0.12.2](https://github.com/autokitteh/vscode-extension/compare/v0.12.1...v0.12.2) (2024-04-25)
+
+
+### Bug Fixes
+
+* modify package.json to fix to vscode marketplace publish on merge to main ([#273](https://github.com/autokitteh/vscode-extension/issues/273)) ([db2d78d](https://github.com/autokitteh/vscode-extension/commit/db2d78d16cf7012a06e0feb09bd8c6bafb09eb99))
+
+## [0.12.1](https://github.com/autokitteh/vscode-extension/compare/v0.12.0...v0.12.1) (2024-04-25)
+
+
+### Bug Fixes
+
+* modify package.json to fix release on merge to main ([#272](https://github.com/autokitteh/vscode-extension/issues/272)) ([35b0fa8](https://github.com/autokitteh/vscode-extension/commit/35b0fa8e4f804b813863b3bfee5185d7d0a40722))
+
+# [0.12.0](https://github.com/autokitteh/vscode-extension/compare/v0.11.0...v0.12.0) (2024-04-25)
+
+
+### Features
+
+* UI features, Functional features and Optimization features ([#227](https://github.com/autokitteh/vscode-extension/issues/227)) ([a202ea0](https://github.com/autokitteh/vscode-extension/commit/a202ea0e4d9f7d4781ebb3f444e782f3e1836ee3)), closes [#223](https://github.com/autokitteh/vscode-extension/issues/223) [#223](https://github.com/autokitteh/vscode-extension/issues/223) [#223](https://github.com/autokitteh/vscode-extension/issues/223) [#226](https://github.com/autokitteh/vscode-extension/issues/226) [#226](https://github.com/autokitteh/vscode-extension/issues/226) [#228](https://github.com/autokitteh/vscode-extension/issues/228) [#230](https://github.com/autokitteh/vscode-extension/issues/230) [#229](https://github.com/autokitteh/vscode-extension/issues/229) [#229](https://github.com/autokitteh/vscode-extension/issues/229) [#232](https://github.com/autokitteh/vscode-extension/issues/232) [#233](https://github.com/autokitteh/vscode-extension/issues/233) [#233](https://github.com/autokitteh/vscode-extension/issues/233) [#236](https://github.com/autokitteh/vscode-extension/issues/236) [#237](https://github.com/autokitteh/vscode-extension/issues/237) [#237](https://github.com/autokitteh/vscode-extension/issues/237) [#231](https://github.com/autokitteh/vscode-extension/issues/231) [#231](https://github.com/autokitteh/vscode-extension/issues/231) [#234](https://github.com/autokitteh/vscode-extension/issues/234) [#235](https://github.com/autokitteh/vscode-extension/issues/235) [#235](https://github.com/autokitteh/vscode-extension/issues/235) [#240](https://github.com/autokitteh/vscode-extension/issues/240) [#241](https://github.com/autokitteh/vscode-extension/issues/241) [#242](https://github.com/autokitteh/vscode-extension/issues/242) [#243](https://github.com/autokitteh/vscode-extension/issues/243) [#243](https://github.com/autokitteh/vscode-extension/issues/243) [#238](https://github.com/autokitteh/vscode-extension/issues/238) [#238](https://github.com/autokitteh/vscode-extension/issues/238) [#244](https://github.com/autokitteh/vscode-extension/issues/244) [#244](https://github.com/autokitteh/vscode-extension/issues/244) [#245](https://github.com/autokitteh/vscode-extension/issues/245) [#245](https://github.com/autokitteh/vscode-extension/issues/245) [#246](https://github.com/autokitteh/vscode-extension/issues/246) [#247](https://github.com/autokitteh/vscode-extension/issues/247) [#247](https://github.com/autokitteh/vscode-extension/issues/247) [#248](https://github.com/autokitteh/vscode-extension/issues/248) [#247](https://github.com/autokitteh/vscode-extension/issues/247) [#239](https://github.com/autokitteh/vscode-extension/issues/239) [#249](https://github.com/autokitteh/vscode-extension/issues/249) [#250](https://github.com/autokitteh/vscode-extension/issues/250) [#250](https://github.com/autokitteh/vscode-extension/issues/250) [#251](https://github.com/autokitteh/vscode-extension/issues/251) [#251](https://github.com/autokitteh/vscode-extension/issues/251) [#253](https://github.com/autokitteh/vscode-extension/issues/253) [#252](https://github.com/autokitteh/vscode-extension/issues/252) [#252](https://github.com/autokitteh/vscode-extension/issues/252) [#255](https://github.com/autokitteh/vscode-extension/issues/255) [#261](https://github.com/autokitteh/vscode-extension/issues/261) [#258](https://github.com/autokitteh/vscode-extension/issues/258) [#258](https://github.com/autokitteh/vscode-extension/issues/258) [#259](https://github.com/autokitteh/vscode-extension/issues/259) [#259](https://github.com/autokitteh/vscode-extension/issues/259) [#256](https://github.com/autokitteh/vscode-extension/issues/256) [#256](https://github.com/autokitteh/vscode-extension/issues/256) [#254](https://github.com/autokitteh/vscode-extension/issues/254) [#254](https://github.com/autokitteh/vscode-extension/issues/254) [#257](https://github.com/autokitteh/vscode-extension/issues/257) [#257](https://github.com/autokitteh/vscode-extension/issues/257) [#260](https://github.com/autokitteh/vscode-extension/issues/260) [#260](https://github.com/autokitteh/vscode-extension/issues/260) [#265](https://github.com/autokitteh/vscode-extension/issues/265) [#270](https://github.com/autokitteh/vscode-extension/issues/270) [#269](https://github.com/autokitteh/vscode-extension/issues/269) [#269](https://github.com/autokitteh/vscode-extension/issues/269) [#271](https://github.com/autokitteh/vscode-extension/issues/271)
+
 # [0.12.0-dev.21](https://github.com/autokitteh/vscode-extension/compare/v0.12.0-dev.20...v0.12.0-dev.21) (2024-04-25)
 
 
