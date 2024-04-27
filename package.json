@@ -303,6 +303,7 @@
 		"@types/glob": "^8.1.0",
 		"@types/lodash.isequal": "^4.5.8",
 		"@types/node": "^20.11.19",
+		"@types/react-window": "^1.8.8",
 		"@types/sinon": "^17.0.3",
 		"@types/tar": "^6.1.11",
 		"@types/tar-fs": "^2.0.4",

@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { AKMonacoEditorModal, AKOverlay, AKSessionState, DeletePopper, PopperComponent } from "@react-components";
-import { AKTableRow, AKTableCell } from "@react-components/AKTable";
+import { AKTableRow, AKTableCell, AKTable, AKTableHeader, AKTableHeaderCell } from "@react-components/AKTable";
 import { useAppState } from "@react-context";
 import { SessionState } from "@react-enums";
 import { useCloseOnEscape, useIncomingMessageHandler } from "@react-hooks";
@@ -10,18 +10,46 @@ import { getTimePassed, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
 import { createPortal } from "react-dom";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { FixedSizeList as List } from "react-window";
+import { FixedSizeList as List, areEqual } from "react-window";
+
+const Row = memo(({ data, index, style }) => {
+	return (
+		data[index] && (
+			<div style={style} className="w-full">
+				{index === 0 ? (
+					<AKTableHeader classes="flex justify-between">
+						<AKTableHeaderCell>{translate().t("reactApp.sessions.time")}</AKTableHeaderCell>
+						<AKTableHeaderCell>{translate().t("reactApp.sessions.status")}</AKTableHeaderCell>
+						<AKTableHeaderCell>{translate().t("reactApp.sessions.sessionId")}</AKTableHeaderCell>
+						<AKTableHeaderCell>{translate().t("reactApp.sessions.actions")}</AKTableHeaderCell>
+					</AKTableHeader>
+				) : (
+					<AKTableRow className="flex justify-between">
+						<AKTableCell classes={["cursor-pointer"]}>{getTimePassed(data[index].createdAt)}</AKTableCell>
+						<AKTableCell classes={["cursor-pointer"]}>
+							<AKSessionState sessionState={data[index].state} />
+						</AKTableCell>
+						<AKTableCell classes={["cursor-pointer w-1/5"]}>{data[index].sessionId}</AKTableCell>
+						<AKTableCell>231</AKTableCell>
+					</AKTableRow>
+				)}
+			</div>
+		)
+	);
+}, areEqual);
 
 export const AKSessionsTableBody = ({
 	sessions,
 	selectedSession,
 	setSelectedSession,
 	heightProp,
+	widthProp,
 }: {
 	sessions?: Session[];
 	selectedSession?: string;
 	setSelectedSession: (sessionId: string) => void;
 	heightProp: string | number;
+	widthProp: string | number;
 }) => {
 	// State Section
 	const [{ modalName, lastDeployment }, dispatch] = useAppState();
@@ -121,20 +149,18 @@ export const AKSessionsTableBody = ({
 		hidePopper();
 	}, []);
 
-	const Row = ({ index, style, data }) => (
-		<div style={style}>
-			{data[index] ? `Session ID: ${data[index].sessionId}, State: ${data[index].state}` : "Loading..."}
-		</div>
-	);
-
 	const handleItemsRendered = ({ visibleStopIndex }) => {
-		if (visibleStopIndex >= 30 - 2) {
+		console.log("visibleStopIndex", visibleStopIndex);
+
+		if (visibleStopIndex >= sessions?.length || 0 - 2) {
 			// Load more items when close to the end
 			console.log("Load more items");
 		}
 	};
 
 	const handleScroll = useCallback(({ scrollDirection, scrollOffset, scrollUpdateWasRequested }) => {
+		console.log("scrollOffset", scrollOffset);
+
 		if (scrollOffset === 0) {
 			console.log("Scrolled to the top!");
 		}
@@ -143,22 +169,20 @@ export const AKSessionsTableBody = ({
 	console.log("heightProp", heightProp);
 
 	return (
-		<>
-			<AutoSizer>
-				{({ height, width }) => (
-					<List
-						height={heightProp - 70}
-						itemCount={30}
-						itemSize={50} // Adjust based on your row height
-						width={width}
-						itemData={sessions || []}
-						onItemsRendered={handleItemsRendered}
-						onScroll={handleScroll}
-					>
-						{Row}
-					</List>
-				)}
-			</AutoSizer>
-		</>
+		<AKTable>
+			{" "}
+			<List
+				height={heightProp}
+				width={widthProp}
+				itemCount={sessions?.length || 0}
+				itemSize={30} // Adjust based on your row height
+				itemData={sessions || []}
+				onItemsRendered={handleItemsRendered}
+				onScroll={(e) => console.log(e)}
+				itemKey={(index) => sessions?.[index]?.sessionId || 0}
+			>
+				{Row}
+			</List>
+		</AKTable>
 	);
 };

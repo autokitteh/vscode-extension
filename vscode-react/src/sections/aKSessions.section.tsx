@@ -43,9 +43,11 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	};
 
 	const [divHeight, setDivHeight] = useState(0);
+	const [divWidth, setDivWidth] = useState(0);
 	const ref = useRef(null);
 	useEffect(() => {
 		setDivHeight(ref.current.clientHeight);
+		setDivWidth(ref.current.clientWidth);
 	});
 
 	return (
@@ -69,12 +71,12 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 						</select>
 					</AKTableHeaderCell>
 				</AKTableHeader>
-				<AKSessionsTableHeader />
 				<AKSessionsTableBody
 					sessions={sessions}
 					selectedSession={selectedSession}
 					setSelectedSession={setSelectedSession}
 					heightProp={divHeight}
+					widthProp={divWidth}
 				/>
 			</AKTable>
 			{isLoading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
