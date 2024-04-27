@@ -8,35 +8,35 @@ import { SessionState } from "@react-enums";
 import { useCloseOnEscape, useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
+import memoizeOne from "memoize-one";
 import { createPortal } from "react-dom";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as List, areEqual } from "react-window";
 
 const Row = memo(({ data, index, style }) => {
+	const { sessions, selectedSessionId } = data;
+	const node = sessions[index];
+	const isSelectedRow = selectedSessionId === node?.sessionId;
 	return (
-		data[index] && (
+		node && (
 			<div style={style} className="w-full">
-				{index === 0 ? (
-					<AKTableHeader classes="flex justify-between">
-						<AKTableHeaderCell>{translate().t("reactApp.sessions.time")}</AKTableHeaderCell>
-						<AKTableHeaderCell>{translate().t("reactApp.sessions.status")}</AKTableHeaderCell>
-						<AKTableHeaderCell>{translate().t("reactApp.sessions.sessionId")}</AKTableHeaderCell>
-						<AKTableHeaderCell>{translate().t("reactApp.sessions.actions")}</AKTableHeaderCell>
-					</AKTableHeader>
-				) : (
-					<AKTableRow className="flex justify-between">
-						<AKTableCell classes={["cursor-pointer"]}>{getTimePassed(data[index].createdAt)}</AKTableCell>
-						<AKTableCell classes={["cursor-pointer"]}>
-							<AKSessionState sessionState={data[index].state} />
-						</AKTableCell>
-						<AKTableCell classes={["cursor-pointer w-1/5"]}>{data[index].sessionId}</AKTableCell>
-						<AKTableCell>231</AKTableCell>
-					</AKTableRow>
-				)}
+				<AKTableRow className="flex justify-around" isSelected={isSelectedRow}>
+					<AKTableCell classes={["cursor-pointer"]}>{getTimePassed(node.createdAt)}</AKTableCell>
+					<AKTableCell classes={["cursor-pointer"]}>
+						<AKSessionState sessionState={node.state} />
+					</AKTableCell>
+					<AKTableCell classes={["cursor-pointer w-1/5"]}>{node.sessionId}</AKTableCell>
+					<AKTableCell>231</AKTableCell>
+				</AKTableRow>
 			</div>
 		)
 	);
 }, areEqual);
+
+const getItemData = memoizeOne((selectedSessionId, sessions) => ({
+	selectedSessionId,
+	sessions,
+}));
 
 export const AKSessionsTableBody = ({
 	sessions,
@@ -168,15 +168,22 @@ export const AKSessionsTableBody = ({
 
 	console.log("heightProp", heightProp);
 
+	const itemData = getItemData(selectedSession, sessions || []);
+
 	return (
 		<AKTable>
-			{" "}
+			<AKTableHeader classes="flex justify-around">
+				<AKTableHeaderCell>{translate().t("reactApp.sessions.time")}</AKTableHeaderCell>
+				<AKTableHeaderCell>{translate().t("reactApp.sessions.status")}</AKTableHeaderCell>
+				<AKTableHeaderCell className="w-1/5">{translate().t("reactApp.sessions.sessionId")}</AKTableHeaderCell>
+				<AKTableHeaderCell>{translate().t("reactApp.sessions.actions")}</AKTableHeaderCell>
+			</AKTableHeader>
 			<List
 				height={heightProp}
 				width={widthProp}
 				itemCount={sessions?.length || 0}
 				itemSize={30} // Adjust based on your row height
-				itemData={sessions || []}
+				itemData={itemData}
 				onItemsRendered={handleItemsRendered}
 				onScroll={(e) => console.log(e)}
 				itemKey={(index) => sessions?.[index]?.sessionId || 0}

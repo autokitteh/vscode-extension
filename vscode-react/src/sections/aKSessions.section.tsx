@@ -8,7 +8,7 @@ import { AKTable, AKTableHeader, AKTableHeaderCell, AKTableMessage } from "@reac
 import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 
-export const AKSessions = ({ height }: { height: string | number }) => {
+export const AKSessions = ({ height }: { height: string }) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
@@ -51,7 +51,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	});
 
 	return (
-		<div style={{ height }} ref={ref}>
+		<div style={{ height: `${parseInt(height, 10) * 0.7}px` }} ref={ref}>
 			<AKTable>
 				<AKTableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-30">
 					<AKTableHeaderCell className="text-lg font-extralight pt-5" colSpan={3}>
