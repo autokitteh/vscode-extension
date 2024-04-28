@@ -1,7 +1,14 @@
 import React, { CSSProperties, memo, RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
-import { AKMonacoEditorModal, AKOverlay, AKSessionState, DeletePopper, PopperComponent } from "@react-components";
+import {
+	AKMonacoEditorModal,
+	AKOverlay,
+	AKSessionActions,
+	AKSessionState,
+	DeletePopper,
+	PopperComponent,
+} from "@react-components";
 import { AKTableRow, AKTableCell, AKTable, AKTableHeader, AKTableHeaderCell } from "@react-components/AKTable";
 import { useAppState } from "@react-context";
 import { SessionState } from "@react-enums";
@@ -20,15 +27,17 @@ const Row = memo(
 	}: {
 		data: {
 			sessions: Session[];
+			sessionActions: {
+				startSession: (session: Session) => void;
+				stopSession: (session: Session) => void;
+				displayInputsModal: (sessionInputs: string) => void;
+				displaySessionDeletePopper: (event: React.MouseEvent<HTMLDivElement>, session: Session) => void;
+				isRunning: (sessionState: SessionState) => boolean;
+				getStopSessionClass: (sessionState: SessionState) => string;
+				isLastDeployment: (deploymentId: string) => boolean;
+			};
 			selectedSessionId: string;
 			displaySessionLogs: (sessionId: string) => void;
-			isLastDeployment: (deploymentId: string) => boolean;
-			startSession: (session: Session) => void;
-			getStopSessionClass: (sessionState: SessionState) => string;
-			stopSession: (session: Session) => void;
-			displayInputsModal: (sessionInputs: string) => void;
-			isRunning: (sessionState: SessionState) => boolean;
-			displaySessionDeletePopper: (event: React.MouseEvent<HTMLDivElement>, session: Session) => void;
 			modalName: string;
 			hidePopper: () => void;
 			isDeletingInProcess: boolean;
@@ -47,13 +56,7 @@ const Row = memo(
 			sessions,
 			selectedSessionId,
 			displaySessionLogs,
-			isLastDeployment,
-			startSession,
-			getStopSessionClass,
-			stopSession,
-			displayInputsModal,
-			isRunning,
-			displaySessionDeletePopper,
+			sessionActions,
 			modalName,
 			hidePopper,
 			isDeletingInProcess,
@@ -78,36 +81,7 @@ const Row = memo(
 							{session.sessionId}
 						</AKTableCell>
 						<AKTableCell>
-							{isLastDeployment(session.deploymentId) && (
-								<div
-									className="codicon codicon-debug-rerun mr-2 cursor-pointer"
-									title={translate().t("reactApp.sessions.startSession")}
-									onClick={() => startSession(session)}
-								></div>
-							)}
-							<div
-								className={getStopSessionClass(session.state)}
-								title={translate().t("reactApp.sessions.stopSession")}
-								onClick={() => stopSession(session)}
-							></div>
-							{isLastDeployment(session.deploymentId) && (
-								<div
-									className="codicon codicon-symbol-namespace mr-2 cursor-pointer"
-									title={translate().t("reactApp.sessions.showSessionProps")}
-									onClick={() => displayInputsModal(JSON.stringify(session.inputs, null, 2))}
-								></div>
-							)}
-							<div
-								className={`codicon codicon-trash mr-2 z-20 ${
-									isRunning(session.state) ? "cursor-not-allowed" : "cursor-pointer"
-								}`}
-								title={
-									isRunning(session.state)
-										? translate().t("reactApp.sessions.deleteSessionDisabled")
-										: translate().t("reactApp.sessions.delete")
-								}
-								onClick={(event) => displaySessionDeletePopper(event, session)}
-							></div>
+							<AKSessionActions session={session} {...sessionActions} />
 							{createPortal(
 								<div>
 									<AKOverlay
@@ -140,13 +114,15 @@ const getItemData = memoizeOne(
 		selectedSessionId,
 		sessions,
 		displaySessionLogs,
-		isLastDeployment,
-		startSession,
-		getStopSessionClass,
-		stopSession,
-		displayInputsModal,
-		isRunning,
-		displaySessionDeletePopper,
+		sessionActions: {
+			startSession: (session: Session) => void;
+			stopSession: (session: Session) => void;
+			displayInputsModal: (sessionInputs: string) => void;
+			displaySessionDeletePopper: (event: React.MouseEvent<HTMLDivElement>, session: Session) => void;
+			isRunning: (sessionState: SessionState) => boolean;
+			getStopSessionClass: (sessionState: SessionState) => string;
+			isLastDeployment: (deploymentId: string) => boolean;
+		},
 		modalName,
 		hidePopper,
 		isDeletingInProcess,
@@ -158,13 +134,7 @@ const getItemData = memoizeOne(
 		selectedSessionId,
 		sessions,
 		displaySessionLogs,
-		isLastDeployment,
-		startSession,
-		getStopSessionClass,
-		stopSession,
-		displayInputsModal,
-		isRunning,
-		displaySessionDeletePopper,
+		sessionActions,
 		modalName,
 		hidePopper,
 		isDeletingInProcess,
@@ -308,19 +278,21 @@ export const AKSessionsTableBody = ({
 		}
 	}, []);
 
-	console.log("heightProp", heightProp);
+	const sessionActions = {
+		startSession,
+		stopSession,
+		displayInputsModal,
+		displaySessionDeletePopper,
+		isRunning,
+		getStopSessionClass,
+		isLastDeployment,
+	};
 
 	const itemData = getItemData(
 		selectedSession,
 		sessions || [],
 		displaySessionLogs,
-		isLastDeployment,
-		startSession,
-		getStopSessionClass,
-		stopSession,
-		displayInputsModal,
-		isRunning,
-		displaySessionDeletePopper,
+		sessionActions,
 		modalName,
 		hidePopper,
 		isDeletingInProcess,
