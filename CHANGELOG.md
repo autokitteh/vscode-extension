@@ -1,3 +1,35 @@
+# [0.13.0-dev.1](https://github.com/autokitteh/vscode-extension/compare/v0.12.3...v0.13.0-dev.1) (2024-04-28)
+
+
+### Bug Fixes
+
+* add titles on hover to ui buttons ([#233](https://github.com/autokitteh/vscode-extension/issues/233)) ([e41ddd0](https://github.com/autokitteh/vscode-extension/commit/e41ddd009f89a4d8eeeec18099943ee8d4737a96))
+* avoid repeating notifications when session history pulled on server down  (UI-259) ([#260](https://github.com/autokitteh/vscode-extension/issues/260)) ([66a8683](https://github.com/autokitteh/vscode-extension/commit/66a8683eee12504ed9fe9276e6197a17640634dd))
+* display appropriate message on reconnecting status ([#223](https://github.com/autokitteh/vscode-extension/issues/223)) ([07a6676](https://github.com/autokitteh/vscode-extension/commit/07a6676d7fd696a856c9362e0c56f37c5c5d9332))
+* fix open resources functionality in project settings ([#238](https://github.com/autokitteh/vscode-extension/issues/238)) ([5321e3d](https://github.com/autokitteh/vscode-extension/commit/5321e3d675074014e3dc589128f0cbac895f757c))
+* fix starlark download when the folder is already exist ([#229](https://github.com/autokitteh/vscode-extension/issues/229)) ([8dbaea6](https://github.com/autokitteh/vscode-extension/commit/8dbaea63e26611d5130d870b5c4961b6e9e5cb1d))
+* fix stuck loading screen on project open in windows ([#243](https://github.com/autokitteh/vscode-extension/issues/243)) ([4a846f9](https://github.com/autokitteh/vscode-extension/commit/4a846f9dd4550b36f4ead6445b0e5f7b3f134aa6))
+* fixed lodash.isEqual package in bundle ([#250](https://github.com/autokitteh/vscode-extension/issues/250)) ([7193a1c](https://github.com/autokitteh/vscode-extension/commit/7193a1cc6590de7ec2c1fa2ce33e633a1f0781b3))
+* get session log record type by the new structure from the ak backend ([#252](https://github.com/autokitteh/vscode-extension/issues/252)) ([d0c262f](https://github.com/autokitteh/vscode-extension/commit/d0c262f69868d5c9ffd9aaa16920b806274a203b))
+* poppers and overlays weren't displayed properly because of the split-pane feature ([#251](https://github.com/autokitteh/vscode-extension/issues/251)) ([8b7b0e4](https://github.com/autokitteh/vscode-extension/commit/8b7b0e4c4e184bf0b1a77ba46e8af24d2e1a04b2))
+* reduced bundle size - improved imports ([#247](https://github.com/autokitteh/vscode-extension/issues/247)) ([376d75c](https://github.com/autokitteh/vscode-extension/commit/376d75ce5b7b504c4967e620610418962adb1e62))
+* reduced bundle size ([#245](https://github.com/autokitteh/vscode-extension/issues/245)) ([94c3c43](https://github.com/autokitteh/vscode-extension/commit/94c3c43914e70d344039e10433ee856cda6b1869))
+
+
+### Features
+
+* delete project ([#235](https://github.com/autokitteh/vscode-extension/issues/235)) ([ab60a40](https://github.com/autokitteh/vscode-extension/commit/ab60a40e9e8a6be98a5bb19a82572ecc24afd7a9))
+* disable session auto-select the last one on change (UI-237) ([#257](https://github.com/autokitteh/vscode-extension/issues/257)) ([aeb2fc7](https://github.com/autokitteh/vscode-extension/commit/aeb2fc78cf18defb699cd0d9eac160540477c6e0))
+* filter session types (UI-242) ([#254](https://github.com/autokitteh/vscode-extension/issues/254)) ([eaf5f16](https://github.com/autokitteh/vscode-extension/commit/eaf5f16642f0e8fe01afb8e4c6a2b3fcb42a72fd))
+* open directory of project resources from the webview ([#231](https://github.com/autokitteh/vscode-extension/issues/231)) ([1fde797](https://github.com/autokitteh/vscode-extension/commit/1fde797c11af59e44ae4e84c11e46abb7074ce95))
+* overlay for poppovers and modals ([#237](https://github.com/autokitteh/vscode-extension/issues/237)) ([6e99db1](https://github.com/autokitteh/vscode-extension/commit/6e99db17f7c7d2e258e169c5daa7d6edfb0f1a59))
+* pick directory button change behavior ([#226](https://github.com/autokitteh/vscode-extension/issues/226)) ([20c4c69](https://github.com/autokitteh/vscode-extension/commit/20c4c69d5c19dc28201b3f6e36a22229ad2012bf))
+* reduce bundle size ([#244](https://github.com/autokitteh/vscode-extension/issues/244)) ([23d9501](https://github.com/autokitteh/vscode-extension/commit/23d950101791001e3591197330a3e5cc89465eea))
+* release new version to extension market on merge to main (UI-262) ([#269](https://github.com/autokitteh/vscode-extension/issues/269)) ([cbec0e8](https://github.com/autokitteh/vscode-extension/commit/cbec0e89b297a397d5c0584bc75578795bbaa3e5))
+* remove redhat-yaml extension dependency ([#258](https://github.com/autokitteh/vscode-extension/issues/258)) ([63c6fe4](https://github.com/autokitteh/vscode-extension/commit/63c6fe4b6dd7f3a15a591d9643a6ba256f92ae18))
+* set manifest yaml schema from autokitteh submodule (UI-257) ([#259](https://github.com/autokitteh/vscode-extension/issues/259)) ([678dee1](https://github.com/autokitteh/vscode-extension/commit/678dee1645f5d3ef5fffcf53024c4b004a6cf4be))
+* set project directory locally (UI-232) ([#256](https://github.com/autokitteh/vscode-extension/issues/256)) ([10a9584](https://github.com/autokitteh/vscode-extension/commit/10a9584b8734e0b8479cb9a7972ddde4a48afb31))
+
 ## [0.12.3](https://github.com/autokitteh/vscode-extension/compare/v0.12.2...v0.12.3) (2024-04-25)
 
 
