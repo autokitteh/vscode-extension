@@ -77,6 +77,7 @@ export const AKSessions = ({ height }: { height: string }) => {
 					setSelectedSession={setSelectedSession}
 					heightProp={divHeight}
 					widthProp={divWidth}
+					totalSessions={totalSessions!}
 				/>
 			</AKTable>
 			{isLoading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}

@@ -78,6 +78,9 @@ export class ProjectView implements IProjectView {
 					case MessageType.setSessionsStateFilter:
 						this.delegate?.setSessionsStateFilter?.(message.payload as string);
 						break;
+					case MessageType.loadMoreSessions:
+						this.delegate?.loadMoreSessions?.();
+						break;
 					default:
 				}
 			},
