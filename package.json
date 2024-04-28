@@ -310,11 +310,7 @@
 		"@types/winattr": "^3.0.0",
 		"@typescript-eslint/eslint-plugin": "^7.0.1",
 		"@typescript-eslint/parser": "^7.0.1",
-<<<<<<< HEAD
-		"@vscode/vsce": "^2.25.0",
-=======
 		"@vscode/vsce": "^2.26.0",
->>>>>>> main
 		"esbuild": "0.20.0",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
@@ -383,11 +379,7 @@
 		"prepare": "husky install",
 		"source-map-explorer": "npx source-map-explorer dist/main.js dist/main.js.map --no-border-checks"
 	},
-<<<<<<< HEAD
-	"version": "0.12.0-dev.21",
-=======
 	"version": "0.12.3",
->>>>>>> main
 	"workspaces": [
 		"vscode-react"
 	]
