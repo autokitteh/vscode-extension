@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
-import { AKSessionsTableHeader } from "@react-components";
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
 import { AKTable, AKTableHeader, AKTableHeaderCell, AKTableMessage } from "@react-components/AKTable";
 import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
@@ -44,10 +43,11 @@ export const AKSessions = ({ height }: { height: string }) => {
 
 	const [divHeight, setDivHeight] = useState(0);
 	const [divWidth, setDivWidth] = useState(0);
-	const ref = useRef(null);
+	const ref = useRef<HTMLDivElement>(null);
+
 	useEffect(() => {
-		setDivHeight(ref.current.clientHeight);
-		setDivWidth(ref.current.clientWidth);
+		setDivHeight(ref?.current?.clientHeight || 0);
+		setDivWidth(ref?.current?.clientWidth || 0);
 	});
 
 	return (
