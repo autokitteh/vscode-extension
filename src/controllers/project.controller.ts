@@ -914,4 +914,9 @@ export class ProjectController {
 		});
 		LoggerService.info(namespaces.projectController, log);
 	}
+
+	deploymentsViewReady() {
+		this.deployments = undefined;
+		this.loadAndDisplayDeployments();
+	}
 }
