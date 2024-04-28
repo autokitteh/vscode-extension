@@ -415,19 +415,6 @@ export class ProjectController {
 		this.project = project;
 		this.view.show(project!.name);
 		this.setProjectNameInView();
-
-		this.startInterval(
-			ProjectIntervalTypes.deployments,
-			() => this.loadAndDisplayDeployments(),
-			this.deploymentsRefreshRate
-		);
-
-		const isResourcesPathExist = await this.getResourcesPathFromContext();
-
-		if (isResourcesPathExist) {
-			this.notifyViewResourcesPathChanged();
-			return;
-		}
 	}
 
 	displayErrorWithoutActionButton(errorMessage: string) {
@@ -913,5 +900,21 @@ export class ProjectController {
 			projectId: this.projectId,
 		});
 		LoggerService.info(namespaces.projectController, log);
+	}
+
+	async loadInitialDataOnceViewReady() {
+		this.deployments = undefined;
+
+		this.startInterval(
+			ProjectIntervalTypes.deployments,
+			() => this.loadAndDisplayDeployments(),
+			this.deploymentsRefreshRate
+		);
+
+		const isResourcesPathExist = await this.getResourcesPathFromContext();
+		if (isResourcesPathExist) {
+			this.notifyViewResourcesPathChanged();
+			return;
+		}
 	}
 }

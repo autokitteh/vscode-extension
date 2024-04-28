@@ -7,6 +7,7 @@ export const mockViewInterface = {
 		build: vi.fn(),
 		onClickSetResourcesDirectory: vi.fn(),
 		run: vi.fn(),
+		loadInitialDataOnceViewReady: vi.fn(),
 	},
 	update: vi.fn(),
 	onClickSetResourcesDirectory: vi.fn(),
