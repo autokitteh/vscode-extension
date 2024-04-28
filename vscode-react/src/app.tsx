@@ -27,12 +27,12 @@ function App() {
 	});
 	const [sizes, setSizes] = useState<(number | string)[]>([]);
 
-	const [divHeight, setDivHeight] = useState(0);
-	const ref = useRef(null);
+	const ref = useRef<HTMLDivElement>(null);
+
 	useEffect(() => {
-		// setDivHeight(ref.current.clientHeight);
-		console.log("ref.current.clientHeight", ref.current.clientHeight);
-		setSizes([ref.current.clientHeight * 0.45, ref.current.clientHeight * 0.45]);
+		if (ref.current) {
+			setSizes([ref.current.clientHeight * 0.45, ref.current.clientHeight * 0.45]);
+		}
 	}, []);
 
 	return (
