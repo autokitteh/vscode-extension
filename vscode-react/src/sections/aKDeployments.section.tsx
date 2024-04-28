@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
 import { AKDeploymentTableBody, AKDeploymentTableHeader } from "@react-components";
 import { AKTable, AKTableHeader, AKTableHeaderCell, AKTableMessage } from "@react-components/AKTable";
 import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
+import { sendMessage } from "@react-utilities";
 import { Deployment } from "@type/models";
 
 export const AKDeployments = ({ height }: { height: string | number }) => {
@@ -17,6 +19,10 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 	useIncomingMessageHandler({
 		setDeploymentsSection,
 	});
+
+	useEffect(() => {
+		sendMessage(MessageType.deploymentsViewReady);
+	}, []);
 
 	useEffect(() => {
 		if (deployments && deployments.length) {
