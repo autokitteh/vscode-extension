@@ -72,3 +72,10 @@ jobs:
           args: "publish -p $VSCE_TOKEN"
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+      - name: Publish Pre-Release to VSCode Marketplace
+        uses: lannonbr/vsce-action@3.0.0
+        if: github.ref == 'refs/heads/dev'
+        with:
+          args: "publish --pre-release -p $VSCE_TOKEN"
+        env:
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
