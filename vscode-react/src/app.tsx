@@ -95,7 +95,7 @@ function App() {
 								onChange={setSizes}
 								sashRender={() => <hr className="bg-vscode-editor-background h-3" />}
 							>
-								<div className="h-">
+								<div>
 									<AKDeployments height={sizes[0]} />
 								</div>
 								<div>
