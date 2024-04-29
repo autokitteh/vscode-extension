@@ -415,19 +415,6 @@ export class ProjectController {
 		this.project = project;
 		this.view.show(project!.name);
 		this.setProjectNameInView();
-
-		this.startInterval(
-			ProjectIntervalTypes.deployments,
-			() => this.loadAndDisplayDeployments(),
-			this.deploymentsRefreshRate
-		);
-
-		const isResourcesPathExist = await this.getResourcesPathFromContext();
-
-		if (isResourcesPathExist) {
-			this.notifyViewResourcesPathChanged();
-			return;
-		}
 	}
 
 	displayErrorWithoutActionButton(errorMessage: string) {
@@ -915,8 +902,20 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, log);
 	}
 
-	deploymentsViewReady() {
+	async deploymentsViewReady() {
 		this.deployments = undefined;
-		this.loadAndDisplayDeployments();
+
+		this.startInterval(
+			ProjectIntervalTypes.deployments,
+			() => this.loadAndDisplayDeployments(),
+			this.deploymentsRefreshRate
+		);
+
+		const isResourcesPathExist = await this.getResourcesPathFromContext();
+
+		if (isResourcesPathExist) {
+			this.notifyViewResourcesPathChanged();
+			return;
+		}
 	}
 }
