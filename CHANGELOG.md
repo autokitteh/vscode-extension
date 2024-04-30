@@ -1,3 +1,10 @@
+## [0.12.4](https://github.com/autokitteh/vscode-extension/compare/v0.12.3...v0.12.4) (2024-04-30)
+
+
+### Bug Fixes
+
+* project deployments doesn't load on project open ([eb282e0](https://github.com/autokitteh/vscode-extension/commit/eb282e0d6a8cd5b342a8b242af7d540daf3d187f))
+
 ## [0.12.3](https://github.com/autokitteh/vscode-extension/compare/v0.12.2...v0.12.3) (2024-04-25)
 
 
