@@ -66,7 +66,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 			>
 				<div className="flex">{`${translate().t("reactApp.sessions.tableTitle")} (${totalSessions})`}</div>
 				<div
-					className="ml-2 w-5 h-5 cursor-pointer"
+					className="ml-3 w-5 h-5 cursor-pointer"
 					onClick={() => {
 						setLiveTailState(!liveTailState);
 					}}
