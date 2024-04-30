@@ -52,7 +52,9 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 		setDivWidth(ref?.current?.clientWidth || 0);
 	});
 
-	const onSessionsTableScroll = () => {};
+	const onSessionsTableScroll = () => {
+		setLiveTailState(false);
+	};
 
 	return (
 		<div style={{ height: `${parseInt(height as string, 10) * 0.7}px` }} ref={ref}>

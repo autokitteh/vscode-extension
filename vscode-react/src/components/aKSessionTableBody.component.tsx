@@ -160,7 +160,7 @@ export const AKSessionsTableBody = ({
 	heightProp: string | number;
 	widthProp: string | number;
 	totalSessions: number;
-	onScroll: (scrollOffset: number) => void;
+	onScroll: () => void;
 }) => {
 	// State Section
 	const [{ modalName, lastDeployment }, dispatch] = useAppState();
@@ -265,17 +265,13 @@ export const AKSessionsTableBody = ({
 		console.log("sessions.length", sessions?.length);
 
 		if (visibleStopIndex >= (sessions?.length || 0) - 1 && (sessions?.length || 0) === totalSessions) {
-			// Load more items when close to the end
-			console.log("Load more items");
+			onScroll();
 
 			sendMessage(MessageType.loadMoreSessions);
 		}
 	};
 
 	const handleScroll = useCallback(({ scrollOffset }: ListOnScrollProps) => {
-		console.log("scrollOffset", scrollOffset);
-		onScroll(scrollOffset);
-
 		if (scrollOffset === 0) {
 			console.log("Scrolled to the top - do something");
 		}
