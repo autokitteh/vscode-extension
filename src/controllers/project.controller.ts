@@ -30,7 +30,7 @@ export class ProjectController {
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
-	private selectedDeploymentId?: string;
+	private selectedDeploymentPerProject: Map<string, string> = new Map();
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
@@ -89,14 +89,14 @@ export class ProjectController {
 		if (sessionsError) {
 			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionHistory)) {
 				const notificationErrorMessage = translate().t("errors.sessionLogRecordFetchFailedShort", {
-					deploymentId: this.selectedDeploymentId,
+					deploymentId: this.selectedDeploymentPerProject,
 				});
 				commands.executeCommand(vsCommands.showErrorMessage, notificationErrorMessage);
 				this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessionHistory, true);
 			}
 
 			const logErrorMessage = translate().t("errors.sessionLogRecordFetchFailed", {
-				deploymentId: this.selectedDeploymentId,
+				deploymentId: this.selectedDeploymentPerProject,
 				error: (sessionsError as Error).message,
 			});
 			LoggerService.error(namespaces.projectController, logErrorMessage);
@@ -117,8 +117,9 @@ export class ProjectController {
 			this.deploymentsRefreshRate
 		);
 		this.notifyViewResourcesPathChanged();
-		if (this.selectedDeploymentId && this.selectedSessionPerDeployment.get(this.selectedDeploymentId)) {
-			const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
+		const selectedDeploymentId = this.selectedDeploymentPerProject.get(this.projectId);
+		if (this.selectedDeploymentPerProject && selectedDeploymentId) {
+			const selectedSessionId = this.selectedSessionPerDeployment.get(selectedDeploymentId);
 			this.initSessionLogsDisplay(selectedSessionId!);
 		}
 	};
@@ -165,8 +166,9 @@ export class ProjectController {
 		};
 
 		this.view.update({ type: MessageType.setSessionsSection, payload: sessionsViewObject });
-		if (this.selectedDeploymentId) {
-			await this.selectDeployment(this.selectedDeploymentId);
+		const selectedDeploymentId = this.selectedDeploymentPerProject.get(this.projectId);
+		if (selectedDeploymentId) {
+			await this.selectDeployment(selectedDeploymentId);
 		}
 		this.loadSingleshotArgs();
 	}
@@ -209,13 +211,14 @@ export class ProjectController {
 	}
 
 	async fetchSessions() {
-		if (!this.selectedDeploymentId) {
+		if (!this.selectedDeploymentPerProject) {
 			return;
 		}
 
 		const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
 
-		const { data: sessions, error } = await SessionsService.listByDeploymentId(this.selectedDeploymentId, {
+		const selectedDeploymentId = this.selectedDeploymentPerProject.get(this.projectId);
+		const { data: sessions, error } = await SessionsService.listByDeploymentId(selectedDeploymentId!, {
 			stateType: selectedSessionStateFilter,
 		});
 
@@ -248,16 +251,16 @@ export class ProjectController {
 
 		this.view.update({
 			type: MessageType.selectDeployment,
-			payload: this.selectedDeploymentId,
+			payload: this.selectedDeploymentPerProject,
 		});
 
 		if (!sessions?.length) {
 			return;
 		}
 
-		if (this.selectedSessionPerDeployment.get(this.selectedDeploymentId)) {
+		if (selectedDeploymentId && this.selectedSessionPerDeployment.get(selectedDeploymentId!)) {
 			const isCurrentSelectedSessionDisplayed = sessions.find(
-				(session) => session.sessionId === this.selectedSessionPerDeployment.get(this.selectedDeploymentId!)
+				(session) => session.sessionId === this.selectedSessionPerDeployment.get(selectedDeploymentId)
 			);
 
 			if (isCurrentSelectedSessionDisplayed) {
@@ -276,11 +279,11 @@ export class ProjectController {
 		});
 
 		this.displaySessionLogs(sessions![0].sessionId);
-		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessions![0].sessionId);
+		this.selectedSessionPerDeployment.set(selectedDeploymentId!, sessions![0].sessionId);
 	}
 
 	async selectDeployment(deploymentId: string): Promise<void> {
-		this.selectedDeploymentId = deploymentId;
+		this.selectedDeploymentPerProject.set(this.projectId, deploymentId);
 
 		await this.fetchSessions();
 
@@ -354,7 +357,8 @@ export class ProjectController {
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
-		this.selectedSessionPerDeployment.set(this.selectedDeploymentId!, sessionId);
+		const selectedDeploymentId = this.selectedDeploymentPerProject.get(this.projectId);
+		this.selectedSessionPerDeployment.set(selectedDeploymentId!, sessionId);
 		this.initSessionLogsDisplay(sessionId);
 	}
 
@@ -611,7 +615,7 @@ export class ProjectController {
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 		LoggerService.info(namespaces.projectController, successMessage);
 
-		this.selectedDeploymentId = deploymentId;
+		this.selectedDeploymentPerProject.set(this.projectId, deploymentId!);
 
 		this.view.update({
 			type: MessageType.selectDeployment,
@@ -866,7 +870,7 @@ export class ProjectController {
 				sessionId,
 				error: (error as Error).message,
 				projectId: this.projectId,
-				deploymentId: this.selectedDeploymentId,
+				deploymentId: this.selectedDeploymentPerProject,
 			});
 			LoggerService.error(namespaces.projectController, log);
 
@@ -878,8 +882,10 @@ export class ProjectController {
 		}
 
 		let selectedSessionId;
-		if (this.selectedDeploymentId && this.selectedSessionPerDeployment.get(this.selectedDeploymentId)) {
-			selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
+		const selectedDeploymentId = this.selectedDeploymentPerProject.get(this.projectId);
+
+		if (selectedDeploymentId && this.selectedSessionPerDeployment.get(selectedDeploymentId)) {
+			selectedSessionId = this.selectedSessionPerDeployment.get(selectedDeploymentId);
 		}
 
 		if (selectedSessionId === sessionId && this.sessions) {
@@ -898,7 +904,10 @@ export class ProjectController {
 
 			selectedSessionId = followingSessionIdAfterDelete;
 			this.displaySessionLogs(selectedSessionId);
-			this.selectedSessionPerDeployment.set(this.selectedDeploymentId!, followingSessionIdAfterDelete);
+
+			const selectedDeploymentId = this.selectedDeploymentPerProject.get(this.projectId);
+
+			this.selectedSessionPerDeployment.set(selectedDeploymentId!, followingSessionIdAfterDelete);
 
 			this.view.update({
 				type: MessageType.selectSession,
@@ -911,7 +920,7 @@ export class ProjectController {
 		});
 
 		const log = translate().t("sessions.sessionDeleteSuccessIdProject", {
-			deploymentId: this.selectedDeploymentId,
+			deploymentId: this.selectedDeploymentPerProject,
 			sessionId: sessionId,
 			projectId: this.projectId,
 		});
