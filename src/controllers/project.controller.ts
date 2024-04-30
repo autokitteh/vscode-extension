@@ -30,8 +30,7 @@ export class ProjectController {
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
-	private selectedDeploymentId?: string;
-	private selectedSessionId?: string;
+	private selectedDeploymentId: string = "";
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
@@ -118,9 +117,12 @@ export class ProjectController {
 			this.deploymentsRefreshRate
 		);
 		this.notifyViewResourcesPathChanged();
-		if (this.selectedSessionId) {
-			this.initSessionLogsDisplay(this.selectedSessionId);
+
+		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
+		if (!selectedSessionId) {
+			return;
 		}
+		this.initSessionLogsDisplay(selectedSessionId);
 	};
 
 	public disable = async () => {
@@ -133,6 +135,7 @@ export class ProjectController {
 
 	async loadAndDisplayDeployments() {
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
+
 		if (error) {
 			const notification = translate().t("errors.noResponse");
 			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.deployments)) {
@@ -148,12 +151,14 @@ export class ProjectController {
 		if (isEqual(this.deployments, deployments)) {
 			return;
 		}
+
 		this.deployments = deployments;
 
 		const deploymentsViewObject: DeploymentSectionViewModel = {
 			deployments,
 			totalDeployments: deployments?.length || 0,
 		};
+
 		this.view.update({
 			type: MessageType.setDeployments,
 			payload: deploymentsViewObject,
@@ -164,10 +169,15 @@ export class ProjectController {
 			totalSessions: this.sessions?.length || 0,
 		};
 
-		this.view.update({ type: MessageType.setSessionsSection, payload: sessionsViewObject });
-		if (this.selectedDeploymentId) {
+		const isSelectedInDisplayedDeployments = deployments?.find(
+			(deployment) => deployment.deploymentId === this.selectedDeploymentId
+		);
+		if (isSelectedInDisplayedDeployments) {
 			await this.selectDeployment(this.selectedDeploymentId);
+			return;
 		}
+
+		this.view.update({ type: MessageType.setSessionsSection, payload: sessionsViewObject });
 		this.loadSingleshotArgs();
 	}
 
@@ -255,28 +265,31 @@ export class ProjectController {
 			return;
 		}
 
-		if (this.selectedSessionPerDeployment.get(this.selectedDeploymentId)) {
-			const isCurrentSelectedSessionDisplayed = sessions.find(
-				(session) => session.sessionId === this.selectedSessionPerDeployment.get(this.selectedDeploymentId!)
-			);
+		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
 
-			if (isCurrentSelectedSessionDisplayed) {
-				this.view.update({
-					type: MessageType.selectSession,
-					payload: isCurrentSelectedSessionDisplayed.sessionId,
-				});
-				this.displaySessionLogs(isCurrentSelectedSessionDisplayed?.sessionId!);
-			}
+		if (!selectedSessionId) {
+			this.view.update({
+				type: MessageType.selectSession,
+				payload: sessions[0].sessionId,
+			});
+
+			this.displaySessionLogs(sessions[0].sessionId);
+			this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessions[0].sessionId);
+
+			return;
+		}
+
+		const isCurrentSelectedSessionDisplayed =
+			sessions.findIndex((session) => session.sessionId === selectedSessionId) !== -1;
+		if (!isCurrentSelectedSessionDisplayed) {
 			return;
 		}
 
 		this.view.update({
 			type: MessageType.selectSession,
-			payload: sessions[0].sessionId,
+			payload: selectedSessionId,
 		});
-
-		this.displaySessionLogs(sessions![0].sessionId);
-		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessions![0].sessionId);
+		this.displaySessionLogs(selectedSessionId);
 	}
 
 	async selectDeployment(deploymentId: string): Promise<void> {
@@ -354,9 +367,7 @@ export class ProjectController {
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
-		this.selectedSessionPerDeployment.set(this.selectedDeploymentId!, sessionId);
-
-		this.selectedSessionId = sessionId;
+		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessionId);
 		this.initSessionLogsDisplay(sessionId);
 	}
 
@@ -415,6 +426,8 @@ export class ProjectController {
 		this.project = project;
 		this.view.show(project!.name);
 		this.setProjectNameInView();
+
+		this.sessions = undefined;
 	}
 
 	displayErrorWithoutActionButton(errorMessage: string) {
@@ -599,8 +612,7 @@ export class ProjectController {
 		const successMessage = translate().t("projects.projectDeploySucceed", { id: this.projectId });
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 		LoggerService.info(namespaces.projectController, successMessage);
-
-		this.selectedDeploymentId = deploymentId;
+		this.selectedDeploymentId = deploymentId!;
 
 		this.view.update({
 			type: MessageType.selectDeployment,
@@ -866,29 +878,37 @@ export class ProjectController {
 			return;
 		}
 
-		if (this.selectedSessionId === sessionId && this.sessions) {
-			const sessionIndex = this.sessions.findIndex((session) => session.sessionId === sessionId);
-			if (sessionIndex === -1 || this.sessions.length === 1) {
-				LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
-				return;
-			}
-
-			await this.fetchSessions();
-
-			let followingSessionIdAfterDelete =
-				sessionIndex < this.sessions.length - 1
-					? this.sessions[sessionIndex].sessionId
-					: this.sessions[sessionIndex - 1]?.sessionId;
-
-			this.selectedSessionId = followingSessionIdAfterDelete;
-			this.displaySessionLogs(this.selectedSessionId);
-			this.selectedSessionPerDeployment.set(this.selectedDeploymentId!, followingSessionIdAfterDelete);
-
-			this.view.update({
-				type: MessageType.selectSession,
-				payload: followingSessionIdAfterDelete,
-			});
+		if (!this.sessions) {
+			return;
 		}
+
+		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+		const sessionIndex = this.sessions.findIndex((session) => session.sessionId === sessionId);
+
+		this.sessions = this.sessions.splice(sessionIndex, 1);
+
+		const followingSessionIdAfterDelete =
+			sessionIndex < this.sessions.length - 1
+				? this.sessions[sessionIndex].sessionId
+				: this.sessions[sessionIndex - 1]?.sessionId;
+
+		const sessionsViewObject: SessionSectionViewModel = {
+			sessions: this.sessions,
+			totalSessions: this.sessions.length || 0,
+		};
+
+		this.view.update({
+			type: MessageType.setSessionsSection,
+			payload: sessionsViewObject,
+		});
+
+		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, followingSessionIdAfterDelete);
+		this.displaySessionLogs(followingSessionIdAfterDelete);
+
+		this.view.update({
+			type: MessageType.selectSession,
+			payload: followingSessionIdAfterDelete,
+		});
 
 		this.view.update({
 			type: MessageType.deleteSessionResponse,
