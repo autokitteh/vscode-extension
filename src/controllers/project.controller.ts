@@ -892,6 +892,19 @@ export class ProjectController {
 		let selectedSessionId;
 		const selectedDeploymentId = this.selectedDeploymentPerProject.get(this.projectId);
 
+		if (!selectedDeploymentId) {
+			const log = translate().t("sessions.errorDeleteSessionNoSelectedDeployment", {
+				projectName: this.project?.name,
+			});
+			LoggerService.error(namespaces.projectController, log);
+
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				translate().t("errors.errorDeleteSessionNoSelectedDeploymentShort")
+			);
+			return;
+		}
+
 		if (selectedDeploymentId && this.selectedSessionPerDeployment.get(selectedDeploymentId)) {
 			selectedSessionId = this.selectedSessionPerDeployment.get(selectedDeploymentId);
 		}
