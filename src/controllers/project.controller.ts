@@ -274,7 +274,7 @@ export class ProjectController {
 					type: MessageType.selectSession,
 					payload: isCurrentSelectedSessionDisplayed.sessionId,
 				});
-				this.displaySessionLogs(isCurrentSelectedSessionDisplayed?.sessionId!);
+				this.displaySessionLogs(isCurrentSelectedSessionDisplayed.sessionId!);
 			}
 			return;
 		}
