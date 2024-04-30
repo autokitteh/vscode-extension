@@ -1,3 +1,10 @@
+## [0.12.5](https://github.com/autokitteh/vscode-extension/compare/v0.12.4...v0.12.5) (2024-04-30)
+
+
+### Bug Fixes
+
+* save selected session and deployments on project change ([bdf9d11](https://github.com/autokitteh/vscode-extension/commit/bdf9d1166d1acd6740a827e64acb68630cc8845b))
+
 ## [0.12.4](https://github.com/autokitteh/vscode-extension/compare/v0.12.3...v0.12.4) (2024-04-30)
 
 

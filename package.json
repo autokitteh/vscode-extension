@@ -379,7 +379,7 @@
 		"prepare": "husky install",
 		"source-map-explorer": "npx source-map-explorer dist/main.js dist/main.js.map --no-border-checks"
 	},
-	"version": "0.12.4",
+	"version": "0.12.5",
 	"workspaces": [
 		"vscode-react"
 	]
