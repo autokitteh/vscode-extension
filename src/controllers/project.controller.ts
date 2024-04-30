@@ -134,6 +134,15 @@ export class ProjectController {
 
 	async loadAndDisplayDeployments() {
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
+
+		const selectedDeploymentId = this.selectedDeploymentPerProject.get(this.projectId);
+		const isSelectedInDisplayedDeployments = deployments?.find(
+			(deployment) => deployment.deploymentId === selectedDeploymentId
+		);
+		if (selectedDeploymentId && isSelectedInDisplayedDeployments) {
+			await this.selectDeployment(selectedDeploymentId);
+		}
+
 		if (error) {
 			const notification = translate().t("errors.noResponse");
 			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.deployments)) {
@@ -166,10 +175,6 @@ export class ProjectController {
 		};
 
 		this.view.update({ type: MessageType.setSessionsSection, payload: sessionsViewObject });
-		const selectedDeploymentId = this.selectedDeploymentPerProject.get(this.projectId);
-		if (selectedDeploymentId) {
-			await this.selectDeployment(selectedDeploymentId);
-		}
 		this.loadSingleshotArgs();
 	}
 
@@ -258,28 +263,29 @@ export class ProjectController {
 			return;
 		}
 
-		if (selectedDeploymentId && this.selectedSessionPerDeployment.get(selectedDeploymentId!)) {
-			const isCurrentSelectedSessionDisplayed = sessions.find(
-				(session) => session.sessionId === this.selectedSessionPerDeployment.get(selectedDeploymentId)
-			);
+		if (selectedDeploymentId) {
+			if (this.selectedSessionPerDeployment.get(selectedDeploymentId!)) {
+				const isCurrentSelectedSessionDisplayed = sessions.find(
+					(session) => session.sessionId === this.selectedSessionPerDeployment.get(selectedDeploymentId)
+				);
 
-			if (isCurrentSelectedSessionDisplayed) {
+				if (isCurrentSelectedSessionDisplayed) {
+					this.view.update({
+						type: MessageType.selectSession,
+						payload: isCurrentSelectedSessionDisplayed.sessionId,
+					});
+					this.displaySessionLogs(isCurrentSelectedSessionDisplayed?.sessionId!);
+				}
+			} else {
 				this.view.update({
 					type: MessageType.selectSession,
-					payload: isCurrentSelectedSessionDisplayed.sessionId,
+					payload: sessions[0].sessionId,
 				});
-				this.displaySessionLogs(isCurrentSelectedSessionDisplayed?.sessionId!);
+
+				this.displaySessionLogs(sessions[0].sessionId);
+				this.selectedSessionPerDeployment.set(selectedDeploymentId, sessions[0].sessionId);
 			}
-			return;
 		}
-
-		this.view.update({
-			type: MessageType.selectSession,
-			payload: sessions[0].sessionId,
-		});
-
-		this.displaySessionLogs(sessions![0].sessionId);
-		this.selectedSessionPerDeployment.set(selectedDeploymentId!, sessions![0].sessionId);
 	}
 
 	async selectDeployment(deploymentId: string): Promise<void> {
@@ -417,6 +423,8 @@ export class ProjectController {
 		this.project = project;
 		this.view.show(project!.name);
 		this.setProjectNameInView();
+
+		this.sessions = undefined;
 
 		this.startInterval(
 			ProjectIntervalTypes.deployments,
