@@ -152,7 +152,7 @@ export const AKSessionsTableBody = ({
 	heightProp,
 	widthProp,
 	totalSessions,
-	onScroll,
+	disableLiveTail,
 }: {
 	sessions?: Session[];
 	selectedSession?: string;
@@ -160,7 +160,7 @@ export const AKSessionsTableBody = ({
 	heightProp: string | number;
 	widthProp: string | number;
 	totalSessions: number;
-	onScroll: () => void;
+	disableLiveTail: () => void;
 }) => {
 	// State Section
 	const [{ modalName, lastDeployment }, dispatch] = useAppState();
@@ -223,6 +223,7 @@ export const AKSessionsTableBody = ({
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogsAndStop, sessionId);
 		setSelectedSession(sessionId);
+		disableLiveTail();
 	};
 
 	const deleteSessionConfirmed = () => {
@@ -265,7 +266,7 @@ export const AKSessionsTableBody = ({
 		console.log("sessions.length", sessions?.length);
 
 		if (visibleStopIndex >= (sessions?.length || 0) - 1 && (sessions?.length || 0) === totalSessions) {
-			onScroll();
+			disableLiveTail();
 
 			sendMessage(MessageType.loadMoreSessions);
 		}

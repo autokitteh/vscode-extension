@@ -52,7 +52,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 		setDivWidth(ref?.current?.clientWidth || 0);
 	});
 
-	const onSessionsTableScroll = () => {
+	const disableLiveTail = () => {
 		setLiveTailState(false);
 	};
 
@@ -103,7 +103,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 					heightProp={divHeight}
 					widthProp={divWidth}
 					totalSessions={totalSessions!}
-					onScroll={onSessionsTableScroll}
+					disableLiveTail={disableLiveTail}
 				/>
 			)}
 		</div>
