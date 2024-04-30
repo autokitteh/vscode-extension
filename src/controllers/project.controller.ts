@@ -926,9 +926,7 @@ export class ProjectController {
 			selectedSessionId = followingSessionIdAfterDelete;
 			this.displaySessionLogs(selectedSessionId);
 
-			const selectedDeploymentId = this.selectedDeploymentPerProject.get(this.projectId);
-
-			this.selectedSessionPerDeployment.set(selectedDeploymentId!, followingSessionIdAfterDelete);
+			this.selectedSessionPerDeployment.set(selectedDeploymentId, followingSessionIdAfterDelete);
 
 			this.view.update({
 				type: MessageType.selectSession,
