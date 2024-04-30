@@ -257,7 +257,7 @@ export class ProjectController {
 
 		this.view.update({
 			type: MessageType.selectDeployment,
-			payload: this.selectedDeploymentPerProject,
+			payload: selectedDeploymentId,
 		});
 
 		if (!sessions?.length) {
