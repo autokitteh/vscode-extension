@@ -86,7 +86,14 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 					</select>
 				</div>
 			</div>
-			{sessions && (
+			{isLoading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
+			{!sessions && !isLoading && (
+				<AKTableMessage>{translate().t("reactApp.sessions.pickDeploymentToShowSessions")}</AKTableMessage>
+			)}
+			{sessions && sessions.length === 0 && (
+				<AKTableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</AKTableMessage>
+			)}
+			{!!sessions?.length && (
 				<AKSessionsTableBody
 					sessions={sessions}
 					selectedSession={selectedSession}
@@ -96,13 +103,6 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 					totalSessions={totalSessions!}
 					onScroll={onSessionsTableScroll}
 				/>
-			)}
-			{isLoading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
-			{!sessions && !isLoading && (
-				<AKTableMessage>{translate().t("reactApp.sessions.pickDeploymentToShowSessions")}</AKTableMessage>
-			)}
-			{sessions && sessions.length === 0 && (
-				<AKTableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</AKTableMessage>
 			)}
 		</div>
 	);
