@@ -152,6 +152,7 @@ export const AKSessionsTableBody = ({
 	heightProp,
 	widthProp,
 	totalSessions,
+	onScroll,
 }: {
 	sessions?: Session[];
 	selectedSession?: string;
@@ -159,6 +160,7 @@ export const AKSessionsTableBody = ({
 	heightProp: string | number;
 	widthProp: string | number;
 	totalSessions: number;
+	onScroll: (scrollOffset: number) => void;
 }) => {
 	// State Section
 	const [{ modalName, lastDeployment }, dispatch] = useAppState();
@@ -272,6 +274,7 @@ export const AKSessionsTableBody = ({
 
 	const handleScroll = useCallback(({ scrollOffset }: ListOnScrollProps) => {
 		console.log("scrollOffset", scrollOffset);
+		onScroll(scrollOffset);
 
 		if (scrollOffset === 0) {
 			console.log("Scrolled to the top - do something");
