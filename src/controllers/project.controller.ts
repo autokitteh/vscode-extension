@@ -939,7 +939,7 @@ export class ProjectController {
 		});
 
 		const log = translate().t("sessions.sessionDeleteSuccessIdProject", {
-			deploymentId: this.selectedDeploymentPerProject,
+			deploymentId: selectedDeploymentId,
 			sessionId: sessionId,
 			projectId: this.projectId,
 		});
