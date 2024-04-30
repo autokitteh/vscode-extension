@@ -31,7 +31,6 @@ export class ProjectController {
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
-	private selectedSessionId?: string;
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
@@ -118,8 +117,9 @@ export class ProjectController {
 			this.deploymentsRefreshRate
 		);
 		this.notifyViewResourcesPathChanged();
-		if (this.selectedSessionId) {
-			this.initSessionLogsDisplay(this.selectedSessionId);
+		if (this.selectedDeploymentId && this.selectedSessionPerDeployment.get(this.selectedDeploymentId)) {
+			const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
+			this.initSessionLogsDisplay(selectedSessionId!);
 		}
 	};
 
@@ -355,8 +355,6 @@ export class ProjectController {
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
 		this.selectedSessionPerDeployment.set(this.selectedDeploymentId!, sessionId);
-
-		this.selectedSessionId = sessionId;
 		this.initSessionLogsDisplay(sessionId);
 	}
 
@@ -879,7 +877,12 @@ export class ProjectController {
 			return;
 		}
 
-		if (this.selectedSessionId === sessionId && this.sessions) {
+		let selectedSessionId;
+		if (this.selectedDeploymentId && this.selectedSessionPerDeployment.get(this.selectedDeploymentId)) {
+			selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
+		}
+
+		if (selectedSessionId === sessionId && this.sessions) {
 			const sessionIndex = this.sessions.findIndex((session) => session.sessionId === sessionId);
 			if (sessionIndex === -1 || this.sessions.length === 1) {
 				LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
@@ -893,8 +896,8 @@ export class ProjectController {
 					? this.sessions[sessionIndex].sessionId
 					: this.sessions[sessionIndex - 1]?.sessionId;
 
-			this.selectedSessionId = followingSessionIdAfterDelete;
-			this.displaySessionLogs(this.selectedSessionId);
+			selectedSessionId = followingSessionIdAfterDelete;
+			this.displaySessionLogs(selectedSessionId);
 			this.selectedSessionPerDeployment.set(this.selectedDeploymentId!, followingSessionIdAfterDelete);
 
 			this.view.update({
