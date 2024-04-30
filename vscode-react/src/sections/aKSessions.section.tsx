@@ -71,14 +71,16 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 						</select>
 					</AKTableHeaderCell>
 				</AKTableHeader>
-				<AKSessionsTableBody
-					sessions={sessions}
-					selectedSession={selectedSession}
-					setSelectedSession={setSelectedSession}
-					heightProp={divHeight}
-					widthProp={divWidth}
-					totalSessions={totalSessions!}
-				/>
+				{sessions && (
+					<AKSessionsTableBody
+						sessions={sessions}
+						selectedSession={selectedSession}
+						setSelectedSession={setSelectedSession}
+						heightProp={divHeight}
+						widthProp={divWidth}
+						totalSessions={totalSessions!}
+					/>
+				)}
 			</AKTable>
 			{isLoading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
 			{!sessions && !isLoading && (
