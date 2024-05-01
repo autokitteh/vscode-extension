@@ -220,7 +220,6 @@ export const AKSessionsTableBody = ({
 	};
 
 	const displaySessionLogs = (sessionId: string) => {
-		debugger;
 		sendMessage(MessageType.displaySessionLogsAndStop, sessionId);
 		setSelectedSession(sessionId);
 	};

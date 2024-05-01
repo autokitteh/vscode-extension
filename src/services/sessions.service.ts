@@ -4,7 +4,7 @@ import {
 } from "@ak-proto-ts/sessions/v1/session_pb";
 import { StartRequest } from "@ak-proto-ts/sessions/v1/svc_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
-import { namespaces } from "@constants";
+import { DEFAULT_SESSIONS_VISIBLE_PAGE_SIZE, namespaces } from "@constants";
 import { translate } from "@i18n";
 import { SessionLogRecord, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
@@ -37,6 +37,7 @@ export class SessionsService {
 				deploymentId,
 				stateType: filter.stateType,
 				pageToken,
+				pageSize: DEFAULT_SESSIONS_VISIBLE_PAGE_SIZE,
 			});
 			const sessions = sessionsResponse.map((session: ProtoSession) => convertSessionProtoToModel(session));
 			return { data: { sessions, count, nextPageToken }, error: undefined };

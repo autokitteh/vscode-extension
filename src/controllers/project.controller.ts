@@ -999,7 +999,7 @@ export class ProjectController {
 		}
 	}
 
-	toggleSessionsLiveTail(isLiveStateOn: boolean) {
-		this.isLiveTailEnabled = isLiveStateOn;
+	toggleSessionsLiveTail(isLiveStateOn: Boolean) {
+		this.isLiveTailEnabled = !!isLiveStateOn;
 	}
 }

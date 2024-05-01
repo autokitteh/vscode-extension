@@ -53,14 +53,11 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	});
 
 	const disableLiveTail = () => {
-		debugger;
-
 		setLiveTailState(false);
 		sendMessage(MessageType.toggleSessionsLiveTail, false);
 	};
 
 	const toggleLiveTail = () => {
-		debugger;
 		setLiveTailState(!liveTailState);
 		sendMessage(MessageType.toggleSessionsLiveTail, !liveTailState);
 	};
