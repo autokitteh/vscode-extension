@@ -1,5 +1,5 @@
 import { StartSessionArgsType } from "@type";
-import { Callback } from "@type/interfaces";
+import { Callback, CallbackBoolean } from "@type/interfaces";
 
 export interface IProjectViewDelegate {
 	onClose?: Callback;
@@ -24,6 +24,7 @@ export interface IProjectViewDelegate {
 	setSessionsStateFilter?: Callback<string>;
 	loadInitialDataOnceViewReady: Callback;
 	loadMoreSessions?: Callback;
+	toggleSessionsLiveTail?: CallbackBoolean;
 }
 
 export interface IProjectView {

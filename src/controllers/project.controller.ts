@@ -992,4 +992,8 @@ export class ProjectController {
 			return;
 		}
 	}
+
+	toggleSessionsLiveTail(isLiveStateOn: boolean) {
+		console.log(isLiveStateOn);
+	}
 }

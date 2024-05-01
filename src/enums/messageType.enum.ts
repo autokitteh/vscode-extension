@@ -28,4 +28,5 @@ export enum MessageType {
 	setSessionsStateFilter = "SET_SESSIONS_STATE_FILTER",
 	loadInitialDataOnceViewReady = "LOAD_INITIAL_DATA_ONCE_VIEW_READY",
 	loadMoreSessions = "LOAD_MORE_SESSIONS",
+	toggleSessionsLiveTail = "TOGGLE_SESSIONS_LIVE_TAIL",
 }

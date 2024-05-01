@@ -169,7 +169,7 @@ export const AKSessionsTableBody = ({
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [inputsModalVisible, setInputsModalVisible] = useState(false);
 	const [sessionInputs, setSessionInputs] = useState<string>();
-
+	const [isFirstItemsScroll, setIsFirstItemsScroll] = useState(true);
 	// Hooks Section
 	useCloseOnEscape(() => setInputsModalVisible(false));
 
@@ -223,7 +223,6 @@ export const AKSessionsTableBody = ({
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogsAndStop, sessionId);
 		setSelectedSession(sessionId);
-		disableLiveTail();
 	};
 
 	const deleteSessionConfirmed = () => {
@@ -262,14 +261,15 @@ export const AKSessionsTableBody = ({
 	}, []);
 
 	const handleItemsRendered = ({ visibleStopIndex }: ListOnItemsRenderedProps) => {
-		console.log("visibleStopIndex", visibleStopIndex);
-		console.log("sessions.length", sessions?.length);
-
 		if (visibleStopIndex >= (sessions?.length || 0) - 1 && (sessions?.length || 0) === totalSessions) {
-			disableLiveTail();
-
 			sendMessage(MessageType.loadMoreSessions);
+			return;
 		}
+		if (isFirstItemsScroll) {
+			setIsFirstItemsScroll(false);
+			return;
+		}
+		disableLiveTail();
 	};
 
 	const handleScroll = useCallback(({ scrollOffset }: ListOnScrollProps) => {
