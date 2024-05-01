@@ -71,7 +71,15 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 				}
 			>
 				<div className="flex">{`${translate().t("reactApp.sessions.tableTitle")} (${totalSessions})`}</div>
-				<div className="ml-3 w-5 h-5 cursor-pointer" onClick={() => toggleLiveTail()}>
+				<div
+					className="ml-3 w-5 h-5 cursor-pointer"
+					onClick={() => toggleLiveTail()}
+					title={
+						liveTailState
+							? translate().t("reactApp.sessions.pauseLiveTail")
+							: translate().t("reactApp.sessions.resumeLiveTail")
+					}
+				>
 					<RotateIcon fill={liveTailState ? "green" : "gray"} />
 				</div>
 				<div className="flex-grow" />
