@@ -105,6 +105,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 					widthProp={divWidth}
 					totalSessions={totalSessions!}
 					disableLiveTail={disableLiveTail}
+					liveTailState={liveTailState}
 				/>
 			)}
 		</div>

@@ -153,6 +153,7 @@ export const AKSessionsTableBody = ({
 	widthProp,
 	totalSessions,
 	disableLiveTail,
+	liveTailState,
 }: {
 	sessions?: Session[];
 	selectedSession?: string;
@@ -161,6 +162,7 @@ export const AKSessionsTableBody = ({
 	widthProp: string | number;
 	totalSessions: number;
 	disableLiveTail: () => void;
+	liveTailState: boolean;
 }) => {
 	// State Section
 	const [{ modalName, lastDeployment }, dispatch] = useAppState();
@@ -169,6 +171,8 @@ export const AKSessionsTableBody = ({
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [inputsModalVisible, setInputsModalVisible] = useState(false);
 	const [sessionInputs, setSessionInputs] = useState<string>();
+	const listRef = useRef<List>(null); // Creating the ref
+
 	// Hooks Section
 	useCloseOnEscape(() => setInputsModalVisible(false));
 
@@ -259,6 +263,12 @@ export const AKSessionsTableBody = ({
 		hidePopper();
 	}, []);
 
+	useEffect(() => {
+		if (listRef.current && liveTailState) {
+			listRef.current.scrollTo(0); // Scroll to the top
+		}
+	}, [liveTailState]);
+
 	const handleItemsRendered = ({ visibleStopIndex }: ListOnItemsRenderedProps) => {
 		if (visibleStopIndex >= (sessions?.length || 0) - 1 && (sessions?.length || 0) === totalSessions) {
 			sendMessage(MessageType.loadMoreSessions);
@@ -319,6 +329,7 @@ export const AKSessionsTableBody = ({
 					onItemsRendered={handleItemsRendered}
 					onScroll={handleScroll}
 					itemKey={(index) => sessions?.[index]?.sessionId || 0}
+					ref={listRef}
 				>
 					{Row}
 				</List>
