@@ -151,7 +151,6 @@ export const AKSessionsTableBody = ({
 	setSelectedSession,
 	heightProp,
 	widthProp,
-	totalSessions,
 	disableLiveTail,
 	liveTailState,
 }: {
@@ -160,7 +159,6 @@ export const AKSessionsTableBody = ({
 	setSelectedSession: (sessionId: string) => void;
 	heightProp: string | number;
 	widthProp: string | number;
-	totalSessions: number;
 	disableLiveTail: () => void;
 	liveTailState: boolean;
 }) => {
@@ -270,7 +268,7 @@ export const AKSessionsTableBody = ({
 	}, [liveTailState]);
 
 	const handleItemsRendered = ({ visibleStopIndex }: ListOnItemsRenderedProps) => {
-		if (visibleStopIndex >= (sessions?.length || 0) - 1 && (sessions?.length || 0) === totalSessions) {
+		if (visibleStopIndex >= (sessions?.length || 0) - 1) {
 			sendMessage(MessageType.loadMoreSessions);
 			return;
 		}

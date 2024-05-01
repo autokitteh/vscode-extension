@@ -111,7 +111,6 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 					setSelectedSession={setSelectedSession}
 					heightProp={divHeight}
 					widthProp={divWidth}
-					totalSessions={totalSessions!}
 					disableLiveTail={disableLiveTail}
 					liveTailState={liveTailState}
 				/>

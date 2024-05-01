@@ -942,8 +942,22 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, log);
 	}
 
+	removeDuplicates(array: Session[], key: keyof Session) {
+		const seen = new Map();
+		for (const item of array) {
+			if (!seen.has(item[key])) {
+				seen.set(item[key], item);
+			}
+		}
+
+		return [...seen.values()];
+	}
+
 	async loadMoreSessions() {
-		if (this.sessionsNextPageToken) {
+		try {
+			if (!this.sessionsNextPageToken) {
+				return;
+			}
 			const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
 
 			const { data, error } = await SessionsService.listByDeploymentId(
@@ -968,7 +982,8 @@ export class ProjectController {
 
 			this.displayedSessionsCount += count;
 
-			this.sessions = [...this.sessions!, ...sessions];
+			this.sessions = this.removeDuplicates([...this.sessions!, ...sessions], "sessionId");
+
 			this.sessionsNextPageToken = nextPageToken;
 
 			const sessionsViewObject: SessionSectionViewModel = {
@@ -980,6 +995,8 @@ export class ProjectController {
 				type: MessageType.setSessionsSection,
 				payload: sessionsViewObject,
 			});
+		} catch (error) {
+			console.log(error);
 		}
 	}
 
