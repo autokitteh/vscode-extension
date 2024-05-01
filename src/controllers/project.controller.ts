@@ -35,7 +35,6 @@ export class ProjectController {
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
 	private sessionsNextPageToken?: string;
-	private displayedSessionsCount: number = 0;
 	private isLiveTailEnabled: boolean = true;
 
 	constructor(
@@ -173,11 +172,6 @@ export class ProjectController {
 			return;
 		}
 
-		const sessionsViewObject: SessionSectionViewModel = {
-			sessions: this.sessions,
-			totalSessions: this.sessions?.length || 0,
-		};
-
 		const isSelectedInDisplayedDeployments = deployments?.find(
 			(deployment) => deployment.deploymentId === this.selectedDeploymentId
 		);
@@ -186,7 +180,6 @@ export class ProjectController {
 			return;
 		}
 
-		this.view.update({ type: MessageType.setSessionsSection, payload: sessionsViewObject });
 		this.loadSingleshotArgs();
 	}
 
@@ -248,7 +241,7 @@ export class ProjectController {
 			return;
 		}
 
-		const { sessions, count, nextPageToken } = data!;
+		const { sessions, nextPageToken } = data!;
 
 		if (isEqual(this.sessions, sessions) && this.sessions?.length && !forcePushToView) {
 			return;
@@ -256,11 +249,21 @@ export class ProjectController {
 
 		this.sessions = sessions;
 		this.sessionsNextPageToken = nextPageToken;
-		this.displayedSessionsCount = count;
+
+		const currentDeployment = this.deployments?.find(
+			(deployment) => deployment.deploymentId === this.selectedDeploymentId
+		);
+
+		let totalSessions = 0;
+		if (currentDeployment) {
+			for (const deploymentStats of currentDeployment.sessionStats!) {
+				totalSessions += deploymentStats.count;
+			}
+		}
 
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions,
-			totalSessions: this.displayedSessionsCount,
+			totalSessions,
 		};
 
 		this.view.update({
@@ -978,17 +981,26 @@ export class ProjectController {
 				return;
 			}
 
-			const { sessions, count, nextPageToken } = data!;
-
-			this.displayedSessionsCount += count;
+			const { sessions, nextPageToken } = data!;
 
 			this.sessions = this.removeDuplicates([...this.sessions!, ...sessions], "sessionId");
 
 			this.sessionsNextPageToken = nextPageToken;
 
+			const currentDeployment = this.deployments?.find(
+				(deployment) => deployment.deploymentId === this.selectedDeploymentId
+			);
+
+			let totalSessions = 0;
+			if (currentDeployment) {
+				for (const deploymentStats of currentDeployment.sessionStats!) {
+					totalSessions += deploymentStats.count;
+				}
+			}
+
 			const sessionsViewObject: SessionSectionViewModel = {
 				sessions: this.sessions,
-				totalSessions: this.displayedSessionsCount,
+				totalSessions,
 			};
 
 			this.view.update({

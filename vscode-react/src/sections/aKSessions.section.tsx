@@ -70,18 +70,23 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 					"text-left z-30 text-lg font-extralight items-center"
 				}
 			>
-				<div className="flex">{`${translate().t("reactApp.sessions.tableTitle")} (${totalSessions})`}</div>
-				<div
-					className="ml-3 w-5 h-5 cursor-pointer"
-					onClick={() => toggleLiveTail()}
-					title={
-						liveTailState
-							? translate().t("reactApp.sessions.pauseLiveTail")
-							: translate().t("reactApp.sessions.resumeLiveTail")
-					}
-				>
-					<RotateIcon fill={liveTailState ? "green" : "gray"} />
+				<div className="flex">
+					{`${translate().t("reactApp.sessions.tableTitle")}`}{" "}
+					{totalSessions || (totalSessions === 0 && `(${totalSessions})`)}
 				</div>
+				{sessions && !isLoading && (
+					<div
+						className="ml-3 w-5 h-5 cursor-pointer"
+						onClick={() => toggleLiveTail()}
+						title={
+							liveTailState
+								? translate().t("reactApp.sessions.pauseLiveTail")
+								: translate().t("reactApp.sessions.resumeLiveTail")
+						}
+					>
+						<RotateIcon fill={liveTailState ? "green" : "gray"} />
+					</div>
+				)}
 				<div className="flex-grow" />
 				<div className="flex w-1/3 text-xs justify-end">
 					<div className="codicon codicon-filter h-6 mr-2 mt-1" />
