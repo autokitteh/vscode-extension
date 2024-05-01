@@ -36,6 +36,7 @@ export class ProjectController {
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
 	private sessionsNextPageToken?: string;
 	private displayedSessionsCount: number = 0;
+	private isLiveTailEnabled: boolean = true;
 
 	constructor(
 		projectView: IProjectView,
@@ -125,6 +126,7 @@ export class ProjectController {
 			return;
 		}
 		this.initSessionLogsDisplay(selectedSessionId);
+		this.isLiveTailEnabled = true;
 	};
 
 	public disable = async () => {
@@ -133,6 +135,7 @@ export class ProjectController {
 		this.deployments = undefined;
 		this.sessions = undefined;
 		this.hasDisplayedError = new Map();
+		this.isLiveTailEnabled = false;
 	};
 
 	async loadAndDisplayDeployments() {
@@ -165,6 +168,10 @@ export class ProjectController {
 			type: MessageType.setDeployments,
 			payload: deploymentsViewObject,
 		});
+
+		if (!this.isLiveTailEnabled) {
+			return;
+		}
 
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions: this.sessions,
@@ -374,7 +381,7 @@ export class ProjectController {
 
 		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessionId);
 		if (stopSessionsInterval) {
-			this.stopInterval(ProjectIntervalTypes.sessions);
+			this.isLiveTailEnabled = false;
 		}
 		this.initSessionLogsDisplay(sessionId);
 	}
@@ -534,6 +541,7 @@ export class ProjectController {
 		this.stopInterval(ProjectIntervalTypes.deployments);
 		this.onProjectDisposeCB?.(this.projectId);
 		this.hasDisplayedError = new Map();
+		this.isLiveTailEnabled = false;
 	}
 
 	async build() {
@@ -935,8 +943,6 @@ export class ProjectController {
 	}
 
 	async loadMoreSessions() {
-		this.stopInterval(ProjectIntervalTypes.sessions);
-
 		if (this.sessionsNextPageToken) {
 			const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
 
@@ -994,10 +1000,6 @@ export class ProjectController {
 	}
 
 	toggleSessionsLiveTail(isLiveStateOn: boolean) {
-		if (isLiveStateOn) {
-			this.startInterval(ProjectIntervalTypes.sessions, () => this.fetchSessions(), this.sessionsLogRefreshRate);
-			return;
-		}
-		this.stopInterval(ProjectIntervalTypes.sessions);
+		this.isLiveTailEnabled = isLiveStateOn;
 	}
 }
