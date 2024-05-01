@@ -72,7 +72,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 			>
 				<div className="flex">
 					{`${translate().t("reactApp.sessions.tableTitle")}`}{" "}
-					{totalSessions || (totalSessions === 0 && `(${totalSessions})`)}
+					{(totalSessions || totalSessions === 0) && `(${totalSessions})`}
 				</div>
 				{sessions && !isLoading && (
 					<div
