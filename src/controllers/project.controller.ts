@@ -994,6 +994,10 @@ export class ProjectController {
 	}
 
 	toggleSessionsLiveTail(isLiveStateOn: boolean) {
-		console.log(isLiveStateOn);
+		if (isLiveStateOn) {
+			this.startInterval(ProjectIntervalTypes.sessions, () => this.fetchSessions(), this.sessionsLogRefreshRate);
+			return;
+		}
+		this.stopInterval(ProjectIntervalTypes.sessions);
 	}
 }

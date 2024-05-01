@@ -53,15 +53,11 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	});
 
 	const disableLiveTail = () => {
-		console.log("disableLiveTail");
-
 		setLiveTailState(false);
 		sendMessage(MessageType.toggleSessionsLiveTail, false);
 	};
 
 	const toggleLiveTail = () => {
-		console.log("toggleLiveTail");
-
 		setLiveTailState(!liveTailState);
 		sendMessage(MessageType.toggleSessionsLiveTail, !liveTailState);
 	};
