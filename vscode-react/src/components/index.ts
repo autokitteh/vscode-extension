@@ -5,7 +5,6 @@ export { AKSessionState } from "@react-components/aKSessiontState.component";
 export { AKModal } from "@react-components/aKModal.component";
 export { AKDeploymentTableHeader } from "@react-components/aKDeploymentTableHeader.component";
 export { AKDeploymentTableBody } from "@react-components/aKDeploymentTableBody.component";
-export { AKSessionsTableHeader } from "@react-components/aKSessionTableHeader.component";
 export { AKMonacoEditorModal } from "@react-components/akMonacoEditorModal.component";
 export { ExecutePopper } from "@react-components/aKDeploymentsExecutePopper.component";
 export { DeletePopper } from "@react-components/aKDeletePopper.component";

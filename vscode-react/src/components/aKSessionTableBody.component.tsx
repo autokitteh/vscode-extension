@@ -76,7 +76,7 @@ const Row = memo(
 						<AKSessionState sessionState={session.state} />
 					</AKTableCell>
 					<AKTableCell classes={["cursor-pointer w-64"]}>{session.sessionId}</AKTableCell>
-					<AKTableCell classes={["w-16 z-10"]}>
+					<AKTableCell classes={["w-32 z-10"]}>
 						<AKSessionActions session={session} {...sessionActions} />
 						{createPortal(
 							<div>
@@ -218,6 +218,7 @@ export const AKSessionsTableBody = ({
 
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogsAndStop, sessionId);
+		disableLiveTail();
 		setSelectedSession(sessionId);
 	};
 
@@ -307,7 +308,7 @@ export const AKSessionsTableBody = ({
 					document.body
 				)}
 			<AKTable>
-				<AKTableHeader classes="flex justify-around">
+				<AKTableHeader classes="flex justify-around pr-4">
 					<AKTableHeaderCell className="flex justify-center w-64">
 						{translate().t("reactApp.sessions.time")}
 					</AKTableHeaderCell>
@@ -317,7 +318,7 @@ export const AKSessionsTableBody = ({
 					<AKTableHeaderCell className="flex justify-center w-64">
 						{translate().t("reactApp.sessions.sessionId")}
 					</AKTableHeaderCell>
-					<AKTableHeaderCell className="flex justify-center w-16">
+					<AKTableHeaderCell className="flex justify-center w-32">
 						{translate().t("reactApp.sessions.actions")}
 					</AKTableHeaderCell>
 				</AKTableHeader>
