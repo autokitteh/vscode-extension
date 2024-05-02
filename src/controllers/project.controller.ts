@@ -283,6 +283,14 @@ export class ProjectController {
 		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
 
 		if (!selectedSessionId) {
+			this.view.update({
+				type: MessageType.selectSession,
+				payload: sessions[0].sessionId,
+			});
+
+			this.displaySessionLogs(sessions[0].sessionId);
+			this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessions[0].sessionId);
+
 			return;
 		}
 
@@ -901,6 +909,12 @@ export class ProjectController {
 		const sessionIndex = this.sessions.findIndex((session) => session.sessionId === sessionId);
 
 		this.sessions = this.sessions.splice(sessionIndex, 1);
+
+		const followingSessionIdAfterDelete =
+			sessionIndex < this.sessions.length - 1
+				? this.sessions[sessionIndex].sessionId
+				: this.sessions[sessionIndex - 1]?.sessionId;
+
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions: this.sessions,
 			totalSessions: this.sessions.length || 0,
@@ -909,6 +923,14 @@ export class ProjectController {
 		this.view.update({
 			type: MessageType.setSessionsSection,
 			payload: sessionsViewObject,
+		});
+
+		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, followingSessionIdAfterDelete);
+		this.displaySessionLogs(followingSessionIdAfterDelete);
+
+		this.view.update({
+			type: MessageType.selectSession,
+			payload: followingSessionIdAfterDelete,
 		});
 
 		this.view.update({
