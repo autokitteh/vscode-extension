@@ -71,16 +71,16 @@ const Row = memo(
 			session && (
 				<div style={style} className="w-full">
 					<AKTableRow className="flex justify-around" isSelected={isSelectedRow}>
-						<AKTableCell classes={["cursor-pointer"]} onClick={() => displaySessionLogs(session.sessionId)}>
+						<AKTableCell classes={["cursor-pointer w-64"]} onClick={() => displaySessionLogs(session.sessionId)}>
 							{getTimePassed(session.createdAt)}
 						</AKTableCell>
-						<AKTableCell classes={["cursor-pointer"]} onClick={() => displaySessionLogs(session.sessionId)}>
+						<AKTableCell classes={["cursor-pointer w-32"]} onClick={() => displaySessionLogs(session.sessionId)}>
 							<AKSessionState sessionState={session.state} />
 						</AKTableCell>
-						<AKTableCell classes={["cursor-pointer w-1/5"]} onClick={() => displaySessionLogs(session.sessionId)}>
+						<AKTableCell classes={["cursor-pointer w-64"]} onClick={() => displaySessionLogs(session.sessionId)}>
 							{session.sessionId}
 						</AKTableCell>
-						<AKTableCell>
+						<AKTableCell classes={["w-16"]}>
 							<AKSessionActions session={session} {...sessionActions} />
 							{createPortal(
 								<div>
@@ -313,10 +313,18 @@ export const AKSessionsTableBody = ({
 				)}
 			<AKTable>
 				<AKTableHeader classes="flex justify-around">
-					<AKTableHeaderCell>{translate().t("reactApp.sessions.time")}</AKTableHeaderCell>
-					<AKTableHeaderCell>{translate().t("reactApp.sessions.status")}</AKTableHeaderCell>
-					<AKTableHeaderCell className="w-1/5">{translate().t("reactApp.sessions.sessionId")}</AKTableHeaderCell>
-					<AKTableHeaderCell>{translate().t("reactApp.sessions.actions")}</AKTableHeaderCell>
+					<AKTableHeaderCell className="flex justify-center w-64">
+						{translate().t("reactApp.sessions.time")}
+					</AKTableHeaderCell>
+					<AKTableHeaderCell className="flex justify-center w-32">
+						{translate().t("reactApp.sessions.status")}
+					</AKTableHeaderCell>
+					<AKTableHeaderCell className="flex justify-center w-64">
+						{translate().t("reactApp.sessions.sessionId")}
+					</AKTableHeaderCell>
+					<AKTableHeaderCell className="flex justify-center w-16">
+						{translate().t("reactApp.sessions.actions")}
+					</AKTableHeaderCell>
 				</AKTableHeader>
 				<List
 					height={heightProp}
