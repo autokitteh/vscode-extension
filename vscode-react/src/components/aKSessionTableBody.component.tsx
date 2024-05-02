@@ -69,40 +69,35 @@ const Row = memo(
 		const isSelectedRow = selectedSessionId === session?.sessionId;
 		return (
 			session && (
-				<div style={style} className="w-full">
-					<AKTableRow className="flex justify-around" isSelected={isSelectedRow}>
-						<AKTableCell classes={["cursor-pointer w-64"]} onClick={() => displaySessionLogs(session.sessionId)}>
-							{getTimePassed(session.createdAt)}
-						</AKTableCell>
-						<AKTableCell classes={["cursor-pointer w-32"]} onClick={() => displaySessionLogs(session.sessionId)}>
-							<AKSessionState sessionState={session.state} />
-						</AKTableCell>
-						<AKTableCell classes={["cursor-pointer w-64"]} onClick={() => displaySessionLogs(session.sessionId)}>
-							{session.sessionId}
-						</AKTableCell>
-						<AKTableCell classes={["w-16"]}>
-							<AKSessionActions session={session} {...sessionActions} />
-							{createPortal(
-								<div>
-									<AKOverlay
-										isVisibile={modalName === "sessionDelete" && index === 0}
-										onOverlayClick={() => hidePopper()}
-									/>
+				<AKTableRow className="flex justify-around" isSelected={isSelectedRow} style={style}>
+					<div className="absolute inset-0 cursor-pointer" onClick={() => displaySessionLogs(session.sessionId)} />
+					<AKTableCell classes={["cursor-pointer w-64"]}>{getTimePassed(session.createdAt)}</AKTableCell>
+					<AKTableCell classes={["cursor-pointer w-32"]}>
+						<AKSessionState sessionState={session.state} />
+					</AKTableCell>
+					<AKTableCell classes={["cursor-pointer w-64"]}>{session.sessionId}</AKTableCell>
+					<AKTableCell classes={["w-16 z-10"]}>
+						<AKSessionActions session={session} {...sessionActions} />
+						{createPortal(
+							<div>
+								<AKOverlay
+									isVisibile={modalName === "sessionDelete" && index === 0}
+									onOverlayClick={() => hidePopper()}
+								/>
 
-									<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
-										<DeletePopper
-											isDeletingInProcess={isDeletingInProcess}
-											onConfirm={() => deleteSessionConfirmed()}
-											onDismiss={() => deleteSessionDismissed()}
-											translations={deleteSessionPopperTranslations}
-										/>
-									</PopperComponent>
-								</div>,
-								document.body
-							)}
-						</AKTableCell>
-					</AKTableRow>
-				</div>
+								<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
+									<DeletePopper
+										isDeletingInProcess={isDeletingInProcess}
+										onConfirm={() => deleteSessionConfirmed()}
+										onDismiss={() => deleteSessionDismissed()}
+										translations={deleteSessionPopperTranslations}
+									/>
+								</PopperComponent>
+							</div>,
+							document.body
+						)}
+					</AKTableCell>
+				</AKTableRow>
 			)
 		);
 	},
