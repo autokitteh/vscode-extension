@@ -12,3 +12,4 @@ export { PopperComponent } from "@react-components/aKPopper.component";
 export { ProjectSettingsPopper } from "@react-components/aKProjectSettingsPopper.component";
 export { AKOverlay } from "@react-components/aKOverlay.component";
 export { AKSessionActions } from "@react-components/aKSessionActions.component";
+export { AKSessionsTableRow } from "@react-components/aKSessionTableRow.component";

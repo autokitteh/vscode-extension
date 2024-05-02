@@ -1,144 +1,16 @@
-import React, { CSSProperties, memo, RefObject, useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
-import {
-	AKMonacoEditorModal,
-	AKOverlay,
-	AKSessionActions,
-	AKSessionState,
-	DeletePopper,
-	PopperComponent,
-} from "@react-components";
-import { AKTableRow, AKTableCell, AKTable, AKTableHeader, AKTableHeaderCell } from "@react-components/AKTable";
+import { AKMonacoEditorModal, AKSessionsTableRow } from "@react-components";
+import { AKTable, AKTableHeader, AKTableHeaderCell } from "@react-components/AKTable";
 import { useAppState } from "@react-context";
 import { SessionState } from "@react-enums";
 import { useCloseOnEscape, useIncomingMessageHandler } from "@react-hooks";
-import { getTimePassed, sendMessage } from "@react-utilities";
+import { AKSessionsTableRowProps } from "@react-types";
+import { getSessionActions, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
-import memoizeOne from "memoize-one";
 import { createPortal } from "react-dom";
-import { FixedSizeList as List, ListOnItemsRenderedProps, ListOnScrollProps, areEqual } from "react-window";
-
-const Row = memo(
-	({
-		data,
-		index,
-		style,
-	}: {
-		data: {
-			sessions: Session[];
-			sessionActions: {
-				startSession: (session: Session) => void;
-				stopSession: (session: Session) => void;
-				displayInputsModal: (sessionInputs: string) => void;
-				displaySessionDeletePopper: (event: React.MouseEvent<HTMLDivElement>, session: Session) => void;
-				isRunning: (sessionState: SessionState) => boolean;
-				getStopSessionClass: (sessionState: SessionState) => string;
-				isLastDeployment: (deploymentId: string) => boolean;
-			};
-			selectedSessionId: string;
-			displaySessionLogs: (sessionId: string) => void;
-			modalName: string;
-			hidePopper: () => void;
-			isDeletingInProcess: boolean;
-			deleteSessionConfirmed: () => void;
-			deleteSessionDismissed: () => void;
-			deleteSessionPopperTranslations: {
-				title: string;
-				subtitle: string;
-			};
-			deletePopperElementRef: RefObject<HTMLDivElement>;
-		};
-		index: number;
-		style: CSSProperties;
-	}) => {
-		const {
-			sessions,
-			selectedSessionId,
-			displaySessionLogs,
-			sessionActions,
-			modalName,
-			hidePopper,
-			isDeletingInProcess,
-			deleteSessionConfirmed,
-			deleteSessionDismissed,
-			deleteSessionPopperTranslations,
-			deletePopperElementRef,
-		} = data;
-		const session = sessions[index];
-		const isSelectedRow = selectedSessionId === session?.sessionId;
-		return (
-			session && (
-				<AKTableRow className="flex justify-around" isSelected={isSelectedRow} style={style}>
-					<div className="absolute inset-0 cursor-pointer" onClick={() => displaySessionLogs(session.sessionId)} />
-					<AKTableCell classes={["cursor-pointer w-64"]}>{getTimePassed(session.createdAt)}</AKTableCell>
-					<AKTableCell classes={["cursor-pointer w-32"]}>
-						<AKSessionState sessionState={session.state} />
-					</AKTableCell>
-					<AKTableCell classes={["cursor-pointer w-64"]}>{session.sessionId}</AKTableCell>
-					<AKTableCell classes={["w-32 z-10"]}>
-						<AKSessionActions session={session} {...sessionActions} />
-						{createPortal(
-							<div>
-								<AKOverlay
-									isVisibile={modalName === "sessionDelete" && index === 0}
-									onOverlayClick={() => hidePopper()}
-								/>
-
-								<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
-									<DeletePopper
-										isDeletingInProcess={isDeletingInProcess}
-										onConfirm={() => deleteSessionConfirmed()}
-										onDismiss={() => deleteSessionDismissed()}
-										translations={deleteSessionPopperTranslations}
-									/>
-								</PopperComponent>
-							</div>,
-							document.body
-						)}
-					</AKTableCell>
-				</AKTableRow>
-			)
-		);
-	},
-	areEqual
-);
-
-const getItemData = memoizeOne(
-	(
-		selectedSessionId,
-		sessions,
-		displaySessionLogs,
-		sessionActions: {
-			startSession: (session: Session) => void;
-			stopSession: (session: Session) => void;
-			displayInputsModal: (sessionInputs: string) => void;
-			displaySessionDeletePopper: (event: React.MouseEvent<HTMLDivElement>, session: Session) => void;
-			isRunning: (sessionState: SessionState) => boolean;
-			getStopSessionClass: (sessionState: SessionState) => string;
-			isLastDeployment: (deploymentId: string) => boolean;
-		},
-		modalName,
-		hidePopper,
-		isDeletingInProcess,
-		deleteSessionConfirmed,
-		deleteSessionDismissed,
-		deleteSessionPopperTranslations,
-		deletePopperElementRef
-	) => ({
-		selectedSessionId,
-		sessions,
-		displaySessionLogs,
-		sessionActions,
-		modalName,
-		hidePopper,
-		isDeletingInProcess,
-		deleteSessionConfirmed,
-		deleteSessionDismissed,
-		deleteSessionPopperTranslations,
-		deletePopperElementRef,
-	})
-);
+import { FixedSizeList as List, ListOnItemsRenderedProps, ListOnScrollProps } from "react-window";
 
 export const AKSessionsTableBody = ({
 	sessions,
@@ -190,31 +62,8 @@ export const AKSessionsTableBody = ({
 		setInputsModalVisible(true);
 	};
 
-	const getStopSessionClass = (sessionState: SessionState) => {
-		const isRunningClass =
-			sessionState === SessionState.RUNNING ? "text-red-500 cursor-pointer" : "text-gray-500 cursor-not-allowed";
-		return `codicon codicon-debug-stop mr-2 ${isRunningClass}`;
-	};
-
 	const showPopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "sessionDelete" });
 	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
-	const startSession = (session: Session) => {
-		const startSessionArgs = {
-			sessionId: session.sessionId,
-			buildId: lastDeployment?.buildId,
-			deploymentId: lastDeployment?.deploymentId,
-			entrypoint: session.entrypoint,
-		};
-
-		sendMessage(MessageType.startSession, startSessionArgs);
-	};
-
-	const stopSession = (session: Session) => {
-		if (session.state !== SessionState.RUNNING) {
-			return;
-		}
-		sendMessage(MessageType.stopSession, session.sessionId);
-	};
 
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogsAndStop, sessionId);
@@ -248,10 +97,6 @@ export const AKSessionsTableBody = ({
 		setDeleteSessionId(session.sessionId);
 	};
 
-	const isRunning = (sessionState: SessionState) => sessionState === SessionState.RUNNING;
-
-	const isLastDeployment = (deploymentId: string) => deploymentId === lastDeployment?.deploymentId;
-
 	// useEffects Section
 	useEffect(() => {
 		hidePopper();
@@ -277,27 +122,26 @@ export const AKSessionsTableBody = ({
 	}, []);
 
 	const sessionActions = {
-		startSession,
-		stopSession,
 		displayInputsModal,
 		displaySessionDeletePopper,
-		isRunning,
-		getStopSessionClass,
-		isLastDeployment,
+		...getSessionActions(lastDeployment!),
 	};
 
-	const itemData = getItemData(
-		selectedSession,
-		sessions || [],
-		displaySessionLogs,
-		sessionActions,
-		modalName,
-		hidePopper,
-		isDeletingInProcess,
-		deleteSessionConfirmed,
-		deleteSessionDismissed,
-		deleteSessionPopperTranslations,
-		deletePopperElementRef
+	const itemData = useMemo(
+		() => ({
+			sessions,
+			sessionActions,
+			selectedSessionId: selectedSession,
+			displaySessionLogs,
+			modalName,
+			hidePopper,
+			isDeletingInProcess,
+			deleteSessionConfirmed,
+			deleteSessionDismissed,
+			deleteSessionPopperTranslations,
+			deletePopperElementRef,
+		}),
+		[sessions, selectedSession, lastDeployment, modalName, isDeletingInProcess]
 	);
 
 	return (
@@ -327,13 +171,13 @@ export const AKSessionsTableBody = ({
 					width={widthProp}
 					itemCount={sessions?.length || 0}
 					itemSize={30} // Adjust based on your row height
-					itemData={itemData}
+					itemData={itemData as AKSessionsTableRowProps}
 					onItemsRendered={handleItemsRendered}
 					onScroll={handleScroll}
 					itemKey={(index) => sessions?.[index]?.sessionId || 0}
 					ref={listRef}
 				>
-					{Row}
+					{AKSessionsTableRow}
 				</List>
 			</AKTable>
 		</>
