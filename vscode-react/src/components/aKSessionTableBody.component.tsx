@@ -36,7 +36,7 @@ export const AKSessionsTableBody = ({
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [inputsModalVisible, setInputsModalVisible] = useState(false);
 	const [sessionInputs, setSessionInputs] = useState<string>();
-	const listRef = useRef<List>(null); // Creating the ref
+	const listRef = useRef<List>(null);
 
 	// Hooks Section
 	useCloseOnEscape(() => setInputsModalVisible(false));
@@ -170,7 +170,7 @@ export const AKSessionsTableBody = ({
 					height={heightProp}
 					width={widthProp}
 					itemCount={sessions?.length || 0}
-					itemSize={30} // Adjust based on your row height
+					itemSize={30}
 					itemData={itemData as AKSessionsTableRowProps}
 					onItemsRendered={handleItemsRendered}
 					onScroll={handleScroll}
