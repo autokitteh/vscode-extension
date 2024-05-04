@@ -12,7 +12,7 @@ type LogoProperties = {
 
 export const AKLogo = ({ className, themeVisualType }: LogoProperties): ReactNode => {
 	const [{ loading }] = useAppState();
-	const logoClass = cn(className, { loading });
+	const logoClass = cn(className, { loading: !!loading.size });
 
 	return themeVisualType === 2 || themeVisualType === 3 ? (
 		<AKLogoWhite className={logoClass} fill="white" />

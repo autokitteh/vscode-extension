@@ -648,8 +648,13 @@ export class ProjectController {
 			...startSessionArgs,
 			inputs: sessionInputs,
 		};
+
 		delete enrichedSessionArgs.sessionId;
 		const { data: sessionId, error } = await SessionsService.startSession(enrichedSessionArgs, this.projectId);
+
+		this.view.update({
+			type: MessageType.handleResponse,
+		});
 
 		if (error) {
 			const notification = `${translate().t("sessions.executionFailed")} `;
@@ -662,6 +667,10 @@ export class ProjectController {
 
 	async deactivateDeployment(deploymentId: string) {
 		const { error } = await DeploymentsService.deactivate(deploymentId);
+
+		this.view.update({
+			type: MessageType.handleResponse,
+		});
 
 		if (error) {
 			const notification = translate().t("deployments.deactivationFailed");
@@ -732,14 +741,14 @@ export class ProjectController {
 			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
 
 			this.view.update({
-				type: MessageType.deploymentDeletedResponse,
+				type: MessageType.handleResponse,
 				payload: false,
 			});
 			return;
 		}
 
 		this.view.update({
-			type: MessageType.deploymentDeletedResponse,
+			type: MessageType.handleResponse,
 			payload: true,
 		});
 
@@ -872,7 +881,7 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 
 			this.view.update({
-				type: MessageType.deleteSessionResponse,
+				type: MessageType.handleResponse,
 			});
 
 			return;
@@ -911,7 +920,7 @@ export class ProjectController {
 		});
 
 		this.view.update({
-			type: MessageType.deleteSessionResponse,
+			type: MessageType.handleResponse,
 		});
 
 		const log = translate().t("sessions.sessionDeleteSuccessIdProject", {

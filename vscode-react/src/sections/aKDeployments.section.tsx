@@ -11,10 +11,11 @@ import { Deployment } from "@type/models";
 
 export const AKDeployments = ({ height }: { height: string | number }) => {
 	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel>();
-	const [isLoading, setIsLoading] = useState(true);
 	const [totalDeployments, setTotalDeployments] = useState<number>();
 	const [deployments, setDeployments] = useState<Deployment[]>();
-	const [, dispatch] = useAppState();
+	const [{ loading }, dispatch] = useAppState();
+
+	const isLoading = loading.has(MessageType.getDeployments);
 
 	useIncomingMessageHandler({
 		setDeploymentsSection,
@@ -29,7 +30,7 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 			dispatch({ type: "SET_LAST_DEPLOYMENT", payload: deployments[0] });
 		}
 		if (deployments && isLoading) {
-			setIsLoading(false);
+			dispatch({ type: "STOP_LOADER", payload: MessageType.getDeployments });
 		}
 	}, [deployments]);
 

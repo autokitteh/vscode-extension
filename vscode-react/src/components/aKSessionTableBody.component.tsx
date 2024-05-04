@@ -36,13 +36,13 @@ export const AKSessionsTableBody = ({
 	};
 
 	// Incoming Messages Handler
-	const handleSessionDeletedResponse = () => {
-		dispatch({ type: "SET_LOADING", payload: false });
-
-		hidePopper();
+	const handleResponse = (messageType: MessageType) => {
+		if (messageType === MessageType.deleteSession) {
+			hidePopper();
+		}
 	};
 
-	useIncomingMessageHandler({ handleSessionDeletedResponse });
+	useIncomingMessageHandler({ handleResponse });
 
 	// Functions Section
 
@@ -68,6 +68,7 @@ export const AKSessionsTableBody = ({
 		};
 
 		sendMessage(MessageType.startSession, startSessionArgs);
+		dispatch({ type: "START_LOADER", payload: MessageType.startSession });
 	};
 
 	const stopSession = (session: Session) => {
@@ -75,21 +76,23 @@ export const AKSessionsTableBody = ({
 			return;
 		}
 		sendMessage(MessageType.stopSession, session.sessionId);
+		dispatch({ type: "START_LOADER", payload: MessageType.stopSession });
 	};
 
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogs, sessionId);
+		dispatch({ type: "START_LOADER", payload: MessageType.displaySessionLogs });
+
 		setSelectedSession(sessionId);
 	};
 
 	const deleteSessionConfirmed = () => {
 		sendMessage(MessageType.deleteSession, deleteSessionId);
-		dispatch({ type: "SET_LOADING", payload: true });
+		dispatch({ type: "START_LOADER", payload: MessageType.deleteSession });
 		return;
 	};
 
 	const deleteSessionDismissed = () => {
-		dispatch({ type: "SET_LOADING", payload: false });
 		setDeleteSessionId("");
 		hidePopper();
 	};
@@ -100,6 +103,8 @@ export const AKSessionsTableBody = ({
 				MessageType.displayErrorWithoutActionButton,
 				translate().t("reactApp.sessions.deleteSessionDisabled")
 			);
+			dispatch({ type: "START_LOADER", payload: MessageType.displayErrorWithoutActionButton });
+
 			return;
 		}
 		const refElement = event.currentTarget;

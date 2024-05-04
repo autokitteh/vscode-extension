@@ -26,7 +26,7 @@ export const AKHeader = () => {
 
 	useEffect(() => {
 		if (projectName) {
-			dispatch({ type: "SET_LOADING", payload: false });
+			dispatch({ type: "STOP_LOADER", payload: MessageType.openProjectInNewWindow });
 		}
 	}, [projectName]);
 

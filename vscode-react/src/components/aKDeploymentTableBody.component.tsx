@@ -33,12 +33,13 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	};
 
 	// Incoming Messages Handler
-	const handleDeploymentDeletedResponse = () => {
-		dispatch({ type: "SET_LOADING", payload: false });
-		hidePopper();
+	const handleResponse = (messageType: MessageType) => {
+		if (messageType === MessageType.startSession) {
+			hidePopper();
+		}
 	};
 
-	useIncomingMessageHandler({ handleDeploymentDeletedResponse });
+	useIncomingMessageHandler({ handleResponse });
 
 	// Functions Section
 	const showPopper = (popperId: string) => dispatch({ type: "SET_MODAL_NAME", payload: popperId });
@@ -68,14 +69,17 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	const deactivateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.deactivateDeployment, deploymentId);
+		dispatch({ type: "START_LOADER", payload: MessageType.deactivateDeployment });
 	};
 
 	const activateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.activateDeployment, deploymentId);
+		dispatch({ type: "START_LOADER", payload: MessageType.activateDeployment });
 	};
 
 	const getSessionsByDeploymentId = (deploymentId: string) => {
 		sendMessage(MessageType.selectDeployment, deploymentId);
+		dispatch({ type: "START_LOADER", payload: MessageType.selectDeployment });
 		setSelectedDeployment(deploymentId);
 	};
 
@@ -104,17 +108,17 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		};
 
 		sendMessage(MessageType.startSession, startSessionArgs);
+		dispatch({ type: "START_LOADER", payload: MessageType.startSession });
 
 		hidePopper();
 	};
 
 	const deleteDeploymentConfirmed = () => {
 		sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
-		dispatch({ type: "SET_LOADING", payload: true });
+		dispatch({ type: "START_LOADER", payload: MessageType.deleteDeployment });
 	};
 
 	const deleteDeploymentDismissed = () => {
-		dispatch({ type: "SET_LOADING", payload: false });
 		setDeleteDeploymentId("");
 		hidePopper();
 	};
@@ -122,6 +126,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const showDeleteDeploymentPopper = (event: React.MouseEvent<HTMLDivElement>, deployment: Deployment) => {
 		if (deployment.state === DeploymentState.ACTIVE_DEPLOYMENT) {
 			sendMessage(MessageType.displayErrorWithoutActionButton, translate().t("reactApp.deployments.deleteDisabled"));
+			dispatch({ type: "START_LOADER", payload: MessageType.displayErrorWithoutActionButton });
+
 			return;
 		}
 		const refElement = event.currentTarget;

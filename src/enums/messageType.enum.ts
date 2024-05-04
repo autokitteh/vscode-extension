@@ -16,9 +16,8 @@ export enum MessageType {
 	setEntrypoints = "SET_ENTRYPOINTS",
 	deleteDeployment = "DELETE_DEPLOYMENT",
 	deploymentDeleted = "DEPLOYMENT_DELETED",
-	deploymentDeletedResponse = "DEPLOYMENT_DELETED_RESPONSE",
 	deleteSession = "DELETE_SESSION",
-	deleteSessionResponse = "DELETE_SESSION_RESPONSE",
+	handleResponse = "HANDLE_RESPONSE",
 	displayErrorWithoutActionButton = "DISPLAY_ERROR_WITHOUT_ACTION_BUTTON",
 	stopSession = "STOP_SESSION",
 	copyProjectPath = "COPY_PROJECT_PATH",
@@ -27,4 +26,7 @@ export enum MessageType {
 	deleteProject = "DELETE_PROJECT",
 	setSessionsStateFilter = "SET_SESSIONS_STATE_FILTER",
 	loadInitialDataOnceViewReady = "LOAD_INITIAL_DATA_ONCE_VIEW_READY",
+	openProjectInNewWindow = "OPEN_PROJECT_IN_NEW_WINDOW",
+	getDeployments = "GET_DEPLOYMENTS",
+	getSessions = "GET_SESSIONS",
 }

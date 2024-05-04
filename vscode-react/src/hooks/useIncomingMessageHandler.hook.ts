@@ -11,11 +11,8 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 			const { type, payload } = event.data;
 
 			switch (type) {
-				case MessageType.deploymentDeletedResponse:
-					handlers.handleDeploymentDeletedResponse?.(payload as boolean);
-					break;
-				case MessageType.deleteSessionResponse:
-					handlers.handleSessionDeletedResponse?.(payload as boolean);
+				case MessageType.handleResponse:
+					handlers.handleResponse?.(payload as MessageType);
 					break;
 				case MessageType.setTheme:
 					handlers.setThemeVisualType?.(payload as Theme);
