@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { AKHeader } from "@react-components";
 import { AppStateProvider } from "@react-context";
-import { useAppDispatch } from "@react-context/appState.context";
-import { useIncomingMessageHandler } from "@react-hooks";
 import { AKDeployments, AKSessions } from "@react-sections";
 import "./app.css";
 import SplitPane from "split-pane-react";
@@ -10,12 +8,6 @@ import "split-pane-react/esm/themes/default.css";
 
 function App() {
 	const [sizes, setSizes] = useState<(number | string)[]>(["50%", "50%"]);
-	const { stopLoader } = useAppDispatch();
-
-	useIncomingMessageHandler({
-		handleResponse: stopLoader,
-	});
-
 	return (
 		<AppStateProvider>
 			<main>

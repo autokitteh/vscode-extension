@@ -3,7 +3,7 @@ import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { AKMonacoEditorModal, AKOverlay, AKSessionState, DeletePopper, PopperComponent } from "@react-components";
 import { AKTableRow, AKTableCell } from "@react-components/AKTable";
-import { useAppState } from "@react-context";
+import { useAppDispatch, useAppState } from "@react-context";
 import { SessionState } from "@react-enums";
 import { useCloseOnEscape, useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
@@ -20,11 +20,12 @@ export const AKSessionsTableBody = ({
 	setSelectedSession: (sessionId: string) => void;
 }) => {
 	// State Section
-	const [{ modalName, lastDeployment }, dispatch] = useAppState();
+	const [{ modalName, lastDeployment }] = useAppState();
 	const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [inputsModalVisible, setInputsModalVisible] = useState(false);
 	const [sessionInputs, setSessionInputs] = useState<string>();
+	const { startLoader, setModalName } = useAppDispatch();
 
 	// Hooks Section
 	useCloseOnEscape(() => setInputsModalVisible(false));
@@ -57,8 +58,8 @@ export const AKSessionsTableBody = ({
 		return `codicon codicon-debug-stop mr-2 ${isRunningClass}`;
 	};
 
-	const showPopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "sessionDelete" });
-	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
+	const showPopper = () => setModalName("sessionDelete");
+	const hidePopper = () => setModalName("");
 	const startSession = (session: Session) => {
 		const startSessionArgs = {
 			sessionId: session.sessionId,
@@ -68,7 +69,7 @@ export const AKSessionsTableBody = ({
 		};
 
 		sendMessage(MessageType.startSession, startSessionArgs);
-		dispatch({ type: "START_LOADER", payload: MessageType.startSession });
+		startLoader(MessageType.startSession);
 	};
 
 	const stopSession = (session: Session) => {
@@ -76,19 +77,19 @@ export const AKSessionsTableBody = ({
 			return;
 		}
 		sendMessage(MessageType.stopSession, session.sessionId);
-		dispatch({ type: "START_LOADER", payload: MessageType.stopSession });
+		startLoader(MessageType.stopSession);
 	};
 
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogs, sessionId);
-		dispatch({ type: "START_LOADER", payload: MessageType.displaySessionLogs });
+		startLoader(MessageType.displaySessionLogs);
 
 		setSelectedSession(sessionId);
 	};
 
 	const deleteSessionConfirmed = () => {
 		sendMessage(MessageType.deleteSession, deleteSessionId);
-		dispatch({ type: "START_LOADER", payload: MessageType.deleteSession });
+		startLoader(MessageType.deleteSession);
 		return;
 	};
 

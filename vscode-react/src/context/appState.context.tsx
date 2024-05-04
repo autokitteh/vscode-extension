@@ -53,8 +53,16 @@ export const useAppDispatch = () => {
 	const stopLoader = (loader: MessageType) => {
 		dispatch({ type: "STOP_LOADER", payload: loader });
 	};
+	const startLoader = (loader: MessageType) => {
+		dispatch({ type: "START_LOADER", payload: loader });
+	};
+	const setModalName = (modalName: string) => {
+		dispatch({ type: "SET_MODAL_NAME", payload: modalName });
+	};
 
 	return {
 		stopLoader,
+		startLoader,
+		setModalName,
 	};
 };

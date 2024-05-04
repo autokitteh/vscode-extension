@@ -4,7 +4,7 @@ import { translate } from "@i18n";
 import { AKDeploymentState, AKOverlay } from "@react-components";
 import { DeletePopper, ExecutePopper, PopperComponent } from "@react-components";
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
-import { useAppState } from "@react-context/appState.context";
+import { useAppDispatch, useAppState } from "@react-context/appState.context";
 import { useDeployments } from "@react-hooks";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
@@ -25,6 +25,8 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const [functions, setFunctions] = useState<SessionEntrypoint[]>();
 	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
+
+	const { startLoader } = useAppDispatch();
 
 	// Local variable
 	const deleteDeploymentPopperTranslations = {
@@ -69,17 +71,17 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	const deactivateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.deactivateDeployment, deploymentId);
-		dispatch({ type: "START_LOADER", payload: MessageType.deactivateDeployment });
+		startLoader(MessageType.deactivateDeployment);
 	};
 
 	const activateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.activateDeployment, deploymentId);
-		dispatch({ type: "START_LOADER", payload: MessageType.activateDeployment });
+		startLoader(MessageType.activateDeployment);
 	};
 
 	const getSessionsByDeploymentId = (deploymentId: string) => {
 		sendMessage(MessageType.selectDeployment, deploymentId);
-		dispatch({ type: "START_LOADER", payload: MessageType.selectDeployment });
+		startLoader(MessageType.selectDeployment);
 		setSelectedDeployment(deploymentId);
 	};
 
@@ -108,14 +110,14 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		};
 
 		sendMessage(MessageType.startSession, startSessionArgs);
-		dispatch({ type: "START_LOADER", payload: MessageType.startSession });
+		startLoader(MessageType.startSession);
 
 		hidePopper();
 	};
 
 	const deleteDeploymentConfirmed = () => {
 		sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
-		dispatch({ type: "START_LOADER", payload: MessageType.deleteDeployment });
+		startLoader(MessageType.deleteDeployment);
 	};
 
 	const deleteDeploymentDismissed = () => {

@@ -3,7 +3,7 @@ import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import DownloadIcon from "@react-assets/icons/download.svg?react";
 import { AKButton, AKLogo, AKOverlay, ProjectSettingsPopper, PopperComponent } from "@react-components";
-import { useAppState } from "@react-context/appState.context";
+import { useAppDispatch, useAppState } from "@react-context/appState.context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import "split-pane-react/esm/themes/default.css";
@@ -14,6 +14,12 @@ export const AKHeader = () => {
 	const [resourcesDir, setResourcesDir] = useState<string>("");
 	const [settingsPopperVisible, setSettingsPopperVisible] = useState<boolean>(false);
 	const pathPopperElementRef = useRef<HTMLDivElement | null>(null);
+
+	const { stopLoader, startLoader } = useAppDispatch();
+
+	useIncomingMessageHandler({
+		handleResponse: stopLoader,
+	});
 
 	useIncomingMessageHandler({
 		setProjectName,
@@ -26,18 +32,13 @@ export const AKHeader = () => {
 
 	useEffect(() => {
 		if (projectName) {
-			dispatch({ type: "STOP_LOADER", payload: MessageType.openProjectInNewWindow });
+			stopLoader(MessageType.openProjectInNewWindow);
 		}
 	}, [projectName]);
 
-	const buildProject = () => {
-		sendMessage(MessageType.buildProject);
-		dispatch({ type: "START_LOADER", payload: MessageType.buildProject });
-	};
-
-	const runProject = () => {
-		sendMessage(MessageType.runProject);
-		dispatch({ type: "START_LOADER", payload: MessageType.runProject });
+	const initAction = (action: MessageType) => {
+		sendMessage(action);
+		startLoader(action);
 	};
 
 	return (
@@ -46,14 +47,18 @@ export const AKHeader = () => {
 			<div className="text-vscode-input-foreground font-bold text-lg">{projectName}</div>
 			<AKButton
 				classes="mx-4"
-				onClick={() => buildProject}
+				onClick={() => initAction(MessageType.buildProject)}
 				disabled={!resourcesDir}
 				title={translate().t("reactApp.general.build")}
 			>
 				<div className="codicon codicon-tools mr-2"></div>
 				{translate().t("reactApp.general.build")}
 			</AKButton>
-			<AKButton onClick={() => runProject()} disabled={!resourcesDir} title={translate().t("reactApp.general.deploy")}>
+			<AKButton
+				onClick={() => initAction(MessageType.runProject)}
+				disabled={!resourcesDir}
+				title={translate().t("reactApp.general.deploy")}
+			>
 				<div className="codicon codicon-rocket mr-2"></div>
 				{translate().t("reactApp.general.deploy")}
 			</AKButton>
