@@ -60,9 +60,14 @@ export const useAppDispatch = () => {
 		dispatch({ type: "SET_MODAL_NAME", payload: modalName });
 	};
 
+	const setLastDeployment = (deployment: Deployment) => {
+		dispatch({ type: "SET_LAST_DEPLOYMENT", payload: deployment });
+	};
+
 	return {
 		stopLoader,
 		startLoader,
 		setModalName,
+		setLastDeployment,
 	};
 };

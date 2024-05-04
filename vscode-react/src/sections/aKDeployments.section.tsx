@@ -13,8 +13,8 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel>();
 	const [totalDeployments, setTotalDeployments] = useState<number>();
 	const [deployments, setDeployments] = useState<Deployment[]>();
-	const [{ loading }, dispatch] = useAppState();
-	const { stopLoader } = useAppDispatch();
+	const [{ loading }] = useAppState();
+	const { stopLoader, setLastDeployment } = useAppDispatch();
 
 	const isLoading = loading.has(MessageType.getDeployments);
 
@@ -28,7 +28,7 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 
 	useEffect(() => {
 		if (deployments && deployments.length) {
-			dispatch({ type: "SET_LAST_DEPLOYMENT", payload: deployments[0] });
+			setLastDeployment(deployments[0]);
 		}
 		if (deployments && isLoading) {
 			stopLoader(MessageType.getDeployments);

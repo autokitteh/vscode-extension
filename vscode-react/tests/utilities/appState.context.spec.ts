@@ -13,14 +13,14 @@ const mockDeployment: Deployment = {
 
 describe("appStateReducer", () => {
 	it("should handle SET_MODAL_NAME", () => {
-		const initialState = { modalName: "", lastDeployment: null };
+		const initialState = { modalName: "", lastDeployment: null, loading: new Set() };
 		const action = { type: "SET_MODAL_NAME", payload: "Modal1" };
 		const state = appStateReducer(initialState, action as Action);
 		expect(state.modalName).toBe("Modal1");
 	});
 
 	it("should handle SET_LAST_DEPLOYMENT", () => {
-		const initialState = { modalName: "", lastDeployment: null };
+		const initialState = { modalName: "", lastDeployment: null, loading: new Set() };
 		const action = { type: "SET_LAST_DEPLOYMENT" as const, payload: mockDeployment };
 		const state = appStateReducer(initialState, action);
 		expect(state.lastDeployment).toBe(mockDeployment);
