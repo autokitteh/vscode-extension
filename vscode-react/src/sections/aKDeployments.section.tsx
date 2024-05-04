@@ -4,7 +4,7 @@ import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
 import { AKDeploymentTableBody, AKDeploymentTableHeader } from "@react-components";
 import { AKTable, AKTableHeader, AKTableHeaderCell, AKTableMessage } from "@react-components/AKTable";
-import { useAppState } from "@react-context";
+import { useAppDispatch, useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import { Deployment } from "@type/models";
@@ -14,6 +14,7 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 	const [totalDeployments, setTotalDeployments] = useState<number>();
 	const [deployments, setDeployments] = useState<Deployment[]>();
 	const [{ loading }, dispatch] = useAppState();
+	const { stopLoader } = useAppDispatch();
 
 	const isLoading = loading.has(MessageType.getDeployments);
 
@@ -30,7 +31,7 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 			dispatch({ type: "SET_LAST_DEPLOYMENT", payload: deployments[0] });
 		}
 		if (deployments && isLoading) {
-			dispatch({ type: "STOP_LOADER", payload: MessageType.getDeployments });
+			stopLoader(MessageType.getDeployments);
 		}
 	}, [deployments]);
 
