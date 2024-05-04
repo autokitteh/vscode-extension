@@ -4,6 +4,7 @@ import { translate } from "@i18n";
 import DownloadIcon from "@react-assets/icons/download.svg?react";
 import ImportIcon from "@react-assets/icons/file-import.svg?react";
 import { AKButton } from "@react-components/aKButton.component";
+import { useAppState } from "@react-context";
 import { sendMessage } from "@react-utilities";
 
 export const ProjectSettingsPopper = ({
@@ -13,8 +14,14 @@ export const ProjectSettingsPopper = ({
 	resourcesDir: string;
 	closePopper: () => void;
 }) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [_, dispatch] = useAppState();
+
 	const postMessage = (message: MessageType, arg: string | undefined) => {
 		sendMessage(message, arg);
+		if (message === MessageType.deleteProject) {
+			dispatch({ type: "START_LOADER", payload: MessageType.deleteProject });
+		}
 		closePopper();
 	};
 

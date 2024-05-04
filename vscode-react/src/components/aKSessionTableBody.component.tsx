@@ -103,8 +103,6 @@ export const AKSessionsTableBody = ({
 				MessageType.displayErrorWithoutActionButton,
 				translate().t("reactApp.sessions.deleteSessionDisabled")
 			);
-			dispatch({ type: "START_LOADER", payload: MessageType.displayErrorWithoutActionButton });
-
 			return;
 		}
 		const refElement = event.currentTarget;

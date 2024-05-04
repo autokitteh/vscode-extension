@@ -1,1 +1,1 @@
-export { AppStateProvider, useAppState } from "@react-context/appState.context";
+export { AppStateProvider, useAppState, useAppDispatch } from "@react-context/appState.context";

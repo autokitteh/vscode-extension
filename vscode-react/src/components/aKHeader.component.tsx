@@ -30,24 +30,30 @@ export const AKHeader = () => {
 		}
 	}, [projectName]);
 
+	const buildProject = () => {
+		sendMessage(MessageType.buildProject);
+		dispatch({ type: "START_LOADER", payload: MessageType.buildProject });
+	};
+
+	const runProject = () => {
+		sendMessage(MessageType.runProject);
+		dispatch({ type: "START_LOADER", payload: MessageType.runProject });
+	};
+
 	return (
 		<div className="flex items-center w-full">
 			<AKLogo className="w-9 h-9 m-2" themeVisualType={themeVisualType} />
 			<div className="text-vscode-input-foreground font-bold text-lg">{projectName}</div>
 			<AKButton
 				classes="mx-4"
-				onClick={() => sendMessage(MessageType.buildProject)}
+				onClick={() => buildProject}
 				disabled={!resourcesDir}
 				title={translate().t("reactApp.general.build")}
 			>
 				<div className="codicon codicon-tools mr-2"></div>
 				{translate().t("reactApp.general.build")}
 			</AKButton>
-			<AKButton
-				onClick={() => sendMessage(MessageType.runProject)}
-				disabled={!resourcesDir}
-				title={translate().t("reactApp.general.deploy")}
-			>
+			<AKButton onClick={() => runProject()} disabled={!resourcesDir} title={translate().t("reactApp.general.deploy")}>
 				<div className="codicon codicon-rocket mr-2"></div>
 				{translate().t("reactApp.general.deploy")}
 			</AKButton>

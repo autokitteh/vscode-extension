@@ -69,6 +69,12 @@ export class ProjectController {
 
 	async deleteProject() {
 		const { error } = await ProjectsService.delete(this.projectId);
+
+		this.view.update({
+			type: MessageType.handleResponse,
+			payload: MessageType.deleteProject,
+		});
+
 		if (error) {
 			const notification = translate().t("projects.deleteFailed", { projectName: this.project?.name });
 			const log = translate().t("projects.deleteFailedError", { projectName: this.project?.name, error });
@@ -178,6 +184,12 @@ export class ProjectController {
 		}
 
 		this.view.update({ type: MessageType.setSessionsSection, payload: sessionsViewObject });
+
+		this.view.update({
+			type: MessageType.handleResponse,
+			payload: MessageType.getDeployments,
+		});
+
 		this.loadSingleshotArgs();
 	}
 
@@ -207,6 +219,11 @@ export class ProjectController {
 			type: MessageType.setEntrypoints,
 			payload: convertBuildRuntimesToViewTriggers(buildInfo.runtimes),
 		});
+
+		this.view.update({
+			type: MessageType.handleResponse,
+			payload: MessageType.setEntrypoints,
+		});
 	}
 
 	async setSessionsStateFilter(filterState: string) {
@@ -216,6 +233,11 @@ export class ProjectController {
 		this.filterSessionsState = filterState;
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		await this.fetchSessions();
+
+		this.view.update({
+			type: MessageType.handleResponse,
+			payload: MessageType.setSessionsStateFilter,
+		});
 	}
 
 	async fetchSessions() {
@@ -301,6 +323,11 @@ export class ProjectController {
 			type: MessageType.selectDeployment,
 			payload: deploymentId,
 		});
+
+		this.view.update({
+			type: MessageType.handleResponse,
+			payload: MessageType.selectDeployment,
+		});
 	}
 
 	printFinishedSessionLogs(lastState: SessionLogRecord) {
@@ -315,6 +342,7 @@ export class ProjectController {
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
 		const sessionHistoryStates = await this.getSessionHistory(sessionId);
+
 		if (!sessionHistoryStates) {
 			return;
 		}
@@ -369,6 +397,11 @@ export class ProjectController {
 
 		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessionId);
 		this.initSessionLogsDisplay(sessionId);
+
+		this.view.update({
+			type: MessageType.handleResponse,
+			payload: MessageType.displaySessionLogs,
+		});
 	}
 
 	async initSessionLogsDisplay(sessionId: string) {
@@ -530,9 +563,20 @@ export class ProjectController {
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
+
+			this.view.update({
+				type: MessageType.handleResponse,
+				payload: MessageType.buildProject,
+			});
+
 			return;
 		}
 		const { data: buildId, error } = await ProjectsService.build(this.projectId, mappedResources!);
+
+		this.view.update({
+			type: MessageType.handleResponse,
+			payload: MessageType.buildProject,
+		});
 		if (error) {
 			const notification = translate().t("projects.projectBuildFailed", {
 				id: this.projectId,
@@ -590,13 +634,25 @@ export class ProjectController {
 
 	async run() {
 		const { data: mappedResources, error: resourcesError } = await getLocalResources(this.projectId);
+
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
+
+			this.view.update({
+				type: MessageType.handleResponse,
+				payload: MessageType.runProject,
+			});
+
 			return;
 		}
 
 		const { data: deploymentId, error } = await ProjectsService.run(this.projectId, mappedResources!);
+
+		this.view.update({
+			type: MessageType.handleResponse,
+			payload: MessageType.runProject,
+		});
 
 		if (error) {
 			const notification = translate().t("projects.projectDeployFailed", {
@@ -622,6 +678,11 @@ export class ProjectController {
 
 	async activateDeployment(deploymentId: string) {
 		const { error } = await DeploymentsService.activate(deploymentId);
+
+		this.view.update({
+			type: MessageType.handleResponse,
+			payload: MessageType.activateDeployment,
+		});
 
 		if (error) {
 			const notification = translate().t("deployments.activationFailed");
@@ -654,6 +715,7 @@ export class ProjectController {
 
 		this.view.update({
 			type: MessageType.handleResponse,
+			payload: MessageType.startSession,
 		});
 
 		if (error) {
@@ -670,6 +732,7 @@ export class ProjectController {
 
 		this.view.update({
 			type: MessageType.handleResponse,
+			payload: MessageType.deactivateDeployment,
 		});
 
 		if (error) {
@@ -720,6 +783,12 @@ export class ProjectController {
 
 	async stopSession(sessionId: string) {
 		const { error } = await SessionsService.stop(sessionId);
+
+		this.view.update({
+			type: MessageType.handleResponse,
+			payload: MessageType.stopSession,
+		});
+
 		if (error) {
 			const notification = translate().t("sessions.stopFailed", { sessionId });
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
@@ -736,21 +805,17 @@ export class ProjectController {
 	async deleteDeployment(deploymentId: string) {
 		const { error } = await DeploymentsService.delete(deploymentId);
 
+		this.view.update({
+			type: MessageType.handleResponse,
+			payload: MessageType.deleteDeployment,
+		});
+
 		if (error) {
 			const errorMessage = translate().t("deployments.deleteFailedId", { deploymentId });
 			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
 
-			this.view.update({
-				type: MessageType.handleResponse,
-				payload: false,
-			});
 			return;
 		}
-
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: true,
-		});
 
 		const log = translate().t("deployments.deleteSucceedIdProject", {
 			deploymentId,
@@ -868,6 +933,12 @@ export class ProjectController {
 
 	async deleteSession(sessionId: string) {
 		const { error } = await SessionsService.deleteSession(sessionId);
+
+		this.view.update({
+			type: MessageType.handleResponse,
+			payload: MessageType.deleteSession,
+		});
+
 		if (error) {
 			const notification = translate().t("sessions.sessionDeleteFailId", { sessionId });
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
@@ -879,10 +950,6 @@ export class ProjectController {
 				deploymentId: this.selectedDeploymentId,
 			});
 			LoggerService.error(namespaces.projectController, log);
-
-			this.view.update({
-				type: MessageType.handleResponse,
-			});
 
 			return;
 		}
@@ -919,10 +986,6 @@ export class ProjectController {
 			payload: followingSessionIdAfterDelete,
 		});
 
-		this.view.update({
-			type: MessageType.handleResponse,
-		});
-
 		const log = translate().t("sessions.sessionDeleteSuccessIdProject", {
 			deploymentId: this.selectedDeploymentId,
 			sessionId: sessionId,
@@ -939,6 +1002,11 @@ export class ProjectController {
 			() => this.loadAndDisplayDeployments(),
 			this.deploymentsRefreshRate
 		);
+
+		this.view.update({
+			type: MessageType.handleResponse,
+			payload: MessageType.getDeployments,
+		});
 
 		const isResourcesPathExist = await this.getResourcesPathFromContext();
 		if (isResourcesPathExist) {
