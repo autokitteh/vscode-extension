@@ -14,7 +14,7 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 	const [totalDeployments, setTotalDeployments] = useState<number>();
 	const [deployments, setDeployments] = useState<Deployment[]>();
 	const [{ loading }] = useAppState();
-	const { stopLoader, setLastDeployment } = useAppDispatch();
+	const { setLastDeployment } = useAppDispatch();
 
 	const isLoading = loading.has(MessageType.getDeployments);
 
@@ -29,9 +29,6 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 	useEffect(() => {
 		if (deployments && deployments.length) {
 			setLastDeployment(deployments[0]);
-		}
-		if (deployments && isLoading) {
-			stopLoader(MessageType.getDeployments);
 		}
 	}, [deployments]);
 
