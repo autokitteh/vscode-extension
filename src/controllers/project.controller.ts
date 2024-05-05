@@ -259,7 +259,7 @@ export class ProjectController {
 			return;
 		}
 
-		this.sessions = sessions;
+		this.sessions = [...this.sessions!, ...sessions];
 		this.sessionsNextPageToken = nextPageToken;
 
 		const currentDeployment = this.deployments?.find(
