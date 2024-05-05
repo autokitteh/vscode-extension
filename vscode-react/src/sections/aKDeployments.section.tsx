@@ -25,9 +25,6 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 	}, []);
 
 	useEffect(() => {
-		if (deployments && deployments.length) {
-			dispatch({ type: "SET_LAST_DEPLOYMENT", payload: deployments[0] });
-		}
 		if (deployments && isLoading) {
 			setIsLoading(false);
 		}
@@ -37,6 +34,12 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 		if (deploymentsSection) {
 			setTotalDeployments(deploymentsSection.totalDeployments);
 			setDeployments(deploymentsSection?.deployments);
+			if (deploymentsSection?.lastDeployment) {
+				dispatch({ type: "SET_LAST_DEPLOYMENT", payload: deploymentsSection.lastDeployment });
+			}
+			if (deploymentsSection?.activeDeploymentId) {
+				dispatch({ type: "SET_ACTIVE_DEPLOYMENT_ID", payload: deploymentsSection.activeDeploymentId });
+			}
 		}
 	}, [deploymentsSection]);
 

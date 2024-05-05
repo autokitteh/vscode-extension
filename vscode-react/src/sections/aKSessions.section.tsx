@@ -5,6 +5,7 @@ import { SessionSectionViewModel } from "@models/views";
 import RotateIcon from "@react-assets/icons/rotate.svg?react";
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
 import { AKTableMessage } from "@react-components/AKTable";
+import { useAppState } from "@react-context";
 import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 
@@ -14,8 +15,11 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [stateFilter, setStateFilter] = useState<string>();
 	const [liveTailState, setLiveTailState] = useState<boolean>(true);
+	const [{ activeDeploymentId, selectedDeploymentId }] = useAppState();
 
-	const { sessions, totalSessions } = sessionsSection || {};
+	const currentDeploymentIsActive = activeDeploymentId === selectedDeploymentId;
+
+	const { sessions } = sessionsSection || {};
 
 	useIncomingMessageHandler({
 		setSessionsSection,
@@ -70,11 +74,8 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 					"text-left z-30 text-lg font-extralight items-center"
 				}
 			>
-				<div className="flex">
-					{`${translate().t("reactApp.sessions.tableTitle")}`}{" "}
-					{(totalSessions || totalSessions === 0) && `(${totalSessions})`}
-				</div>
-				{sessions && sessions.length && !isLoading ? (
+				<div className="flex">{`${translate().t("reactApp.sessions.tableTitle")}`}</div>
+				{!isLoading && currentDeploymentIsActive ? (
 					<div
 						className="ml-3 w-5 h-5 cursor-pointer"
 						onClick={() => toggleLiveTail()}

@@ -5,6 +5,8 @@ import { Action } from "src/types";
 type State = {
 	modalName: string;
 	lastDeployment: Deployment | null;
+	activeDeploymentId: string | null;
+	selectedDeploymentId: string | null;
 };
 
 const AppStateContext = createContext<[State, React.Dispatch<Action>] | undefined>(undefined);
@@ -15,13 +17,22 @@ export const appStateReducer = (state: State, action: Action): State => {
 			return { ...state, modalName: action.payload };
 		case "SET_LAST_DEPLOYMENT":
 			return { ...state, lastDeployment: action.payload };
+		case "SET_ACTIVE_DEPLOYMENT_ID":
+			return { ...state, activeDeploymentId: action.payload };
+		case "SET_SELECTED_DEPLOYMENT_ID":
+			return { ...state, selectedDeploymentId: action.payload };
 		default:
 			return state;
 	}
 };
 
 export const AppStateProvider = ({ children }: { children: React.ReactNode }) => {
-	const initialState: State = { modalName: "", lastDeployment: null };
+	const initialState: State = {
+		modalName: "",
+		lastDeployment: null,
+		activeDeploymentId: null,
+		selectedDeploymentId: null,
+	};
 	const value = useReducer(appStateReducer, initialState);
 
 	return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
