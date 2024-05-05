@@ -259,23 +259,11 @@ export class ProjectController {
 			return;
 		}
 
-		this.sessions = [...this.sessions!, ...sessions];
+		this.sessions = sessions;
 		this.sessionsNextPageToken = nextPageToken;
-
-		const currentDeployment = this.deployments?.find(
-			(deployment) => deployment.deploymentId === this.selectedDeploymentId
-		);
-
-		let totalSessions = 0;
-		if (currentDeployment) {
-			for (const deploymentStats of currentDeployment.sessionStats!) {
-				totalSessions += deploymentStats.count;
-			}
-		}
 
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions,
-			totalSessions,
 		};
 
 		this.view.update({
@@ -929,7 +917,6 @@ export class ProjectController {
 
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions: this.sessions,
-			totalSessions: this.sessions.length || 0,
 		};
 
 		this.view.update({
@@ -984,24 +971,12 @@ export class ProjectController {
 
 			const { sessions, nextPageToken } = data!;
 
-			this.sessions = sessions;
+			this.sessions = [...this.sessions!, ...sessions];
 
 			this.sessionsNextPageToken = nextPageToken;
 
-			const currentDeployment = this.deployments?.find(
-				(deployment) => deployment.deploymentId === this.selectedDeploymentId
-			);
-
-			let totalSessions = 0;
-			if (currentDeployment) {
-				for (const deploymentStats of currentDeployment.sessionStats!) {
-					totalSessions += deploymentStats.count;
-				}
-			}
-
 			const sessionsViewObject: SessionSectionViewModel = {
 				sessions: this.sessions,
-				totalSessions,
 			};
 
 			this.view.update({
