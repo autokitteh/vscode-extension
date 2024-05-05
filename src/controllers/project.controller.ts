@@ -3,7 +3,13 @@ import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
-import { MessageType, ProjectIntervalTypes, ProjectRecurringErrorMessages, SessionStateType } from "@enums";
+import {
+	DeploymentState,
+	MessageType,
+	ProjectIntervalTypes,
+	ProjectRecurringErrorMessages,
+	SessionStateType,
+} from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
@@ -158,9 +164,15 @@ export class ProjectController {
 
 		this.deployments = deployments;
 
+		const activeDeploymentId = deployments?.find(
+			(deployment: Deployment) => deployment.state === DeploymentState.ACTIVE_DEPLOYMENT
+		)?.deploymentId;
+
 		const deploymentsViewObject: DeploymentSectionViewModel = {
 			deployments,
 			totalDeployments: deployments?.length || 0,
+			lastDeployment: deployments ? deployments[0] : undefined,
+			activeDeploymentId,
 		};
 
 		this.view.update({
