@@ -29,6 +29,8 @@ export class SessionsService {
 		pageToken?: string
 	): Promise<ServiceResponse<{ sessions: Session[]; count: number; nextPageToken: string }>> {
 		try {
+			console.log("listByDeploymentId", deploymentId, filter, pageToken);
+
 			const {
 				sessions: sessionsResponse,
 				count,

@@ -945,17 +945,6 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, log);
 	}
 
-	removeDuplicates(array: Session[], key: keyof Session) {
-		const seen = new Map();
-		for (const item of array) {
-			if (!seen.has(item[key])) {
-				seen.set(item[key], item);
-			}
-		}
-
-		return [...seen.values()];
-	}
-
 	async loadMoreSessions() {
 		try {
 			if (!this.sessionsNextPageToken) {
@@ -983,7 +972,7 @@ export class ProjectController {
 
 			const { sessions, nextPageToken } = data!;
 
-			this.sessions = this.removeDuplicates([...this.sessions!, ...sessions], "sessionId");
+			this.sessions = sessions;
 
 			this.sessionsNextPageToken = nextPageToken;
 
@@ -1032,6 +1021,7 @@ export class ProjectController {
 		this.isLiveTailEnabled = !!isLiveStateOn;
 		if (isLiveStateOn) {
 			this.fetchSessions(true);
+			this.sessionsNextPageToken = undefined;
 		}
 	}
 }
