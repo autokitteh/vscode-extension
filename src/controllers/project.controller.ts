@@ -232,7 +232,7 @@ export class ProjectController {
 		await this.fetchSessions();
 	}
 
-	async fetchSessions(forcePushToView: boolean = false) {
+	async fetchSessions() {
 		if (!this.selectedDeploymentId) {
 			return;
 		}
@@ -255,7 +255,7 @@ export class ProjectController {
 
 		const { sessions, nextPageToken } = data!;
 
-		if (isEqual(this.sessions, sessions) && this.sessions?.length && !forcePushToView) {
+		if (isEqual(this.sessions, sessions)) {
 			return;
 		}
 
@@ -1032,7 +1032,7 @@ export class ProjectController {
 	toggleSessionsLiveTail(isLiveStateOn: Boolean) {
 		this.isLiveTailEnabled = !!isLiveStateOn;
 		if (isLiveStateOn) {
-			this.fetchSessions(true);
+			this.fetchSessions();
 			this.sessionsNextPageToken = undefined;
 		}
 	}
