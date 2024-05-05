@@ -2,13 +2,14 @@ import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels } from "@constants";
+import { ProjectManager } from "@controllers/managers/project.manager";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { MessageType, ProjectIntervalTypes, ProjectRecurringErrorMessages, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
 import { reverseSessionStateConverter } from "@models/utils";
-import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
+import { DeploymentsService, SessionsService, LoggerService } from "@services";
 import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
@@ -34,6 +35,8 @@ export class ProjectController {
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
+
+	private projectManager = new ProjectManager();
 
 	constructor(
 		projectView: IProjectView,
@@ -68,18 +71,7 @@ export class ProjectController {
 	}
 
 	async deleteProject() {
-		const { error } = await ProjectsService.delete(this.projectId);
-		if (error) {
-			const notification = translate().t("projects.deleteFailed", { projectName: this.project?.name });
-			const log = translate().t("projects.deleteFailedError", { projectName: this.project?.name, error });
-			commands.executeCommand(vsCommands.showErrorMessage, notification);
-			LoggerService.error(namespaces.projectController, log);
-			return;
-		}
-		const successMessage = translate().t("projects.deleteSucceed", { projectName: this.project?.name });
-		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
-		LoggerService.info(namespaces.projectController, successMessage);
-		this.onProjectDeleteCB?.(this.projectId);
+		await this.projectManager.deleteProject(this.projectId, this.project!.name, this.onProjectDeleteCB);
 	}
 
 	async getSessionHistory(sessionId: string) {
@@ -412,15 +404,9 @@ export class ProjectController {
 	public async openProject(onProjectDisposeCB: Callback<string>, onProjectDeleteCB: Callback<string>) {
 		this.onProjectDisposeCB = onProjectDisposeCB;
 		this.onProjectDeleteCB = onProjectDeleteCB;
-		const { data: project, error } = await ProjectsService.get(this.projectId);
-		const log = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
-		if (error) {
-			LoggerService.error(namespaces.projectController, (error as Error).message);
-			commands.executeCommand(vsCommands.showErrorMessage, log);
-			return;
-		}
+		const project = await this.projectManager.getProjectById(this.projectId);
 		if (!project) {
-			LoggerService.error(namespaces.projectController, log);
+			return;
 		}
 
 		this.project = project;
@@ -435,20 +421,7 @@ export class ProjectController {
 	}
 
 	async downloadResources(downloadPath?: string) {
-		const { data: existingResources, error } = await ProjectsService.getResources(this.projectId);
-
-		if (error) {
-			const notification = translate().t("projects.downloadResourcesDirectoryErrorForProject", {
-				projectName: this.project?.name,
-			});
-			const log = translate().t("projects.downloadResourcesDirectoryError", {
-				projectName: this.project?.name,
-				error: (error as Error).message,
-			});
-			LoggerService.error(namespaces.projectController, log);
-			commands.executeCommand(vsCommands.showErrorMessage, notification);
-			return;
-		}
+		const existingResources = await this.projectManager.getResources(this.projectId, this.project!.name);
 
 		if (!existingResources || !Object.keys(existingResources).length) {
 			commands.executeCommand(
@@ -532,20 +505,13 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
 			return;
 		}
-		const { data: buildId, error } = await ProjectsService.build(this.projectId, mappedResources!);
-		if (error) {
-			const notification = translate().t("projects.projectBuildFailed", {
-				id: this.projectId,
-			});
-			const log = `${notification} - ${(error as Error).message}`;
 
-			commands.executeCommand(vsCommands.showErrorMessage, notification);
-			LoggerService.error(namespaces.projectController, log);
+		const buildId = await this.projectManager.buildProject(this.projectId, mappedResources!);
+		if (!buildId) {
 			return;
 		}
 		const successMessage = translate().t("projects.projectBuildSucceed", { id: buildId });
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
-
 		LoggerService.info(namespaces.projectController, successMessage);
 	}
 
@@ -596,22 +562,16 @@ export class ProjectController {
 			return;
 		}
 
-		const { data: deploymentId, error } = await ProjectsService.run(this.projectId, mappedResources!);
+		const deploymentId = await this.projectManager.runProject(this.projectId, mappedResources!);
 
-		if (error) {
-			const notification = translate().t("projects.projectDeployFailed", {
-				id: this.projectId,
-			});
-			const log = `${notification} - ${(error as Error).message}`;
-			LoggerService.error(namespaces.projectController, log);
-			commands.executeCommand(vsCommands.showErrorMessage, notification);
-
+		if (!deploymentId) {
 			return;
 		}
 
 		const successMessage = translate().t("projects.projectDeploySucceed", { id: this.projectId });
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 		LoggerService.info(namespaces.projectController, successMessage);
+
 		this.selectedDeploymentId = deploymentId!;
 
 		this.view.update({
