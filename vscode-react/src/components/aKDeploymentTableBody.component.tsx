@@ -4,9 +4,8 @@ import { translate } from "@i18n";
 import { AKDeploymentState, AKOverlay } from "@react-components";
 import { DeletePopper, ExecutePopper, PopperComponent } from "@react-components";
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
-import { useAppDispatch, useAppState } from "@react-context/appState.context";
+import { useAppState } from "@react-context/appState.context";
 import { useDeployments } from "@react-hooks";
-import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment, SessionEntrypoint } from "@type/models";
 import { createPortal } from "react-dom";
@@ -26,22 +25,11 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
 
-	const { startLoader } = useAppDispatch();
-
 	// Local variable
 	const deleteDeploymentPopperTranslations = {
 		title: translate().t("reactApp.deployments.deletionApprovalQuestion"),
 		subtitle: translate().t("reactApp.deployments.deletionApprovalQuestionSubtitle"),
 	};
-
-	// Incoming Messages Handler
-	const handleResponse = (messageType: MessageType) => {
-		if (messageType === MessageType.startSession) {
-			hidePopper();
-		}
-	};
-
-	useIncomingMessageHandler({ handleResponse });
 
 	// Functions Section
 	const showPopper = (popperId: string) => dispatch({ type: "SET_MODAL_NAME", payload: popperId });
@@ -71,17 +59,14 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	const deactivateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.deactivateDeployment, deploymentId);
-		startLoader(MessageType.deactivateDeployment);
 	};
 
 	const activateBuild = (deploymentId: string) => {
 		sendMessage(MessageType.activateDeployment, deploymentId);
-		startLoader(MessageType.activateDeployment);
 	};
 
 	const getSessionsByDeploymentId = (deploymentId: string) => {
 		sendMessage(MessageType.selectDeployment, deploymentId);
-		startLoader(MessageType.selectDeployment);
 		setSelectedDeployment(deploymentId);
 	};
 
@@ -110,14 +95,12 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		};
 
 		sendMessage(MessageType.startSession, startSessionArgs);
-		startLoader(MessageType.startSession);
-
 		hidePopper();
 	};
 
 	const deleteDeploymentConfirmed = () => {
 		sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
-		startLoader(MessageType.deleteDeployment);
+		hidePopper();
 	};
 
 	const deleteDeploymentDismissed = () => {

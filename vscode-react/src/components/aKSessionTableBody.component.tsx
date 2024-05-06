@@ -5,7 +5,7 @@ import { AKMonacoEditorModal, AKOverlay, AKSessionState, DeletePopper, PopperCom
 import { AKTableRow, AKTableCell } from "@react-components/AKTable";
 import { useAppDispatch, useAppState } from "@react-context";
 import { SessionState } from "@react-enums";
-import { useCloseOnEscape, useIncomingMessageHandler } from "@react-hooks";
+import { useCloseOnEscape } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
 import { createPortal } from "react-dom";
@@ -25,7 +25,7 @@ export const AKSessionsTableBody = ({
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [inputsModalVisible, setInputsModalVisible] = useState(false);
 	const [sessionInputs, setSessionInputs] = useState<string>();
-	const { startLoader, setModalName } = useAppDispatch();
+	const { setModalName } = useAppDispatch();
 
 	// Hooks Section
 	useCloseOnEscape(() => setInputsModalVisible(false));
@@ -35,15 +35,6 @@ export const AKSessionsTableBody = ({
 		title: translate().t("reactApp.sessions.deletionApprovalQuestion"),
 		subtitle: translate().t("reactApp.sessions.deletionApprovalQuestionSubtitle"),
 	};
-
-	// Incoming Messages Handler
-	const handleResponse = (messageType: MessageType) => {
-		if (messageType === MessageType.deleteSession) {
-			hidePopper();
-		}
-	};
-
-	useIncomingMessageHandler({ handleResponse });
 
 	// Functions Section
 
@@ -69,7 +60,6 @@ export const AKSessionsTableBody = ({
 		};
 
 		sendMessage(MessageType.startSession, startSessionArgs);
-		startLoader(MessageType.startSession);
 	};
 
 	const stopSession = (session: Session) => {
@@ -77,20 +67,16 @@ export const AKSessionsTableBody = ({
 			return;
 		}
 		sendMessage(MessageType.stopSession, session.sessionId);
-		startLoader(MessageType.stopSession);
 	};
 
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogs, sessionId);
-		startLoader(MessageType.displaySessionLogs);
-
 		setSelectedSession(sessionId);
 	};
 
 	const deleteSessionConfirmed = () => {
 		sendMessage(MessageType.deleteSession, deleteSessionId);
-		startLoader(MessageType.deleteSession);
-		return;
+		hidePopper();
 	};
 
 	const deleteSessionDismissed = () => {

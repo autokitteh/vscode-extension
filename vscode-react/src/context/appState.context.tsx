@@ -1,12 +1,11 @@
 import React, { createContext, ReactNode, useContext, useReducer } from "react";
-import { MessageType } from "@enums";
 import { Deployment } from "@type/models";
 import { Action } from "src/types";
 
 type State = {
 	modalName: string;
 	lastDeployment: Deployment | null;
-	loading: Set<MessageType>;
+	loading: boolean;
 };
 
 const AppStateContext = createContext<[State, React.Dispatch<Action>] | undefined>(undefined);
@@ -17,12 +16,8 @@ export const appStateReducer = (state: State, action: Action): State => {
 			return { ...state, modalName: action.payload };
 		case "SET_LAST_DEPLOYMENT":
 			return { ...state, lastDeployment: action.payload };
-		case "START_LOADER":
-			return { ...state, loading: new Set(state.loading).add(action.payload) };
-		case "STOP_LOADER":
-			const newLoading = new Set(state.loading);
-			newLoading.delete(action.payload);
-			return { ...state, loading: newLoading };
+		case "SET_LOADER":
+			return { ...state, loading: action.payload };
 		default:
 			return state;
 	}
@@ -32,7 +27,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
 	const initialState: State = {
 		modalName: "",
 		lastDeployment: null,
-		loading: new Set([MessageType.openProjectInNewWindow, MessageType.getDeployments, MessageType.getSessions]),
+		loading: true,
 	};
 
 	const [state, dispatch] = useReducer(appStateReducer, initialState);
@@ -50,11 +45,11 @@ export const useAppState = () => {
 
 export const useAppDispatch = () => {
 	const [, dispatch] = useAppState();
-	const stopLoader = (loader: MessageType) => {
-		dispatch({ type: "STOP_LOADER", payload: loader });
+	const stopLoader = () => {
+		dispatch({ type: "SET_LOADER", payload: false });
 	};
-	const startLoader = (loader: MessageType) => {
-		dispatch({ type: "START_LOADER", payload: loader });
+	const startLoader = () => {
+		dispatch({ type: "SET_LOADER", payload: true });
 	};
 	const setModalName = (modalName: string) => {
 		dispatch({ type: "SET_MODAL_NAME", payload: modalName });

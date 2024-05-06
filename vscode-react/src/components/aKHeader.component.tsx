@@ -18,7 +18,8 @@ export const AKHeader = () => {
 	const { stopLoader, startLoader } = useAppDispatch();
 
 	useIncomingMessageHandler({
-		handleResponse: stopLoader,
+		stopLoader,
+		startLoader,
 	});
 
 	useIncomingMessageHandler({
@@ -32,14 +33,9 @@ export const AKHeader = () => {
 
 	useEffect(() => {
 		if (projectName) {
-			stopLoader(MessageType.openProjectInNewWindow);
+			stopLoader();
 		}
 	}, [projectName]);
-
-	const initAction = (action: MessageType) => {
-		sendMessage(action);
-		startLoader(action);
-	};
 
 	return (
 		<div className="flex items-center w-full">
@@ -47,7 +43,7 @@ export const AKHeader = () => {
 			<div className="text-vscode-input-foreground font-bold text-lg">{projectName}</div>
 			<AKButton
 				classes="mx-4"
-				onClick={() => initAction(MessageType.buildProject)}
+				onClick={() => sendMessage(MessageType.buildProject)}
 				disabled={!resourcesDir}
 				title={translate().t("reactApp.general.build")}
 			>
@@ -55,7 +51,7 @@ export const AKHeader = () => {
 				{translate().t("reactApp.general.build")}
 			</AKButton>
 			<AKButton
-				onClick={() => initAction(MessageType.runProject)}
+				onClick={() => sendMessage(MessageType.runProject)}
 				disabled={!resourcesDir}
 				title={translate().t("reactApp.general.deploy")}
 			>

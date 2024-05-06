@@ -11,9 +11,6 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 			const { type, payload } = event.data;
 
 			switch (type) {
-				case MessageType.handleResponse:
-					handlers.handleResponse?.(payload as MessageType);
-					break;
 				case MessageType.setTheme:
 					handlers.setThemeVisualType?.(payload as Theme);
 					break;
@@ -34,6 +31,15 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 					break;
 				case MessageType.setSessionsSection:
 					handlers.setSessionsSection?.(payload as SessionSectionViewModel);
+					break;
+				case MessageType.selectSession:
+					handlers.setSelectedSession?.(payload as string);
+					break;
+				case MessageType.startLoader:
+					handlers.startLoader?.();
+					break;
+				case MessageType.stopLoader:
+					handlers.stopLoader?.();
 					break;
 				case MessageType.selectSession:
 					handlers.setSelectedSession?.(payload as string);

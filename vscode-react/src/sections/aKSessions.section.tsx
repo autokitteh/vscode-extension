@@ -5,7 +5,6 @@ import { SessionSectionViewModel } from "@models/views";
 import { AKSessionsTableHeader } from "@react-components";
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
 import { AKTable, AKTableHeader, AKTableHeaderCell, AKTableMessage } from "@react-components/AKTable";
-import { useAppDispatch, useAppState } from "@react-context";
 import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 
@@ -13,12 +12,8 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [stateFilter, setStateFilter] = useState<string>();
-	const [{ loading }, dispatch] = useAppState();
-	const isLoading = loading.has(MessageType.getSessions);
-
+	const [isLoading, setIsLoading] = useState(true);
 	const { sessions, totalSessions } = sessionsSection || {};
-
-	const { startLoader } = useAppDispatch();
 
 	useIncomingMessageHandler({
 		setSessionsSection,
@@ -27,7 +22,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 
 	useEffect(() => {
 		if (isLoading) {
-			dispatch({ type: "STOP_LOADER", payload: MessageType.getSessions });
+			setIsLoading(false);
 		}
 	}, [sessions]);
 
@@ -39,7 +34,6 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 
 	const filterSessions = (value: string) => {
 		setStateFilter(value);
-		startLoader(MessageType.setSessionsStateFilter);
 
 		if (value === "all") {
 			sendMessage(MessageType.setSessionsStateFilter, undefined);

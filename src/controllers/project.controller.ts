@@ -34,6 +34,7 @@ export class ProjectController {
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
+	private loadingRequestsCounter: number = 1;
 
 	constructor(
 		projectView: IProjectView,
@@ -49,6 +50,7 @@ export class ProjectController {
 	}
 
 	reveal(): void {
+		this.startLoading();
 		if (!this.project) {
 			const projectNotFoundMessage = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
 			commands.executeCommand(vsCommands.showErrorMessage, projectNotFoundMessage);
@@ -58,22 +60,22 @@ export class ProjectController {
 		this.view.reveal(this.project.name);
 
 		this.notifyViewResourcesPathChanged();
+		this.stopLoading();
 	}
 
 	setProjectNameInView() {
+		this.startLoading();
 		this.view.update({
 			type: MessageType.setProjectName,
 			payload: this.project?.name,
 		});
+		this.stopLoading();
 	}
 
 	async deleteProject() {
+		this.startLoading();
 		const { error } = await ProjectsService.delete(this.projectId);
-
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.deleteProject,
-		});
+		this.stopLoading();
 
 		if (error) {
 			const notification = translate().t("projects.deleteFailed", { projectName: this.project?.name });
@@ -89,8 +91,10 @@ export class ProjectController {
 	}
 
 	async getSessionHistory(sessionId: string) {
+		this.startLoading();
 		const { data: sessionHistoryStates, error: sessionsError } =
 			await SessionsService.getLogRecordsBySessionId(sessionId);
+		this.stopLoading();
 
 		if (sessionsError) {
 			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionHistory)) {
@@ -140,7 +144,9 @@ export class ProjectController {
 	};
 
 	async loadAndDisplayDeployments() {
+		this.startLoading();
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
+		this.stopLoading();
 
 		if (error) {
 			const notification = translate().t("errors.noResponse");
@@ -185,12 +191,25 @@ export class ProjectController {
 
 		this.view.update({ type: MessageType.setSessionsSection, payload: sessionsViewObject });
 
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.getDeployments,
-		});
-
 		this.loadSingleshotArgs();
+	}
+
+	startLoading() {
+		this.loadingRequestsCounter++;
+		if (this.loadingRequestsCounter === 1) {
+			this.view.update({
+				type: MessageType.startLoader,
+			});
+		}
+	}
+
+	stopLoading() {
+		this.loadingRequestsCounter--;
+		if (this.loadingRequestsCounter <= 0) {
+			this.view.update({
+				type: MessageType.stopLoader,
+			});
+		}
 	}
 
 	async loadSingleshotArgs() {
@@ -200,9 +219,11 @@ export class ProjectController {
 			return;
 		}
 
+		this.startLoading();
 		const { data: buildDescription, error: buildDescriptionError } = await BuildsService.getBuildDescription(
 			lastDeployment.buildId
 		);
+		this.stopLoading();
 
 		if (buildDescriptionError) {
 			LoggerService.error(namespaces.projectController, translate().t("errors.buildInformationForSingleshotNotLoaded"));
@@ -219,11 +240,6 @@ export class ProjectController {
 			type: MessageType.setEntrypoints,
 			payload: convertBuildRuntimesToViewTriggers(buildInfo.runtimes),
 		});
-
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.setEntrypoints,
-		});
 	}
 
 	async setSessionsStateFilter(filterState: string) {
@@ -233,11 +249,6 @@ export class ProjectController {
 		this.filterSessionsState = filterState;
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		await this.fetchSessions();
-
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.setSessionsStateFilter,
-		});
 	}
 
 	async fetchSessions() {
@@ -247,9 +258,11 @@ export class ProjectController {
 
 		const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
 
+		this.startLoading();
 		const { data: sessions, error } = await SessionsService.listByDeploymentId(this.selectedDeploymentId, {
 			stateType: selectedSessionStateFilter,
 		});
+		this.stopLoading();
 
 		if (error) {
 			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessions)) {
@@ -323,11 +336,6 @@ export class ProjectController {
 			type: MessageType.selectDeployment,
 			payload: deploymentId,
 		});
-
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.selectDeployment,
-		});
 	}
 
 	printFinishedSessionLogs(lastState: SessionLogRecord) {
@@ -397,11 +405,6 @@ export class ProjectController {
 
 		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessionId);
 		this.initSessionLogsDisplay(sessionId);
-
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.displaySessionLogs,
-		});
 	}
 
 	async initSessionLogsDisplay(sessionId: string) {
@@ -445,8 +448,12 @@ export class ProjectController {
 	public async openProject(onProjectDisposeCB: Callback<string>, onProjectDeleteCB: Callback<string>) {
 		this.onProjectDisposeCB = onProjectDisposeCB;
 		this.onProjectDeleteCB = onProjectDeleteCB;
+
+		this.startLoading();
 		const { data: project, error } = await ProjectsService.get(this.projectId);
 		const log = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
+		this.stopLoading();
+
 		if (error) {
 			LoggerService.error(namespaces.projectController, (error as Error).message);
 			commands.executeCommand(vsCommands.showErrorMessage, log);
@@ -468,7 +475,9 @@ export class ProjectController {
 	}
 
 	async downloadResources(downloadPath?: string) {
+		this.startLoading();
 		const { data: existingResources, error } = await ProjectsService.getResources(this.projectId);
+		this.stopLoading();
 
 		if (error) {
 			const notification = translate().t("projects.downloadResourcesDirectoryErrorForProject", {
@@ -564,19 +573,12 @@ export class ProjectController {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
 
-			this.view.update({
-				type: MessageType.handleResponse,
-				payload: MessageType.buildProject,
-			});
-
 			return;
 		}
+		this.startLoading();
 		const { data: buildId, error } = await ProjectsService.build(this.projectId, mappedResources!);
+		this.stopLoading();
 
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.buildProject,
-		});
 		if (error) {
 			const notification = translate().t("projects.projectBuildFailed", {
 				id: this.projectId,
@@ -638,21 +640,12 @@ export class ProjectController {
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
-
-			this.view.update({
-				type: MessageType.handleResponse,
-				payload: MessageType.runProject,
-			});
-
 			return;
 		}
 
+		this.startLoading();
 		const { data: deploymentId, error } = await ProjectsService.run(this.projectId, mappedResources!);
-
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.runProject,
-		});
+		this.stopLoading();
 
 		if (error) {
 			const notification = translate().t("projects.projectDeployFailed", {
@@ -677,12 +670,9 @@ export class ProjectController {
 	}
 
 	async activateDeployment(deploymentId: string) {
+		this.startLoading();
 		const { error } = await DeploymentsService.activate(deploymentId);
-
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.activateDeployment,
-		});
+		this.stopLoading();
 
 		if (error) {
 			const notification = translate().t("deployments.activationFailed");
@@ -711,12 +701,9 @@ export class ProjectController {
 		};
 
 		delete enrichedSessionArgs.sessionId;
+		this.startLoading();
 		const { data: sessionId, error } = await SessionsService.startSession(enrichedSessionArgs, this.projectId);
-
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.startSession,
-		});
+		this.stopLoading();
 
 		if (error) {
 			const notification = `${translate().t("sessions.executionFailed")} `;
@@ -728,12 +715,9 @@ export class ProjectController {
 	}
 
 	async deactivateDeployment(deploymentId: string) {
+		this.startLoading();
 		const { error } = await DeploymentsService.deactivate(deploymentId);
-
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.deactivateDeployment,
-		});
+		this.stopLoading();
 
 		if (error) {
 			const notification = translate().t("deployments.deactivationFailed");
@@ -782,12 +766,9 @@ export class ProjectController {
 	}
 
 	async stopSession(sessionId: string) {
+		this.startLoading();
 		const { error } = await SessionsService.stop(sessionId);
-
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.stopSession,
-		});
+		this.stopLoading();
 
 		if (error) {
 			const notification = translate().t("sessions.stopFailed", { sessionId });
@@ -803,12 +784,9 @@ export class ProjectController {
 	}
 
 	async deleteDeployment(deploymentId: string) {
+		this.startLoading();
 		const { error } = await DeploymentsService.delete(deploymentId);
-
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.deleteDeployment,
-		});
+		this.stopLoading();
 
 		if (error) {
 			const errorMessage = translate().t("deployments.deleteFailedId", { deploymentId });
@@ -932,12 +910,9 @@ export class ProjectController {
 	}
 
 	async deleteSession(sessionId: string) {
+		this.startLoading();
 		const { error } = await SessionsService.deleteSession(sessionId);
-
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.deleteSession,
-		});
+		this.stopLoading();
 
 		if (error) {
 			const notification = translate().t("sessions.sessionDeleteFailId", { sessionId });
@@ -1003,10 +978,7 @@ export class ProjectController {
 			this.deploymentsRefreshRate
 		);
 
-		this.view.update({
-			type: MessageType.handleResponse,
-			payload: MessageType.getDeployments,
-		});
+		this.stopLoading();
 
 		const isResourcesPathExist = await this.getResourcesPathFromContext();
 		if (isResourcesPathExist) {
