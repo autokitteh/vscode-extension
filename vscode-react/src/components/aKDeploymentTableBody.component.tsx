@@ -13,14 +13,13 @@ import { createPortal } from "react-dom";
 
 export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
 	// State Hooks Section
-	const { selectedDeploymentId, entrypoints } = useDeployments();
-	const [{ modalName }, dispatch] = useAppState();
+	const { entrypoints } = useDeployments();
+	const [{ modalName, selectedDeploymentId }, dispatch] = useAppState();
 	const executePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [selectedFile, setSelectedFile] = useState<string>("");
 	const [selectedFunction, setSelectedFunction] = useState<string>("");
 	const [selectedEntrypoint, setSelectedEntrypoint] = useState<SessionEntrypoint>();
-	const [selectedDeployment, setSelectedDeployment] = useState("");
 	const [files, setFiles] = useState<Record<string, SessionEntrypoint[]>>();
 	const [functions, setFunctions] = useState<SessionEntrypoint[]>();
 	const [isDeletingInProcess, setIsDeletingInProgress] = useState(false);
@@ -77,7 +76,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 
 	const getSessionsByDeploymentId = (deploymentId: string) => {
 		sendMessage(MessageType.selectDeployment, deploymentId);
-		setSelectedDeployment(deploymentId);
 		dispatch({ type: "SET_SELECTED_DEPLOYMENT_ID", payload: deploymentId });
 	};
 
@@ -147,16 +145,10 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		}
 	}, [entrypoints]);
 
-	useEffect(() => {
-		if (typeof selectedDeploymentId === "string") {
-			setSelectedDeployment(selectedDeploymentId);
-		}
-	}, [selectedDeploymentId]);
-
 	return (
 		deployments &&
 		deployments.map((deployment: Deployment, index: number) => (
-			<AKTableRow key={deployment.deploymentId} isSelected={selectedDeployment === deployment.deploymentId}>
+			<AKTableRow key={deployment.deploymentId} isSelected={selectedDeploymentId === deployment.deploymentId}>
 				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getTimePassed(deployment.createdAt)}
 				</AKTableCell>

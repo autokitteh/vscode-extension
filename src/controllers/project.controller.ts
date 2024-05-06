@@ -131,6 +131,9 @@ export class ProjectController {
 		if (!selectedSessionId) {
 			return;
 		}
+		this.sessions = undefined;
+		await this.fetchSessions();
+
 		this.initSessionLogsDisplay(selectedSessionId);
 		if (this.selectedDeploymentId) {
 			this.isLiveTailEnabled.set(this.selectedDeploymentId, this.liveTailStateOnDisable);
@@ -176,6 +179,7 @@ export class ProjectController {
 			totalDeployments: deployments?.length || 0,
 			lastDeployment: deployments ? deployments[0] : undefined,
 			activeDeploymentId,
+			selectedDeploymentId: this.selectedDeploymentId,
 		};
 
 		this.view.update({
