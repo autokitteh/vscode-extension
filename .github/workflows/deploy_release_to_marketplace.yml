@@ -1,0 +1,39 @@
+name: autokittehVSCode CI - Publish to VSCode Marketplace
+on: workflow_dispatch
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          submodules: true
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "21.2.0"
+          cache: "npm"
+      - name: Pull submodule from remote
+        run: git submodule update --remote
+      - name: Install dependencies for both vscode and react app
+        run: npm ci
+      - name: Run vscode and react app tests
+        run: npm run test:all
+      - name: Run vscode TS validation extension and react app
+        run: npm run compile:all
+      - name: Run vscode TS build extension and react app
+        run: npm run build:all
+      - name: Publish to VSCode Marketplace
+        uses: lannonbr/vsce-action@3.0.0
+        if: github.ref == 'refs/heads/main'
+        with:
+          args: "publish -p $VSCE_TOKEN"
+        env:
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}

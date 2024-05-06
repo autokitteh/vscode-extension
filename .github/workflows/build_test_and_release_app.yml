@@ -42,7 +42,7 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/main'
     permissions:
       contents: write
       pull-requests: write
@@ -63,5 +63,5 @@ jobs:
         run: npm ci
       - name: Release and tag a new version
         env:
-          SLACK_WEBHOOK_URL: ${{ github.ref == 'refs/heads/main' && secrets.SLACK_WEBHOOK_URL || github.ref == 'refs/heads/dev' && secrets.SLACK_WEBHOOK_URL_BETA }}
+          SLACK_WEBHOOK_URL: ${{ github.ref == 'refs/heads/main' && secrets.SLACK_WEBHOOK_URL }}
         run: npx semantic-release
