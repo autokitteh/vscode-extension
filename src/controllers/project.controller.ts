@@ -41,7 +41,7 @@ export class ProjectController {
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
 	private sessionsNextPageToken?: string;
-	private isLiveTailEnabled: Map<string, boolean> = new Map();
+	private isLiveTailEnabledPerDeployment: Map<string, boolean> = new Map();
 	private liveTailStateOnDisable: boolean = false;
 
 	constructor(
@@ -122,7 +122,7 @@ export class ProjectController {
 		this.setProjectNameInView();
 
 		if (this.selectedDeploymentId) {
-			this.isLiveTailEnabled.set(this.selectedDeploymentId, this.liveTailStateOnDisable);
+			this.isLiveTailEnabledPerDeployment.set(this.selectedDeploymentId, this.liveTailStateOnDisable);
 		}
 
 		this.startInterval(
@@ -148,7 +148,7 @@ export class ProjectController {
 		this.deployments = undefined;
 		this.sessions = undefined;
 		this.hasDisplayedError = new Map();
-		this.liveTailStateOnDisable = this.isLiveTailEnabled.get(this.selectedDeploymentId) || false;
+		this.liveTailStateOnDisable = this.isLiveTailEnabledPerDeployment.get(this.selectedDeploymentId) || false;
 	};
 
 	async loadAndDisplayDeployments() {
@@ -189,7 +189,7 @@ export class ProjectController {
 			payload: deploymentsViewObject,
 		});
 
-		if (!this.isLiveTailEnabled.get(this.selectedDeploymentId)) {
+		if (!this.isLiveTailEnabledPerDeployment.get(this.selectedDeploymentId)) {
 			return;
 		}
 
@@ -385,7 +385,7 @@ export class ProjectController {
 
 		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessionId);
 		if (stopSessionsInterval) {
-			this.isLiveTailEnabled.delete(this.selectedDeploymentId);
+			this.isLiveTailEnabledPerDeployment.delete(this.selectedDeploymentId);
 		}
 		this.initSessionLogsDisplay(sessionId);
 	}
@@ -545,7 +545,7 @@ export class ProjectController {
 		this.stopInterval(ProjectIntervalTypes.deployments);
 		this.onProjectDisposeCB?.(this.projectId);
 		this.hasDisplayedError = new Map();
-		this.isLiveTailEnabled.delete(this.selectedDeploymentId);
+		this.isLiveTailEnabledPerDeployment.delete(this.selectedDeploymentId);
 	}
 
 	async build() {
@@ -1006,7 +1006,7 @@ export class ProjectController {
 	}
 
 	toggleSessionsLiveTail(isLiveStateOn: Boolean) {
-		this.isLiveTailEnabled.set(this.selectedDeploymentId, !!isLiveStateOn);
+		this.isLiveTailEnabledPerDeployment.set(this.selectedDeploymentId, !!isLiveStateOn);
 		if (isLiveStateOn) {
 			this.fetchSessions();
 			this.sessionsNextPageToken = undefined;
