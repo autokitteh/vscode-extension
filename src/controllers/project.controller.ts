@@ -34,7 +34,7 @@ export class ProjectController {
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
-	private loadingRequestsCounter: number = 1;
+	private loadingRequestsCounter: number = 0;
 
 	constructor(
 		projectView: IProjectView,
@@ -977,8 +977,6 @@ export class ProjectController {
 			() => this.loadAndDisplayDeployments(),
 			this.deploymentsRefreshRate
 		);
-
-		this.stopLoading();
 
 		const isResourcesPathExist = await this.getResourcesPathFromContext();
 		if (isResourcesPathExist) {
