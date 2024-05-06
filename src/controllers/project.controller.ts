@@ -120,6 +120,11 @@ export class ProjectController {
 
 	public enable = async () => {
 		this.setProjectNameInView();
+
+		if (this.selectedDeploymentId) {
+			this.isLiveTailEnabled.set(this.selectedDeploymentId, this.liveTailStateOnDisable);
+		}
+
 		this.startInterval(
 			ProjectIntervalTypes.deployments,
 			() => this.loadAndDisplayDeployments(),
@@ -135,9 +140,6 @@ export class ProjectController {
 		await this.fetchSessions();
 
 		this.initSessionLogsDisplay(selectedSessionId);
-		if (this.selectedDeploymentId) {
-			this.isLiveTailEnabled.set(this.selectedDeploymentId, this.liveTailStateOnDisable);
-		}
 	};
 
 	public disable = async () => {
