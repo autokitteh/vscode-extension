@@ -542,7 +542,9 @@ export class ProjectController {
 		this.stopInterval(ProjectIntervalTypes.deployments);
 		this.onProjectDisposeCB?.(this.projectId);
 		this.hasDisplayedError = new Map();
-		this.selectedDeployment && this.deploymentsWithLiveTail.set(this.selectedDeployment.deploymentId, false);
+		if (this.selectedDeployment) {
+			this.deploymentsWithLiveTail.set(this.selectedDeployment.deploymentId, false);
+		}
 	}
 
 	async build() {
