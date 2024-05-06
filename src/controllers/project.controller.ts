@@ -42,7 +42,6 @@ export class ProjectController {
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
 	private sessionsNextPageToken?: string;
 	private isLiveTailEnabledPerDeployment: Map<string, boolean> = new Map();
-	private liveTailStateOnDisable: boolean = false;
 
 	constructor(
 		projectView: IProjectView,
@@ -121,10 +120,6 @@ export class ProjectController {
 	public enable = async () => {
 		this.setProjectNameInView();
 
-		if (this.selectedDeploymentId) {
-			this.isLiveTailEnabledPerDeployment.set(this.selectedDeploymentId, this.liveTailStateOnDisable);
-		}
-
 		this.startInterval(
 			ProjectIntervalTypes.deployments,
 			() => this.loadAndDisplayDeployments(),
@@ -132,12 +127,13 @@ export class ProjectController {
 		);
 		this.notifyViewResourcesPathChanged();
 
+		this.sessions = undefined;
+		await this.fetchSessions();
+
 		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
 		if (!selectedSessionId) {
 			return;
 		}
-		this.sessions = undefined;
-		await this.fetchSessions();
 
 		this.initSessionLogsDisplay(selectedSessionId);
 	};
@@ -148,7 +144,6 @@ export class ProjectController {
 		this.deployments = undefined;
 		this.sessions = undefined;
 		this.hasDisplayedError = new Map();
-		this.liveTailStateOnDisable = this.isLiveTailEnabledPerDeployment.get(this.selectedDeploymentId) || false;
 	};
 
 	async loadAndDisplayDeployments() {
