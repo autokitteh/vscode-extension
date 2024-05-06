@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import DownloadIcon from "@react-assets/icons/download.svg?react";
 import { AKButton, AKLogo, AKOverlay, ProjectSettingsPopper, PopperComponent } from "@react-components";
-import { useAppDispatch, useAppState } from "@react-context/appState.context";
+import { useAppDispatch } from "@react-context/appState.context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import "split-pane-react/esm/themes/default.css";
@@ -20,22 +20,10 @@ export const AKHeader = () => {
 	useIncomingMessageHandler({
 		stopLoader,
 		startLoader,
-	});
-
-	useIncomingMessageHandler({
 		setProjectName,
 		setThemeVisualType,
 		setResourcesDir,
 	});
-
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [_, dispatch] = useAppState();
-
-	useEffect(() => {
-		if (projectName) {
-			stopLoader();
-		}
-	}, [projectName]);
 
 	return (
 		<div className="flex items-center w-full">
