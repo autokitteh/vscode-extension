@@ -292,14 +292,6 @@ export class ProjectController {
 		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
 
 		if (!selectedSessionId) {
-			this.view.update({
-				type: MessageType.selectSession,
-				payload: sessions[0].sessionId,
-			});
-
-			this.displaySessionLogs(sessions[0].sessionId);
-			this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessions[0].sessionId);
-
 			return;
 		}
 
