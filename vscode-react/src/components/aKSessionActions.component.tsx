@@ -39,7 +39,7 @@ export const AKSessionActions = ({
 				></div>
 			)}
 			<div
-				className={getStopSessionClass(session.state)}
+				className={`codicon codicon-debug-stop mr-2 ${getStopSessionClass(session.state)}`}
 				title={translate().t("reactApp.sessions.stopSession")}
 				onClick={onStop}
 			></div>

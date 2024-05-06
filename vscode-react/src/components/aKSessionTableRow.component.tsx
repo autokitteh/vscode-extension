@@ -32,7 +32,7 @@ export const AKSessionsTableRow = memo(
 						<AKSessionState sessionState={session.state} />
 					</AKTableCell>
 					<AKTableCell classes={["cursor-pointer w-64"]}>{session.sessionId}</AKTableCell>
-					<AKTableCell classes={["w-32 z-10"]}>
+					<AKTableCell classes={["w-32 z-10 flex justify-center"]}>
 						<AKSessionActions session={session} {...sessionActions} />
 						{createPortal(
 							<div>
