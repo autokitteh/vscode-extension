@@ -41,9 +41,6 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 				case MessageType.stopLoader:
 					handlers.stopLoader?.();
 					break;
-				case MessageType.selectSession:
-					handlers.setSelectedSession?.(payload as string);
-					break;
 			}
 		};
 
