@@ -40,8 +40,8 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 			if (deploymentsSection?.activeDeploymentId) {
 				dispatch({ type: "SET_ACTIVE_DEPLOYMENT_ID", payload: deploymentsSection.activeDeploymentId });
 			}
-			if (deploymentsSection?.selectedDeploymentId) {
-				dispatch({ type: "SET_SELECTED_DEPLOYMENT_ID", payload: deploymentsSection.selectedDeploymentId });
+			if (deploymentsSection?.selectedDeployment) {
+				dispatch({ type: "SET_SELECTED_DEPLOYMENT", payload: deploymentsSection.selectedDeployment });
 			}
 		}
 	}, [deploymentsSection]);

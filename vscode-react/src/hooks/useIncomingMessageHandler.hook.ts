@@ -3,7 +3,7 @@ import { MessageType, Theme } from "@enums";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
-import { SessionEntrypoint } from "@type/models";
+import { Deployment, SessionEntrypoint } from "@type/models";
 
 export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) => {
 	useEffect(() => {
@@ -30,7 +30,7 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 					handlers.setDeploymentsSection?.(payload as DeploymentSectionViewModel);
 					break;
 				case MessageType.selectDeployment:
-					handlers.setSelectedDeploymentId?.(payload as string);
+					handlers.setSelectedDeployment?.(payload as Deployment);
 					break;
 				case MessageType.setEntrypoints:
 					handlers.setEntrypoints?.(payload as Record<string, SessionEntrypoint[]>);

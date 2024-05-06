@@ -36,12 +36,12 @@ export class ProjectController {
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
-	private selectedDeploymentId: string = "";
+	private selectedDeployment?: Deployment;
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
 	private sessionsNextPageToken?: string;
-	private isLiveTailEnabledPerDeployment: Map<string, boolean> = new Map();
+	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
 
 	constructor(
 		projectView: IProjectView,
@@ -97,14 +97,14 @@ export class ProjectController {
 		if (sessionsError) {
 			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionHistory)) {
 				const notificationErrorMessage = translate().t("errors.sessionLogRecordFetchFailedShort", {
-					deploymentId: this.selectedDeploymentId,
+					deploymentId: this.selectedDeployment,
 				});
 				commands.executeCommand(vsCommands.showErrorMessage, notificationErrorMessage);
 				this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessionHistory, true);
 			}
 
 			const logErrorMessage = translate().t("errors.sessionLogRecordFetchFailed", {
-				deploymentId: this.selectedDeploymentId,
+				deploymentId: this.selectedDeployment,
 				error: (sessionsError as Error).message,
 			});
 			LoggerService.error(namespaces.projectController, logErrorMessage);
@@ -130,7 +130,7 @@ export class ProjectController {
 		this.sessions = undefined;
 		await this.fetchSessions();
 
-		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
+		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeployment!.deploymentId);
 		if (!selectedSessionId) {
 			return;
 		}
@@ -166,6 +166,7 @@ export class ProjectController {
 		}
 
 		this.deployments = deployments;
+		this.loadSingleshotArgs();
 
 		const activeDeploymentId = deployments?.find(
 			(deployment: Deployment) => deployment.state === DeploymentState.ACTIVE_DEPLOYMENT
@@ -176,7 +177,7 @@ export class ProjectController {
 			totalDeployments: deployments?.length || 0,
 			lastDeployment: deployments ? deployments[0] : undefined,
 			activeDeploymentId,
-			selectedDeploymentId: this.selectedDeploymentId,
+			selectedDeployment: this.selectedDeployment,
 		};
 
 		this.view.update({
@@ -184,19 +185,13 @@ export class ProjectController {
 			payload: deploymentsViewObject,
 		});
 
-		if (!this.isLiveTailEnabledPerDeployment.get(this.selectedDeploymentId)) {
-			return;
+		if (this.selectedDeployment && this.selectedDeployment.deploymentId) {
+			const isLiveStateOn = this.deploymentsWithLiveTail.get(this.selectedDeployment.deploymentId);
+			if (!isLiveStateOn) {
+				return;
+			}
+			await this.selectDeployment(this.selectedDeployment.deploymentId);
 		}
-
-		const isSelectedInDisplayedDeployments = deployments?.find(
-			(deployment) => deployment.deploymentId === this.selectedDeploymentId
-		);
-		if (isSelectedInDisplayedDeployments) {
-			await this.selectDeployment(this.selectedDeploymentId);
-			return;
-		}
-
-		this.loadSingleshotArgs();
 	}
 
 	async loadSingleshotArgs() {
@@ -237,13 +232,13 @@ export class ProjectController {
 	}
 
 	async fetchSessions() {
-		if (!this.selectedDeploymentId) {
+		if (!this.selectedDeployment) {
 			return;
 		}
 
 		const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
 
-		const { data, error } = await SessionsService.listByDeploymentId(this.selectedDeploymentId, {
+		const { data, error } = await SessionsService.listByDeploymentId(this.selectedDeployment!.deploymentId, {
 			stateType: selectedSessionStateFilter,
 		});
 		if (error) {
@@ -275,16 +270,11 @@ export class ProjectController {
 			payload: sessionsViewObject,
 		});
 
-		this.view.update({
-			type: MessageType.selectDeployment,
-			payload: this.selectedDeploymentId,
-		});
-
 		if (!sessions?.length) {
 			return;
 		}
 
-		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
+		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeployment!.deploymentId);
 
 		if (!selectedSessionId) {
 			return;
@@ -304,13 +294,23 @@ export class ProjectController {
 	}
 
 	async selectDeployment(deploymentId: string): Promise<void> {
-		this.selectedDeploymentId = deploymentId;
+		this.selectedDeployment = this.deployments?.find(
+			(deployment: Deployment) => deployment.deploymentId === deploymentId
+		);
 
-		await this.fetchSessions();
+		const existingLiveTailState = this.deploymentsWithLiveTail.has(deploymentId);
+		const isFirstTime = !existingLiveTailState;
+		const isLiveStateOn = this.deploymentsWithLiveTail.get(deploymentId);
+		if (isFirstTime) {
+			this.deploymentsWithLiveTail.set(deploymentId, true);
+		}
+		if (isFirstTime || isLiveStateOn) {
+			await this.fetchSessions();
+		}
 
 		this.view.update({
 			type: MessageType.selectDeployment,
-			payload: deploymentId,
+			payload: this.selectedDeployment,
 		});
 	}
 
@@ -378,9 +378,11 @@ export class ProjectController {
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
-		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessionId);
-		if (stopSessionsInterval) {
-			this.isLiveTailEnabledPerDeployment.delete(this.selectedDeploymentId);
+		if (this.selectedDeployment) {
+			this.selectedSessionPerDeployment.set(this.selectedDeployment.deploymentId, sessionId);
+			if (stopSessionsInterval) {
+				this.deploymentsWithLiveTail.set(this.selectedDeployment.deploymentId, false);
+			}
 		}
 		this.initSessionLogsDisplay(sessionId);
 	}
@@ -540,7 +542,7 @@ export class ProjectController {
 		this.stopInterval(ProjectIntervalTypes.deployments);
 		this.onProjectDisposeCB?.(this.projectId);
 		this.hasDisplayedError = new Map();
-		this.isLiveTailEnabledPerDeployment.delete(this.selectedDeploymentId);
+		this.selectedDeployment && this.deploymentsWithLiveTail.set(this.selectedDeployment.deploymentId, false);
 	}
 
 	async build() {
@@ -631,11 +633,14 @@ export class ProjectController {
 		const successMessage = translate().t("projects.projectDeploySucceed", { id: this.projectId });
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 		LoggerService.info(namespaces.projectController, successMessage);
-		this.selectedDeploymentId = deploymentId!;
+
+		this.selectedDeployment = this.deployments?.find(
+			(deployment: Deployment) => deployment.deploymentId === deploymentId
+		);
 
 		this.view.update({
 			type: MessageType.selectDeployment,
-			payload: deploymentId,
+			payload: this.selectedDeployment,
 		});
 	}
 
@@ -886,7 +891,7 @@ export class ProjectController {
 				sessionId,
 				error: (error as Error).message,
 				projectId: this.projectId,
-				deploymentId: this.selectedDeploymentId,
+				deploymentId: this.selectedDeployment,
 			});
 			LoggerService.error(namespaces.projectController, log);
 
@@ -920,7 +925,7 @@ export class ProjectController {
 			payload: sessionsViewObject,
 		});
 
-		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, followingSessionIdAfterDelete);
+		this.selectedSessionPerDeployment.set(this.selectedDeployment!.deploymentId, followingSessionIdAfterDelete);
 		this.displaySessionLogs(followingSessionIdAfterDelete);
 
 		this.view.update({
@@ -933,7 +938,7 @@ export class ProjectController {
 		});
 
 		const log = translate().t("sessions.sessionDeleteSuccessIdProject", {
-			deploymentId: this.selectedDeploymentId,
+			deploymentId: this.selectedDeployment,
 			sessionId: sessionId,
 			projectId: this.projectId,
 		});
@@ -948,7 +953,7 @@ export class ProjectController {
 			const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
 
 			const { data, error } = await SessionsService.listByDeploymentId(
-				this.selectedDeploymentId!,
+				this.selectedDeployment!.deploymentId,
 				{
 					stateType: selectedSessionStateFilter,
 				},
@@ -1001,10 +1006,14 @@ export class ProjectController {
 	}
 
 	toggleSessionsLiveTail(isLiveStateOn: Boolean) {
-		this.isLiveTailEnabledPerDeployment.set(this.selectedDeploymentId, !!isLiveStateOn);
-		if (isLiveStateOn) {
-			this.fetchSessions();
-			this.sessionsNextPageToken = undefined;
+		if (this.selectedDeployment) {
+			this.deploymentsWithLiveTail.set(this.selectedDeployment.deploymentId, !!isLiveStateOn);
+
+			if (isLiveStateOn) {
+				this.fetchSessions();
+				this.sessionsNextPageToken = undefined;
+				return;
+			}
 		}
 	}
 }
