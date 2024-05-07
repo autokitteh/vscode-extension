@@ -185,13 +185,15 @@ export class ProjectController {
 			payload: deploymentsViewObject,
 		});
 
-		if (this.selectedDeployment && this.selectedDeployment.deploymentId) {
-			const isLiveStateOn = this.deploymentsWithLiveTail.get(this.selectedDeployment.deploymentId);
-			if (!isLiveStateOn) {
-				return;
-			}
-			await this.selectDeployment(this.selectedDeployment.deploymentId);
+		if (!this.selectedDeployment) {
+			return;
 		}
+
+		const isLiveStateOn = this.deploymentsWithLiveTail.get(this.selectedDeployment.deploymentId);
+		if (!isLiveStateOn) {
+			return;
+		}
+		await this.selectDeployment(this.selectedDeployment.deploymentId);
 	}
 
 	async loadSingleshotArgs() {
