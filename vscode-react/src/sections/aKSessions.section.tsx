@@ -9,11 +9,10 @@ import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 
 export const AKSessions = ({ height }: { height: string | number }) => {
-	const [isLoading, setIsLoading] = useState(true);
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [stateFilter, setStateFilter] = useState<string>();
-
+	const [isLoading, setIsLoading] = useState(true);
 	const { sessions, totalSessions } = sessionsSection || {};
 
 	useIncomingMessageHandler({
@@ -35,6 +34,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 
 	const filterSessions = (value: string) => {
 		setStateFilter(value);
+
 		if (value === "all") {
 			sendMessage(MessageType.setSessionsStateFilter, undefined);
 			return;

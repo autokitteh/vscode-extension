@@ -12,7 +12,6 @@
 		"test:watch": "vitest"
 	},
 	"dependencies": {
-		"@lottiefiles/react-lottie-player": "^3.5.3",
 		"@monaco-editor/react": "^4.6.0",
 		"@popperjs/core": "^2.11.8",
 		"@types/node": "^20.10.6",

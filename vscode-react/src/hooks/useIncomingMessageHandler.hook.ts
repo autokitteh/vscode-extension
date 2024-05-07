@@ -11,12 +11,6 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 			const { type, payload } = event.data;
 
 			switch (type) {
-				case MessageType.deploymentDeletedResponse:
-					handlers.handleDeploymentDeletedResponse?.(payload as boolean);
-					break;
-				case MessageType.deleteSessionResponse:
-					handlers.handleSessionDeletedResponse?.(payload as boolean);
-					break;
 				case MessageType.setTheme:
 					handlers.setThemeVisualType?.(payload as Theme);
 					break;
@@ -40,6 +34,12 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 					break;
 				case MessageType.selectSession:
 					handlers.setSelectedSession?.(payload as string);
+					break;
+				case MessageType.startLoader:
+					handlers.startLoader?.();
+					break;
+				case MessageType.stopLoader:
+					handlers.stopLoader?.();
 					break;
 			}
 		};

@@ -6,7 +6,6 @@ import { DeletePopper, ExecutePopper, PopperComponent } from "@react-components"
 import { AKTableCell, AKTableRow } from "@react-components/AKTable";
 import { useAppState } from "@react-context/appState.context";
 import { useDeployments } from "@react-hooks";
-import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment, SessionEntrypoint } from "@type/models";
 import { createPortal } from "react-dom";
@@ -23,7 +22,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const [selectedDeployment, setSelectedDeployment] = useState("");
 	const [files, setFiles] = useState<Record<string, SessionEntrypoint[]>>();
 	const [functions, setFunctions] = useState<SessionEntrypoint[]>();
-	const [isDeletingInProcess, setIsDeletingInProgress] = useState(false);
 	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
 
@@ -32,14 +30,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		title: translate().t("reactApp.deployments.deletionApprovalQuestion"),
 		subtitle: translate().t("reactApp.deployments.deletionApprovalQuestionSubtitle"),
 	};
-
-	// Incoming Messages Handler
-	const handleDeploymentDeletedResponse = () => {
-		setIsDeletingInProgress(false);
-		hidePopper();
-	};
-
-	useIncomingMessageHandler({ handleDeploymentDeletedResponse });
 
 	// Functions Section
 	const showPopper = (popperId: string) => dispatch({ type: "SET_MODAL_NAME", payload: popperId });
@@ -105,17 +95,15 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		};
 
 		sendMessage(MessageType.startSession, startSessionArgs);
-
 		hidePopper();
 	};
 
 	const deleteDeploymentConfirmed = () => {
 		sendMessage(MessageType.deleteDeployment, deleteDeploymentId);
-		setIsDeletingInProgress(true);
+		hidePopper();
 	};
 
 	const deleteDeploymentDismissed = () => {
-		setIsDeletingInProgress(false);
 		setDeleteDeploymentId("");
 		hidePopper();
 	};
@@ -123,6 +111,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const showDeleteDeploymentPopper = (event: React.MouseEvent<HTMLDivElement>, deployment: Deployment) => {
 		if (deployment.state === DeploymentState.ACTIVE_DEPLOYMENT) {
 			sendMessage(MessageType.displayErrorWithoutActionButton, translate().t("reactApp.deployments.deleteDisabled"));
+
 			return;
 		}
 		const refElement = event.currentTarget;
@@ -221,7 +210,6 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 							/>
 							<PopperComponent visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
 								<DeletePopper
-									isDeletingInProcess={isDeletingInProcess}
 									onConfirm={() => deleteDeploymentConfirmed()}
 									onDismiss={() => deleteDeploymentDismissed()}
 									translations={deleteDeploymentPopperTranslations}

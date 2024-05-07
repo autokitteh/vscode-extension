@@ -3,9 +3,9 @@ import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { AKMonacoEditorModal, AKOverlay, AKSessionState, DeletePopper, PopperComponent } from "@react-components";
 import { AKTableRow, AKTableCell } from "@react-components/AKTable";
-import { useAppState } from "@react-context";
+import { useAppDispatch, useAppState } from "@react-context";
 import { SessionState } from "@react-enums";
-import { useCloseOnEscape, useIncomingMessageHandler } from "@react-hooks";
+import { useCloseOnEscape } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Session } from "@type/models";
 import { createPortal } from "react-dom";
@@ -20,12 +20,12 @@ export const AKSessionsTableBody = ({
 	setSelectedSession: (sessionId: string) => void;
 }) => {
 	// State Section
-	const [{ modalName, lastDeployment }, dispatch] = useAppState();
-	const [isDeletingInProcess, setIsDeletingInProgress] = useState(false);
+	const [{ modalName, lastDeployment }] = useAppState();
 	const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [inputsModalVisible, setInputsModalVisible] = useState(false);
 	const [sessionInputs, setSessionInputs] = useState<string>();
+	const { setModalName } = useAppDispatch();
 
 	// Hooks Section
 	useCloseOnEscape(() => setInputsModalVisible(false));
@@ -35,14 +35,6 @@ export const AKSessionsTableBody = ({
 		title: translate().t("reactApp.sessions.deletionApprovalQuestion"),
 		subtitle: translate().t("reactApp.sessions.deletionApprovalQuestionSubtitle"),
 	};
-
-	// Incoming Messages Handler
-	const handleSessionDeletedResponse = () => {
-		setIsDeletingInProgress(false);
-		hidePopper();
-	};
-
-	useIncomingMessageHandler({ handleSessionDeletedResponse });
 
 	// Functions Section
 
@@ -57,8 +49,8 @@ export const AKSessionsTableBody = ({
 		return `codicon codicon-debug-stop mr-2 ${isRunningClass}`;
 	};
 
-	const showPopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "sessionDelete" });
-	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
+	const showPopper = () => setModalName("sessionDelete");
+	const hidePopper = () => setModalName("");
 	const startSession = (session: Session) => {
 		const startSessionArgs = {
 			sessionId: session.sessionId,
@@ -84,12 +76,10 @@ export const AKSessionsTableBody = ({
 
 	const deleteSessionConfirmed = () => {
 		sendMessage(MessageType.deleteSession, deleteSessionId);
-		setIsDeletingInProgress(true);
-		return;
+		hidePopper();
 	};
 
 	const deleteSessionDismissed = () => {
-		setIsDeletingInProgress(false);
 		setDeleteSessionId("");
 		hidePopper();
 	};
@@ -176,7 +166,6 @@ export const AKSessionsTableBody = ({
 
 									<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
 										<DeletePopper
-											isDeletingInProcess={isDeletingInProcess}
 											onConfirm={() => deleteSessionConfirmed()}
 											onDismiss={() => deleteSessionDismissed()}
 											translations={deleteSessionPopperTranslations}
