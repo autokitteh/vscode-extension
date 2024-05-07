@@ -1,3 +1,10 @@
+# [0.14.0](https://github.com/autokitteh/vscode-extension/compare/v0.13.0...v0.14.0) (2024-05-07)
+
+
+### Features
+
+* infinite scrolling for sessions (UI-231) ([#294](https://github.com/autokitteh/vscode-extension/issues/294)) ([9061515](https://github.com/autokitteh/vscode-extension/commit/90615153ed092a228a91528f92723333b82fd890))
+
 # [0.13.0](https://github.com/autokitteh/vscode-extension/compare/v0.12.5...v0.13.0) (2024-05-07)
 
 
