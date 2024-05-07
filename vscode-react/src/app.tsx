@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AKHeader } from "@react-components";
 import { AppStateProvider } from "@react-context";
 import { AKDeployments, AKSessions } from "@react-sections";
@@ -7,10 +7,19 @@ import SplitPane from "split-pane-react";
 import "split-pane-react/esm/themes/default.css";
 
 function App() {
-	const [sizes, setSizes] = useState<(number | string)[]>(["50%", "50%"]);
+	const [sizes, setSizes] = useState<(number | string)[]>([]);
+
+	const ref = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (ref.current) {
+			setSizes([ref.current.clientHeight * 0.48, ref.current.clientHeight * 0.48]);
+		}
+	}, []);
+
 	return (
 		<AppStateProvider>
-			<main>
+			<main ref={ref}>
 				<div className="flex flex-col w-full">
 					<AKHeader />
 					<div className="h-[calc(100vh-6vh)]">

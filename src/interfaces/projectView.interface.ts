@@ -9,7 +9,7 @@ export interface IProjectViewDelegate {
 	onClickSetResourcesDirectory: Callback;
 	run: Callback;
 	selectDeployment?: Callback<string>;
-	displaySessionLogs?: Callback<string>;
+	displaySessionLogsAndStop?: Callback<string>;
 	activateDeployment?: Callback<string>;
 	deactivateDeployment?: Callback<string>;
 	startSession?: Callback<StartSessionArgsType>;
@@ -23,6 +23,8 @@ export interface IProjectViewDelegate {
 	setProjectResourcesDirectory?: Callback<string>;
 	setSessionsStateFilter?: Callback<string>;
 	loadInitialDataOnceViewReady: Callback;
+	loadMoreSessions?: Callback;
+	toggleSessionsLiveTail?: Callback<Boolean>;
 }
 
 export interface IProjectView {

@@ -22,5 +22,8 @@
 	"delete": "Delete",
 	"stopSession": "Stop session",
 	"startSession": "Start session",
-	"showSessionProps": "Show session properties"
+	"showSessionProps": "Show session properties",
+	"livetail": "Live tail",
+	"resumeLiveTail": "Resume live tail",
+	"pauseLiveTail": "Pause live tail"
 }

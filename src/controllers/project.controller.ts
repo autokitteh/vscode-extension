@@ -3,7 +3,13 @@ import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
-import { MessageType, ProjectIntervalTypes, ProjectRecurringErrorMessages, SessionStateType } from "@enums";
+import {
+	DeploymentState,
+	MessageType,
+	ProjectIntervalTypes,
+	ProjectRecurringErrorMessages,
+	SessionStateType,
+} from "@enums";
 import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
@@ -30,11 +36,14 @@ export class ProjectController {
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
-	private selectedDeploymentId: string = "";
+	private selectedDeploymentId?: string;
+	private isDeploymentLiveTailPossible?: boolean;
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
 	private loadingRequestsCounter: number = 0;
+	private sessionsNextPageToken?: string;
+	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
 
 	constructor(
 		projectView: IProjectView,
@@ -121,6 +130,7 @@ export class ProjectController {
 
 	public enable = async () => {
 		this.setProjectNameInView();
+
 		this.startInterval(
 			ProjectIntervalTypes.deployments,
 			() => this.loadAndDisplayDeployments(),
@@ -128,11 +138,15 @@ export class ProjectController {
 		);
 		this.notifyViewResourcesPathChanged();
 
-		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
-		if (!selectedSessionId) {
+		this.sessions = undefined;
+		await this.fetchSessions();
+
+		if (!this.selectedDeploymentId) {
 			return;
 		}
-		this.initSessionLogsDisplay(selectedSessionId);
+		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
+
+		this.initSessionLogsDisplay(selectedSessionId!);
 	};
 
 	public disable = async () => {
@@ -165,10 +179,12 @@ export class ProjectController {
 		}
 
 		this.deployments = deployments;
+		this.loadSingleshotArgs();
 
 		const deploymentsViewObject: DeploymentSectionViewModel = {
 			deployments,
 			totalDeployments: deployments?.length || 0,
+			selectedDeploymentId: this.selectedDeploymentId,
 		};
 
 		this.view.update({
@@ -176,22 +192,15 @@ export class ProjectController {
 			payload: deploymentsViewObject,
 		});
 
-		const sessionsViewObject: SessionSectionViewModel = {
-			sessions: this.sessions,
-			totalSessions: this.sessions?.length || 0,
-		};
-
-		const isSelectedInDisplayedDeployments = deployments?.find(
-			(deployment) => deployment.deploymentId === this.selectedDeploymentId
-		);
-		if (isSelectedInDisplayedDeployments) {
-			await this.selectDeployment(this.selectedDeploymentId);
+		if (!this.selectedDeploymentId) {
 			return;
 		}
 
-		this.view.update({ type: MessageType.setSessionsSection, payload: sessionsViewObject });
-
-		this.loadSingleshotArgs();
+		const isLiveStateOn = this.deploymentsWithLiveTail.get(this.selectedDeploymentId);
+		if (!isLiveStateOn) {
+			return;
+		}
+		await this.selectDeployment(this.selectedDeploymentId);
 	}
 
 	startLoader() {
@@ -265,7 +274,7 @@ export class ProjectController {
 		const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
 
 		this.startLoader();
-		const { data: sessions, error } = await SessionsService.listByDeploymentId(this.selectedDeploymentId, {
+		const { data, error } = await SessionsService.listByDeploymentId(this.selectedDeploymentId, {
 			stateType: selectedSessionStateFilter,
 		});
 		this.stopLoader();
@@ -281,25 +290,24 @@ export class ProjectController {
 			return;
 		}
 
-		if (isEqual(this.sessions, sessions) && this.sessions?.length) {
+		const { sessions, nextPageToken } = data!;
+
+		if (isEqual(this.sessions, sessions)) {
 			return;
 		}
 
 		this.sessions = sessions;
+		this.sessionsNextPageToken = nextPageToken;
 
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions,
-			totalSessions: sessions?.length || 0,
+			showLiveTail: this.isDeploymentLiveTailPossible!,
+			lastDeployment: this.deployments ? this.deployments[0] : undefined,
 		};
 
 		this.view.update({
 			type: MessageType.setSessionsSection,
 			payload: sessionsViewObject,
-		});
-
-		this.view.update({
-			type: MessageType.selectDeployment,
-			payload: this.selectedDeploymentId,
 		});
 
 		if (!sessions?.length) {
@@ -309,14 +317,6 @@ export class ProjectController {
 		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
 
 		if (!selectedSessionId) {
-			this.view.update({
-				type: MessageType.selectSession,
-				payload: sessions[0].sessionId,
-			});
-
-			this.displaySessionLogs(sessions[0].sessionId);
-			this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessions[0].sessionId);
-
 			return;
 		}
 
@@ -336,11 +336,27 @@ export class ProjectController {
 	async selectDeployment(deploymentId: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
 
-		await this.fetchSessions();
+		const selectedDeploymentState = this.deployments?.find(
+			(deployment) => deployment.deploymentId === this.selectedDeploymentId
+		)?.state;
+		const selectedDeploymentActive = selectedDeploymentState === DeploymentState.ACTIVE_DEPLOYMENT;
+		const selectedDeploymentDraining = selectedDeploymentState === DeploymentState.DRAINING_DEPLOYMENT;
+		this.isDeploymentLiveTailPossible = selectedDeploymentActive || selectedDeploymentDraining;
+
+		const existingLiveTailState = this.deploymentsWithLiveTail.has(deploymentId);
+		const isFirstTime = !existingLiveTailState;
+		let isLiveStateOn = this.deploymentsWithLiveTail.get(deploymentId);
+		if (isFirstTime && this.isDeploymentLiveTailPossible) {
+			isLiveStateOn = true;
+			this.deploymentsWithLiveTail.set(deploymentId, true);
+		}
+		if (isFirstTime || isLiveStateOn || (!isLiveStateOn && !this.isDeploymentLiveTailPossible)) {
+			await this.fetchSessions();
+		}
 
 		this.view.update({
 			type: MessageType.selectDeployment,
-			payload: deploymentId,
+			payload: this.selectedDeploymentId,
 		});
 	}
 
@@ -405,12 +421,24 @@ export class ProjectController {
 		});
 	}
 
-	async displaySessionLogs(sessionId: string): Promise<void> {
+	async displaySessionLogs(sessionId: string, stopSessionsInterval: boolean = false): Promise<void> {
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
-		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessionId);
 		this.initSessionLogsDisplay(sessionId);
+
+		if (!this.selectedDeploymentId) {
+			return;
+		}
+
+		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessionId);
+		if (stopSessionsInterval) {
+			this.deploymentsWithLiveTail.set(this.selectedDeploymentId, false);
+		}
+	}
+
+	async displaySessionLogsAndStop(sessionId: string) {
+		this.displaySessionLogs(sessionId, true);
 	}
 
 	async initSessionLogsDisplay(sessionId: string) {
@@ -570,6 +598,9 @@ export class ProjectController {
 		this.stopInterval(ProjectIntervalTypes.deployments);
 		this.onProjectDisposeCB?.(this.projectId);
 		this.hasDisplayedError = new Map();
+		if (this.selectedDeploymentId) {
+			this.deploymentsWithLiveTail.set(this.selectedDeploymentId, false);
+		}
 	}
 
 	async build() {
@@ -667,11 +698,14 @@ export class ProjectController {
 		const successMessage = translate().t("projects.projectDeploySucceed", { id: this.projectId });
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 		LoggerService.info(namespaces.projectController, successMessage);
-		this.selectedDeploymentId = deploymentId!;
+
+		this.selectedDeploymentId = this.deployments?.find(
+			(deployment: Deployment) => deployment.deploymentId === deploymentId
+		)?.deploymentId;
 
 		this.view.update({
 			type: MessageType.selectDeployment,
-			payload: deploymentId,
+			payload: this.selectedDeploymentId,
 		});
 	}
 
@@ -951,7 +985,8 @@ export class ProjectController {
 
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions: this.sessions,
-			totalSessions: this.sessions.length || 0,
+			showLiveTail: !!this.isDeploymentLiveTailPossible,
+			lastDeployment: this.deployments ? this.deployments[0] : undefined,
 		};
 
 		this.view.update({
@@ -959,7 +994,7 @@ export class ProjectController {
 			payload: sessionsViewObject,
 		});
 
-		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, followingSessionIdAfterDelete);
+		this.selectedSessionPerDeployment.set(this.selectedDeploymentId!, followingSessionIdAfterDelete);
 		this.displaySessionLogs(followingSessionIdAfterDelete);
 
 		this.view.update({
@@ -973,6 +1008,52 @@ export class ProjectController {
 			projectId: this.projectId,
 		});
 		LoggerService.info(namespaces.projectController, log);
+	}
+
+	async loadMoreSessions() {
+		try {
+			if (!this.sessionsNextPageToken) {
+				return;
+			}
+			const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
+
+			const { data, error } = await SessionsService.listByDeploymentId(
+				this.selectedDeploymentId!,
+				{
+					stateType: selectedSessionStateFilter,
+				},
+				this.sessionsNextPageToken
+			);
+			if (error) {
+				if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessions)) {
+					commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.internalErrorUpdate"));
+					this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessions, true);
+				}
+
+				const log = `${translate().t("errors.sessionFetchFailed")} - ${(error as Error).message}`;
+				LoggerService.error(namespaces.projectController, log);
+				return;
+			}
+
+			const { sessions, nextPageToken } = data!;
+
+			this.sessions = [...this.sessions!, ...sessions];
+
+			this.sessionsNextPageToken = nextPageToken;
+
+			const sessionsViewObject: SessionSectionViewModel = {
+				sessions: this.sessions,
+				showLiveTail: this.isDeploymentLiveTailPossible!,
+				lastDeployment: this.deployments ? this.deployments[0] : undefined,
+			};
+
+			this.view.update({
+				type: MessageType.setSessionsSection,
+				payload: sessionsViewObject,
+			});
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	async loadInitialDataOnceViewReady() {
@@ -989,5 +1070,19 @@ export class ProjectController {
 			this.notifyViewResourcesPathChanged();
 			return;
 		}
+	}
+
+	toggleSessionsLiveTail(isLiveStateOn: Boolean) {
+		if (!this.selectedDeploymentId) {
+			return;
+		}
+		this.deploymentsWithLiveTail.set(this.selectedDeploymentId, !!isLiveStateOn);
+
+		if (!isLiveStateOn) {
+			return;
+		}
+		this.fetchSessions();
+		this.sessionsNextPageToken = undefined;
+		return;
 	}
 }

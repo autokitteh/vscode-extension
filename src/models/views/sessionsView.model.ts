@@ -1,6 +1,7 @@
-import { Session } from "@type/models";
+import { Deployment, Session } from "@type/models";
 
 export type SessionSectionViewModel = {
 	sessions?: Session[];
-	totalSessions?: number;
+	showLiveTail: boolean;
+	lastDeployment?: Deployment;
 };
