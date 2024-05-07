@@ -1,12 +1,9 @@
 import React, { createContext, useContext, useReducer } from "react";
-import { Deployment } from "@type/models";
 import { Action } from "src/types";
 
 type State = {
 	modalName: string;
-	lastDeployment?: Deployment;
-	activeDeploymentId?: string;
-	selectedDeployment?: Deployment;
+	selectedDeploymentId?: string;
 };
 
 const AppStateContext = createContext<[State, React.Dispatch<Action>] | undefined>(undefined);
@@ -15,12 +12,8 @@ export const appStateReducer = (state: State, action: Action): State => {
 	switch (action.type) {
 		case "SET_MODAL_NAME":
 			return { ...state, modalName: action.payload };
-		case "SET_LAST_DEPLOYMENT":
-			return { ...state, lastDeployment: action.payload };
-		case "SET_ACTIVE_DEPLOYMENT_ID":
-			return { ...state, activeDeploymentId: action.payload };
 		case "SET_SELECTED_DEPLOYMENT":
-			return { ...state, selectedDeployment: action.payload };
+			return { ...state, selectedDeploymentId: action.payload };
 		default:
 			return state;
 	}
@@ -29,9 +22,7 @@ export const appStateReducer = (state: State, action: Action): State => {
 export const AppStateProvider = ({ children }: { children: React.ReactNode }) => {
 	const initialState: State = {
 		modalName: "",
-		lastDeployment: undefined,
-		activeDeploymentId: undefined,
-		selectedDeployment: undefined,
+		selectedDeploymentId: undefined,
 	};
 	const value = useReducer(appStateReducer, initialState);
 

@@ -8,7 +8,7 @@ import { SessionState } from "@react-enums";
 import { useCloseOnEscape, useIncomingMessageHandler } from "@react-hooks";
 import { AKSessionsTableRowProps } from "@react-types";
 import { getSessionActions, sendMessage } from "@react-utilities";
-import { Session } from "@type/models";
+import { Deployment, Session } from "@type/models";
 import { createPortal } from "react-dom";
 import { FixedSizeList as List, ListOnItemsRenderedProps, ListOnScrollProps } from "react-window";
 
@@ -20,6 +20,7 @@ export const AKSessionsTableBody = ({
 	widthProp,
 	disableLiveTail,
 	liveTailState,
+	lastDeployment,
 }: {
 	sessions?: Session[];
 	selectedSession?: string;
@@ -28,9 +29,10 @@ export const AKSessionsTableBody = ({
 	widthProp: string | number;
 	disableLiveTail: () => void;
 	liveTailState: boolean;
+	lastDeployment?: Deployment;
 }) => {
 	// State Section
-	const [{ modalName, lastDeployment }, dispatch] = useAppState();
+	const [{ modalName }, dispatch] = useAppState();
 	const [isDeletingInProcess, setIsDeletingInProgress] = useState(false);
 	const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);

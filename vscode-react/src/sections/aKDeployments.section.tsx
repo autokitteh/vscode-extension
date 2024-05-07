@@ -34,14 +34,8 @@ export const AKDeployments = ({ height }: { height: string | number }) => {
 		if (deploymentsSection) {
 			setTotalDeployments(deploymentsSection.totalDeployments);
 			setDeployments(deploymentsSection?.deployments);
-			if (deploymentsSection?.lastDeployment) {
-				dispatch({ type: "SET_LAST_DEPLOYMENT", payload: deploymentsSection.lastDeployment });
-			}
-			if (deploymentsSection?.activeDeploymentId) {
-				dispatch({ type: "SET_ACTIVE_DEPLOYMENT_ID", payload: deploymentsSection.activeDeploymentId });
-			}
-			if (deploymentsSection?.selectedDeployment) {
-				dispatch({ type: "SET_SELECTED_DEPLOYMENT", payload: deploymentsSection.selectedDeployment });
+			if (deploymentsSection?.selectedDeploymentId) {
+				dispatch({ type: "SET_SELECTED_DEPLOYMENT", payload: deploymentsSection.selectedDeploymentId });
 			}
 		}
 	}, [deploymentsSection]);

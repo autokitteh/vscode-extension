@@ -37,7 +37,7 @@ export class ProjectController {
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
-	private selectedDeploymentState?: number;
+	private selectedDeploymentActiveOrDraining?: boolean;
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
@@ -169,15 +169,9 @@ export class ProjectController {
 		this.deployments = deployments;
 		this.loadSingleshotArgs();
 
-		const activeDeploymentId = deployments?.find(
-			(deployment: Deployment) => deployment.state === DeploymentState.ACTIVE_DEPLOYMENT
-		)?.deploymentId;
-
 		const deploymentsViewObject: DeploymentSectionViewModel = {
 			deployments,
 			totalDeployments: deployments?.length || 0,
-			lastDeployment: deployments ? deployments[0] : undefined,
-			activeDeploymentId,
 			selectedDeploymentId: this.selectedDeploymentId,
 		};
 
@@ -266,7 +260,8 @@ export class ProjectController {
 
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions,
-			selectedDeploymentState: this.selectedDeploymentState!,
+			showLiveTail: this.selectedDeploymentActiveOrDraining!,
+			lastDeployment: this.deployments ? this.deployments[0] : undefined,
 		};
 
 		this.view.update({
@@ -299,9 +294,13 @@ export class ProjectController {
 
 	async selectDeployment(deploymentId: string): Promise<void> {
 		this.selectedDeploymentId = deploymentId;
-		this.selectedDeploymentState = this.deployments?.find(
+
+		const selectedDeploymentState = this.deployments?.find(
 			(deployment) => deployment.deploymentId === this.selectedDeploymentId
 		)?.state;
+		const selectedDeploymentActive = selectedDeploymentState === DeploymentState.ACTIVE_DEPLOYMENT;
+		const selectedDeploymentDraining = selectedDeploymentState === DeploymentState.DRAINING_DEPLOYMENT;
+		this.selectedDeploymentActiveOrDraining = selectedDeploymentActive || selectedDeploymentDraining;
 
 		const existingLiveTailState = this.deploymentsWithLiveTail.has(deploymentId);
 		const isFirstTime = !existingLiveTailState;
@@ -928,7 +927,8 @@ export class ProjectController {
 
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions: this.sessions,
-			selectedDeploymentState: this.selectedDeploymentState!,
+			showLiveTail: !!this.selectedDeploymentActiveOrDraining,
+			lastDeployment: this.deployments ? this.deployments[0] : undefined,
 		};
 
 		this.view.update({
@@ -989,7 +989,8 @@ export class ProjectController {
 
 			const sessionsViewObject: SessionSectionViewModel = {
 				sessions: this.sessions,
-				selectedDeploymentState: this.selectedDeploymentState!,
+				showLiveTail: this.selectedDeploymentActiveOrDraining!,
+				lastDeployment: this.deployments ? this.deployments[0] : undefined,
 			};
 
 			this.view.update({

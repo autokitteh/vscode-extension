@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { DeploymentState, MessageType, SessionStateType } from "@enums";
+import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
 import RotateIcon from "@react-assets/icons/rotate.svg?react";
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
 import { AKTableMessage } from "@react-components/AKTable";
-import { useAppState } from "@react-context";
 import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 
@@ -15,14 +14,8 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [stateFilter, setStateFilter] = useState<string>();
 	const [liveTailState, setLiveTailState] = useState<boolean>(true);
-	const [{ activeDeploymentId, selectedDeployment }] = useAppState();
 
-	const currentDeploymentIsActive = activeDeploymentId === selectedDeployment?.deploymentId;
-	const currentDeploymentIsDraining = selectedDeployment?.state === DeploymentState.DRAINING_DEPLOYMENT;
-
-	const isLiveTailVisible = currentDeploymentIsActive || currentDeploymentIsDraining;
-
-	const { sessions } = sessionsSection || {};
+	const { sessions, showLiveTail, lastDeployment } = sessionsSection || {};
 
 	useIncomingMessageHandler({
 		setSessionsSection,
@@ -78,7 +71,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 				}
 			>
 				<div className="flex">{`${translate().t("reactApp.sessions.tableTitle")}`}</div>
-				{!isLoading && isLiveTailVisible ? (
+				{!isLoading && showLiveTail ? (
 					<div
 						className="ml-3 w-5 h-5 cursor-pointer"
 						onClick={() => toggleLiveTail()}
@@ -122,6 +115,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 					widthProp={divWidth}
 					disableLiveTail={disableLiveTail}
 					liveTailState={liveTailState}
+					lastDeployment={lastDeployment}
 				/>
 			)}
 		</div>

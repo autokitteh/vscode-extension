@@ -23,7 +23,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	const [isDeletingInProcess, setIsDeletingInProgress] = useState(false);
 	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
-	const [selectedDeployment, setSelectedDeployment] = useState<Deployment>();
+	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string>();
 	const [entrypoints, setEntrypoints] = useState<Record<string, SessionEntrypoint[]>>();
 
 	// Local variable
@@ -33,10 +33,10 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	};
 
 	useEffect(() => {
-		if (selectedDeployment) {
-			dispatch({ type: "SET_SELECTED_DEPLOYMENT", payload: selectedDeployment });
+		if (selectedDeploymentId) {
+			dispatch({ type: "SET_SELECTED_DEPLOYMENT", payload: selectedDeploymentId });
 		}
-	}, [selectedDeployment]);
+	}, [selectedDeploymentId]);
 
 	// Incoming Messages Handler
 	const handleDeploymentDeletedResponse = () => {
@@ -44,7 +44,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 		hidePopper();
 	};
 
-	useIncomingMessageHandler({ handleDeploymentDeletedResponse, setSelectedDeployment, setEntrypoints });
+	useIncomingMessageHandler({ handleDeploymentDeletedResponse, setSelectedDeploymentId, setEntrypoints });
 
 	// Functions Section
 	const showPopper = (popperId: string) => dispatch({ type: "SET_MODAL_NAME", payload: popperId });
@@ -153,10 +153,7 @@ export const AKDeploymentTableBody = ({ deployments }: { deployments?: Deploymen
 	return (
 		deployments &&
 		deployments.map((deployment: Deployment, index: number) => (
-			<AKTableRow
-				key={deployment.deploymentId}
-				isSelected={selectedDeployment?.deploymentId === deployment.deploymentId}
-			>
+			<AKTableRow key={deployment.deploymentId} isSelected={selectedDeploymentId === deployment.deploymentId}>
 				<AKTableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getTimePassed(deployment.createdAt)}
 				</AKTableCell>
