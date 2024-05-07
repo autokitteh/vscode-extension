@@ -1013,14 +1013,16 @@ export class ProjectController {
 	}
 
 	toggleSessionsLiveTail(isLiveStateOn: Boolean) {
-		if (this.selectedDeployment) {
-			this.deploymentsWithLiveTail.set(this.selectedDeployment.deploymentId, !!isLiveStateOn);
-
-			if (isLiveStateOn) {
-				this.fetchSessions();
-				this.sessionsNextPageToken = undefined;
-				return;
-			}
+		if (!this.selectedDeployment) {
+			return;
 		}
+		this.deploymentsWithLiveTail.set(this.selectedDeployment.deploymentId, !!isLiveStateOn);
+
+		if (!isLiveStateOn) {
+			return;
+		}
+		this.fetchSessions();
+		this.sessionsNextPageToken = undefined;
+		return;
 	}
 }
