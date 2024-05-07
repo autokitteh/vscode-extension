@@ -345,11 +345,12 @@ export class ProjectController {
 
 		const existingLiveTailState = this.deploymentsWithLiveTail.has(deploymentId);
 		const isFirstTime = !existingLiveTailState;
-		const isLiveStateOn = this.deploymentsWithLiveTail.get(deploymentId);
+		let isLiveStateOn = this.deploymentsWithLiveTail.get(deploymentId);
 		if (isFirstTime && this.isDeploymentLiveTailPossible) {
+			isLiveStateOn = true;
 			this.deploymentsWithLiveTail.set(deploymentId, true);
 		}
-		if (isFirstTime || (!isLiveStateOn && !this.isDeploymentLiveTailPossible)) {
+		if (isFirstTime || isLiveStateOn || (!isLiveStateOn && !this.isDeploymentLiveTailPossible)) {
 			await this.fetchSessions();
 		}
 
