@@ -50,7 +50,7 @@ export class ProjectController {
 	}
 
 	reveal(): void {
-		this.startLoading();
+		this.startLoader();
 		if (!this.project) {
 			const projectNotFoundMessage = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
 			commands.executeCommand(vsCommands.showErrorMessage, projectNotFoundMessage);
@@ -60,22 +60,22 @@ export class ProjectController {
 		this.view.reveal(this.project.name);
 
 		this.notifyViewResourcesPathChanged();
-		this.stopLoading();
+		this.stopLoader();
 	}
 
 	setProjectNameInView() {
-		this.startLoading();
+		this.startLoader();
 		this.view.update({
 			type: MessageType.setProjectName,
 			payload: this.project?.name,
 		});
-		this.stopLoading();
+		this.stopLoader();
 	}
 
 	async deleteProject() {
-		this.startLoading();
+		this.startLoader();
 		const { error } = await ProjectsService.delete(this.projectId);
-		this.stopLoading();
+		this.stopLoader();
 
 		if (error) {
 			const notification = translate().t("projects.deleteFailed", { projectName: this.project?.name });
@@ -91,10 +91,10 @@ export class ProjectController {
 	}
 
 	async getSessionHistory(sessionId: string) {
-		this.startLoading();
+		this.startLoader();
 		const { data: sessionHistoryStates, error: sessionsError } =
 			await SessionsService.getLogRecordsBySessionId(sessionId);
-		this.stopLoading();
+		this.stopLoader();
 
 		if (sessionsError) {
 			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionHistory)) {
@@ -144,9 +144,9 @@ export class ProjectController {
 	};
 
 	async loadAndDisplayDeployments() {
-		this.startLoading();
+		this.startLoader();
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
-		this.stopLoading();
+		this.stopLoader();
 
 		if (error) {
 			const notification = translate().t("errors.noResponse");
@@ -194,22 +194,28 @@ export class ProjectController {
 		this.loadSingleshotArgs();
 	}
 
-	startLoading() {
+	startLoader() {
 		this.loadingRequestsCounter++;
-		if (this.loadingRequestsCounter === 1) {
-			this.view.update({
-				type: MessageType.startLoader,
-			});
+		if (this.loadingRequestsCounter < 0) {
+			LoggerService.error(namespaces.projectController, translate().t("errors.loadingCounterStartFailure"));
+			this.loadingRequestsCounter = 1;
 		}
+
+		this.view.update({
+			type: MessageType.startLoader,
+		});
 	}
 
-	stopLoading() {
+	stopLoader() {
 		this.loadingRequestsCounter--;
-		if (this.loadingRequestsCounter <= 0) {
-			this.view.update({
-				type: MessageType.stopLoader,
-			});
+		if (this.loadingRequestsCounter < 0) {
+			LoggerService.error(namespaces.projectController, translate().t("errors.loadingCounterStopFailure"));
+			this.loadingRequestsCounter = 0;
 		}
+
+		this.view.update({
+			type: MessageType.stopLoader,
+		});
 	}
 
 	async loadSingleshotArgs() {
@@ -219,11 +225,11 @@ export class ProjectController {
 			return;
 		}
 
-		this.startLoading();
+		this.startLoader();
 		const { data: buildDescription, error: buildDescriptionError } = await BuildsService.getBuildDescription(
 			lastDeployment.buildId
 		);
-		this.stopLoading();
+		this.stopLoader();
 
 		if (buildDescriptionError) {
 			LoggerService.error(namespaces.projectController, translate().t("errors.buildInformationForSingleshotNotLoaded"));
@@ -258,11 +264,11 @@ export class ProjectController {
 
 		const selectedSessionStateFilter = reverseSessionStateConverter(this.filterSessionsState as SessionStateType);
 
-		this.startLoading();
+		this.startLoader();
 		const { data: sessions, error } = await SessionsService.listByDeploymentId(this.selectedDeploymentId, {
 			stateType: selectedSessionStateFilter,
 		});
-		this.stopLoading();
+		this.stopLoader();
 
 		if (error) {
 			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessions)) {
@@ -449,10 +455,10 @@ export class ProjectController {
 		this.onProjectDisposeCB = onProjectDisposeCB;
 		this.onProjectDeleteCB = onProjectDeleteCB;
 
-		this.startLoading();
+		this.startLoader();
 		const { data: project, error } = await ProjectsService.get(this.projectId);
 		const log = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
-		this.stopLoading();
+		this.stopLoader();
 
 		if (error) {
 			LoggerService.error(namespaces.projectController, (error as Error).message);
@@ -475,9 +481,9 @@ export class ProjectController {
 	}
 
 	async downloadResources(downloadPath?: string) {
-		this.startLoading();
+		this.startLoader();
 		const { data: existingResources, error } = await ProjectsService.getResources(this.projectId);
-		this.stopLoading();
+		this.stopLoader();
 
 		if (error) {
 			const notification = translate().t("projects.downloadResourcesDirectoryErrorForProject", {
@@ -575,9 +581,9 @@ export class ProjectController {
 
 			return;
 		}
-		this.startLoading();
+		this.startLoader();
 		const { data: buildId, error } = await ProjectsService.build(this.projectId, mappedResources!);
-		this.stopLoading();
+		this.stopLoader();
 
 		if (error) {
 			const notification = translate().t("projects.projectBuildFailed", {
@@ -643,9 +649,9 @@ export class ProjectController {
 			return;
 		}
 
-		this.startLoading();
+		this.startLoader();
 		const { data: deploymentId, error } = await ProjectsService.run(this.projectId, mappedResources!);
-		this.stopLoading();
+		this.stopLoader();
 
 		if (error) {
 			const notification = translate().t("projects.projectDeployFailed", {
@@ -670,9 +676,9 @@ export class ProjectController {
 	}
 
 	async activateDeployment(deploymentId: string) {
-		this.startLoading();
+		this.startLoader();
 		const { error } = await DeploymentsService.activate(deploymentId);
-		this.stopLoading();
+		this.stopLoader();
 
 		if (error) {
 			const notification = translate().t("deployments.activationFailed");
@@ -701,9 +707,9 @@ export class ProjectController {
 		};
 
 		delete enrichedSessionArgs.sessionId;
-		this.startLoading();
+		this.startLoader();
 		const { data: sessionId, error } = await SessionsService.startSession(enrichedSessionArgs, this.projectId);
-		this.stopLoading();
+		this.stopLoader();
 
 		if (error) {
 			const notification = `${translate().t("sessions.executionFailed")} `;
@@ -715,9 +721,9 @@ export class ProjectController {
 	}
 
 	async deactivateDeployment(deploymentId: string) {
-		this.startLoading();
+		this.startLoader();
 		const { error } = await DeploymentsService.deactivate(deploymentId);
-		this.stopLoading();
+		this.stopLoader();
 
 		if (error) {
 			const notification = translate().t("deployments.deactivationFailed");
@@ -766,9 +772,9 @@ export class ProjectController {
 	}
 
 	async stopSession(sessionId: string) {
-		this.startLoading();
+		this.startLoader();
 		const { error } = await SessionsService.stop(sessionId);
-		this.stopLoading();
+		this.stopLoader();
 
 		if (error) {
 			const notification = translate().t("sessions.stopFailed", { sessionId });
@@ -784,9 +790,9 @@ export class ProjectController {
 	}
 
 	async deleteDeployment(deploymentId: string) {
-		this.startLoading();
+		this.startLoader();
 		const { error } = await DeploymentsService.delete(deploymentId);
-		this.stopLoading();
+		this.stopLoader();
 
 		if (error) {
 			const errorMessage = translate().t("deployments.deleteFailedId", { deploymentId });
@@ -910,9 +916,9 @@ export class ProjectController {
 	}
 
 	async deleteSession(sessionId: string) {
-		this.startLoading();
+		this.startLoader();
 		const { error } = await SessionsService.deleteSession(sessionId);
-		this.stopLoading();
+		this.stopLoader();
 
 		if (error) {
 			const notification = translate().t("sessions.sessionDeleteFailId", { sessionId });
