@@ -5,5 +5,5 @@ export type DeploymentSectionViewModel = {
 	totalDeployments: number;
 	lastDeployment?: Deployment;
 	activeDeploymentId?: string;
-	selectedDeployment?: Deployment;
+	selectedDeploymentId?: string;
 };
