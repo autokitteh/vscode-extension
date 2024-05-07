@@ -32,6 +32,7 @@ export class ProjectController {
 	public project?: Project;
 	private sessions?: Session[] = [];
 	private sessionHistoryStates: SessionLogRecord[] = [];
+	private cachedSessionHistoryStates: Map<string, SessionLogRecord[]> = new Map();
 	private sessionLogOutputCursor: number = 0;
 	private deployments?: Deployment[];
 	private deploymentsRefreshRate: number;
@@ -442,6 +443,13 @@ export class ProjectController {
 	}
 
 	async initSessionLogsDisplay(sessionId: string) {
+		if (this.cachedSessionHistoryStates.has(sessionId)) {
+			const sessionHistoryStates = this.cachedSessionHistoryStates.get(sessionId);
+			const lastState = sessionHistoryStates![sessionHistoryStates!.length - 1];
+			this.outputSessionLogs(sessionHistoryStates!);
+			this.printFinishedSessionLogs(lastState);
+			return;
+		}
 		const sessionHistoryStates = await this.getSessionHistory(sessionId);
 		if (!sessionHistoryStates) {
 			return;
@@ -454,13 +462,14 @@ export class ProjectController {
 		if (lastState.isFinished()) {
 			this.outputSessionLogs(sessionHistoryStates);
 			this.printFinishedSessionLogs(lastState);
-		} else {
-			this.startInterval(
-				ProjectIntervalTypes.sessionHistory,
-				() => this.displaySessionsHistory(sessionId),
-				this.sessionsLogRefreshRate
-			);
+			this.cachedSessionHistoryStates.set(sessionId, sessionHistoryStates);
+			return;
 		}
+		this.startInterval(
+			ProjectIntervalTypes.sessionHistory,
+			() => this.displaySessionsHistory(sessionId),
+			this.sessionsLogRefreshRate
+		);
 	}
 
 	async startInterval(intervalKey: ProjectIntervalTypes, loadFunc: () => Promise<void> | void, refreshRate: number) {
