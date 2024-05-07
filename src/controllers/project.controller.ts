@@ -380,13 +380,16 @@ export class ProjectController {
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
-		if (this.selectedDeployment) {
-			this.selectedSessionPerDeployment.set(this.selectedDeployment.deploymentId, sessionId);
-			if (stopSessionsInterval) {
-				this.deploymentsWithLiveTail.set(this.selectedDeployment.deploymentId, false);
-			}
-		}
 		this.initSessionLogsDisplay(sessionId);
+
+		if (!this.selectedDeployment) {
+			return;
+		}
+
+		this.selectedSessionPerDeployment.set(this.selectedDeployment.deploymentId, sessionId);
+		if (stopSessionsInterval) {
+			this.deploymentsWithLiveTail.set(this.selectedDeployment.deploymentId, false);
+		}
 	}
 
 	async displaySessionLogsAndStop(sessionId: string) {
