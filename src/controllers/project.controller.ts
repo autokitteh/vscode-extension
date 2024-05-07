@@ -346,10 +346,10 @@ export class ProjectController {
 		const existingLiveTailState = this.deploymentsWithLiveTail.has(deploymentId);
 		const isFirstTime = !existingLiveTailState;
 		const isLiveStateOn = this.deploymentsWithLiveTail.get(deploymentId);
-		if (isFirstTime) {
+		if (isFirstTime && this.selectedDeploymentActiveOrDraining) {
 			this.deploymentsWithLiveTail.set(deploymentId, true);
 		}
-		if (isFirstTime || isLiveStateOn) {
+		if (isFirstTime || (!isLiveStateOn && !this.selectedDeploymentActiveOrDraining)) {
 			await this.fetchSessions();
 		}
 

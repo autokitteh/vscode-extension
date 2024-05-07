@@ -6,7 +6,7 @@ import RotateIcon from "@react-assets/icons/rotate.svg?react";
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
 import { AKTableMessage } from "@react-components/AKTable";
 import { useAppState } from "@react-context";
-import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
+import { useIncomingMessageHandler, useForceRerender, useDelayedLoading } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 
 export const AKSessions = ({ height }: { height: string | number }) => {
@@ -15,6 +15,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	const [stateFilter, setStateFilter] = useState<string>();
 	const [liveTailState, setLiveTailState] = useState<boolean>(true);
 	const [{ loading }] = useAppState();
+	const delayedLoading = useDelayedLoading(loading, 1000);
 
 	const { sessions, showLiveTail, lastDeployment } = sessionsSection || {};
 
@@ -59,7 +60,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	};
 
 	return (
-		<div style={{ height: `${parseInt(height as string, 10) * 0.7}px` }} ref={ref}>
+		<div style={{ height: `${parseInt(height as string, 10) * 0.85}px` }} ref={ref}>
 			<div
 				className={
 					"flex flex-row w-full h-12 bg-vscode-editor-background sticky top-0 " +
@@ -67,7 +68,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 				}
 			>
 				<div className="flex">{`${translate().t("reactApp.sessions.tableTitle")}`}</div>
-				{!loading && showLiveTail ? (
+				{!delayedLoading && showLiveTail ? (
 					<div
 						className="ml-3 w-5 h-5 cursor-pointer"
 						onClick={() => toggleLiveTail()}
@@ -95,8 +96,8 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 					</select>
 				</div>
 			</div>
-			{loading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
-			{!sessions && !loading && (
+			{delayedLoading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
+			{!sessions && !delayedLoading && (
 				<AKTableMessage>{translate().t("reactApp.sessions.pickDeploymentToShowSessions")}</AKTableMessage>
 			)}
 			{sessions && sessions.length === 0 && (
