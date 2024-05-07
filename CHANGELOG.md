@@ -1,3 +1,10 @@
+# [0.13.0](https://github.com/autokitteh/vscode-extension/compare/v0.12.5...v0.13.0) (2024-05-07)
+
+
+### Features
+
+* global loader - animate logo on loading state (UI-270) ([#283](https://github.com/autokitteh/vscode-extension/issues/283)) ([77dcd6f](https://github.com/autokitteh/vscode-extension/commit/77dcd6f3d6d81014577a7bc27ec3e269e607493d))
+
 ## [0.12.5](https://github.com/autokitteh/vscode-extension/compare/v0.12.4...v0.12.5) (2024-04-30)
 
 
