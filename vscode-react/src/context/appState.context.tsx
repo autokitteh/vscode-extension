@@ -58,6 +58,5 @@ export const useAppDispatch = () => {
 		stopLoader,
 		startLoader,
 		setModalName,
-		setLastDeployment,
 	};
 };
