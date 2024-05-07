@@ -37,7 +37,7 @@ export class ProjectController {
 	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
-	private selectedDeploymentActiveOrDraining?: boolean;
+	private isDeploymentLiveTailPossible?: boolean;
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
@@ -301,7 +301,7 @@ export class ProjectController {
 
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions,
-			showLiveTail: this.selectedDeploymentActiveOrDraining!,
+			showLiveTail: this.isDeploymentLiveTailPossible!,
 			lastDeployment: this.deployments ? this.deployments[0] : undefined,
 		};
 
@@ -341,15 +341,15 @@ export class ProjectController {
 		)?.state;
 		const selectedDeploymentActive = selectedDeploymentState === DeploymentState.ACTIVE_DEPLOYMENT;
 		const selectedDeploymentDraining = selectedDeploymentState === DeploymentState.DRAINING_DEPLOYMENT;
-		this.selectedDeploymentActiveOrDraining = selectedDeploymentActive || selectedDeploymentDraining;
+		this.isDeploymentLiveTailPossible = selectedDeploymentActive || selectedDeploymentDraining;
 
 		const existingLiveTailState = this.deploymentsWithLiveTail.has(deploymentId);
 		const isFirstTime = !existingLiveTailState;
 		const isLiveStateOn = this.deploymentsWithLiveTail.get(deploymentId);
-		if (isFirstTime && this.selectedDeploymentActiveOrDraining) {
+		if (isFirstTime && this.isDeploymentLiveTailPossible) {
 			this.deploymentsWithLiveTail.set(deploymentId, true);
 		}
-		if (isFirstTime || (!isLiveStateOn && !this.selectedDeploymentActiveOrDraining)) {
+		if (isFirstTime || (!isLiveStateOn && !this.isDeploymentLiveTailPossible)) {
 			await this.fetchSessions();
 		}
 
@@ -984,7 +984,7 @@ export class ProjectController {
 
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions: this.sessions,
-			showLiveTail: !!this.selectedDeploymentActiveOrDraining,
+			showLiveTail: !!this.isDeploymentLiveTailPossible,
 			lastDeployment: this.deployments ? this.deployments[0] : undefined,
 		};
 
@@ -1042,7 +1042,7 @@ export class ProjectController {
 
 			const sessionsViewObject: SessionSectionViewModel = {
 				sessions: this.sessions,
-				showLiveTail: this.selectedDeploymentActiveOrDraining!,
+				showLiveTail: this.isDeploymentLiveTailPossible!,
 				lastDeployment: this.deployments ? this.deployments[0] : undefined,
 			};
 
