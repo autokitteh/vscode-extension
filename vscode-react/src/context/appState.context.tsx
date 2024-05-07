@@ -1,5 +1,4 @@
 import React, { createContext, ReactNode, useContext, useReducer } from "react";
-import { Deployment } from "@type/models";
 import { Action } from "src/types";
 
 type State = {
@@ -53,10 +52,6 @@ export const useAppDispatch = () => {
 	};
 	const setModalName = (modalName: string) => {
 		dispatch({ type: "SET_MODAL_NAME", payload: modalName });
-	};
-
-	const setLastDeployment = (deployment: Deployment) => {
-		dispatch({ type: "SET_LAST_DEPLOYMENT", payload: deployment });
 	};
 
 	return {
