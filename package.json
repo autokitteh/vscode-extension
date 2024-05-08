@@ -233,7 +233,7 @@
 			{
 				"contents": "No connection instance has been found.\n[Enable](command:autokitteh.enable)",
 				"view": "autokittehSidebarTree",
-				"when": "config.autokitteh.baseURL && !config.autokitteh.serviceEnabled && config.autokitteh.authToken"
+				"when": "config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
 			},
 			{
 				"contents": "[Login](command:autokitteh.login)",
