@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useRef } from "react";
 import { translate } from "@i18n";
 import { AKModal } from "@react-components";
 import {
@@ -21,8 +21,36 @@ export const AKConnectionsModal = ({
 }) => {
 	const [{ delayedLoading }] = useAppState();
 
+	const modalRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const vscodeEditorBackground = getComputedStyle(document.documentElement)
+			.getPropertyValue("--vscode-button-background")
+			.trim();
+
+		const hexToRGBA = (hex: string, opacity: number) => {
+			let r = 0,
+				g = 0,
+				b = 0;
+			if (hex.length === 4) {
+				r = parseInt(hex[1] + hex[1], 16);
+				g = parseInt(hex[2] + hex[2], 16);
+				b = parseInt(hex[3] + hex[3], 16);
+			} else if (hex.length === 7) {
+				r = parseInt(hex[1] + hex[2], 16);
+				g = parseInt(hex[3] + hex[4], 16);
+				b = parseInt(hex[5] + hex[6], 16);
+			}
+			return `rgba(${r},${g},${b},${opacity})`;
+		};
+
+		if (modalRef.current) {
+			modalRef.current.style.backgroundColor = hexToRGBA(vscodeEditorBackground, 0.98);
+		}
+	}, []);
+
 	return (
-		<AKModal wrapperClasses={["!bg-white z-50"]} classes={["bg-black-semi-transparent", "rounded-none"]}>
+		<AKModal classes={["rounded-none"]} ref={modalRef}>
 			<div
 				className="flex justify-end cursor-pointer text-white font-extrabold pt-8 text-xl"
 				onClick={() => onCloseClicked()}
@@ -37,8 +65,8 @@ export const AKConnectionsModal = ({
 					</AKTableHeader>
 					{connections?.map((connection) => (
 						<AKTableRow key={connection.connectionId}>
-							<AKTableCell>{connection.name}</AKTableCell>
-							<AKTableCell>{connection.connectionId}</AKTableCell>
+							<AKTableCell classes={["text-vscode-button-foreground"]}>{connection.name}</AKTableCell>
+							<AKTableCell classes={["text-vscode-button-foreground"]}>{connection.connectionId}</AKTableCell>
 						</AKTableRow>
 					))}
 				</AKTable>
