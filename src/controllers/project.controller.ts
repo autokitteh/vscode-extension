@@ -15,11 +15,11 @@ import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
 import { reverseSessionStateConverter } from "@models/utils";
-import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
+import { DeploymentsService, ProjectsService, SessionsService, LoggerService, ConnectionsService } from "@services";
 import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
-import { Deployment, Project, Session } from "@type/models";
+import { Connection, Deployment, Project, Session } from "@type/models";
 import { createDirectory, openFileExplorer } from "@utilities";
 import isEqual from "lodash.isequal";
 import { commands, OpenDialogOptions, window, env, Uri } from "vscode";
@@ -46,7 +46,11 @@ export class ProjectController {
 	private loadingRequestsCounter: number = 0;
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
+<<<<<<< HEAD
 	private retryScheduler?: RetryScheduler;
+=======
+	private connections: Connection[] = [];
+>>>>>>> 81079974 (feat: connections management)
 
 	constructor(
 		projectView: IProjectView,
@@ -530,10 +534,25 @@ export class ProjectController {
 		if (!project) {
 			LoggerService.error(namespaces.projectController, log);
 		}
-
 		this.project = project;
 		this.view.show(project!.name);
 		this.setProjectNameInView();
+
+		this.startLoader();
+		const { data: connections, error: connectionsError } = await ConnectionsService.list();
+		this.stopLoader();
+
+		if (connectionsError) {
+			commands.executeCommand(vsCommands.showErrorMessage, (connectionsError as Error).message);
+		}
+
+		this.connections = connections || [];
+
+		this.view.update({
+			type: MessageType.setConnections,
+			payload: this.connections,
+		});
+
 		this.sessions = undefined;
 	}
 

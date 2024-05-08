@@ -38,6 +38,7 @@
 	"buildInformationForSingleshotNotLoaded": "Couldn't load build information for singleshot",
 	"buildInformationForSingleshotNotParsed": "Couldn't parse build information for singleshot",
 	"buildInfoFetchFailedForBuild": "Couldn't fetch build info for build {{buildId}}, error: {{error}}",
+	"connectionsListFetchFailed": "Couldn't fetch connections list",
 	"buildProjectError": "Couldn't build project {{projectId}}, error: {{error}}",
 	"creatingDirectory": "Project directory setup failed - project {{projectName}}",
 	"creatingDirectoryExtended": "Project directory setup failed - project {{projectName}}, error: {{error}}",

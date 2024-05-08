@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import DownloadIcon from "@react-assets/icons/download.svg?react";
+import { AKConnectionsModal } from "@react-components/aKConnectionsModal.component";
 import { Button, Logo, Overlay } from "@react-components/atoms";
 import { Popper } from "@react-components/molecules";
 import { ProjectSettingsPopper } from "@react-components/project/organisms";
@@ -9,6 +10,7 @@ import { useAppDispatch } from "@react-context/appState.context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import "split-pane-react/esm/themes/default.css";
+import { Connection } from "@type/models";
 
 export const Header = () => {
 	const [projectName, setProjectName] = useState<string>();
@@ -16,7 +18,7 @@ export const Header = () => {
 	const [resourcesDir, setResourcesDir] = useState<string>("");
 	const [settingsPopperVisible, setSettingsPopperVisible] = useState<boolean>(false);
 	const pathPopperElementRef = useRef<HTMLDivElement | null>(null);
-
+	const [connections, setConnections] = useState<Connection[]>([]);
 	const { stopLoader, startLoader } = useAppDispatch();
 
 	useIncomingMessageHandler({
@@ -25,7 +27,10 @@ export const Header = () => {
 		setProjectName,
 		setThemeVisualType,
 		setResourcesDir,
+		setConnections,
 	});
+
+	console.log("connections", connections);
 
 	return (
 		<div className="flex items-center w-full">
@@ -72,6 +77,7 @@ export const Header = () => {
 					<ProjectSettingsPopper resourcesDir={resourcesDir} closePopper={() => setSettingsPopperVisible(false)} />
 				</Popper>
 			</div>
+			<AKConnectionsModal connections={connections} onCloseClicked={() => {}} />
 		</div>
 	);
 };
