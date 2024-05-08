@@ -30,8 +30,6 @@ export const Header = () => {
 		setConnections,
 	});
 
-	console.log("connections", connections);
-
 	return (
 		<div className="flex items-center w-full">
 			<Logo className="w-9 h-9 m-2" themeVisualType={themeVisualType} />
@@ -60,7 +58,7 @@ export const Header = () => {
 					classes="flex relative z-30 mr-2"
 					title={translate().t("reactApp.settings.openConnectionsSettingsScreen")}
 				>
-					<div className="codicon codicon-link text-vscode-background" /> Connections
+					<div className="codicon codicon-link text-vscode-background mr-1" /> Connections
 				</AKButton>
 				{!resourcesDir ? (
 					<Button
