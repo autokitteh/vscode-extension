@@ -236,7 +236,7 @@
 				"when": "config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
 			},
 			{
-				"contents": "[Login](command:autokitteh.login)",
+				"contents": "Click here to login and get your authentication token.\n[Login](command:autokitteh.login)",
 				"view": "autokittehSidebarTree",
 				"when": "!config.autokitteh.authToken"
 			},
