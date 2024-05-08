@@ -3,13 +3,13 @@ import { createConnectTransport } from "@connectrpc/connect-node";
 import { BASE_URL } from "@constants/api.constants";
 import { WorkspaceConfig } from "@utilities";
 
-export const jwtInterceptor: Interceptor = (next) => async (req) => {
+export const jwtInterceptor: Interceptor = (next) => (req) => {
 	const authToken = WorkspaceConfig.getFromWorkspace<string>("authToken", "");
 
 	if (authToken) {
 		req.header.set("Authorization", `Bearer ${authToken}`);
 	}
-	return await next(req);
+	return next(req);
 };
 
 export const grpcTransport = createConnectTransport({

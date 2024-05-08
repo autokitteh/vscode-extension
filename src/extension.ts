@@ -50,7 +50,7 @@ export async function activate(context: ExtensionContext) {
 		})
 	);
 	context.subscriptions.push(
-		commands.registerCommand(vsCommands.login, async () => {
+		commands.registerCommand(vsCommands.login, () => {
 			env.openExternal(Uri.parse(`${BASE_URL}/login`));
 		})
 	);
