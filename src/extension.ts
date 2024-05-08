@@ -23,7 +23,7 @@ import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject } from "@vscommands";
 import { openAddConnectionsPage } from "@vscommands/sideBarActions";
 import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough";
-import { commands, ExtensionContext, env, Uri } from "vscode";
+import { commands, ExtensionContext, env, Uri, window } from "vscode";
 
 export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
@@ -52,6 +52,19 @@ export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.login, () => {
 			env.openExternal(Uri.parse(`${BASE_URL}/login`));
+		})
+	);
+	const handleUri = (uri: Uri) => {
+		const queryParams = new URLSearchParams(uri.query);
+
+		if (queryParams.has("token")) {
+			WorkspaceConfig.setToWorkspace<string>("authToken", queryParams.get("token") as string);
+		}
+	};
+
+	context.subscriptions.push(
+		window.registerUriHandler({
+			handleUri,
 		})
 	);
 
