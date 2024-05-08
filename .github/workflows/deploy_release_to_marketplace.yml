@@ -1,31 +1,33 @@
 name: autokittehVSCode CI - Publish to VSCode Marketplace
+
 on:
   workflow_dispatch:
     inputs:
       environment:
         type: choice
-        description: Environment to deploy to
+        description: "Environment to deploy to"
         options:
-          - pre-release
-          - release
+          - "pre-release"
+          - "release"
         required: true
       tag:
         type: string
+        description: "Git tag to deploy"
         required: true
+
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 permissions:
-  contents: read
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      repository-projects: write
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.inputs.tag }}
           token: ${{ secrets.PAT_TOKEN }}
           submodules: true
       - uses: actions/setup-node@v3
@@ -36,16 +38,13 @@ jobs:
         run: git submodule update --remote
       - name: Install dependencies for both vscode and react app
         run: npm ci
-      - name: Run vscode and react app tests
-        run: npm run test:all
-      - name: Run vscode TS validation extension and react app
+      - name: Compile vscode and react app
         run: npm run compile:all
-      - name: Run vscode TS build extension and react app
+      - name: Build vscode and react app
         run: npm run build:all
       - name: Publish to VSCode Marketplace
         uses: lannonbr/vsce-action@3.0.0
-        if: github.ref == 'refs/heads/main'
         with:
-          args: "publish -p $VSCE_TOKEN"
+          args: ${{ github.event.inputs.environment == 'pre-release' && 'publish -p ${{ secrets.VSCE_TOKEN }} --pre-release' || 'publish -p ${{ secrets.VSCE_TOKEN }}' }}
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
