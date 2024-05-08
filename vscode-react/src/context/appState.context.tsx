@@ -37,7 +37,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
 	useEffect(() => {
 		let timeoutId: NodeJS.Timeout | undefined;
 		if (state.loading) {
-			timeoutId = setTimeout(() => setDelayedLoading(true), 1000); // Delay set to 1000 ms
+			timeoutId = setTimeout(() => setDelayedLoading(true), 1000);
 		} else {
 			clearTimeout(timeoutId);
 			setDelayedLoading(false);
