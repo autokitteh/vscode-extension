@@ -1,5 +1,17 @@
 name: autokittehVSCode CI - Publish to VSCode Marketplace
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: Environment to deploy to
+        options:
+          - pre-release
+          - release
+        required: true
+      tag:
+        type: string
+        required: true
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 permissions:
