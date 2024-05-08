@@ -20,7 +20,7 @@ export const Header = () => {
 	const pathPopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [connections, setConnections] = useState<Connection[]>([]);
 	const { stopLoader, startLoader } = useAppDispatch();
-
+	const [connectionsModalVisible, setConnectionsModalVisible] = useState<boolean>(false);
 	useIncomingMessageHandler({
 		stopLoader,
 		startLoader,
@@ -54,7 +54,14 @@ export const Header = () => {
 				{translate().t("reactApp.general.deploy")}
 			</Button>
 			<div className="flex-grow"></div>
-			<div className="flex-col">
+			<div className="flex flex-row">
+				<AKButton
+					onClick={() => setConnectionsModalVisible(true)}
+					classes="flex relative z-30 mr-2"
+					title={translate().t("reactApp.settings.openConnectionsSettingsScreen")}
+				>
+					<div className="codicon codicon-link text-vscode-background" /> Connections
+				</AKButton>
 				{!resourcesDir ? (
 					<Button
 						onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
@@ -77,7 +84,9 @@ export const Header = () => {
 					<ProjectSettingsPopper resourcesDir={resourcesDir} closePopper={() => setSettingsPopperVisible(false)} />
 				</Popper>
 			</div>
-			<AKConnectionsModal connections={connections} onCloseClicked={() => {}} />
+			{connectionsModalVisible && (
+				<AKConnectionsModal connections={connections} onCloseClicked={() => setConnectionsModalVisible(false)} />
+			)}
 		</div>
 	);
 };

@@ -6,5 +6,6 @@
 	"deleteProject": "Delete Project",
 	"viewProjectResourcesDirectoryPath": "View project resources directory path",
 	"viewProjectSettings": "View project settings",
-	"pickDirectoryOfExecutables": "Pick directory of project files"
+	"pickDirectoryOfExecutables": "Pick directory of project files",
+	"openConnectionsSettingsScreen": "Connections Settings"
 }
