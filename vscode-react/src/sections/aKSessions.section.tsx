@@ -6,7 +6,7 @@ import RotateIcon from "@react-assets/icons/rotate.svg?react";
 import { AKSessionsTableBody } from "@react-components/aKSessionTableBody.component";
 import { AKTableMessage } from "@react-components/AKTable";
 import { useAppState } from "@react-context";
-import { useIncomingMessageHandler, useForceRerender, useDelayedLoading } from "@react-hooks";
+import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 
 export const AKSessions = ({ height }: { height: string | number }) => {
@@ -14,8 +14,7 @@ export const AKSessions = ({ height }: { height: string | number }) => {
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [stateFilter, setStateFilter] = useState<string>();
 	const [liveTailState, setLiveTailState] = useState<boolean>(true);
-	const [{ loading }] = useAppState();
-	const delayedLoading = useDelayedLoading(loading, 1000);
+	const [{ delayedLoading }] = useAppState();
 
 	const { sessions, showLiveTail, lastDeployment } = sessionsSection || {};
 
