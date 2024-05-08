@@ -231,14 +231,14 @@
 		},
 		"viewsWelcome": [
 			{
-				"contents": "No connection instance has been found.\n[Enable](command:autokitteh.enable)",
-				"view": "autokittehSidebarTree",
-				"when": "config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
-			},
-			{
 				"contents": "Click here to login and get your authentication token.\n[Login](command:autokitteh.login)",
 				"view": "autokittehSidebarTree",
 				"when": "!config.autokitteh.authToken"
+			},
+			{
+				"contents": "No connection instance has been found.\n[Enable](command:autokitteh.enable)",
+				"view": "autokittehSidebarTree",
+				"when": "config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
 			},
 			{
 				"contents": "No instance setup has been found.\n[Setup Configuration](command:autokitteh.openConfigSetupWalkthrough)\n",
