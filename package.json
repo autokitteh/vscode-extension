@@ -236,6 +236,11 @@
 				"when": "config.autokitteh.baseURL && !config.autokitteh.serviceEnabled"
 			},
 			{
+				"contents": "[Login](command:autokitteh.login)",
+				"view": "autokittehSidebarTree",
+				"when": "!config.autokitteh.authToken"
+			},
+			{
 				"contents": "No instance setup has been found.\n[Setup Configuration](command:autokitteh.openConfigSetupWalkthrough)\n",
 				"view": "autokittehSidebarTree",
 				"when": "!config.autokitteh.baseURL"
