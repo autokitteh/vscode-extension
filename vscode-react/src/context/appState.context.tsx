@@ -1,10 +1,18 @@
+<<<<<<< HEAD
 import React, { createContext, ReactNode, useContext, useEffect, useReducer, useState } from "react";
+=======
+import React, { createContext, ReactNode, useContext, useReducer, useEffect, useState } from "react";
+>>>>>>> cd1e4ab1 (refactor: optimize loading state)
 import { Action } from "src/types";
 
 type State = {
 	modalName: string;
 	loading: boolean;
+<<<<<<< HEAD
 	delayedLoading: boolean;
+=======
+	delayedLoading: boolean; // Adding delayedLoading state
+>>>>>>> cd1e4ab1 (refactor: optimize loading state)
 	selectedDeploymentId?: string;
 };
 
@@ -26,7 +34,8 @@ export const appStateReducer = (state: State, action: Action): State => {
 export const AppStateProvider = ({ children }: { children: ReactNode }) => {
 	const initialState: State = {
 		modalName: "",
-		loading: true,
+		loading: false,
+		delayedLoading: false, // Initialize delayedLoading
 		selectedDeploymentId: undefined,
 		delayedLoading: false,
 	};

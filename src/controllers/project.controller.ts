@@ -46,11 +46,8 @@ export class ProjectController {
 	private loadingRequestsCounter: number = 0;
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
-<<<<<<< HEAD
 	private retryScheduler?: RetryScheduler;
-=======
-	private connections: Connection[] = [];
->>>>>>> 81079974 (feat: connections management)
+	private connections?: Connection[];
 
 	constructor(
 		projectView: IProjectView,
@@ -546,7 +543,7 @@ export class ProjectController {
 			commands.executeCommand(vsCommands.showErrorMessage, (connectionsError as Error).message);
 		}
 
-		this.connections = connections || [];
+		this.connections = connections;
 
 		this.view.update({
 			type: MessageType.setConnections,
