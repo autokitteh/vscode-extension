@@ -1,9 +1,10 @@
-import React, { createContext, ReactNode, useContext, useReducer } from "react";
+import React, { createContext, ReactNode, useContext, useEffect, useReducer, useState } from "react";
 import { Action } from "src/types";
 
 type State = {
 	modalName: string;
 	loading: boolean;
+	delayedLoading: boolean;
 	selectedDeploymentId?: string;
 };
 
@@ -27,10 +28,29 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
 		modalName: "",
 		loading: true,
 		selectedDeploymentId: undefined,
+		delayedLoading: false,
 	};
 
 	const [state, dispatch] = useReducer(appStateReducer, initialState);
-	const value: [State, React.Dispatch<Action>] = [state, dispatch];
+	const [delayedLoading, setDelayedLoading] = useState(false);
+
+	useEffect(() => {
+		let timeoutId: NodeJS.Timeout | undefined;
+		if (state.loading) {
+			timeoutId = setTimeout(() => setDelayedLoading(true), 1000); // Delay set to 1000 ms
+		} else {
+			clearTimeout(timeoutId);
+			setDelayedLoading(false);
+		}
+		return () => {
+			if (timeoutId) {
+				clearTimeout(timeoutId);
+			}
+		};
+	}, [state.loading]);
+
+	const value: [State, React.Dispatch<Action>] = [{ ...state, delayedLoading }, dispatch];
+
 	return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
 };
 
