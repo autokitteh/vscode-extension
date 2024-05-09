@@ -15,9 +15,6 @@ on:
         description: "Git tag to deploy"
         required: true
 
-env:
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 permissions:
   contents: write
   repository-projects: write
