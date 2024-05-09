@@ -63,5 +63,5 @@ jobs:
         run: npm ci
       - name: Release and tag a new version
         env:
-          SLACK_WEBHOOK_URL: ${{ github.ref == 'refs/heads/main' && secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: npx semantic-release
