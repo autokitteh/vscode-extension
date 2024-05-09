@@ -17,7 +17,6 @@ on:
 
 permissions:
   contents: write
-  repository-projects: write
 
 jobs:
   deploy:
@@ -28,18 +27,26 @@ jobs:
           ref: ${{ github.event.inputs.tag }}
           token: ${{ secrets.PAT_TOKEN }}
           submodules: true
+
       - uses: actions/setup-node@v3
         with:
           node-version: "21.2.0"
           cache: "npm"
-      - name: Pull submodule from remote
-        run: git submodule update --remote
-      - name: Install dependencies for both vscode and react app
-        run: npm ci
-      - name: Compile vscode and react app
-        run: npm run compile:all
-      - name: Build vscode and react app
-        run: npm run build:all
+
+      - if: github.event.inputs.release-type == 'pre-release'
+        name: Pull submodule from remote and build
+        run: |
+          git submodule update --remote
+          npm ci
+          npm run compile:all
+          npm run build:all
+
+      - if: github.event.inputs.release-type == 'release'
+        name: Download Artifacts for Release
+        uses: actions/download-artifact@v3
+        with:
+          name: built-files
+
       - name: Publish to VSCode Marketplace
         uses: lannonbr/vsce-action@3.0.0
         with:
