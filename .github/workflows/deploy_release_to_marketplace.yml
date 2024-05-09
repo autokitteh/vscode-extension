@@ -19,34 +19,34 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.tag }}
           token: ${{ secrets.PAT_TOKEN }}
           submodules: true
 
-      - uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: "21.2.0"
           cache: "npm"
 
       - if: github.event.inputs.release-type == 'pre-release'
-        name: Pull submodule from remote and build
+        name: Build from scratch for Pre-release
         run: |
           git submodule update --remote
           npm ci
           npm run compile:all
           npm run build:all
+          npx vsce package --pre-release
 
       - if: github.event.inputs.release-type == 'release'
-        name: Download Artifacts for Release
-        uses: actions/download-artifact@v3
-        with:
-          name: built-files
+        name: Download and prepare Release vsix
+        run: |
+          curl -sL -o extension.vsix "$(curl -sH "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/autokitteh/vscode-extension/releases/tags/${{ github.event.inputs.tag }} | jq -r '.assets[] | select(.name | endswith(".vsix")) | .browser_download_url')"
 
       - name: Publish to VSCode Marketplace
-        uses: lannonbr/vsce-action@3.0.0
-        with:
-          args: ${{ github.event.inputs.release-type == 'pre-release' && 'publish -p ${{ secrets.VSCE_TOKEN }} --pre-release' || 'publish -p ${{ secrets.VSCE_TOKEN }}' }}
+        run: npx vsce publish -p ${{ secrets.VSCE_TOKEN }} --packagePath extension.vsix
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
