@@ -39,7 +39,7 @@ jobs:
           npm ci
           npm run compile:all
           npm run build:all
-          npx vsce package --pre-release
+          npx vsce package --pre-release --out extension.vsix
 
       - if: github.event.inputs.release-type == 'release'
         name: Download and prepare Release vsix
