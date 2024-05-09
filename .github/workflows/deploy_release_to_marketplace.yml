@@ -15,9 +15,6 @@ on:
         description: "Git tag to deploy"
         required: true
 
-permissions:
-  contents: write
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
