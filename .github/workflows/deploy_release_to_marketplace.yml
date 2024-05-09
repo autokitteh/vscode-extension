@@ -3,9 +3,9 @@ name: autokittehVSCode CI - Publish to VSCode Marketplace
 on:
   workflow_dispatch:
     inputs:
-      environment:
+      release-type:
         type: choice
-        description: "Environment to deploy to"
+        description: "Release type"
         options:
           - "pre-release"
           - "release"
@@ -43,6 +43,6 @@ jobs:
       - name: Publish to VSCode Marketplace
         uses: lannonbr/vsce-action@3.0.0
         with:
-          args: ${{ github.event.inputs.environment == 'pre-release' && 'publish -p ${{ secrets.VSCE_TOKEN }} --pre-release' || 'publish -p ${{ secrets.VSCE_TOKEN }}' }}
+          args: ${{ github.event.inputs.release-type == 'pre-release' && 'publish -p ${{ secrets.VSCE_TOKEN }} --pre-release' || 'publish -p ${{ secrets.VSCE_TOKEN }}' }}
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
