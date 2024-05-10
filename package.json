@@ -89,6 +89,11 @@
 		],
 		"configuration": {
 			"properties": {
+				"autokitteh.authToken": {
+					"default": "",
+					"description": "Authentication token",
+					"type": "string"
+				},
 				"autokitteh.baseURL": {
 					"default": "http://localhost:9980",
 					"description": "Server URL",
