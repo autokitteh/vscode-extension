@@ -1,3 +1,10 @@
+# [0.15.0](https://github.com/autokitteh/vscode-extension/compare/v0.14.0...v0.15.0) (2024-05-10)
+
+
+### Features
+
+* add auth-token field in extension settings (UI-293) ([#298](https://github.com/autokitteh/vscode-extension/issues/298)) ([e47bbee](https://github.com/autokitteh/vscode-extension/commit/e47bbee4740b1be7eed03e01ba74acdd4f052ba5))
+
 # [0.14.0](https://github.com/autokitteh/vscode-extension/compare/v0.13.0...v0.14.0) (2024-05-07)
 
 
