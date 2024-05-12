@@ -50,8 +50,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download and prepare release vsix from github repository
-        run: |
-          curl -sL -o extension.vsix "$(curl -sH "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/autokitteh/vscode-extension/releases/tags/${{ github.event.inputs.tag }} | jq -r '.assets[] | select(.name | endswith(".vsix")) | .browser_download_url')"
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          version: tags/${{ github.event.inputs.tag }}
+          file: autokitteh-${{ github.event.inputs.tag }}.vsix
+          target: extension.vsix
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to VSCode Marketplace
         run: npx vsce publish -p ${{ secrets.VSCE_TOKEN }} --packagePath extension.vsix
