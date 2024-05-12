@@ -1,2 +1,2 @@
 export type { Action } from "./contextAction.type";
-export type { AKSessionsTableRowProps } from "./sessions.type";
+export type { SessionsTableRowProps } from "./sessions.type";

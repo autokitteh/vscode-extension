@@ -2,7 +2,7 @@ import { RefObject } from "react";
 import { SessionState } from "@react-enums";
 import { Session } from "@type/models";
 
-export type AKSessionsTableRowProps = {
+export type SessionsTableRowProps = {
 	sessions: Session[];
 	sessionActions: {
 		startSession: (session: Session) => void;
