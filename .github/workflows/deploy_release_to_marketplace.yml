@@ -34,6 +34,7 @@ jobs:
             exit 1
           fi
           curl -sLJO -H "Authorization: token ${{ secrets.PAT_TOKEN }}" -o extension.vsix "$DOWNLOAD_URL"
+
       - name: Publish to VSCode Marketplace
         run: |
           VSCE_OPTIONS="--packagePath extension.vsix"
