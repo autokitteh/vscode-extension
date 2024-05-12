@@ -55,7 +55,7 @@ jobs:
           version: tags/${{ github.event.inputs.tag }}
           file: autokitteh-${{ github.event.inputs.tag }}.vsix
           target: extension.vsix
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Publish to VSCode Marketplace
         run: npx vsce publish -p ${{ secrets.VSCE_TOKEN }} --packagePath extension.vsix
