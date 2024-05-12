@@ -43,5 +43,3 @@ jobs:
           fi
           echo "Running vsce publish with options: $VSCE_OPTIONS"
           npx vsce publish -p ${{ secrets.VSCE_TOKEN }} $VSCE_OPTIONS
-        env:
-          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
