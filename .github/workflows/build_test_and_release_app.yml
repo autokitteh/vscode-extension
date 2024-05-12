@@ -1,8 +1,6 @@
 name: Build & Release
 on:
   push:
-env:
-  GH_TOKEN: ${{ secrets.PAT_TOKEN }}
 permissions:
   contents: read
 jobs:
