@@ -17,6 +17,7 @@ on:
 
 jobs:
   publish-pre-release-to-marketplace:
+    name: Publish Pre-Release to VSCode Marketplace
     if: github.event.inputs.release-type == 'pre-release'
     runs-on: ubuntu-latest
     steps:
@@ -43,7 +44,8 @@ jobs:
       - name: Publish to VSCode Marketplace as pre-release
         run: npx vsce publish -p ${{ secrets.VSCE_TOKEN }} --pre-release
 
-  publish-release-to-marketplace:
+  publish-to-marketplace:
+    name: Publish to VSCode Marketplace
     if: github.event.inputs.release-type == 'release'
     runs-on: ubuntu-latest
     steps:
