@@ -1,0 +1,45 @@
+name: Publish to VSCode Marketplace
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-type:
+        type: choice
+        description: "Release type"
+        options:
+          - "pre-release"
+          - "release"
+        required: true
+      tag:
+        type: string
+        description: "Git tag to publish"
+        required: true
+
+jobs:
+  publish-to-marketplace:
+    name: Publish to VSCode Marketplace
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "21.2.0"
+          cache: "npm"
+
+      - name: Download and prepare release vsix from GitHub repository
+        run: |
+          DOWNLOAD_URL=$(curl -sH "Authorization: token ${{ secrets.PAT_TOKEN }}" "https://api.github.com/repos/autokitteh/vscode-extension/releases/tags/${{ github.event.inputs.tag }}" | jq -r '.assets[] | select(.name | endswith(".vsix")).browser_download_url')
+          if [ -z "$DOWNLOAD_URL" ] || [ "$DOWNLOAD_URL" == "null" ]; then
+            echo "Error: No asset found for download or failed to parse URL."
+            exit 1
+          fi
+          curl -sLJO -H "Authorization: token ${{ secrets.PAT_TOKEN }}" -o extension.vsix "$DOWNLOAD_URL"
+
+      - name: Publish to VSCode Marketplace
+        run: |
+          VSCE_OPTIONS="--packagePath extension.vsix"
+          if [ "${{ github.event.inputs.release-type }}" == "pre-release" ]; then
+            VSCE_OPTIONS="$VSCE_OPTIONS --pre-release"
+          fi
+          echo "Running vsce publish with options: $VSCE_OPTIONS"
+          npx vsce publish -p ${{ secrets.VSCE_TOKEN }} $VSCE_OPTIONS
