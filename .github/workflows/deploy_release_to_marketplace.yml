@@ -1,4 +1,4 @@
-name: autokittehVSCode CI - Publish to VSCode Marketplace
+name: Publish to VSCode Marketplace
 
 on:
   workflow_dispatch:
