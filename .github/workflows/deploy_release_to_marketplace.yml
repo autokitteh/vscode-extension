@@ -28,7 +28,7 @@ jobs:
 
       - name: Download and prepare release vsix from GitHub repository
         run: |
-          DOWNLOAD_URL=$(curl -sH "Authorization: token ${{ secrets.PAT_TOKEN }}" "https://api.github.com/repos/RonenMars/vscode-playground/releases/tags/${{ github.event.inputs.tag }}" | jq -r '.assets[] | select(.name | endswith(".vsix")).browser_download_url')
+          DOWNLOAD_URL=$(curl -sH "Authorization: token ${{ secrets.PAT_TOKEN }}" "https://api.github.com/repos/autokitteh/vscode-extension/releases/tags/${{ github.event.inputs.tag }}" | jq -r '.assets[] | select(.name | endswith(".vsix")).browser_download_url')
           if [ -z "$DOWNLOAD_URL" ] || [ "$DOWNLOAD_URL" == "null" ]; then
             echo "Error: No asset found for download or failed to parse URL."
             exit 1
