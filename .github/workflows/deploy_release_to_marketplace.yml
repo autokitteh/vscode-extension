@@ -33,20 +33,23 @@ jobs:
           node-version: "21.2.0"
           cache: "npm"
 
-      - name: Build from scratch for Pre-release
+      - name: Build from scratch pre-release extension version
         run: |
           git submodule update --remote
           npm ci
           npm run compile:all
           npm run build:all
-          npx vsce publish -p ${{ secrets.VSCE_TOKEN }} --pre-release
+
+      - name: Publish to VSCode Marketplace as pre-release
+        run: npx vsce publish -p ${{ secrets.VSCE_TOKEN }} --pre-release
 
   publish-release-to-marketplace:
     if: github.event.inputs.release-type == 'release'
     runs-on: ubuntu-latest
     steps:
-      - name: Download and prepare Release vsix
+      - name: Download and prepare release vsix from github repository
         run: |
           curl -sL -o extension.vsix "$(curl -sH "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/autokitteh/vscode-extension/releases/tags/${{ github.event.inputs.tag }} | jq -r '.assets[] | select(.name | endswith(".vsix")) | .browser_download_url')"
+
       - name: Publish to VSCode Marketplace
         run: npx vsce publish -p ${{ secrets.VSCE_TOKEN }} --packagePath extension.vsix
