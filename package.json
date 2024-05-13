@@ -220,7 +220,7 @@
 			"autokittehSidebarTree": [
 				{
 					"id": "autokittehSidebarTree",
-					"name": " Server"
+					"name": "AK Server"
 				}
 			]
 		},
@@ -267,7 +267,7 @@
 							"onCommand:autokitteh.enable"
 						],
 						"description": "[Enable](command:autokitteh.enable)",
-						"id": "connect",
+						"id": "connectAK",
 						"media": {
 							"altText": "Empty image",
 							"image": "resources/walkthrough/empty.png"
