@@ -2,7 +2,9 @@ import { useRef, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import DownloadIcon from "@react-assets/icons/download.svg?react";
-import { Button, Logo, Overlay, ProjectSettingsPopper, PopperComponent } from "@react-components";
+import { Button, Logo, Overlay } from "@react-components/atoms";
+import { Popper } from "@react-components/molecules";
+import { ProjectSettingsPopper } from "@react-components/project/organisms";
 import { useAppDispatch } from "@react-context/appState.context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
@@ -66,9 +68,9 @@ export const Header = () => {
 				)}
 				<Overlay isVisibile={settingsPopperVisible} onOverlayClick={() => setSettingsPopperVisible(false)} />
 
-				<PopperComponent visible={settingsPopperVisible} referenceRef={pathPopperElementRef}>
+				<Popper visible={settingsPopperVisible} referenceRef={pathPopperElementRef}>
 					<ProjectSettingsPopper resourcesDir={resourcesDir} closePopper={() => setSettingsPopperVisible(false)} />
-				</PopperComponent>
+				</Popper>
 			</div>
 		</div>
 	);

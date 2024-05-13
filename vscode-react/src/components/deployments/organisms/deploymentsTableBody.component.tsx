@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
-import { DeploymentState, Overlay } from "@react-components";
-import { DeletePopper, ExecutePopper, PopperComponent } from "@react-components";
-import { TableCell, TableRow } from "@react-components/Table";
+import { Overlay } from "@react-components/atoms";
+import { Cell } from "@react-components/atoms/table";
+import { DeploymentStateLabel, ExecutePopper } from "@react-components/deployments";
+import { DeletePopper, Popper } from "@react-components/molecules";
+import { Row } from "@react-components/molecules/table";
 import { useAppState } from "@react-context/appState.context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
@@ -145,31 +147,31 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	return (
 		deployments &&
 		deployments.map((deployment: Deployment, index: number) => (
-			<TableRow key={deployment.deploymentId} isSelected={selectedDeploymentId === deployment.deploymentId}>
-				<TableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+			<Row key={deployment.deploymentId} isSelected={selectedDeploymentId === deployment.deploymentId}>
+				<Cell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getTimePassed(deployment.createdAt)}
-				</TableCell>
-				<TableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+				</Cell>
+				<Cell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					<div className="flex justify-center">
 						<DeploymentStateLabel deploymentState={deployment.state} />
 					</div>
-				</TableCell>
-				<TableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+				</Cell>
+				<Cell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getSessionStateCount(deployment, SessionStateType.stopped)}
-				</TableCell>
-				<TableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+				</Cell>
+				<Cell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getSessionStateCount(deployment, SessionStateType.running)}
-				</TableCell>
-				<TableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+				</Cell>
+				<Cell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getSessionStateCount(deployment, SessionStateType.error)}
-				</TableCell>
-				<TableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+				</Cell>
+				<Cell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{getSessionStateCount(deployment, SessionStateType.completed)}
-				</TableCell>
-				<TableCell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+				</Cell>
+				<Cell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
 					{deployment.buildId}
-				</TableCell>
-				<TableCell>
+				</Cell>
+				<Cell>
 					<div className="flex justify-center">
 						<div
 							className={`codicon codicon-debug-rerun mr-2 cursor-pointer 
@@ -209,14 +211,14 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 								isVisibile={index === 0 && (modalName === "deploymentDelete" || modalName === "deploymentExecute")}
 								onOverlayClick={() => hidePopper()}
 							/>
-							<PopperComponent visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
+							<Popper visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
 								<DeletePopper
 									onConfirm={() => deleteDeploymentConfirmed()}
 									onDismiss={() => deleteDeploymentDismissed()}
 									translations={deleteDeploymentPopperTranslations}
 								/>
-							</PopperComponent>
-							<PopperComponent visible={modalName === "deploymentExecute"} referenceRef={executePopperElementRef}>
+							</Popper>
+							<Popper visible={modalName === "deploymentExecute"} referenceRef={executePopperElementRef}>
 								<ExecutePopper
 									files={files!}
 									functions={functions!}
@@ -228,12 +230,12 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 									onClose={() => hidePopper()}
 									displayedErrors={displayedErrors}
 								/>
-							</PopperComponent>
+							</Popper>
 						</div>,
 						document.body
 					)}
-				</TableCell>
-			</TableRow>
+				</Cell>
+			</Row>
 		))
 	);
 };

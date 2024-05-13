@@ -3,7 +3,6 @@ import { Theme } from "@enums";
 import LogoBlack from "@react-assets/images/logo/ak-logo-black.svg?react";
 import LogoWhite from "@react-assets/images/logo/ak-logo-white.svg?react";
 import { useAppState } from "@react-context/appState.context";
-import { useDelayedLoading } from "@react-hooks";
 import { cn } from "@react-utilities/cnClasses.utils";
 
 type LogoProperties = {
@@ -12,8 +11,7 @@ type LogoProperties = {
 };
 
 export const Logo = ({ className, themeVisualType }: LogoProperties): ReactNode => {
-	const [{ loading }] = useAppState();
-	const delayedLoading = useDelayedLoading(loading, 1000);
+	const [{ delayedLoading }] = useAppState();
 	const logoClass = cn(className, { loading: delayedLoading });
 
 	return themeVisualType === 2 || themeVisualType === 3 ? (

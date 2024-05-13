@@ -3,10 +3,10 @@ import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
 import RotateIcon from "@react-assets/icons/rotate.svg?react";
-import { SessionsTableBody } from "@react-components/sessions/organisms/sessionsTableBody.component";
-import { TableMessage } from "@react-components/Table";
+import { TableMessage } from "@react-components/atoms/table";
+import { SessionsTableBody } from "@react-components/sessions/organisms";
 import { useAppState } from "@react-context";
-import { useIncomingMessageHandler, useForceRerender, useDelayedLoading } from "@react-hooks";
+import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 
 export const SessionsSection = ({ height }: { height: string | number }) => {
@@ -14,8 +14,7 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [stateFilter, setStateFilter] = useState<string>();
 	const [liveTailState, setLiveTailState] = useState<boolean>(true);
-	const [{ loading }] = useAppState();
-	const delayedLoading = useDelayedLoading(loading, 1000);
+	const [{ delayedLoading }] = useAppState();
 
 	const { sessions, showLiveTail, lastDeployment } = sessionsSection || {};
 
@@ -118,5 +117,3 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 		</div>
 	);
 };
-
-export default Sessions;

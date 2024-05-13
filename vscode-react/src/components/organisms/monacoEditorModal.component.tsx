@@ -1,6 +1,6 @@
 import React from "react";
 import { Editor } from "@monaco-editor/react";
-import { Modal } from "@react-components";
+import { Modal } from "@react-components/molecules";
 
 export const MonacoEditorModal = ({ onCloseClicked, content }: { onCloseClicked: () => void; content?: string }) => (
 	<Modal wrapperClasses={["!bg-transparent z-50"]} classes={["bg-black-semi-transparent", "rounded-none"]}>

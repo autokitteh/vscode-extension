@@ -1,1 +1,1 @@
-export { Deployments } from "@react-components/deployments/pages/deploymentsSection.component";
+export { DeploymentsSection } from "@react-components/deployments/pages/deploymentsSection.component";

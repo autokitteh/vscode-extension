@@ -1,7 +1,7 @@
 import React from "react";
 import { translate } from "@i18n";
 import { HeaderCell } from "@react-components/atoms/table";
-import { TableHeader } from "@react-components/molecules/table/tableHeader.component";
+import { TableHeader } from "@react-components/molecules/table";
 
 export const DeploymentTableHeader: React.FC = () => {
 	return (

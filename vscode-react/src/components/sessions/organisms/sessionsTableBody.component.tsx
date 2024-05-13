@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
-import { MonacoEditorModal, SessionsTableRow } from "@react-components";
-import { Table, TableHeader, TableHeaderCell } from "@react-components/Table";
+import { HeaderCell } from "@react-components/atoms/table";
+import { TableHeader } from "@react-components/molecules";
+import { MonacoEditorModal, Table } from "@react-components/organisms";
+import { SessionsTableRow } from "@react-components/sessions/organisms";
 import { useAppDispatch, useAppState } from "@react-context";
 import { SessionState } from "@react-enums";
 import { useCloseOnEscape } from "@react-hooks";
@@ -144,18 +146,10 @@ export const SessionsTableBody = ({
 				)}
 			<Table>
 				<TableHeader classes="flex justify-around pr-4">
-					<TableHeaderCell className="flex justify-center w-64">
-						{translate().t("reactApp.sessions.time")}
-					</TableHeaderCell>
-					<TableHeaderCell className="flex justify-center w-32">
-						{translate().t("reactApp.sessions.status")}
-					</TableHeaderCell>
-					<TableHeaderCell className="flex justify-center w-64">
-						{translate().t("reactApp.sessions.sessionId")}
-					</TableHeaderCell>
-					<TableHeaderCell className="flex justify-center w-32">
-						{translate().t("reactApp.sessions.actions")}
-					</TableHeaderCell>
+					<HeaderCell className="flex justify-center w-64">{translate().t("reactApp.sessions.time")}</HeaderCell>
+					<HeaderCell className="flex justify-center w-32">{translate().t("reactApp.sessions.status")}</HeaderCell>
+					<HeaderCell className="flex justify-center w-64">{translate().t("reactApp.sessions.sessionId")}</HeaderCell>
+					<HeaderCell className="flex justify-center w-32">{translate().t("reactApp.sessions.actions")}</HeaderCell>
 				</TableHeader>
 				<List
 					height={heightProp}

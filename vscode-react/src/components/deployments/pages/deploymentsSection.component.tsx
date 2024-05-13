@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
-import { DeploymentTableBody, DeploymentTableHeader } from "@react-components";
-import { Table, TableHeader, TableHeaderCell, TableMessage } from "@react-components/Table";
+import { HeaderCell, TableMessage } from "@react-components/atoms/table";
+import { DeploymentTableHeader } from "@react-components/deployments/molecules";
+import { DeploymentsTableBody } from "@react-components/deployments/organisms";
+import { TableHeader } from "@react-components/molecules/table";
+import { Table } from "@react-components/organisms";
 import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
@@ -44,12 +47,12 @@ export const DeploymentsSection = ({ height }: { height: string | number }) => {
 		<div style={{ height }}>
 			<Table>
 				<TableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-30">
-					<TableHeaderCell className="text-lg font-extralight pt-5" colSpan={8}>
+					<HeaderCell className="text-lg font-extralight pt-5" colSpan={8}>
 						{`${translate().t("reactApp.deployments.tableTitle")} (${totalDeployments})`}
-					</TableHeaderCell>
+					</HeaderCell>
 				</TableHeader>
 				<DeploymentTableHeader />
-				<DeploymentTableBody deployments={deployments} />
+				<DeploymentsTableBody deployments={deployments} />
 			</Table>
 			{(isLoading || !deployments) && <TableMessage>{translate().t("reactApp.general.loading")}</TableMessage>}
 			{deployments && deployments.length === 0 && (
@@ -58,5 +61,3 @@ export const DeploymentsSection = ({ height }: { height: string | number }) => {
 		</div>
 	);
 };
-
-export default Deployments;

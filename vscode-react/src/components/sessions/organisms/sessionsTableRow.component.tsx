@@ -1,6 +1,9 @@
 import React, { memo, CSSProperties } from "react";
-import { SessionState, SessionActions, Overlay, PopperComponent, DeletePopper } from "@react-components";
-import { TableCell, TableRow } from "@react-components/Table";
+import { Overlay } from "@react-components/atoms";
+import { Cell } from "@react-components/atoms/table";
+import { DeletePopper, Popper, Row } from "@react-components/molecules";
+import { SessionStateLabel } from "@react-components/sessions/atoms";
+import { SessionActions } from "@react-components/sessions/molecules";
 import { SessionsTableRowProps } from "@react-types";
 import { getTimePassed } from "@react-utilities";
 import { createPortal } from "react-dom";
@@ -24,14 +27,14 @@ export const SessionsTableRow = memo(
 		const isSelectedRow = selectedSessionId === session?.sessionId;
 		return (
 			session && (
-				<TableRow className="flex justify-around" isSelected={isSelectedRow} style={style}>
+				<Row className="flex justify-around" isSelected={isSelectedRow} style={style}>
 					<div className="absolute inset-0 cursor-pointer" onClick={() => displaySessionLogs(session.sessionId)} />
-					<TableCell classes={["cursor-pointer w-64"]}>{getTimePassed(session.createdAt)}</TableCell>
-					<TableCell classes={["cursor-pointer w-32"]}>
-						<SessionState sessionState={session.state} />
-					</TableCell>
-					<TableCell classes={["cursor-pointer w-64"]}>{session.sessionId}</TableCell>
-					<TableCell classes={["w-32 z-10 flex justify-center"]}>
+					<Cell classes={["cursor-pointer w-64"]}>{getTimePassed(session.createdAt)}</Cell>
+					<Cell classes={["cursor-pointer w-32"]}>
+						<SessionStateLabel sessionState={session.state} />
+					</Cell>
+					<Cell classes={["cursor-pointer w-64"]}>{session.sessionId}</Cell>
+					<Cell classes={["w-32 z-10 flex justify-center"]}>
 						<SessionActions session={session} {...sessionActions} />
 						{createPortal(
 							<div>
@@ -40,18 +43,18 @@ export const SessionsTableRow = memo(
 									onOverlayClick={() => hidePopper()}
 								/>
 
-								<PopperComponent visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
+								<Popper visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
 									<DeletePopper
 										onConfirm={() => deleteSessionConfirmed()}
 										onDismiss={() => deleteSessionDismissed()}
 										translations={deleteSessionPopperTranslations}
 									/>
-								</PopperComponent>
+								</Popper>
 							</div>,
 							document.body
 						)}
-					</TableCell>
-				</TableRow>
+					</Cell>
+				</Row>
 			)
 		);
 	},
