@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import { translate } from "@i18n";
 import { SessionState } from "@react-enums";
 
-export const SessionState = ({ sessionState }: { sessionState: SessionState }): ReactNode => {
+export const SessionStateLabel = ({ sessionState }: { sessionState: SessionState }): ReactNode => {
 	switch (sessionState) {
 		case SessionState.CREATED:
 			return <div className="text-white">{translate().t("reactApp.sessions.statuses.created")}</div>;

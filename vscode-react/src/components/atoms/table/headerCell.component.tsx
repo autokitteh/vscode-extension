@@ -1,12 +1,12 @@
 import React, { ReactNode } from "react";
 
-interface TableHeaderCellProps {
+interface HeaderCellProps {
 	children: ReactNode;
 	className?: string;
 	colSpan?: number;
 }
 
-export const TableHeaderCell = ({ children, className, colSpan }: TableHeaderCellProps) => {
+export const HeaderCell = ({ children, className, colSpan }: HeaderCellProps) => {
 	return (
 		<th className={className} colSpan={colSpan}>
 			{children}

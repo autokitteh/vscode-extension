@@ -10,7 +10,7 @@ import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment, SessionEntrypoint } from "@type/models";
 import { createPortal } from "react-dom";
 
-export const DeploymentTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
+export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
 	// State Hooks Section
 	const [{ modalName }, dispatch] = useAppState();
 	const executePopperElementRef = useRef<HTMLDivElement | null>(null);

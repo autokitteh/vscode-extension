@@ -3,13 +3,13 @@ import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
 import RotateIcon from "@react-assets/icons/rotate.svg?react";
-import { SessionsTableBody } from "@react-components/sessions/organisms/aKSessionTableBody.component";
+import { SessionsTableBody } from "@react-components/sessions/organisms/sessionsTableBody.component";
 import { TableMessage } from "@react-components/Table";
 import { useAppState } from "@react-context";
 import { useIncomingMessageHandler, useForceRerender, useDelayedLoading } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 
-export const Sessions = ({ height }: { height: string | number }) => {
+export const SessionsSection = ({ height }: { height: string | number }) => {
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [stateFilter, setStateFilter] = useState<string>();

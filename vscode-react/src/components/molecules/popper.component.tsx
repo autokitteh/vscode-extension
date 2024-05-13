@@ -7,7 +7,7 @@ interface PopperProps {
 	referenceRef: React.RefObject<HTMLDivElement>;
 }
 
-export const PopperComponent: React.FC<PopperProps> = ({ visible, children, referenceRef }) => {
+export const Popper: React.FC<PopperProps> = ({ visible, children, referenceRef }) => {
 	const popperRef = useRef<HTMLDivElement | null>(null);
 	const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 	const { styles, attributes, update } = usePopper(referenceRef.current, popperElement, {

@@ -7,7 +7,7 @@ interface CellProps {
 	classes?: string[];
 }
 
-export const TableCell = ({ children, onClick, classes }: CellProps) => {
+export const Cell = ({ children, onClick, classes }: CellProps) => {
 	const baseClass = "text-center p-1";
 	const cellClass = clsx(baseClass, classes);
 	return (
