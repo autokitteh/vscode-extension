@@ -1,3 +1,10 @@
+# [0.16.0](https://github.com/autokitteh/vscode-extension/compare/v0.15.0...v0.16.0) (2024-05-14)
+
+
+### Features
+
+* ability to authenticate using a token with a server (ENG-789) ([#292](https://github.com/autokitteh/vscode-extension/issues/292)) ([fe1544c](https://github.com/autokitteh/vscode-extension/commit/fe1544cec627e8c58471792505b75b9873cce099))
+
 # [0.15.0](https://github.com/autokitteh/vscode-extension/compare/v0.14.0...v0.15.0) (2024-05-10)
 
 
