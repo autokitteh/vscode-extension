@@ -1,12 +1,6 @@
 require("module-alias/register");
 
-import {
-	vsCommands,
-	sidebarControllerRefreshRate,
-	namespaces,
-	starlarkLocalLSPDefaultArgs,
-	BASE_URL,
-} from "@constants";
+import { vsCommands, sidebarControllerRefreshRate, namespaces, starlarkLocalLSPDefaultArgs } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
@@ -23,7 +17,7 @@ import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject, setToken } from "@vscommands";
 import { openAddConnectionsPage } from "@vscommands/sideBarActions";
 import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough";
-import { commands, ExtensionContext, env, Uri } from "vscode";
+import { commands, ExtensionContext } from "vscode";
 
 export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
@@ -49,11 +43,6 @@ export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.getContext, async (key: string, defaultValue?: any) => {
 			return context.workspaceState.get(key, defaultValue);
-		})
-	);
-	context.subscriptions.push(
-		commands.registerCommand(vsCommands.login, () => {
-			env.openExternal(Uri.parse(`${BASE_URL}/login`));
 		})
 	);
 
