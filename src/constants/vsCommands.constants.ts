@@ -2,7 +2,6 @@ export const vsCommands = {
 	openWebview: "autokitteh.openWebview",
 	enable: "autokitteh.enable",
 	disable: "autokitteh.disable",
-	login: "autokitteh.login",
 	applyManifest: "autokitteh.applyManifest",
 	buildFolder: "autokitteh.buildFolder",
 	openBaseURLInputDialog: "autokitteh.openBaseURLInputDialog",
