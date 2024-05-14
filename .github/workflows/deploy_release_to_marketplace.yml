@@ -29,16 +29,17 @@ jobs:
       - name: Download and prepare release vsix from GitHub repository
         run: |
           DOWNLOAD_URL=$(curl -sH "Authorization: token ${{ secrets.PAT_TOKEN }}" "https://api.github.com/repos/autokitteh/vscode-extension/releases/tags/${{ github.event.inputs.tag }}" | jq -r '.assets[] | select(.name | endswith(".vsix")).browser_download_url')
-          echo "DOWNLOAD_URL: $DOWNLOAD_URL"
+          echo "DOWNLOAD_URL=$DOWNLOAD_URL" 
           if [ -z "$DOWNLOAD_URL" ] || [ "$DOWNLOAD_URL" == "null" ]; then
             echo "Error: No asset found for download or failed to parse URL."
             exit 1
           fi
-          curl -sLJO -H "Authorization: token ${{ secrets.PAT_TOKEN }}" -o extension.vsix "$DOWNLOAD_URL"
-          if [ ! -f "extension.vsix" ]; then
-            echo "Error: Failed to download extension.vsix"
+          HTTP_STATUS=$(curl -s -w "%{http_code}" -H "Authorization: token ${{ secrets.PAT_TOKEN }}" -o extension.vsix "$DOWNLOAD_URL")
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "Error: Failed to download extension.vsix. HTTP status code: $HTTP_STATUS"
             exit 1
           fi
+          ls -l extension.vsix
 
       - name: Publish to VSCode Marketplace
         run: |
