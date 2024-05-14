@@ -34,7 +34,7 @@ jobs:
             echo "Error: No asset found for download or failed to parse URL."
             exit 1
           fi
-          HTTP_STATUS=$(curl -s -w "%{http_code}" -H "Authorization: token ${{ secrets.PAT_TOKEN }}" -o extension.vsix "$DOWNLOAD_URL")
+          HTTP_STATUS=$(curl -L -w "%{http_code}" -H "Authorization: token ${{ secrets.PAT_TOKEN }}" -o extension.vsix "$DOWNLOAD_URL")
           if [ "$HTTP_STATUS" -ne 200 ]; then
             echo "Error: Failed to download extension.vsix. HTTP status code: $HTTP_STATUS"
             exit 1
