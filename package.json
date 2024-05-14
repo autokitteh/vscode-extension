@@ -49,6 +49,10 @@
 				"title": "autokitteh: Apply Manifest"
 			},
 			{
+				"command": "autokitteh.setAuthToken",
+				"title": "autokitteh: Set Authentication Token"
+			},
+			{
 				"command": "autokitteh.buildFolder",
 				"title": "Build autokitteh"
 			},

@@ -14,7 +14,7 @@ import {
 import { SidebarTreeItem } from "@type/views";
 import { WorkspaceConfig, isStalarkLSPSocketMode } from "@utilities";
 import { MessageHandler, SidebarView } from "@views";
-import { applyManifest, buildOnRightClick, buildProject, runProject } from "@vscommands";
+import { applyManifest, buildOnRightClick, buildProject, runProject, setToken } from "@vscommands";
 import { openAddConnectionsPage } from "@vscommands/sideBarActions";
 import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough";
 import { commands, ExtensionContext } from "vscode";
@@ -27,6 +27,8 @@ export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(vsCommands.openBaseURLInputDialog, openBaseURLInputDialog));
 	context.subscriptions.push(commands.registerCommand(vsCommands.openConfigSetupWalkthrough, openWalkthrough));
 	context.subscriptions.push(commands.registerCommand(vsCommands.addConnections, openAddConnectionsPage));
+	context.subscriptions.push(commands.registerCommand(vsCommands.setAuthToken, setToken));
+
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.buildProject, (focusedItem) => buildProject(focusedItem, sidebarController))
 	);

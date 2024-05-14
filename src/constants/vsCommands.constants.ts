@@ -16,4 +16,5 @@ export const vsCommands = {
 	addConnections: "autokitteh.addConnections",
 	setContext: "autokitteh.setContext",
 	getContext: "autokitteh.getContext",
+	setAuthToken: "autokitteh.setAuthToken",
 };
