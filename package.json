@@ -49,6 +49,10 @@
 				"title": "autokitteh: Apply Manifest"
 			},
 			{
+				"command": "autokitteh.setAuthToken",
+				"title": "autokitteh: Set Authentication Token"
+			},
+			{
 				"command": "autokitteh.buildFolder",
 				"title": "Build autokitteh"
 			},
@@ -230,11 +234,6 @@
 			]
 		},
 		"viewsWelcome": [
-			{
-				"contents": "Click here to login and get your authentication token.\n[Login](command:autokitteh.login)",
-				"view": "autokittehSidebarTree",
-				"when": "!config.autokitteh.authToken"
-			},
 			{
 				"contents": "No connection instance has been found.\n[Enable](command:autokitteh.enable)",
 				"view": "autokittehSidebarTree",

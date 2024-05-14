@@ -1,0 +1,5 @@
+{
+	"enterToken": "Enter authentication token for autokitteh remote server",
+	"saved": "Authentication saved to workspace configuration",
+	"emtpy": "Token cannot be empty"
+}
