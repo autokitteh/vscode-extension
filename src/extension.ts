@@ -1,6 +1,5 @@
 require("module-alias/register");
 
-import { initializeGrpcTransportAndClients } from "@api/grpc/clients.grpc.api";
 import { vsCommands, sidebarControllerRefreshRate, namespaces, starlarkLocalLSPDefaultArgs } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
@@ -18,12 +17,20 @@ import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject, setToken } from "@vscommands";
 import { openAddConnectionsPage } from "@vscommands/sideBarActions";
 import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough";
-import { commands, ExtensionContext, workspace } from "vscode";
+import { commands, ExtensionContext, workspace, window } from "vscode";
 
 export async function activate(context: ExtensionContext) {
-	workspace.onDidChangeConfiguration((event) => {
+	workspace.onDidChangeConfiguration(async (event) => {
 		if (event.affectsConfiguration("autokitteh.baseURL")) {
-			initializeGrpcTransportAndClients();
+			const userResponseOnWindowReload = await window.showInformationMessage(
+				translate().t("general.baseURLChanged"),
+				translate().t("general.reload"),
+				translate().t("general.dismiss")
+			);
+			if (userResponseOnWindowReload === translate().t("general.dismiss")) {
+				return;
+			}
+			commands.executeCommand("workbench.action.reloadWindow");
 		}
 	});
 
