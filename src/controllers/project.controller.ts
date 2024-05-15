@@ -129,36 +129,6 @@ export class ProjectController {
 		return sessionHistoryStates;
 	}
 
-	private async fetchProject() {
-		this.startLoader();
-		const { data: project, error } = await ProjectsService.get(this.projectId);
-		const log = translate().t("errors.projectNotFoundWithID", { id: this.projectId });
-		this.stopLoader();
-
-		if (error) {
-			this.view.update({
-				type: MessageType.markProjectNotReachable,
-				payload: true,
-			});
-			LoggerService.error(namespaces.projectController, (error as Error).message);
-			commands.executeCommand(vsCommands.showErrorMessage, log);
-			return;
-		}
-		if (!project) {
-			this.view.update({
-				type: MessageType.markProjectNotReachable,
-				payload: true,
-			});
-			LoggerService.error(namespaces.projectController, log);
-			return;
-		}
-		this.view.update({
-			type: MessageType.markProjectNotReachable,
-			payload: false,
-		});
-		return project;
-	}
-
 	public enable = async () => {
 		this.setProjectNameInView();
 
@@ -167,9 +137,6 @@ export class ProjectController {
 			() => this.loadAndDisplayDeployments(),
 			this.deploymentsRefreshRate
 		);
-
-		this.startInterval(ProjectIntervalTypes.project, () => this.fetchProject(), this.deploymentsRefreshRate);
-
 		this.notifyViewResourcesPathChanged();
 
 		this.sessions = undefined;
@@ -185,7 +152,6 @@ export class ProjectController {
 
 	public disable = async () => {
 		this.stopInterval(ProjectIntervalTypes.deployments);
-		this.stopInterval(ProjectIntervalTypes.project);
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		this.deployments = undefined;
 		this.sessions = undefined;
@@ -506,7 +472,7 @@ export class ProjectController {
 		);
 	}
 
-	async startInterval(intervalKey: ProjectIntervalTypes, loadFunc: () => Promise<any> | void, refreshRate: number) {
+	async startInterval(intervalKey: ProjectIntervalTypes, loadFunc: () => Promise<void> | void, refreshRate: number) {
 		if (this.intervalKeeper.has(intervalKey)) {
 			this.stopInterval(intervalKey);
 		}
@@ -526,8 +492,19 @@ export class ProjectController {
 		this.onProjectDisposeCB = onProjectDisposeCB;
 		this.onProjectDeleteCB = onProjectDeleteCB;
 
-		const project = await this.fetchProject();
-		this.startInterval(ProjectIntervalTypes.project, () => this.fetchProject(), this.deploymentsRefreshRate);
+		this.startLoader();
+		const { data: project, error } = await ProjectsService.get(this.projectId);
+		const log = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
+		this.stopLoader();
+
+		if (error) {
+			LoggerService.error(namespaces.projectController, (error as Error).message);
+			commands.executeCommand(vsCommands.showErrorMessage, log);
+			return;
+		}
+		if (!project) {
+			LoggerService.error(namespaces.projectController, log);
+		}
 
 		this.project = project;
 		this.view.show(project!.name);
