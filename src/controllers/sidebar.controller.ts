@@ -52,9 +52,7 @@ export class SidebarController {
 					this.startCountdown();
 					return [
 						{
-							label:
-								translate().t("general.reconnecting", { countdown: this.formatCountdown(this.countdown) }) +
-								" - Retry Now",
+							label: translate().t("general.reconnecting", { countdown: this.formatCountdown(this.countdown) }),
 							key: undefined,
 						},
 					];
@@ -62,9 +60,7 @@ export class SidebarController {
 
 				return [
 					{
-						label:
-							translate().t("general.reconnecting", { countdown: this.formatCountdown(this.countdown) }) +
-							" - Retry Now",
+						label: translate().t("general.reconnecting", { countdown: this.formatCountdown(this.countdown) }),
 						key: undefined,
 					},
 				];
@@ -110,8 +106,7 @@ export class SidebarController {
 		this.countdownTimerId = setInterval(() => {
 			this.view.refresh([
 				{
-					label:
-						translate().t("general.reconnecting", { countdown: this.formatCountdown(this.countdown) }) + " - Retry Now",
+					label: translate().t("general.reconnecting", { countdown: this.formatCountdown(this.countdown) }),
 					key: undefined,
 				},
 			]);
