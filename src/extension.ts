@@ -90,7 +90,7 @@ export async function activate(context: ExtensionContext) {
 		commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {
 			if (project) {
 				if (project.label.indexOf("Reconnecting") !== -1 && project.key === undefined) {
-					sidebarController.refreshProjects();
+					sidebarController.refreshProjects(false);
 					return;
 				}
 				tabsManager.openWebview(project);

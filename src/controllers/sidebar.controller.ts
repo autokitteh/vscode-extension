@@ -32,7 +32,7 @@ export class SidebarController {
 		this.startFetchInterval();
 	};
 
-	private fetchProjects = async (): Promise<SidebarTreeItem[] | undefined> => {
+	private fetchProjects = async (resetCountdown: boolean = false): Promise<SidebarTreeItem[] | undefined> => {
 		const { data: projects, error } = await ProjectsService.list();
 
 		if (error) {
@@ -48,7 +48,18 @@ export class SidebarController {
 			);
 
 			if ((error as ConnectError).code === Code.Unavailable || (error as ConnectError).code === Code.Aborted) {
-				this.startCountdown();
+				if (resetCountdown) {
+					this.startCountdown();
+					return [
+						{
+							label:
+								translate().t("general.reconnecting", { countdown: this.formatCountdown(this.countdown) }) +
+								" - Retry Now",
+							key: undefined,
+						},
+					];
+				}
+
 				return [
 					{
 						label:
@@ -81,8 +92,8 @@ export class SidebarController {
 		}, 1000);
 	}
 
-	public async refreshProjects() {
-		const projects = await this.fetchProjects();
+	public async refreshProjects(resetCountdown: boolean = true) {
+		const projects = await this.fetchProjects(resetCountdown);
 		if (projects) {
 			if (!isEqual(projects, this.projects)) {
 				this.projects = projects;
