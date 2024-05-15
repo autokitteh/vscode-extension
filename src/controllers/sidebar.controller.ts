@@ -23,7 +23,7 @@ export class SidebarController {
 		this.view = sidebarView;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
 		this.refreshRate = refreshRate;
-		this.countdownDuration = 10; // initial countdown duration in seconds
+		this.countdownDuration = 10;
 		this.countdown = this.countdownDuration;
 	}
 
@@ -62,7 +62,7 @@ export class SidebarController {
 			}
 		}
 
-		this.resetCountdown(); // Reset countdown on successful fetch
+		this.resetCountdown();
 		this.projectsFetchErrorDisplayed = false;
 
 		if (projects!.length) {
@@ -109,8 +109,8 @@ export class SidebarController {
 			if (this.countdown <= 0) {
 				clearInterval(this.countdownTimerId);
 				this.countdownTimerId = undefined;
-				this.countdownDuration *= 2; // Double the countdown duration for the next retry
-				this.refreshProjects(); // Retry fetching projects
+				this.countdownDuration *= 2;
+				this.refreshProjects();
 			}
 		}, 1000);
 	}
@@ -131,9 +131,9 @@ export class SidebarController {
 			clearInterval(this.countdownTimerId);
 			this.countdownTimerId = undefined;
 		}
-		this.countdownDuration = 10; // Reset the countdown duration
+		this.countdownDuration = 10;
 		this.countdown = this.countdownDuration;
-		this.startFetchInterval(); // Restart the fetch interval
+		this.startFetchInterval();
 	}
 
 	async buildProject(projectId: string) {
