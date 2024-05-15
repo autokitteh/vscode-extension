@@ -7,7 +7,7 @@ type ModalProps = {
 	wrapperClasses?: Array<string>;
 	classes?: Array<string>;
 };
-export const AKModal = forwardRef<HTMLDivElement, ModalProps>(({ children, wrapperClasses, classes }, ref) => {
+export const Modal = forwardRef<HTMLDivElement, ModalProps>(({ children, wrapperClasses, classes }, ref) => {
 	const wrapperClass = clsx(
 		"absolute w-full h-full bg-vscode-editor-background top-0 right-0 z-40 opacity-100",
 		wrapperClasses

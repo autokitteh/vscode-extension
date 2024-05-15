@@ -1,18 +1,12 @@
 import { useEffect, useRef } from "react";
 import { translate } from "@i18n";
-import { AKModal } from "@react-components";
-import {
-	AKTable,
-	AKTableCell,
-	AKTableHeader,
-	AKTableHeaderCell,
-	AKTableMessage,
-	AKTableRow,
-} from "@react-components/AKTable";
+import { Cell, HeaderCell, TableMessage } from "@react-components/atoms/table";
+import { Modal, Row, TableHeader } from "@react-components/molecules";
+import { Table } from "@react-components/organisms";
 import { useAppState } from "@react-context";
 import { Connection } from "@type/models";
 
-export const AKConnectionsModal = ({
+export const ConnectionsModal = ({
 	onCloseClicked,
 	connections,
 }: {
@@ -50,7 +44,7 @@ export const AKConnectionsModal = ({
 	}, []);
 
 	return (
-		<AKModal classes={["rounded-none"]} ref={modalRef}>
+		<Modal classes={["rounded-none"]} ref={modalRef}>
 			<div
 				className="flex justify-end cursor-pointer text-white font-extrabold pt-8 text-xl"
 				onClick={() => onCloseClicked()}
@@ -58,22 +52,22 @@ export const AKConnectionsModal = ({
 				X
 			</div>
 			{!delayedLoading && connections?.length ? (
-				<AKTable>
-					<AKTableHeader>
-						<AKTableHeaderCell>Name</AKTableHeaderCell>
-						<AKTableHeaderCell>ID</AKTableHeaderCell>
-					</AKTableHeader>
+				<Table>
+					<TableHeader>
+						<HeaderCell>Name</HeaderCell>
+						<HeaderCell>ID</HeaderCell>
+					</TableHeader>
 					{connections?.map((connection) => (
-						<AKTableRow key={connection.connectionId}>
-							<AKTableCell classes={["text-vscode-button-foreground"]}>{connection.name}</AKTableCell>
-							<AKTableCell classes={["text-vscode-button-foreground"]}>{connection.connectionId}</AKTableCell>
-						</AKTableRow>
+						<Row key={connection.connectionId}>
+							<Cell classes={["text-vscode-button-foreground"]}>{connection.name}</Cell>
+							<Cell classes={["text-vscode-button-foreground"]}>{connection.connectionId}</Cell>
+						</Row>
 					))}
-				</AKTable>
+				</Table>
 			) : (
-				<AKTableMessage>{translate().t("reactApp.connections.noConnectionsFound")}</AKTableMessage>
+				<TableMessage>{translate().t("reactApp.connections.noConnectionsFound")}</TableMessage>
 			)}
-			{delayedLoading && <AKTableMessage>{translate().t("reactApp.general.loading")}</AKTableMessage>}
-		</AKModal>
+			{delayedLoading && <TableMessage>{translate().t("reactApp.general.loading")}</TableMessage>}
+		</Modal>
 	);
 };

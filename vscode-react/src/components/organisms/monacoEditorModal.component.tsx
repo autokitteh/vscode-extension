@@ -3,7 +3,7 @@ import { Editor } from "@monaco-editor/react";
 import { Modal } from "@react-components/molecules";
 
 export const MonacoEditorModal = ({ onClose, content }: { onClose: () => void; content?: string }) => (
-	<Modal wrapperClasses={["!bg-transparent z-50"]} classes={["bg-black-semi-transparent", "rounded-none"]}>
+	<Modal wrapperClasses={["z-50"]} classes={["bg-black-semi-transparent", "rounded-none"]}>
 		<div className="flex justify-end cursor-pointer text-white font-extrabold pt-8 text-xl" onClick={() => onClose()}>
 			X
 		</div>

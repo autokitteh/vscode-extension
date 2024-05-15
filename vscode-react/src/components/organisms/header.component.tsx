@@ -2,8 +2,8 @@ import { useRef, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
 import DownloadIcon from "@react-assets/icons/download.svg?react";
-import { AKConnectionsModal } from "@react-components/aKConnectionsModal.component";
 import { Button, Logo, Overlay } from "@react-components/atoms";
+import { ConnectionsModal } from "@react-components/connections";
 import { Popper } from "@react-components/molecules";
 import { ProjectSettingsPopper } from "@react-components/project/organisms";
 import { useAppDispatch } from "@react-context/appState.context";
@@ -53,13 +53,13 @@ export const Header = () => {
 			</Button>
 			<div className="flex-grow"></div>
 			<div className="flex flex-row">
-				<AKButton
+				<Button
 					onClick={() => setConnectionsModalVisible(true)}
 					classes="flex relative z-30 mr-2"
 					title={translate().t("reactApp.settings.openConnectionsSettingsScreen")}
 				>
 					<div className="codicon codicon-link text-vscode-background mr-1" /> Connections
-				</AKButton>
+				</Button>
 				{!resourcesDir ? (
 					<Button
 						onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
@@ -83,7 +83,7 @@ export const Header = () => {
 				</Popper>
 			</div>
 			{connectionsModalVisible && (
-				<AKConnectionsModal connections={connections} onCloseClicked={() => setConnectionsModalVisible(false)} />
+				<ConnectionsModal connections={connections} onCloseClicked={() => setConnectionsModalVisible(false)} />
 			)}
 		</div>
 	);
