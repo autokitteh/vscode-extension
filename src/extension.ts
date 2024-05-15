@@ -22,15 +22,8 @@ import { commands, ExtensionContext, workspace } from "vscode";
 
 export async function activate(context: ExtensionContext) {
 	workspace.onDidChangeConfiguration((event) => {
-		if (event.affectsConfiguration("autokitteh.authToken")) {
-			commands.executeCommand(vsCommands.disable);
-			commands.executeCommand(vsCommands.enable);
-		}
 		if (event.affectsConfiguration("autokitteh.baseURL")) {
 			initializeGrpcTransportAndClients();
-
-			commands.executeCommand(vsCommands.disable);
-			commands.executeCommand(vsCommands.enable);
 		}
 	});
 
