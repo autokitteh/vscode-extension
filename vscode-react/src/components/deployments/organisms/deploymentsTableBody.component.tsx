@@ -147,31 +147,23 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	return (
 		deployments &&
 		deployments.map((deployment: Deployment, index: number) => (
-			<Row key={deployment.deploymentId} isSelected={selectedDeploymentId === deployment.deploymentId}>
-				<Cell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
-					{getTimePassed(deployment.createdAt)}
-				</Cell>
-				<Cell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
+			<Row
+				key={deployment.deploymentId}
+				isSelected={selectedDeploymentId === deployment.deploymentId}
+				onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
+			>
+				<Cell classes={["cursor-pointer"]}>{getTimePassed(deployment.createdAt)}</Cell>
+				<Cell classes={["cursor-pointer"]}>
 					<div className="flex justify-center">
 						<DeploymentStateLabel deploymentState={deployment.state} />
 					</div>
 				</Cell>
-				<Cell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
-					{getSessionStateCount(deployment, SessionStateType.stopped)}
-				</Cell>
-				<Cell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
-					{getSessionStateCount(deployment, SessionStateType.running)}
-				</Cell>
-				<Cell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
-					{getSessionStateCount(deployment, SessionStateType.error)}
-				</Cell>
-				<Cell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
-					{getSessionStateCount(deployment, SessionStateType.completed)}
-				</Cell>
-				<Cell onClick={() => getSessionsByDeploymentId(deployment.deploymentId)} classes={["cursor-pointer"]}>
-					{deployment.buildId}
-				</Cell>
-				<Cell>
+				<Cell classes={["cursor-pointer"]}>{getSessionStateCount(deployment, SessionStateType.stopped)}</Cell>
+				<Cell classes={["cursor-pointer"]}>{getSessionStateCount(deployment, SessionStateType.running)}</Cell>
+				<Cell classes={["cursor-pointer"]}>{getSessionStateCount(deployment, SessionStateType.error)}</Cell>
+				<Cell classes={["cursor-pointer"]}>{getSessionStateCount(deployment, SessionStateType.completed)}</Cell>
+				<Cell classes={["cursor-pointer"]}>{deployment.buildId}</Cell>
+				<Cell classes={["z-40"]}>
 					<div className="flex justify-center">
 						<div
 							className={`codicon codicon-debug-rerun mr-2 cursor-pointer 
