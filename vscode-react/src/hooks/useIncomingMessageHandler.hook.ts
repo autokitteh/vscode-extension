@@ -41,6 +41,9 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 				case MessageType.stopLoader:
 					handlers.stopLoader?.();
 					break;
+				case MessageType.markProjectNotReachable:
+					handlers.setUnreachableState?.(payload as boolean);
+					break;
 			}
 		};
 
