@@ -141,7 +141,7 @@ export const SessionsTableBody = ({
 		<>
 			{inputsModalVisible &&
 				createPortal(
-					<MonacoEditorModal content={sessionInputs} onCloseClicked={() => setInputsModalVisible(false)} />,
+					<MonacoEditorModal content={sessionInputs} onClose={() => setInputsModalVisible(false)} />,
 					document.body
 				)}
 			<Table>
