@@ -12,7 +12,7 @@ import {
 	StarlarkVersionManagerService,
 } from "@services";
 import { SidebarTreeItem } from "@type/views";
-import { WorkspaceConfig, isStalarkLSPSocketMode } from "@utilities";
+import { ValidateURL, WorkspaceConfig, isStalarkLSPSocketMode } from "@utilities";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject, setToken } from "@vscommands";
 import { openAddConnectionsPage } from "@vscommands/sideBarActions";
@@ -22,6 +22,11 @@ import { commands, ExtensionContext, workspace, window } from "vscode";
 export async function activate(context: ExtensionContext) {
 	workspace.onDidChangeConfiguration(async (event) => {
 		if (event.affectsConfiguration("autokitteh.baseURL")) {
+			const newBaseURL = WorkspaceConfig.getFromWorkspace<string>("baseURL", "");
+			if (!ValidateURL(newBaseURL)) {
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("general.baseURLInvalid"));
+				return;
+			}
 			const userResponseOnWindowReload = await window.showInformationMessage(
 				translate().t("general.baseURLChanged"),
 				translate().t("general.reload"),
