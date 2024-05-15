@@ -1,6 +1,6 @@
 require("module-alias/register");
 
-import { vsCommands, sidebarControllerRefreshRate, namespaces, starlarkLocalLSPDefaultArgs } from "@constants";
+import { vsCommands, namespaces, starlarkLocalLSPDefaultArgs } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
@@ -67,7 +67,7 @@ export async function activate(context: ExtensionContext) {
 
 	const sidebarView = new SidebarView();
 
-	const sidebarController = new SidebarController(sidebarView, sidebarControllerRefreshRate);
+	const sidebarController = new SidebarController(sidebarView);
 	const tabsManager = new TabsManagerController(context);
 
 	context.subscriptions.push(

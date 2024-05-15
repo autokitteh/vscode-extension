@@ -113,11 +113,6 @@
 					"description": "Is extension ON",
 					"type": "boolean"
 				},
-				"autokitteh.sidebar.refresh.interval": {
-					"default": 1,
-					"description": "Refresh interval in seconds for the sidebar panel",
-					"type": "number"
-				},
 				"autokitteh.notificationsLevel": {
 					"type": "string",
 					"default": "All",

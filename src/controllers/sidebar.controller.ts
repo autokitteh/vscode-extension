@@ -6,24 +6,22 @@ import { LoggerService, ProjectsService } from "@services";
 import { SidebarTreeItem } from "@type/views";
 import { ISidebarView } from "interfaces";
 import isEqual from "lodash.isequal";
-import moment from "moment";
+import { duration } from "moment";
 import { commands, window } from "vscode";
 
 export class SidebarController {
 	private view: ISidebarView;
 	private intervalTimerId?: NodeJS.Timeout;
 	private countdownTimerId?: NodeJS.Timeout;
-	private refreshRate: number;
-	private projectsFetchErrorDisplayed: boolean = false;
 	private projects?: SidebarTreeItem[];
 	private countdown: number;
 	private countdownDuration: number;
+	initialCountdownDuration = 60;
 
-	constructor(sidebarView: ISidebarView, refreshRate: number) {
+	constructor(sidebarView: ISidebarView) {
 		this.view = sidebarView;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
-		this.refreshRate = refreshRate;
-		this.countdownDuration = refreshRate;
+		this.countdownDuration = this.initialCountdownDuration;
 		this.countdown = this.countdownDuration;
 	}
 
@@ -36,11 +34,8 @@ export class SidebarController {
 		const { data: projects, error } = await ProjectsService.list();
 
 		if (error) {
-			if (!this.projectsFetchErrorDisplayed) {
-				const notification = translate().t("projects.fetchProjectsFailed");
-				commands.executeCommand(vsCommands.showErrorMessage, notification);
-				this.projectsFetchErrorDisplayed = true;
-			}
+			const notification = translate().t("projects.fetchProjectsFailed");
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
 
 			LoggerService.error(
 				namespaces.projectSidebarController,
@@ -70,7 +65,6 @@ export class SidebarController {
 		}
 
 		this.resetCountdown();
-		this.projectsFetchErrorDisplayed = false;
 
 		if (projects!.length) {
 			return projects!.map((project) => ({
@@ -122,13 +116,13 @@ export class SidebarController {
 	}
 
 	private formatCountdown(seconds: number): string {
-		const duration = moment.duration(seconds, "seconds");
-		if (duration.hours() > 0) {
-			return `${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s`;
-		} else if (duration.minutes() > 0) {
-			return `${duration.minutes()}m ${duration.seconds()}s`;
+		const momentDuration = duration(seconds, "seconds");
+		if (momentDuration.hours() > 0) {
+			return `${momentDuration.hours()}h ${momentDuration.minutes()}m ${momentDuration.seconds()}s`;
+		} else if (momentDuration.minutes() > 0) {
+			return `${momentDuration.minutes()}m ${momentDuration.seconds()}s`;
 		} else {
-			return `${duration.seconds()}s`;
+			return `${momentDuration.seconds()}s`;
 		}
 	}
 
@@ -137,7 +131,7 @@ export class SidebarController {
 			clearInterval(this.countdownTimerId);
 			this.countdownTimerId = undefined;
 		}
-		this.countdownDuration = this.refreshRate;
+		this.countdownDuration = this.initialCountdownDuration;
 		this.countdown = this.countdownDuration;
 		this.startFetchInterval();
 	}
