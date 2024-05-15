@@ -1,5 +1,6 @@
 require("module-alias/register");
 
+import { initializeGrpcTransportAndClients } from "@api/grpc/clients.grpc.api";
 import { vsCommands, sidebarControllerRefreshRate, namespaces, starlarkLocalLSPDefaultArgs } from "@constants";
 import { SidebarController } from "@controllers";
 import { TabsManagerController } from "@controllers";
@@ -16,10 +17,23 @@ import { WorkspaceConfig, isStalarkLSPSocketMode } from "@utilities";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject, setToken } from "@vscommands";
 import { openAddConnectionsPage } from "@vscommands/sideBarActions";
-import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough";
-import { commands, ExtensionContext } from "vscode";
+import { openBaseURLInputDialog, openWalkthrough, setBaseURL } from "@vscommands/walkthrough";
+import { commands, ExtensionContext, workspace } from "vscode";
 
 export async function activate(context: ExtensionContext) {
+	workspace.onDidChangeConfiguration((event) => {
+		if (event.affectsConfiguration("autokitteh.authToken")) {
+			commands.executeCommand(vsCommands.disable);
+			commands.executeCommand(vsCommands.enable);
+		}
+		if (event.affectsConfiguration("autokitteh.baseURL")) {
+			initializeGrpcTransportAndClients();
+
+			commands.executeCommand(vsCommands.disable);
+			commands.executeCommand(vsCommands.enable);
+		}
+	});
+
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
 	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));
 	context.subscriptions.push(commands.registerCommand(vsCommands.showInfoMessage, MessageHandler.infoMessage));
@@ -28,6 +42,7 @@ export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(vsCommands.openConfigSetupWalkthrough, openWalkthrough));
 	context.subscriptions.push(commands.registerCommand(vsCommands.addConnections, openAddConnectionsPage));
 	context.subscriptions.push(commands.registerCommand(vsCommands.setAuthToken, setToken));
+	context.subscriptions.push(commands.registerCommand(vsCommands.setBaseURL, setBaseURL));
 
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.buildProject, (focusedItem) => buildProject(focusedItem, sidebarController))
