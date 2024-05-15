@@ -23,7 +23,7 @@ export class SidebarController {
 		this.view = sidebarView;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
 		this.refreshRate = refreshRate;
-		this.countdownDuration = 10;
+		this.countdownDuration = refreshRate;
 		this.countdown = this.countdownDuration;
 	}
 
@@ -142,7 +142,7 @@ export class SidebarController {
 			clearInterval(this.countdownTimerId);
 			this.countdownTimerId = undefined;
 		}
-		this.countdownDuration = 10;
+		this.countdownDuration = this.refreshRate;
 		this.countdown = this.countdownDuration;
 		this.startFetchInterval();
 	}
