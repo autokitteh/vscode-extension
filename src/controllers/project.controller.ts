@@ -3,6 +3,7 @@ import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
+import { RetryHandler } from "@controllers/utilities/retryHandler.util";
 import {
 	DeploymentState,
 	MessageType,
@@ -45,6 +46,7 @@ export class ProjectController {
 	private loadingRequestsCounter: number = 0;
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
+	private retryHandler: RetryHandler;
 
 	constructor(
 		projectView: IProjectView,
@@ -57,6 +59,22 @@ export class ProjectController {
 		this.view.delegate = this;
 		this.deploymentsRefreshRate = deploymentsRefreshRate;
 		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
+
+		this.retryHandler = new RetryHandler(
+			60,
+			() => this.loadAndDisplayDeployments(),
+			(countdown) => this.updateViewWithCountdown(countdown)
+		);
+	}
+
+	private updateViewWithCountdown(countdown: string) {
+		this.view.update({
+			type: MessageType.markProjectNotReachable,
+			payload: {
+				isNotReachable: true,
+				countdown,
+			},
+		});
 	}
 
 	reveal(): void {
@@ -129,14 +147,42 @@ export class ProjectController {
 		return sessionHistoryStates;
 	}
 
+	private async fetchProject() {
+		this.startLoader();
+		const { data: project, error } = await ProjectsService.get(this.projectId);
+		const log = translate().t("errors.projectNotFoundWithID", { id: this.projectId });
+		this.stopLoader();
+
+		if (error) {
+			LoggerService.error(namespaces.projectController, (error as Error).message);
+			commands.executeCommand(vsCommands.showErrorMessage, log);
+			return;
+		}
+		if (!project) {
+			LoggerService.error(namespaces.projectController, log);
+			return;
+		}
+		this.view.update({
+			type: MessageType.markProjectNotReachable,
+			payload: {
+				isNotReachable: true,
+				countdown: "",
+			},
+		});
+		return project;
+	}
+
 	public enable = async () => {
 		this.setProjectNameInView();
 
-		this.startInterval(
-			ProjectIntervalTypes.deployments,
+		this.retryHandler = new RetryHandler(
+			60,
 			() => this.loadAndDisplayDeployments(),
-			this.deploymentsRefreshRate
+			(countdown) => this.updateViewWithCountdown(countdown)
 		);
+
+		this.startInterval(ProjectIntervalTypes.project, () => this.fetchProject(), this.deploymentsRefreshRate);
+
 		this.notifyViewResourcesPathChanged();
 
 		this.sessions = undefined;
@@ -152,6 +198,7 @@ export class ProjectController {
 
 	public disable = async () => {
 		this.stopInterval(ProjectIntervalTypes.deployments);
+		this.stopInterval(ProjectIntervalTypes.project);
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		this.deployments = undefined;
 		this.sessions = undefined;
@@ -172,6 +219,7 @@ export class ProjectController {
 
 			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
 			LoggerService.error(namespaces.projectController, log);
+			this.retryHandler.startCountdown();
 			return;
 		}
 
@@ -472,7 +520,7 @@ export class ProjectController {
 		);
 	}
 
-	async startInterval(intervalKey: ProjectIntervalTypes, loadFunc: () => Promise<void> | void, refreshRate: number) {
+	async startInterval(intervalKey: ProjectIntervalTypes, loadFunc: () => Promise<any> | void, refreshRate: number) {
 		if (this.intervalKeeper.has(intervalKey)) {
 			this.stopInterval(intervalKey);
 		}
@@ -1068,10 +1116,10 @@ export class ProjectController {
 	async loadInitialDataOnceViewReady() {
 		this.deployments = undefined;
 
-		this.startInterval(
-			ProjectIntervalTypes.deployments,
+		this.retryHandler = new RetryHandler(
+			60,
 			() => this.loadAndDisplayDeployments(),
-			this.deploymentsRefreshRate
+			(countdown) => this.updateViewWithCountdown(countdown)
 		);
 
 		const isResourcesPathExist = await this.getResourcesPathFromContext();
