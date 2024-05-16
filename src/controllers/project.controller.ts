@@ -59,6 +59,7 @@ export class ProjectController {
 		this.view.delegate = this;
 		this.deploymentsRefreshRate = deploymentsRefreshRate;
 		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
+		this.setProjectNameInView();
 
 		this.retryHandler = new RetryHandler(
 			60,
@@ -86,6 +87,13 @@ export class ProjectController {
 			return;
 		}
 		this.view.reveal(this.project.name);
+
+		this.retryHandler = new RetryHandler(
+			60,
+			() => this.loadAndDisplayDeployments(),
+			(countdown) => this.updateViewWithCountdown(countdown)
+		);
+		this.retryHandler.startFetchInterval();
 
 		this.notifyViewResourcesPathChanged();
 		this.stopLoader();
@@ -557,7 +565,6 @@ export class ProjectController {
 		this.project = project;
 		this.view.show(project!.name);
 		this.setProjectNameInView();
-
 		this.sessions = undefined;
 	}
 
@@ -1121,6 +1128,7 @@ export class ProjectController {
 			() => this.loadAndDisplayDeployments(),
 			(countdown) => this.updateViewWithCountdown(countdown)
 		);
+		this.retryHandler.startFetchInterval();
 
 		const isResourcesPathExist = await this.getResourcesPathFromContext();
 		if (isResourcesPathExist) {
