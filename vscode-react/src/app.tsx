@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MessageType } from "@enums";
+import { Overlay } from "@react-components/atoms";
 import { DeploymentsSection } from "@react-components/deployments/pages";
 import { Header } from "@react-components/organisms";
 import { SessionsSection } from "@react-components/sessions/pages";
@@ -33,33 +34,32 @@ function App() {
 	return (
 		<AppStateProvider>
 			<main ref={ref}>
-				{unreachableState ? (
-					<div
-						className="flex bg-vscode-editor-background w-full h-[100vh] text-4xl justify-center items-center"
-						onClick={() => reconnect()}
-					>
-						Unreachable
-					</div>
-				) : (
-					<div className="flex flex-col w-full">
-						<Header />
-						<div className="h-[calc(100vh-6vh)]">
-							<SplitPane
-								split="horizontal"
-								sizes={sizes}
-								onChange={setSizes}
-								sashRender={() => <hr className="bg-vscode-editor-background h-3" />}
-							>
-								<div>
-									<DeploymentsSection height={sizes[0]} />
-								</div>
-								<div>
-									<SessionsSection height={sizes[1]} />
-								</div>
-							</SplitPane>
+				{unreachableState && (
+					<div onClick={() => reconnect()}>
+						<Overlay isVisibile />
+						<div className="flex bg-vscode-editor-background w-full h-[100vh] text-4xl justify-center items-center">
+							Reconnecting in {unreachableState}
 						</div>
 					</div>
 				)}
+				<div className="flex flex-col w-full">
+					<Header />
+					<div className="h-[calc(100vh-6vh)]">
+						<SplitPane
+							split="horizontal"
+							sizes={sizes}
+							onChange={setSizes}
+							sashRender={() => <hr className="bg-vscode-editor-background h-3" />}
+						>
+							<div>
+								<DeploymentsSection height={sizes[0]} />
+							</div>
+							<div>
+								<SessionsSection height={sizes[1]} />
+							</div>
+						</SplitPane>
+					</div>
+				</div>
 			</main>
 		</AppStateProvider>
 	);
