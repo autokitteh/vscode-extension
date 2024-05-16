@@ -59,9 +59,9 @@ export class RetryHandler {
 			clearInterval(this.countdownTimerId);
 			this.countdownTimerId = undefined;
 		}
-		this.countdownDuration = 60; // Reset the countdown duration
+		this.countdownDuration = 60;
 		this.countdown = this.countdownDuration;
-		this.startFetchInterval(); // Resume regular fetching
+		this.startFetchInterval();
 	}
 
 	public stopTimers() {

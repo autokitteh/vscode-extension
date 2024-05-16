@@ -46,7 +46,7 @@ export class ProjectController {
 	private loadingRequestsCounter: number = 0;
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
-	private retryHandler: RetryHandler;
+	private retryHandler?: RetryHandler;
 
 	constructor(
 		projectView: IProjectView,
@@ -60,12 +60,6 @@ export class ProjectController {
 		this.deploymentsRefreshRate = deploymentsRefreshRate;
 		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
 		this.setProjectNameInView();
-
-		this.retryHandler = new RetryHandler(
-			60,
-			() => this.loadAndDisplayDeployments(),
-			(countdown) => this.updateViewWithCountdown(countdown)
-		);
 	}
 
 	private updateViewWithCountdown(countdown: string) {
@@ -153,29 +147,8 @@ export class ProjectController {
 		return sessionHistoryStates;
 	}
 
-	private async fetchProject() {
-		this.startLoader();
-		const { data: project, error } = await ProjectsService.get(this.projectId);
-		const log = translate().t("errors.projectNotFoundWithID", { id: this.projectId });
-		this.stopLoader();
-
-		if (error) {
-			LoggerService.error(namespaces.projectController, (error as Error).message);
-			commands.executeCommand(vsCommands.showErrorMessage, log);
-			return;
-		}
-		if (!project) {
-			LoggerService.error(namespaces.projectController, log);
-			return;
-		}
-		return project;
-	}
-
 	public enable = async () => {
 		this.setProjectNameInView();
-
-		this.retryHandler.startFetchInterval();
-
 		this.notifyViewResourcesPathChanged();
 
 		this.sessions = undefined;
@@ -190,8 +163,8 @@ export class ProjectController {
 	};
 
 	public reEnable = async () => {
-		this.retryHandler.resetCountdown();
-		this.retryHandler.startFetchInterval();
+		this.deployments = undefined;
+		this.loadAndDisplayDeployments(false);
 	};
 
 	public disable = async () => {
@@ -208,7 +181,7 @@ export class ProjectController {
 		commands.executeCommand(vsCommands.reEnableSidebar);
 	};
 
-	async loadAndDisplayDeployments() {
+	async loadAndDisplayDeployments(isResetCounters: boolean = true) {
 		this.startLoader();
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
 		this.stopLoader();
@@ -222,11 +195,9 @@ export class ProjectController {
 
 			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
 			LoggerService.error(namespaces.projectController, log);
-			this.retryHandler.startCountdown();
-			return;
-		}
-
-		if (isEqual(this.deployments, deployments)) {
+			if (isResetCounters) {
+				this.retryHandler?.startCountdown();
+			}
 			return;
 		}
 
@@ -234,6 +205,12 @@ export class ProjectController {
 			type: MessageType.markProjectNotReachable,
 			payload: "",
 		});
+
+		this.retryHandler?.resetCountdown();
+
+		if (isEqual(this.deployments, deployments)) {
+			return;
+		}
 
 		this.deployments = deployments;
 		this.loadSingleshotArgs();

@@ -33,7 +33,6 @@ export class SidebarController {
 
 	public reEnable = () => {
 		this.refreshProjects(false);
-		this.retryHandler.startFetchInterval();
 	};
 
 	public enable = async () => {
@@ -149,7 +148,6 @@ export class SidebarController {
 	};
 
 	public disable = () => {
-		this.retryHandler.stopTimers();
 		this.resetSidebar();
 	};
 
