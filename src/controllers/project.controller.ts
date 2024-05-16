@@ -71,10 +71,7 @@ export class ProjectController {
 	private updateViewWithCountdown(countdown: string) {
 		this.view.update({
 			type: MessageType.markProjectNotReachable,
-			payload: {
-				isNotReachable: true,
-				countdown,
-			},
+			payload: countdown,
 		});
 	}
 
@@ -170,13 +167,6 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
-		this.view.update({
-			type: MessageType.markProjectNotReachable,
-			payload: {
-				isNotReachable: true,
-				countdown: "",
-			},
-		});
 		return project;
 	}
 
@@ -234,6 +224,11 @@ export class ProjectController {
 		if (isEqual(this.deployments, deployments)) {
 			return;
 		}
+
+		this.view.update({
+			type: MessageType.markProjectNotReachable,
+			payload: "",
+		});
 
 		this.deployments = deployments;
 		this.loadSingleshotArgs();
