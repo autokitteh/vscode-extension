@@ -47,7 +47,7 @@ export class SidebarController {
 		this.retryHandler.startFetchInterval();
 	};
 
-	private fetchProjects = async (resetCountdown: boolean = false): Promise<SidebarTreeItem[] | undefined> => {
+	private fetchProjects = async (resetCountdown: boolean = true): Promise<SidebarTreeItem[] | undefined> => {
 		const { data: projects, error } = await ProjectsService.list();
 
 		if (error) {
@@ -158,10 +158,6 @@ export class SidebarController {
 		this.retryHandler.stopTimers();
 		this.resetSidebar();
 	};
-
-	private stopTimers() {
-		this.retryHandler.stopTimers();
-	}
 
 	public dispose() {
 		this.disposables.forEach((disposable) => disposable.dispose());

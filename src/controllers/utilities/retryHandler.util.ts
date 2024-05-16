@@ -23,7 +23,7 @@ export class RetryHandler {
 		this.stopFetchInterval();
 		this.fetchIntervalId = setInterval(async () => {
 			await this.fetchFunction();
-		}, 1000); // Fetch every second
+		}, 1000);
 	}
 
 	public startCountdown() {

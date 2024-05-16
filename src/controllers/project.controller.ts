@@ -69,6 +69,7 @@ export class ProjectController {
 	}
 
 	private updateViewWithCountdown(countdown: string) {
+		this.deployments = undefined;
 		this.view.update({
 			type: MessageType.markProjectNotReachable,
 			payload: countdown,
@@ -173,13 +174,7 @@ export class ProjectController {
 	public enable = async () => {
 		this.setProjectNameInView();
 
-		this.retryHandler = new RetryHandler(
-			60,
-			() => this.loadAndDisplayDeployments(),
-			(countdown) => this.updateViewWithCountdown(countdown)
-		);
-
-		this.startInterval(ProjectIntervalTypes.project, () => this.fetchProject(), this.deploymentsRefreshRate);
+		this.retryHandler.startFetchInterval();
 
 		this.notifyViewResourcesPathChanged();
 
@@ -192,6 +187,11 @@ export class ProjectController {
 		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
 
 		this.initSessionLogsDisplay(selectedSessionId!);
+	};
+
+	public reEnable = async () => {
+		this.retryHandler.resetCountdown();
+		this.retryHandler.startFetchInterval();
 	};
 
 	public disable = async () => {

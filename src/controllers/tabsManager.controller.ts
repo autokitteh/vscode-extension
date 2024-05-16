@@ -42,6 +42,12 @@ export class TabsManagerController {
 		}
 	}
 
+	public reEnable() {
+		for (const key in this.openWebviews) {
+			this.openWebviews[key].reEnable();
+		}
+	}
+
 	public onProjectDelete(controllerId: string) {
 		this.openWebviews[controllerId].view.panel.dispose();
 	}
