@@ -1,5 +1,3 @@
-// src/controllers/SidebarController.ts
-
 import { Code, ConnectError } from "@connectrpc/connect";
 import { namespaces, vsCommands } from "@constants";
 import { getLocalResources } from "@controllers/utilities";
