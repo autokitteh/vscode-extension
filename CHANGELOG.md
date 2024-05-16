@@ -1,3 +1,10 @@
+# [0.17.0](https://github.com/autokitteh/vscode-extension/compare/v0.16.0...v0.17.0) (2024-05-16)
+
+
+### Features
+
+* authentication token - listeners (UI-301) ([#305](https://github.com/autokitteh/vscode-extension/issues/305)) ([176b558](https://github.com/autokitteh/vscode-extension/commit/176b558f9bdf913e45804f8705e47cc9e7dfa3ef))
+
 # [0.16.0](https://github.com/autokitteh/vscode-extension/compare/v0.15.0...v0.16.0) (2024-05-14)
 
 
