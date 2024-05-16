@@ -31,16 +31,12 @@ export class SidebarController {
 				)
 		);
 		this.retryHandler.startFetchInterval();
-		this.registerCommands();
 	}
 
-	private registerCommands() {
-		this.disposables.push(
-			commands.registerCommand("extension.refreshProjects", async () => {
-				await this.refreshProjects(false);
-			})
-		);
-	}
+	public reEnable = () => {
+		this.refreshProjects(false);
+		this.retryHandler.startFetchInterval();
+	};
 
 	public enable = async () => {
 		this.refreshProjects();

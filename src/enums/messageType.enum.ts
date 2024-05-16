@@ -30,4 +30,5 @@ export enum MessageType {
 	loadMoreSessions = "LOAD_MORE_SESSIONS",
 	toggleSessionsLiveTail = "TOGGLE_SESSIONS_LIVE_TAIL",
 	markProjectNotReachable = "MARK_PROJECT_NOT_REACHABLE",
+	tryToReenable = "TRY_TO_REENABLE",
 }

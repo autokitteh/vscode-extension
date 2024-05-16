@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import { MessageType } from "@enums";
 import { DeploymentsSection } from "@react-components/deployments/pages";
 import { Header } from "@react-components/organisms";
 import { SessionsSection } from "@react-components/sessions/pages";
 import { AppStateProvider } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
+import { sendMessage } from "@react-utilities";
 import "./app.css";
 import SplitPane from "split-pane-react";
 import "split-pane-react/esm/themes/default.css";
@@ -24,13 +26,20 @@ function App() {
 		setUnreachableState,
 	});
 
-	console.log("unreachableState", unreachableState);
+	const reconnect = () => {
+		sendMessage(MessageType.tryToReenable);
+	};
 
 	return (
 		<AppStateProvider>
 			<main ref={ref}>
 				{unreachableState ? (
-					<div className="bg-vscode-editor-background w-full h-full text-4xl">Unreachable</div>
+					<div
+						className="flex bg-vscode-editor-background w-full h-[100vh] text-4xl justify-center items-center"
+						onClick={() => reconnect()}
+					>
+						Unreachable
+					</div>
 				) : (
 					<div className="flex flex-col w-full">
 						<Header />

@@ -17,4 +17,5 @@ export const vsCommands = {
 	setContext: "autokitteh.setContext",
 	getContext: "autokitteh.getContext",
 	setAuthToken: "autokitteh.setAuthToken",
+	reEnableSidebar: "autokitteh.reEnableSidebar",
 };

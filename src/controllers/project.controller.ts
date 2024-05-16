@@ -203,6 +203,11 @@ export class ProjectController {
 		this.hasDisplayedError = new Map();
 	};
 
+	public tryToReenable = async () => {
+		this.reEnable();
+		commands.executeCommand(vsCommands.reEnableSidebar);
+	};
+
 	async loadAndDisplayDeployments() {
 		this.startLoader();
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
