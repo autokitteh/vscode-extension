@@ -6,25 +6,30 @@ import { LoggerService, ProjectsService } from "@services";
 import { SidebarTreeItem } from "@type/views";
 import { ISidebarView } from "interfaces";
 import isEqual from "lodash.isequal";
+import moment from "moment";
 import { commands, window } from "vscode";
 
 export class SidebarController {
 	private view: ISidebarView;
 	private intervalTimerId?: NodeJS.Timeout;
+	private countdownTimerId?: NodeJS.Timeout;
 	private refreshRate: number;
 	private projectsFetchErrorDisplayed: boolean = false;
 	private projects?: SidebarTreeItem[];
+	private countdown: number;
+	private countdownDuration: number;
 
 	constructor(sidebarView: ISidebarView, refreshRate: number) {
 		this.view = sidebarView;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
 		this.refreshRate = refreshRate;
+		this.countdownDuration = 10; // initial countdown duration in seconds
+		this.countdown = this.countdownDuration;
 	}
 
 	public enable = async () => {
 		this.refreshProjects();
-
-		this.startInterval();
+		this.startFetchInterval();
 	};
 
 	private fetchProjects = async (): Promise<SidebarTreeItem[] | undefined> => {
@@ -41,12 +46,25 @@ export class SidebarController {
 				namespaces.projectSidebarController,
 				translate().t("projects.fetchProjectsFailedError", { error: (error as Error).message })
 			);
+
 			if ((error as ConnectError).code === Code.Unavailable || (error as ConnectError).code === Code.Aborted) {
-				return [{ label: translate().t("general.reconnecting"), key: undefined }];
+				this.startCountdown();
+				return [
+					{
+						label:
+							translate().t("general.reconnecting", { countdown: this.formatCountdown(this.countdown) }) +
+							" - Retry Now",
+						key: undefined,
+					},
+				];
 			} else {
 				return [{ label: translate().t("general.internalError"), key: undefined }];
 			}
 		}
+
+		this.resetCountdown(); // Reset countdown on successful fetch
+		this.projectsFetchErrorDisplayed = false;
+
 		if (projects!.length) {
 			return projects!.map((project) => ({
 				label: project.name,
@@ -56,11 +74,14 @@ export class SidebarController {
 		return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
 	};
 
-	private startInterval() {
-		this.intervalTimerId = setInterval(() => this.refreshProjects(), this.refreshRate);
+	private startFetchInterval() {
+		this.stopTimers();
+		this.intervalTimerId = setInterval(async () => {
+			await this.refreshProjects();
+		}, 1000);
 	}
 
-	private async refreshProjects() {
+	public async refreshProjects() {
 		const projects = await this.fetchProjects();
 		if (projects) {
 			if (!isEqual(projects, this.projects)) {
@@ -68,6 +89,51 @@ export class SidebarController {
 				this.view.refresh(this.projects);
 			}
 		}
+	}
+
+	private startCountdown() {
+		this.stopTimers();
+
+		this.countdown = this.countdownDuration;
+
+		this.countdownTimerId = setInterval(() => {
+			this.view.refresh([
+				{
+					label:
+						translate().t("general.reconnecting", { countdown: this.formatCountdown(this.countdown) }) + " - Retry Now",
+					key: undefined,
+				},
+			]);
+			this.countdown--;
+
+			if (this.countdown <= 0) {
+				clearInterval(this.countdownTimerId);
+				this.countdownTimerId = undefined;
+				this.countdownDuration *= 2; // Double the countdown duration for the next retry
+				this.refreshProjects(); // Retry fetching projects
+			}
+		}, 1000);
+	}
+
+	private formatCountdown(seconds: number): string {
+		const duration = moment.duration(seconds, "seconds");
+		if (duration.hours() > 0) {
+			return `${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s`;
+		} else if (duration.minutes() > 0) {
+			return `${duration.minutes()}m ${duration.seconds()}s`;
+		} else {
+			return `${duration.seconds()}s`;
+		}
+	}
+
+	private resetCountdown() {
+		if (this.countdownTimerId) {
+			clearInterval(this.countdownTimerId);
+			this.countdownTimerId = undefined;
+		}
+		this.countdownDuration = 10; // Reset the countdown duration
+		this.countdown = this.countdownDuration;
+		this.startFetchInterval(); // Restart the fetch interval
 	}
 
 	async buildProject(projectId: string) {
@@ -126,14 +192,18 @@ export class SidebarController {
 	};
 
 	public disable = () => {
-		this.stopInterval();
+		this.stopTimers();
 		this.resetSidebar();
 	};
 
-	private stopInterval() {
+	private stopTimers() {
 		if (this.intervalTimerId) {
 			clearInterval(this.intervalTimerId);
 			this.intervalTimerId = undefined;
+		}
+		if (this.countdownTimerId) {
+			clearInterval(this.countdownTimerId);
+			this.countdownTimerId = undefined;
 		}
 	}
 }

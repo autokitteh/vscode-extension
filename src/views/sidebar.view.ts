@@ -38,7 +38,7 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 	}
 
 	getTreeItem(element: TreeItem): TreeItem {
-		if (element !== this.rootNode) {
+		if (element !== this.rootNode || element.contextValue === undefined) {
 			element.command = {
 				command: vsCommands.openWebview,
 				title: translate().t("projects.openProject"),
