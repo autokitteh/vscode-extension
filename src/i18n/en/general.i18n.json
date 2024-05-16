@@ -1,5 +1,9 @@
 {
 	"companyName": "autokitteh",
 	"reconnecting": "Reconnecting...",
-	"internalError": "Internal error"
+	"internalError": "Internal error",
+	"baseURLChanged": "Base URL changed, to apply changes please reload your workspace",
+	"reload": "Reload",
+	"dismiss": "Dismiss",
+	"baseURLInvalid": "Base URL you entered is invalid, please enter a valid URL"
 }
