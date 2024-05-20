@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
-import { vsCommands, namespaces, channels } from "@constants";
+import { vsCommands, namespaces, channels, INITIAL_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
 import { RetrySchedulerController } from "@controllers/retryScheduler.controller";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import {
@@ -81,7 +81,7 @@ export class ProjectController {
 		this.view.reveal(this.project.name);
 
 		this.retryScheduler = new RetrySchedulerController(
-			60,
+			INITIAL_RETRY_SCHEDULE_COUNTDOWN,
 			() => this.loadAndDisplayDeployments(),
 			(countdown) => this.updateViewWithCountdown(countdown)
 		);
@@ -1101,7 +1101,7 @@ export class ProjectController {
 		this.deployments = undefined;
 
 		this.retryScheduler = new RetrySchedulerController(
-			60,
+			INITIAL_RETRY_SCHEDULE_COUNTDOWN,
 			() => this.loadAndDisplayDeployments(),
 			(countdown) => this.updateViewWithCountdown(countdown)
 		);
