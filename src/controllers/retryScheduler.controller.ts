@@ -41,7 +41,7 @@ export class RetrySchedulerController {
 			this.countdown--;
 
 			let currentTime = new Date();
-			let elapsedTime = (currentTime.getTime() - this.startTime.getTime()) / 1000; // in seconds
+			let elapsedTime = (currentTime.getTime() - this.startTime.getTime()) / 1000;
 
 			if (this.countdown <= 0) {
 				clearInterval(this.countdownTimerId);
