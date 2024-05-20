@@ -59,7 +59,6 @@ export class ProjectController {
 		this.view.delegate = this;
 		this.deploymentsRefreshRate = deploymentsRefreshRate;
 		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
-		this.setProjectNameInView();
 	}
 
 	private updateViewWithCountdown(countdown: string) {
