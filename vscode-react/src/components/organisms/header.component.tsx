@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n";
-import DownloadIcon from "@react-assets/icons/download.svg?react";
+import { DownloadIcon } from "@react-assets/icons/download.icon";
 import { Button, Logo, Overlay } from "@react-components/atoms";
 import { ConnectionsModal } from "@react-components/connections";
 import { Popper } from "@react-components/molecules";
@@ -66,7 +66,7 @@ export const Header = () => {
 						classes="flex relative z-30"
 						title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
 					>
-						<DownloadIcon className="text-vscode-background" />
+						<DownloadIcon className="fill-vscode-button-background" />
 					</Button>
 				) : (
 					<Button
@@ -83,7 +83,7 @@ export const Header = () => {
 				</Popper>
 			</div>
 			{connectionsModalVisible && (
-				<ConnectionsModal connections={connections} onCloseClicked={() => setConnectionsModalVisible(false)} />
+				<ConnectionsModal connections={connections} onClose={() => setConnectionsModalVisible(false)} />
 			)}
 		</div>
 	);
