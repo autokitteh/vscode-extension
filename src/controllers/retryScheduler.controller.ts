@@ -80,6 +80,8 @@ export class RetrySchedulerController {
 		}
 		this.countdownDuration = this.initialDuration;
 		this.countdown = this.countdownDuration;
+		this.startTime = new Date();
+		this.hourlyRetryStarted = false;
 		this.startFetchInterval();
 	}
 
