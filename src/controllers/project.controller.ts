@@ -79,13 +79,6 @@ export class ProjectController {
 		}
 		this.view.reveal(this.project.name);
 
-		this.retryScheduler = new RetrySchedulerController(
-			INITIAL_RETRY_SCHEDULE_COUNTDOWN,
-			() => this.loadAndDisplayDeployments(),
-			(countdown) => this.updateViewWithCountdown(countdown)
-		);
-		this.retryScheduler.startFetchInterval();
-
 		this.notifyViewResourcesPathChanged();
 		this.stopLoader();
 	}

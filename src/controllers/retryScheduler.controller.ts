@@ -3,7 +3,7 @@ import moment from "moment";
 
 export class RetrySchedulerController {
 	private countdown: number;
-	private countdownDuration: number;
+	private currentCountdownDuration: number;
 	private countdownTimerId?: NodeJS.Timeout;
 	private fetchIntervalId?: NodeJS.Timeout;
 	private initialDuration: number;
@@ -17,9 +17,9 @@ export class RetrySchedulerController {
 		fetchFunction: () => Promise<void>,
 		updateViewFunction: (countdown: string) => void
 	) {
-		this.countdownDuration = initialDuration;
+		this.currentCountdownDuration = initialDuration;
 		this.initialDuration = initialDuration;
-		this.countdown = this.countdownDuration;
+		this.countdown = this.currentCountdownDuration;
 		this.fetchFunction = fetchFunction;
 		this.updateViewFunction = updateViewFunction;
 		this.startTime = new Date();
@@ -34,28 +34,28 @@ export class RetrySchedulerController {
 
 	public startCountdown() {
 		this.stopTimers();
-		this.countdown = this.countdownDuration;
+		this.countdown = this.currentCountdownDuration;
 
 		this.countdownTimerId = setInterval(() => {
 			this.updateViewFunction(this.formatCountdown(this.countdown));
 			this.countdown--;
 
-			let currentTime = new Date();
-			let elapsedTime = (currentTime.getTime() - this.startTime.getTime()) / 1000;
-
 			if (this.countdown <= 0) {
 				clearInterval(this.countdownTimerId);
 				this.countdownTimerId = undefined;
 
+				const currentTime = new Date();
+				const elapsedTime = (currentTime.getTime() - this.startTime.getTime()) / 1000;
+
 				if (!this.hourlyRetryStarted && elapsedTime >= 3600) {
 					this.hourlyRetryStarted = true;
-					this.countdownDuration = 3600;
+					this.currentCountdownDuration = 3600;
 				}
 
 				if (this.hourlyRetryStarted) {
 					this.startFetchInterval();
 				} else {
-					this.countdownDuration *= EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER;
+					this.currentCountdownDuration *= EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER;
 					this.startFetchInterval();
 				}
 			}
@@ -78,8 +78,8 @@ export class RetrySchedulerController {
 			clearInterval(this.countdownTimerId);
 			this.countdownTimerId = undefined;
 		}
-		this.countdownDuration = this.initialDuration;
-		this.countdown = this.countdownDuration;
+		this.currentCountdownDuration = this.initialDuration;
+		this.countdown = this.currentCountdownDuration;
 		this.startTime = new Date();
 		this.hourlyRetryStarted = false;
 		this.startFetchInterval();
