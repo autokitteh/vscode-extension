@@ -43,7 +43,7 @@ function App() {
 						<Overlay isVisibile className="opacity-65 z-40!" />
 						<div className={overlayClass}>
 							<div className="flex">
-								<LottieLoader animationData={retryLoader} className="w-64 h-64" />
+								<LottieLoader animationData={retryLoader} className="w-48 h-48" />
 							</div>
 							<div className="flex text-white font-light text-sm">Reconnecting in {retryCountdown}</div>
 							<div className="flex text-white text-sm">Retry Now</div>
