@@ -1,7 +1,7 @@
 import { Code, ConnectError } from "@connectrpc/connect";
 import { INITIAL_RETRY_SCHEDULE_COUNTDOWN, namespaces, vsCommands } from "@constants";
-import { RetrySchedulerController } from "@controllers/retryScheduler.controller";
 import { getLocalResources } from "@controllers/utilities";
+import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import { translate } from "@i18n";
 import { LoggerService, ProjectsService } from "@services";
 import { SidebarTreeItem } from "@type/views";
@@ -12,13 +12,13 @@ import { commands, window, Disposable } from "vscode";
 export class SidebarController {
 	private view: ISidebarView;
 	private projects?: SidebarTreeItem[];
-	private retryScheduler: RetrySchedulerController;
+	private retryScheduler: RetryScheduler;
 	private disposables: Disposable[] = [];
 
 	constructor(sidebarView: ISidebarView) {
 		this.view = sidebarView;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
-		this.retryScheduler = new RetrySchedulerController(
+		this.retryScheduler = new RetryScheduler(
 			INITIAL_RETRY_SCHEDULE_COUNTDOWN,
 			() => this.refreshProjects(),
 			(countdown) =>

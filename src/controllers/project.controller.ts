@@ -2,8 +2,8 @@ import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels, INITIAL_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
-import { RetrySchedulerController } from "@controllers/retryScheduler.controller";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
+import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import {
 	DeploymentState,
 	MessageType,
@@ -46,7 +46,7 @@ export class ProjectController {
 	private loadingRequestsCounter: number = 0;
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
-	private retryScheduler?: RetrySchedulerController;
+	private retryScheduler?: RetryScheduler;
 
 	constructor(
 		projectView: IProjectView,
@@ -1092,7 +1092,7 @@ export class ProjectController {
 	async loadInitialDataOnceViewReady() {
 		this.deployments = undefined;
 
-		this.retryScheduler = new RetrySchedulerController(
+		this.retryScheduler = new RetryScheduler(
 			INITIAL_RETRY_SCHEDULE_COUNTDOWN,
 			() => this.loadAndDisplayDeployments(),
 			(countdown) => this.updateViewWithCountdown(countdown)

@@ -1,7 +1,7 @@
 import { EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER } from "@constants";
 import moment from "moment";
 
-export class RetrySchedulerController {
+export class RetryScheduler {
 	private countdown: number;
 	private currentCountdownDuration: number;
 	private countdownTimerId?: NodeJS.Timeout;
