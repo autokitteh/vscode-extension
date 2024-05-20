@@ -38,8 +38,8 @@ export class RetrySchedulerController {
 			if (this.countdown <= 0) {
 				clearInterval(this.countdownTimerId);
 				this.countdownTimerId = undefined;
-				this.countdownDuration *= 2; // Double the countdown duration for the next retry
-				this.startFetchInterval(); // Retry fetching projects
+				this.countdownDuration *= 2;
+				this.startFetchInterval();
 			}
 		}, 1000);
 	}
