@@ -178,7 +178,7 @@ export class ProjectController {
 
 	public tryToReenable = async () => {
 		this.reconnect();
-		commands.executeCommand(vsCommands.reEnableSidebar);
+		commands.executeCommand(vsCommands.reconnectSidebar);
 	};
 
 	async loadAndDisplayDeployments(isResetCounters: boolean = true) {
