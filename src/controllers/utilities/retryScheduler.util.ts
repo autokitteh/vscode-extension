@@ -74,10 +74,7 @@ export class RetryScheduler {
 	}
 
 	public resetCountdown() {
-		if (this.countdownTimerId) {
-			clearInterval(this.countdownTimerId);
-			this.countdownTimerId = undefined;
-		}
+		this.stopTimers();
 		this.currentCountdownDuration = this.initialDuration;
 		this.countdown = this.currentCountdownDuration;
 		this.startTime = new Date();
