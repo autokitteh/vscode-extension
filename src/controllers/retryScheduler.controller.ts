@@ -1,3 +1,4 @@
+import { INITIAL_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
 import moment from "moment";
 
 export class RetrySchedulerController {
@@ -59,7 +60,7 @@ export class RetrySchedulerController {
 			clearInterval(this.countdownTimerId);
 			this.countdownTimerId = undefined;
 		}
-		this.countdownDuration = 60;
+		this.countdownDuration = INITIAL_RETRY_SCHEDULE_COUNTDOWN;
 		this.countdown = this.countdownDuration;
 		this.startFetchInterval();
 	}
