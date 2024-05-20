@@ -45,8 +45,8 @@ function App() {
 							<div className="flex">
 								<LottieLoader animationData={retryLoader} className="w-64 h-64" />
 							</div>
-							<div className="flex text-white font-light">Reconnecting in {unreachableState}</div>
-							<div className="flex text-white">Retry Now</div>
+							<div className="flex text-white font-light text-sm">Reconnecting in {unreachableState}</div>
+							<div className="flex text-white text-sm">Retry Now</div>
 						</div>
 					</div>
 				) : null}
