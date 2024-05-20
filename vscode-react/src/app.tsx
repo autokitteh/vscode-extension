@@ -30,7 +30,7 @@ function App() {
 	});
 
 	const reconnect = () => {
-		sendMessage(MessageType.tryToReenable);
+		sendMessage(MessageType.tryToReconnect);
 	};
 
 	const overlayClass = "relative flex flex-col w-[100vw] h-[100vh] text-4xl justify-center items-center z-50";

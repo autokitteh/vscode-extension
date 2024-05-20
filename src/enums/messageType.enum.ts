@@ -30,5 +30,5 @@ export enum MessageType {
 	loadMoreSessions = "LOAD_MORE_SESSIONS",
 	toggleSessionsLiveTail = "TOGGLE_SESSIONS_LIVE_TAIL",
 	setRetryCountdown = "SET_RETRY_COUNTDOWN",
-	tryToReenable = "TRY_TO_REENABLE",
+	tryToReconnect = "TRY_TO_RECONNECT",
 }

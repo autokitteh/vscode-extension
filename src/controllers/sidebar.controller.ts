@@ -31,7 +31,7 @@ export class SidebarController {
 		this.retryScheduler.startFetchInterval();
 	}
 
-	public reEnable = () => {
+	public reconnect = () => {
 		this.refreshProjects(false);
 	};
 

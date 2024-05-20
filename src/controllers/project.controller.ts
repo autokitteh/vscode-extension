@@ -162,7 +162,7 @@ export class ProjectController {
 		this.initSessionLogsDisplay(selectedSessionId!);
 	};
 
-	public reEnable = async () => {
+	public reconnect = async () => {
 		this.deployments = undefined;
 		this.loadAndDisplayDeployments(false);
 	};
@@ -177,7 +177,7 @@ export class ProjectController {
 	};
 
 	public tryToReenable = async () => {
-		this.reEnable();
+		this.reconnect();
 		commands.executeCommand(vsCommands.reEnableSidebar);
 	};
 

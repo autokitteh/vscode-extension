@@ -42,9 +42,9 @@ export class TabsManagerController {
 		}
 	}
 
-	public reEnable() {
+	public reconnect() {
 		for (const key in this.openWebviews) {
-			this.openWebviews[key].reEnable();
+			this.openWebviews[key].reconnect();
 		}
 	}
 

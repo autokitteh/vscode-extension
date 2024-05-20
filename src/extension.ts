@@ -88,7 +88,7 @@ export async function activate(context: ExtensionContext) {
 
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.reEnableSidebar, async () => {
-			sidebarController.reEnable();
+			sidebarController.reconnect();
 		})
 	);
 
@@ -97,7 +97,7 @@ export async function activate(context: ExtensionContext) {
 			if (project) {
 				if (project.label.indexOf("Reconnecting") !== -1 && project.key === undefined) {
 					sidebarController.refreshProjects(false);
-					tabsManager.reEnable();
+					tabsManager.reconnect();
 					return;
 				}
 				tabsManager.openWebview(project);
