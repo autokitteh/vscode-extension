@@ -1,4 +1,4 @@
-import { EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER, INITIAL_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
+import { EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER } from "@constants";
 import moment from "moment";
 
 export class RetrySchedulerController {
@@ -6,6 +6,7 @@ export class RetrySchedulerController {
 	private countdownDuration: number;
 	private countdownTimerId?: NodeJS.Timeout;
 	private fetchIntervalId?: NodeJS.Timeout;
+	private initialDuration: number;
 	private fetchFunction: () => Promise<void>;
 	private updateViewFunction: (countdown: string) => void;
 
@@ -15,6 +16,7 @@ export class RetrySchedulerController {
 		updateViewFunction: (countdown: string) => void
 	) {
 		this.countdownDuration = initialDuration;
+		this.initialDuration = initialDuration;
 		this.countdown = this.countdownDuration;
 		this.fetchFunction = fetchFunction;
 		this.updateViewFunction = updateViewFunction;
@@ -60,7 +62,7 @@ export class RetrySchedulerController {
 			clearInterval(this.countdownTimerId);
 			this.countdownTimerId = undefined;
 		}
-		this.countdownDuration = INITIAL_RETRY_SCHEDULE_COUNTDOWN;
+		this.countdownDuration = this.initialDuration;
 		this.countdown = this.countdownDuration;
 		this.startFetchInterval();
 	}
