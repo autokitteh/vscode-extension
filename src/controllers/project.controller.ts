@@ -65,7 +65,7 @@ export class ProjectController {
 	private updateViewWithCountdown(countdown: string) {
 		this.deployments = undefined;
 		this.view.update({
-			type: MessageType.markProjectNotReachable,
+			type: MessageType.setRetryCountdown,
 			payload: countdown,
 		});
 	}
@@ -202,7 +202,7 @@ export class ProjectController {
 		}
 
 		this.view.update({
-			type: MessageType.markProjectNotReachable,
+			type: MessageType.setRetryCountdown,
 			payload: "",
 		});
 

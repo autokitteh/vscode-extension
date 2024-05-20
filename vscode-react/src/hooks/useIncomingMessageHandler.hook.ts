@@ -41,8 +41,8 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 				case MessageType.stopLoader:
 					handlers.stopLoader?.();
 					break;
-				case MessageType.markProjectNotReachable:
-					handlers.setUnreachableState?.(payload as string);
+				case MessageType.setRetryCountdown:
+					handlers.setRetryCountdown?.(payload as string);
 					break;
 			}
 		};

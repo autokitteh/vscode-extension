@@ -14,5 +14,5 @@ export interface IIncomingMessagesHandler {
 	setSelectedSession?: (sessionId: string | undefined) => void;
 	setSessionsSection?: (sessions: SessionSectionViewModel | undefined) => void;
 	setPathResponse?: (pathResponse: boolean) => void;
-	setUnreachableState?: (unreachableState: string) => void;
+	setRetryCountdown?: (countdown: string) => void;
 }
