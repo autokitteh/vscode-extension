@@ -7,14 +7,11 @@ export class RetrySchedulerController {
 	private countdownTimerId?: NodeJS.Timeout;
 	private fetchIntervalId?: NodeJS.Timeout;
 	private initialDuration: number;
-	private maxAttempts: number; // New property
-	private attempts: number; // New property
 	private fetchFunction: () => Promise<void>;
 	private updateViewFunction: (countdown: string) => void;
 
 	constructor(
 		initialDuration: number,
-		maxAttempts: number,
 		fetchFunction: () => Promise<void>,
 		updateViewFunction: (countdown: string) => void
 	) {
@@ -23,8 +20,6 @@ export class RetrySchedulerController {
 		this.countdown = this.countdownDuration;
 		this.fetchFunction = fetchFunction;
 		this.updateViewFunction = updateViewFunction;
-		this.maxAttempts = maxAttempts;
-		this.attempts = 0;
 	}
 
 	public async startFetchInterval() {
@@ -45,13 +40,8 @@ export class RetrySchedulerController {
 			if (this.countdown <= 0) {
 				clearInterval(this.countdownTimerId);
 				this.countdownTimerId = undefined;
-				this.attempts++;
-				if (this.attempts < this.maxAttempts) {
-					this.countdownDuration *= EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER;
-					this.startFetchInterval();
-				} else {
-					this.stopTimers();
-				}
+				this.countdownDuration *= EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER;
+				this.startFetchInterval();
 			}
 		}, 1000);
 	}
