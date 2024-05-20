@@ -7,6 +7,8 @@ export class RetrySchedulerController {
 	private countdownTimerId?: NodeJS.Timeout;
 	private fetchIntervalId?: NodeJS.Timeout;
 	private initialDuration: number;
+	private startTime: Date;
+	private hourlyRetryStarted: boolean = false;
 	private fetchFunction: () => Promise<void>;
 	private updateViewFunction: (countdown: string) => void;
 
@@ -20,6 +22,7 @@ export class RetrySchedulerController {
 		this.countdown = this.countdownDuration;
 		this.fetchFunction = fetchFunction;
 		this.updateViewFunction = updateViewFunction;
+		this.startTime = new Date();
 	}
 
 	public async startFetchInterval() {
@@ -37,11 +40,24 @@ export class RetrySchedulerController {
 			this.updateViewFunction(this.formatCountdown(this.countdown));
 			this.countdown--;
 
+			let currentTime = new Date();
+			let elapsedTime = (currentTime.getTime() - this.startTime.getTime()) / 1000; // in seconds
+
 			if (this.countdown <= 0) {
 				clearInterval(this.countdownTimerId);
 				this.countdownTimerId = undefined;
-				this.countdownDuration *= EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER;
-				this.startFetchInterval();
+
+				if (!this.hourlyRetryStarted && elapsedTime >= 3600) {
+					this.hourlyRetryStarted = true;
+					this.countdownDuration = 3600;
+				}
+
+				if (this.hourlyRetryStarted) {
+					this.startFetchInterval();
+				} else {
+					this.countdownDuration *= EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER;
+					this.startFetchInterval();
+				}
 			}
 		}, 1000);
 	}
