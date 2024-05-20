@@ -1,6 +1,6 @@
 import moment from "moment";
 
-export class RetryHandler {
+export class RetrySchedulerController {
 	private countdown: number;
 	private countdownDuration: number;
 	private countdownTimerId?: NodeJS.Timeout;

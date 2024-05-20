@@ -2,8 +2,8 @@ import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels } from "@constants";
+import { RetrySchedulerController } from "@controllers/retryScheduler.controller";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
-import { RetryHandler } from "@controllers/utilities/retryHandler.util";
 import {
 	DeploymentState,
 	MessageType,
@@ -46,7 +46,7 @@ export class ProjectController {
 	private loadingRequestsCounter: number = 0;
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
-	private retryHandler?: RetryHandler;
+	private retryScheduler?: RetrySchedulerController;
 
 	constructor(
 		projectView: IProjectView,
@@ -80,12 +80,12 @@ export class ProjectController {
 		}
 		this.view.reveal(this.project.name);
 
-		this.retryHandler = new RetryHandler(
+		this.retryScheduler = new RetrySchedulerController(
 			60,
 			() => this.loadAndDisplayDeployments(),
 			(countdown) => this.updateViewWithCountdown(countdown)
 		);
-		this.retryHandler.startFetchInterval();
+		this.retryScheduler.startFetchInterval();
 
 		this.notifyViewResourcesPathChanged();
 		this.stopLoader();
@@ -196,7 +196,7 @@ export class ProjectController {
 			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
 			LoggerService.error(namespaces.projectController, log);
 			if (isResetCounters) {
-				this.retryHandler?.startCountdown();
+				this.retryScheduler?.startCountdown();
 			}
 			return;
 		}
@@ -206,7 +206,7 @@ export class ProjectController {
 			payload: "",
 		});
 
-		this.retryHandler?.resetCountdown();
+		this.retryScheduler?.resetCountdown();
 
 		if (isEqual(this.deployments, deployments)) {
 			return;
@@ -1100,12 +1100,12 @@ export class ProjectController {
 	async loadInitialDataOnceViewReady() {
 		this.deployments = undefined;
 
-		this.retryHandler = new RetryHandler(
+		this.retryScheduler = new RetrySchedulerController(
 			60,
 			() => this.loadAndDisplayDeployments(),
 			(countdown) => this.updateViewWithCountdown(countdown)
 		);
-		this.retryHandler.startFetchInterval();
+		this.retryScheduler.startFetchInterval();
 
 		const isResourcesPathExist = await this.getResourcesPathFromContext();
 		if (isResourcesPathExist) {

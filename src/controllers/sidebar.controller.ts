@@ -1,7 +1,7 @@
 import { Code, ConnectError } from "@connectrpc/connect";
 import { namespaces, vsCommands } from "@constants";
+import { RetrySchedulerController } from "@controllers/retryScheduler.controller";
 import { getLocalResources } from "@controllers/utilities";
-import { RetryHandler } from "@controllers/utilities/retryHandler.util";
 import { translate } from "@i18n";
 import { LoggerService, ProjectsService } from "@services";
 import { SidebarTreeItem } from "@type/views";
@@ -12,13 +12,13 @@ import { commands, window, Disposable } from "vscode";
 export class SidebarController {
 	private view: ISidebarView;
 	private projects?: SidebarTreeItem[];
-	private retryHandler: RetryHandler;
+	private retryScheduler: RetrySchedulerController;
 	private disposables: Disposable[] = [];
 
 	constructor(sidebarView: ISidebarView) {
 		this.view = sidebarView;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
-		this.retryHandler = new RetryHandler(
+		this.retryScheduler = new RetrySchedulerController(
 			60,
 			() => this.refreshProjects(),
 			(countdown) =>
@@ -28,7 +28,7 @@ export class SidebarController {
 					})
 				)
 		);
-		this.retryHandler.startFetchInterval();
+		this.retryScheduler.startFetchInterval();
 	}
 
 	public reEnable = () => {
@@ -37,7 +37,7 @@ export class SidebarController {
 
 	public enable = async () => {
 		this.refreshProjects();
-		this.retryHandler.startFetchInterval();
+		this.retryScheduler.startFetchInterval();
 	};
 
 	private fetchProjects = async (resetCountdown: boolean = true): Promise<SidebarTreeItem[] | undefined> => {
@@ -52,7 +52,7 @@ export class SidebarController {
 
 			if ((error as ConnectError).code === Code.Unavailable || (error as ConnectError).code === Code.Aborted) {
 				if (resetCountdown) {
-					this.retryHandler.startCountdown();
+					this.retryScheduler.startCountdown();
 					return;
 				}
 
@@ -62,7 +62,7 @@ export class SidebarController {
 			}
 		}
 
-		this.retryHandler.resetCountdown();
+		this.retryScheduler.resetCountdown();
 
 		if (projects!.length) {
 			return projects!.map((project) => ({
