@@ -1,17 +1,23 @@
 import { useRef } from "react";
 import { PlugConnectionIcon } from "@assets/icons/plugConnection.icon";
+import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { Button } from "@react-components/atoms";
 import { Cell, HeaderCell, TableMessage } from "@react-components/atoms/table";
 import { Modal, Row, TableHeader } from "@react-components/molecules";
 import { Table } from "@react-components/organisms";
 import { useAppState } from "@react-context";
+import { sendMessage } from "@react-utilities";
 import { Connection } from "@type/models";
 
 export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void; connections?: Connection[] }) => {
 	const [{ delayedLoading }] = useAppState();
 
 	const modalRef = useRef<HTMLDivElement>(null);
+
+	const handleConnectionInitClick = (connectionInitURL: string) => {
+		sendMessage(MessageType.openConnectionInitURL, connectionInitURL);
+	};
 
 	return (
 		<Modal classes={["rounded-none"]} ref={modalRef} wrapperClasses={["bg-transparent", "z-50"]}>
@@ -36,7 +42,7 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 									<Cell classes={["text-vscode-foreground"]}>{connection.name}</Cell>
 									<Cell classes={["text-vscode-foreground"]}>{connection.connectionId}</Cell>
 									<Cell classes={["flex justify-center"]}>
-										<Button>
+										<Button classes="pointer" onClick={() => handleConnectionInitClick(connection.links.init_url)}>
 											<PlugConnectionIcon className="fill-vscode-button-foreground w-4" />
 										</Button>
 									</Cell>

@@ -26,6 +26,7 @@ export interface IProjectViewDelegate {
 	loadMoreSessions?: Callback;
 	toggleSessionsLiveTail?: Callback<Boolean>;
 	tryToReenable?: Callback;
+	openConnectionInitURL?: Callback<string>;
 }
 
 export interface IProjectView {

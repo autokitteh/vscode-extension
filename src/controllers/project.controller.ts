@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
-import { vsCommands, namespaces, channels, INITIAL_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
+import { vsCommands, namespaces, channels, BASE_URL, INITIAL_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import {
@@ -1134,5 +1134,14 @@ export class ProjectController {
 		this.fetchSessions();
 		this.sessionsNextPageToken = undefined;
 		return;
+	}
+
+	openConnectionInitURL(connectionInitURL: string) {
+		const initURL = Uri.parse(`${BASE_URL}${connectionInitURL}`);
+		env.openExternal(initURL).then((success) => {
+			if (!success) {
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.failedOpenConnectionInit"));
+			}
+		});
 	}
 }
