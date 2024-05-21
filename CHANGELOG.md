@@ -1,3 +1,10 @@
+# [0.18.0](https://github.com/autokitteh/vscode-extension/compare/v0.17.0...v0.18.0) (2024-05-21)
+
+
+### Features
+
+* improve ui on connectivity issues with the server (UI-300) ([#306](https://github.com/autokitteh/vscode-extension/issues/306)) ([b91432e](https://github.com/autokitteh/vscode-extension/commit/b91432efafbc7602f129919914fabad236852f2b))
+
 # [0.17.0](https://github.com/autokitteh/vscode-extension/compare/v0.16.0...v0.17.0) (2024-05-16)
 
 
