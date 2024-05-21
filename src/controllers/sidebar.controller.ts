@@ -1,52 +1,69 @@
 import { Code, ConnectError } from "@connectrpc/connect";
-import { namespaces, vsCommands } from "@constants";
+import { INITIAL_RETRY_SCHEDULE_COUNTDOWN, namespaces, vsCommands } from "@constants";
 import { getLocalResources } from "@controllers/utilities";
+import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import { translate } from "@i18n";
 import { LoggerService, ProjectsService } from "@services";
 import { SidebarTreeItem } from "@type/views";
 import { ISidebarView } from "interfaces";
 import isEqual from "lodash.isequal";
-import { commands, window } from "vscode";
+import { commands, window, Disposable } from "vscode";
 
 export class SidebarController {
 	private view: ISidebarView;
-	private intervalTimerId?: NodeJS.Timeout;
-	private refreshRate: number;
-	private projectsFetchErrorDisplayed: boolean = false;
 	private projects?: SidebarTreeItem[];
+	private retryScheduler: RetryScheduler;
+	private disposables: Disposable[] = [];
 
-	constructor(sidebarView: ISidebarView, refreshRate: number) {
+	constructor(sidebarView: ISidebarView) {
 		this.view = sidebarView;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
-		this.refreshRate = refreshRate;
+		this.retryScheduler = new RetryScheduler(
+			INITIAL_RETRY_SCHEDULE_COUNTDOWN,
+			() => this.refreshProjects(),
+			(countdown) =>
+				this.updateViewWithCountdown(
+					translate().t("general.reconnecting", {
+						countdown,
+					})
+				)
+		);
+		this.retryScheduler.startFetchInterval();
 	}
+
+	public reconnect = () => {
+		this.refreshProjects(false);
+	};
 
 	public enable = async () => {
 		this.refreshProjects();
-
-		this.startInterval();
+		this.retryScheduler.startFetchInterval();
 	};
 
-	private fetchProjects = async (): Promise<SidebarTreeItem[] | undefined> => {
+	private fetchProjects = async (resetCountdown: boolean = true): Promise<SidebarTreeItem[] | undefined> => {
 		const { data: projects, error } = await ProjectsService.list();
 
 		if (error) {
-			if (!this.projectsFetchErrorDisplayed) {
-				const notification = translate().t("projects.fetchProjectsFailed");
-				commands.executeCommand(vsCommands.showErrorMessage, notification);
-				this.projectsFetchErrorDisplayed = true;
-			}
-
+			this.projects = undefined;
 			LoggerService.error(
 				namespaces.projectSidebarController,
 				translate().t("projects.fetchProjectsFailedError", { error: (error as Error).message })
 			);
+
 			if ((error as ConnectError).code === Code.Unavailable || (error as ConnectError).code === Code.Aborted) {
-				return [{ label: translate().t("general.reconnecting"), key: undefined }];
+				if (resetCountdown) {
+					this.retryScheduler.startCountdown();
+					return;
+				}
+
+				return;
 			} else {
 				return [{ label: translate().t("general.internalError"), key: undefined }];
 			}
 		}
+
+		this.retryScheduler.resetCountdown();
+
 		if (projects!.length) {
 			return projects!.map((project) => ({
 				label: project.name,
@@ -56,18 +73,23 @@ export class SidebarController {
 		return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
 	};
 
-	private startInterval() {
-		this.intervalTimerId = setInterval(() => this.refreshProjects(), this.refreshRate);
-	}
-
-	private async refreshProjects() {
-		const projects = await this.fetchProjects();
+	public async refreshProjects(resetCountdown: boolean = true) {
+		const projects = await this.fetchProjects(resetCountdown);
 		if (projects) {
 			if (!isEqual(projects, this.projects)) {
 				this.projects = projects;
 				this.view.refresh(this.projects);
 			}
 		}
+	}
+
+	private updateViewWithCountdown(countdown: string) {
+		this.view.refresh([
+			{
+				label: countdown,
+				key: undefined,
+			},
+		]);
 	}
 
 	async buildProject(projectId: string) {
@@ -126,14 +148,10 @@ export class SidebarController {
 	};
 
 	public disable = () => {
-		this.stopInterval();
 		this.resetSidebar();
 	};
 
-	private stopInterval() {
-		if (this.intervalTimerId) {
-			clearInterval(this.intervalTimerId);
-			this.intervalTimerId = undefined;
-		}
+	public dispose() {
+		this.disposables.forEach((disposable) => disposable.dispose());
 	}
 }

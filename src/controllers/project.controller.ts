@@ -1,8 +1,9 @@
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
-import { vsCommands, namespaces, channels } from "@constants";
+import { vsCommands, namespaces, channels, INITIAL_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
+import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import {
 	DeploymentState,
 	MessageType,
@@ -45,6 +46,7 @@ export class ProjectController {
 	private loadingRequestsCounter: number = 0;
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
+	private retryScheduler?: RetryScheduler;
 
 	constructor(
 		projectView: IProjectView,
@@ -57,6 +59,14 @@ export class ProjectController {
 		this.view.delegate = this;
 		this.deploymentsRefreshRate = deploymentsRefreshRate;
 		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
+	}
+
+	private updateViewWithCountdown(countdown: string) {
+		this.deployments = undefined;
+		this.view.update({
+			type: MessageType.setRetryCountdown,
+			payload: countdown,
+		});
 	}
 
 	reveal(): void {
@@ -131,12 +141,6 @@ export class ProjectController {
 
 	public enable = async () => {
 		this.setProjectNameInView();
-
-		this.startInterval(
-			ProjectIntervalTypes.deployments,
-			() => this.loadAndDisplayDeployments(),
-			this.deploymentsRefreshRate
-		);
 		this.notifyViewResourcesPathChanged();
 
 		this.sessions = undefined;
@@ -150,15 +154,26 @@ export class ProjectController {
 		this.initSessionLogsDisplay(selectedSessionId!);
 	};
 
+	public reconnect = async () => {
+		this.deployments = undefined;
+		this.loadAndDisplayDeployments(false);
+	};
+
 	public disable = async () => {
 		this.stopInterval(ProjectIntervalTypes.deployments);
+		this.stopInterval(ProjectIntervalTypes.project);
 		this.stopInterval(ProjectIntervalTypes.sessionHistory);
 		this.deployments = undefined;
 		this.sessions = undefined;
 		this.hasDisplayedError = new Map();
 	};
 
-	async loadAndDisplayDeployments() {
+	public tryToReenable = async () => {
+		this.reconnect();
+		commands.executeCommand(vsCommands.reconnectSidebar);
+	};
+
+	async loadAndDisplayDeployments(isResetCounters: boolean = true) {
 		this.startLoader();
 		const { data: deployments, error } = await DeploymentsService.listByProjectId(this.projectId);
 		this.stopLoader();
@@ -172,8 +187,18 @@ export class ProjectController {
 
 			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
 			LoggerService.error(namespaces.projectController, log);
+			if (isResetCounters) {
+				this.retryScheduler?.startCountdown();
+			}
 			return;
 		}
+
+		this.view.update({
+			type: MessageType.setRetryCountdown,
+			payload: "",
+		});
+
+		this.retryScheduler?.resetCountdown();
 
 		if (isEqual(this.deployments, deployments)) {
 			return;
@@ -472,7 +497,7 @@ export class ProjectController {
 		);
 	}
 
-	async startInterval(intervalKey: ProjectIntervalTypes, loadFunc: () => Promise<void> | void, refreshRate: number) {
+	async startInterval(intervalKey: ProjectIntervalTypes, loadFunc: () => Promise<any> | void, refreshRate: number) {
 		if (this.intervalKeeper.has(intervalKey)) {
 			this.stopInterval(intervalKey);
 		}
@@ -509,7 +534,6 @@ export class ProjectController {
 		this.project = project;
 		this.view.show(project!.name);
 		this.setProjectNameInView();
-
 		this.sessions = undefined;
 	}
 
@@ -1068,11 +1092,12 @@ export class ProjectController {
 	async loadInitialDataOnceViewReady() {
 		this.deployments = undefined;
 
-		this.startInterval(
-			ProjectIntervalTypes.deployments,
+		this.retryScheduler = new RetryScheduler(
+			INITIAL_RETRY_SCHEDULE_COUNTDOWN,
 			() => this.loadAndDisplayDeployments(),
-			this.deploymentsRefreshRate
+			(countdown) => this.updateViewWithCountdown(countdown)
 		);
+		this.retryScheduler.startFetchInterval();
 
 		const isResourcesPathExist = await this.getResourcesPathFromContext();
 		if (isResourcesPathExist) {

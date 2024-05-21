@@ -1,15 +1,15 @@
 export {
 	DEFAULT_SERVER_URL,
 	EXT_PUBLISHER,
-	DEFAULT_SIDEBAR_VIEW_REFRESH_INTERVAL,
 	DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL,
 	DEFAULT_PROJECT_VIEW_SESSION_LOG_REFRESH_INTERVAL,
 	AK_FRONTEND_URL,
 	DEFAULT_SESSIONS_VISIBLE_PAGE_SIZE,
+	INITIAL_RETRY_SCHEDULE_COUNTDOWN,
+	EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER,
 } from "@constants/extensionConfiguration.constants";
 export {
 	BASE_URL,
-	sidebarControllerRefreshRate,
 	projectControllerRefreshRate,
 	projectControllerSessionsLogRefreshRate,
 } from "@constants/api.constants";

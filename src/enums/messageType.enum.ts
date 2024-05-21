@@ -29,4 +29,6 @@ export enum MessageType {
 	stopLoader = "STOP_LOADER",
 	loadMoreSessions = "LOAD_MORE_SESSIONS",
 	toggleSessionsLiveTail = "TOGGLE_SESSIONS_LIVE_TAIL",
+	setRetryCountdown = "SET_RETRY_COUNTDOWN",
+	tryToReconnect = "TRY_TO_RECONNECT",
 }

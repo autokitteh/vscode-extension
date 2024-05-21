@@ -25,6 +25,7 @@ export interface IProjectViewDelegate {
 	loadInitialDataOnceViewReady: Callback;
 	loadMoreSessions?: Callback;
 	toggleSessionsLiveTail?: Callback<Boolean>;
+	tryToReenable?: Callback;
 }
 
 export interface IProjectView {

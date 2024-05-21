@@ -113,11 +113,6 @@
 					"description": "Is extension ON",
 					"type": "boolean"
 				},
-				"autokitteh.sidebar.refresh.interval": {
-					"default": 1,
-					"description": "Refresh interval in seconds for the sidebar panel",
-					"type": "number"
-				},
 				"autokitteh.notificationsLevel": {
 					"type": "string",
 					"default": "All",
@@ -291,6 +286,7 @@
 		"lodash.isequal": "^4.5.0",
 		"module-alias": "^2.2.3",
 		"moment": "^2.30.1",
+		"react-lottie-loader": "^1.1.0",
 		"tar": "^6.2.0",
 		"tar-fs": "^3.0.5",
 		"vscode-languageclient": "^6.1.3",
