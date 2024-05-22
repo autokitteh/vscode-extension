@@ -340,12 +340,6 @@
 	"homepage": "https://autokitteh.com",
 	"icon": "resources/extensions-marketplace/ak-extension-icon.png",
 	"license": "SEE LICENSE IN LICENSE.md",
-	"lint-staged": {
-		"*.{ts,tsx}": [
-			"prettier --write",
-			"eslint --fix"
-		]
-	},
 	"main": "./dist/src/extension.js",
 	"name": "autokitteh",
 	"private": true,
@@ -355,8 +349,7 @@
 		"url": "https://github.com/autokitteh/vscode-extension"
 	},
 	"scripts": {
-		"cleanup": "rm -rf dist node_modules ./vscode-react/build ./vscode-react/node_modules",
-		"clean-and-run": "npm run cleanup && npm install && npm run compile && npm run build && cd vscode-react && npm run watch",
+		"start:webview": "cd vscode-react && npm run start",
 		"build:webview": "cd vscode-react && npm run build",
 		"check-types": "tsc --pretty --noEmit",
 		"compile": "tsc -p ./",
@@ -366,18 +359,11 @@
 		"build": "npm run esbuild-base -- --sourcemap",
 		"build:all": "npm run build --workspace=vscode-react && npm run build",
 		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --external:fswin",
-		"update-ak-submodle": "git submodule update --remote --merge",
-		"format:check": "npm run prettier -- --check",
 		"check-format:staged": "prettier . --check",
-		"lint": "eslint src --ext .ts,.tsx .",
 		"fix-eslint:staged": "npm run lint --fix",
-		"prettier": "prettier . --ignore-path .prettierignore",
-		"start:webview": "cd vscode-react && npm run start",
 		"test:run": "vitest run",
 		"test:watch": "vitest",
 		"test:all": "vitest run && npm run test:run --workspace=vscode-react",
-		"type:check": "tsc",
-		"validate": "run-p lint type:check format:check",
 		"package": "vsce package",
 		"prepare": "husky install",
 		"source-map-explorer": "npx source-map-explorer dist/main.js dist/main.js.map --no-border-checks"
