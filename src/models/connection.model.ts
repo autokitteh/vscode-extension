@@ -4,9 +4,9 @@ import { Connection } from "@type/models";
 export const convertConnectionProtoToModel = (protoConnection: ProtoConnection): Connection => {
 	return {
 		connectionId: protoConnection.connectionId,
+		integrationId: protoConnection.integrationId,
 		name: protoConnection.name,
-		initLink: protoConnection.links.init_urlinit_url,
+		initLink: protoConnection.links.init_url,
 		status: protoConnection.status,
-		capabilities: protoConnection.capabilities as Record<string, boolean> | undefined,
 	};
 };

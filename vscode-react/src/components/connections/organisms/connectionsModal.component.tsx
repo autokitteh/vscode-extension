@@ -1,8 +1,6 @@
 import { useRef } from "react";
-import { PlugConnectionIcon } from "@assets/icons/plugConnection.icon";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
-import { Button } from "@react-components/atoms";
 import { Cell, HeaderCell, TableMessage } from "@react-components/atoms/table";
 import { Modal, Row, TableHeader } from "@react-components/molecules";
 import { Table } from "@react-components/organisms";
@@ -34,17 +32,18 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 						<Table>
 							<TableHeader>
 								<HeaderCell>Name</HeaderCell>
-								<HeaderCell>ID</HeaderCell>
-								<HeaderCell>Init</HeaderCell>
+								<HeaderCell>Integration</HeaderCell>
+								<HeaderCell>Actions</HeaderCell>
 							</TableHeader>
 							{connections?.map((connection) => (
 								<Row key={connection.connectionId}>
 									<Cell classes={["text-vscode-foreground"]}>{connection.name}</Cell>
-									<Cell classes={["text-vscode-foreground"]}>{connection.connectionId}</Cell>
+									<Cell classes={["text-vscode-foreground"]}>{connection.integrationName}</Cell>
 									<Cell classes={["flex justify-center"]}>
-										<Button classes="pointer" onClick={() => handleConnectionInitClick(connection.initLink)}>
-											<PlugConnectionIcon className="fill-vscode-button-foreground w-4" />
-										</Button>
+										<div
+											onClick={() => handleConnectionInitClick(connection.initLink)}
+											className="w-3 codicon codicon-gear text-vscode-background"
+										/>{" "}
 									</Cell>
 								</Row>
 							))}

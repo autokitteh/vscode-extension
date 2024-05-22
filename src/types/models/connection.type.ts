@@ -7,6 +7,7 @@ export type Connection = {
 	connectionId: string;
 	name: string;
 	initLink: string;
+	integrationId?: string;
+	integrationName?: string;
 	status: ConnectionStatus | undefined;
-	capabilities: Record<string, boolean> | undefined;
 };
