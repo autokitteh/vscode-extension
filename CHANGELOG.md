@@ -1,3 +1,15 @@
+## [0.18.1](https://github.com/autokitteh/vscode-extension/compare/v0.18.0...v0.18.1) (2024-05-22)
+
+
+### Bug Fixes
+
+* match vscode engine version to the @types/vscode - proper version: 1.89.0 ([#311](https://github.com/autokitteh/vscode-extension/issues/311)) ([cffc644](https://github.com/autokitteh/vscode-extension/commit/cffc644dfcec83164736bc2494a09e5eefdfeb1d))
+
+
+### Performance Improvements
+
+* update extension dependencies and clean package.json([#307](https://github.com/autokitteh/vscode-extension/issues/307)) ([c9c0c10](https://github.com/autokitteh/vscode-extension/commit/c9c0c1052725cf9282c4d6edd4b04c677f44c11c))
+
 # [0.18.0](https://github.com/autokitteh/vscode-extension/compare/v0.17.0...v0.18.0) (2024-05-21)
 
 
