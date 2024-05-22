@@ -42,7 +42,7 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 									<Cell classes={["text-vscode-foreground"]}>{connection.name}</Cell>
 									<Cell classes={["text-vscode-foreground"]}>{connection.connectionId}</Cell>
 									<Cell classes={["flex justify-center"]}>
-										<Button classes="pointer" onClick={() => handleConnectionInitClick(connection.links.init_url)}>
+										<Button classes="pointer" onClick={() => handleConnectionInitClick(connection.initLink)}>
 											<PlugConnectionIcon className="fill-vscode-button-foreground w-4" />
 										</Button>
 									</Cell>
