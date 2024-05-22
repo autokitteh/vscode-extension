@@ -6,7 +6,7 @@ type ConnectionStatus = {
 export type Connection = {
 	connectionId: string;
 	name: string;
-	links: Record<string, string>;
+	initLink: string;
 	status: ConnectionStatus | undefined;
 	capabilities: Record<string, boolean> | undefined;
 };

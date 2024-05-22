@@ -5,7 +5,7 @@ export const convertConnectionProtoToModel = (protoConnection: ProtoConnection):
 	return {
 		connectionId: protoConnection.connectionId,
 		name: protoConnection.name,
-		links: protoConnection.links,
+		initLink: protoConnection.links.init_urlinit_url,
 		status: protoConnection.status,
 		capabilities: protoConnection.capabilities as Record<string, boolean> | undefined,
 	};
