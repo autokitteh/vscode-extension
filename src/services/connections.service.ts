@@ -7,9 +7,9 @@ import { ServiceResponse } from "@type";
 import { Connection } from "@type/models";
 
 export class ConnectionsService {
-	static async list(): Promise<ServiceResponse<Connection[]>> {
+	static async list(projectId: string): Promise<ServiceResponse<Connection[]>> {
 		try {
-			const connections = await connectionsService.list({});
+			const connections = await connectionsService.list({ projectId });
 			const convertedConnections = connections.connections.map(convertConnectionProtoToModel);
 			return { data: convertedConnections, error: undefined };
 		} catch (error) {

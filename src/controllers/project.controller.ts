@@ -536,7 +536,7 @@ export class ProjectController {
 		this.setProjectNameInView();
 
 		this.startLoader();
-		const { data: connections, error: connectionsError } = await ConnectionsService.list();
+		const { data: connections, error: connectionsError } = await ConnectionsService.list(this.projectId);
 		this.stopLoader();
 
 		if (connectionsError) {
