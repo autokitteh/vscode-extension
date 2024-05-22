@@ -18,7 +18,8 @@ export class SessionLogRecord {
 
 	constructor(logRecord: ProtoSessionLogRecord) {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { t, ...props } = logRecord;
+		const { t, processId, ...props } = logRecord;
+
 		const logRecordType = this.getLogRecordType(props);
 
 		if (!logRecordType) {
@@ -55,18 +56,22 @@ export class SessionLogRecord {
 	}
 
 	private getLogRecordType(props: { [key: string]: any }): SessionLogRecordType | undefined {
-		const keys = Object.keys(props);
-		for (const key of keys) {
-			if (key in SessionLogRecordType) {
-				return key as SessionLogRecordType;
-			}
+		const activeKey = Object.keys(props).find((key) => props[key] !== undefined);
+
+		if (activeKey && activeKey in SessionLogRecordType) {
+			return activeKey as SessionLogRecordType;
 		}
 		return undefined;
 	}
 
 	private handleStateRecord(logRecord: ProtoSessionLogRecord) {
 		this.type = SessionLogRecordType.state;
-		this.state = Object.keys(logRecord.state!)[0] as SessionStateType;
+		const activeKey = Object.keys(logRecord.state!).find(
+			(key) =>
+				logRecord.state?.[key as unknown as SessionStateType] !== undefined &&
+				typeof logRecord.state?.[key as unknown as SessionStateType] === "object"
+		);
+		this.state = activeKey as SessionStateType;
 		if (this.state === SessionStateType.running) {
 			const functionRunning = logRecord.state?.running?.call?.function?.name;
 			this.logs = functionRunning ? `${translate().t("sessions.historyInitFunction")}: ${functionRunning}` : undefined;
