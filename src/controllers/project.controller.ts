@@ -408,12 +408,12 @@ export class ProjectController {
 		}
 		this.sessionHistoryStates = sessionHistoryStates;
 
-		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
-
 		this.outputSessionLogs(sessionHistoryStates);
 
-		if (lastState.isFinished()) {
-			this.printFinishedSessionLogs(lastState);
+		const completedState = sessionHistoryStates.find((state) => state.isFinished());
+
+		if (completedState) {
+			this.printFinishedSessionLogs(completedState);
 			return;
 		}
 	}
