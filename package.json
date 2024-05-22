@@ -376,11 +376,11 @@
 		"start:webview": "cd vscode-react && npm run start",
 		"test:run": "vitest run",
 		"test:watch": "vitest",
-		"test:all": "vitest run && npm run test:run --workspace=vscode-react",
+		"test": "vitest run && npm run test:run --workspace=vscode-react",
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
 		"package": "vsce package",
-		"prepare": "husky install",
+		"prepare": "husky init",
 		"source-map-explorer": "npx source-map-explorer dist/main.js dist/main.js.map --no-border-checks"
 	},
 	"version": "0.18.0",
