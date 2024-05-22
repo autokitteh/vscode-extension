@@ -7,7 +7,7 @@
 			"label": "Clean and Compile",
 			"type": "shell",
 			"problemMatcher": "$tsc-watch",
-			"command": "rm -rf dist && tsc --watch",
+			"command": "rm -rf dist && npm i typescript@latest && tsc --watch",
 			"isBackground": true,
 			"presentation": {
 				"reveal": "never"
