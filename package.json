@@ -376,7 +376,6 @@
 		"test:run": "vitest run",
 		"test:watch": "vitest",
 		"test:all": "vitest run && npm run test:run --workspace=vscode-react",
-		"test": "vitest run && npm run test:run --workspace=vscode-react",
 		"type:check": "tsc",
 		"validate": "run-p lint type:check format:check",
 		"package": "vsce package",
