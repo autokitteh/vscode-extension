@@ -1,3 +1,10 @@
+## [0.18.2](https://github.com/autokitteh/vscode-extension/compare/v0.18.1...v0.18.2) (2024-05-22)
+
+
+### Bug Fixes
+
+* session logs model fix to handle error bug in some sessions ([#310](https://github.com/autokitteh/vscode-extension/issues/310)) ([603925f](https://github.com/autokitteh/vscode-extension/commit/603925fc1f8d4aaa45f012580b7a41a40c430de5))
+
 ## [0.18.1](https://github.com/autokitteh/vscode-extension/compare/v0.18.0...v0.18.1) (2024-05-22)
 
 
