@@ -18,7 +18,7 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 	};
 
 	return (
-		<Modal classes={["rounded-none"]} ref={modalRef} wrapperClasses={["bg-transparent", "z-50"]}>
+		<Modal classes={["rounded-none"]} ref={modalRef} wrapperClasses={["z-50"]}>
 			<div
 				className="flex justify-end cursor-pointer text-vscode-foreground font-extrabold pt-8 text-xl leading-3"
 				onClick={() => onClose()}
@@ -33,12 +33,16 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 							<TableHeader>
 								<HeaderCell>Name</HeaderCell>
 								<HeaderCell>Integration</HeaderCell>
+								<HeaderCell>Status</HeaderCell>
+								<HeaderCell>Information</HeaderCell>
 								<HeaderCell>Actions</HeaderCell>
 							</TableHeader>
 							{connections?.map((connection) => (
 								<Row key={connection.connectionId}>
 									<Cell classes={["text-vscode-foreground"]}>{connection.name}</Cell>
 									<Cell classes={["text-vscode-foreground"]}>{connection.integrationName}</Cell>
+									<Cell classes={["text-vscode-foreground"]}>{connection.status}</Cell>
+									<Cell classes={["text-vscode-foreground"]}>{connection.statusInfoMessage}</Cell>
 									<Cell classes={["flex justify-center"]}>
 										<div
 											onClick={() => handleConnectionInitClick(connection.initLink)}

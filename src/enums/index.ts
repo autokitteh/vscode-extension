@@ -6,3 +6,4 @@ export { SortOrder } from "@enums/sortOrder.enum";
 export { ProjectIntervalTypes } from "@enums/projectIntervals.enum";
 export { DeploymentState } from "@enums/deploymentState.enum";
 export { ProjectRecurringErrorMessages } from "@enums/projectRecurringErrors.enum";
+export { ConnectionStatus } from "@enums/connectionStatus.enum";
