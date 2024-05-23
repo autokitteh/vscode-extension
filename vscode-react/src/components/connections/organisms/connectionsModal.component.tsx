@@ -16,6 +16,9 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 	const handleConnectionInitClick = (connectionInitURL: string) => {
 		sendMessage(MessageType.openConnectionInitURL, connectionInitURL);
 	};
+	const handleConnectionTestClick = (connectionTestURL: string) => {
+		sendMessage(MessageType.openConnectionTestURL, connectionTestURL);
+	};
 
 	return (
 		<Modal classes={["rounded-none"]} ref={modalRef} wrapperClasses={["z-50"]}>
@@ -44,10 +47,18 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 									<Cell classes={["text-vscode-foreground"]}>{connection.status}</Cell>
 									<Cell classes={["text-vscode-foreground"]}>{connection.statusInfoMessage}</Cell>
 									<Cell classes={["flex justify-center"]}>
-										<div
-											onClick={() => handleConnectionInitClick(connection.initLink)}
-											className="w-3 codicon codicon-gear text-vscode-background"
-										/>{" "}
+										{connection.initURL && (
+											<div
+												onClick={() => handleConnectionInitClick(connection.initURL!)}
+												className="w-3 codicon codicon-gear text-vscode-background cursor-pointer"
+											/>
+										)}
+										{connection.testURL && (
+											<div
+												onClick={() => handleConnectionTestClick(connection.testURL!)}
+												className="w-3 codicon codicon-beaker text-vscode-background cursor-pointer"
+											/>
+										)}
 									</Cell>
 								</Row>
 							))}

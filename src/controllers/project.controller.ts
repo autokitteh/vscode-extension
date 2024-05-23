@@ -36,7 +36,6 @@ export class ProjectController {
 	private cachedSessionHistoryStates: Map<string, SessionLogRecord[]> = new Map();
 	private sessionLogOutputCursor: number = 0;
 	private deployments?: Deployment[];
-	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
 	private isDeploymentLiveTailPossible?: boolean;
@@ -58,7 +57,6 @@ export class ProjectController {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
-		this.deploymentsRefreshRate = deploymentsRefreshRate;
 		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
 	}
 
@@ -1139,6 +1137,15 @@ export class ProjectController {
 	openConnectionInitURL(connectionInitURL: string) {
 		const initURL = Uri.parse(`${BASE_URL}${connectionInitURL}`);
 		env.openExternal(initURL).then((success) => {
+			if (!success) {
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.failedOpenConnectionInit"));
+			}
+		});
+	}
+
+	openConnectionTestURL(connectionTestURL: string) {
+		const testURL = Uri.parse(`${BASE_URL}${connectionTestURL}`);
+		env.openExternal(testURL).then((success) => {
 			if (!success) {
 				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.failedOpenConnectionInit"));
 			}

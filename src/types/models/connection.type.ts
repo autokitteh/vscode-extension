@@ -1,7 +1,8 @@
 export type Connection = {
 	connectionId: string;
 	name: string;
-	initLink: string;
+	initURL?: string;
+	testURL?: string;
 	integrationId?: string;
 	integrationName?: string;
 	status: string;

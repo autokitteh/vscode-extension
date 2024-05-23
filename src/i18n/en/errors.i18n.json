@@ -55,5 +55,6 @@
 	"sessionLogRecordFetchFailed": "Session log fetch failed for deployment ID: {{deploymentId}}, error: {{error}}",
 	"loadingCounterStopFailure": "Loading requests counter failure on stop - resetting",
 	"loadingCounterStartFailure": "Loading requests counter failure on start - resetting",
-	"failedOpenConnectionInit": "Failed to open connection initialization"
+	"failedOpenConnectionInit": "Failed to open connection initialization",
+	"failedOpenConnectionTest": "Failed to open connection test"
 }

@@ -1,5 +1,6 @@
 import { connectionsClient, integrationsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
+import { ConnectionStatus } from "@enums";
 import { translate } from "@i18n";
 import { convertConnectionProtoToModel } from "@models";
 import { LoggerService } from "@services";
@@ -27,6 +28,25 @@ export class ConnectionsService {
 		} catch (error) {
 			LoggerService.error(namespaces.deploymentsService, translate().t("errors.connectionsListFetchFailed"));
 			return { data: undefined, error };
+		}
+	}
+
+	static async test(
+		connectionId: string
+	): Promise<ServiceResponse<{ isOK: boolean; currentStatus: ConnectionStatus | undefined }>> {
+		try {
+			const connectionStatus = await connectionsClient.test({ connectionId });
+			if (connectionStatus?.status?.code) {
+				const isOK = (connectionStatus.status.code as number) === ConnectionStatus.ok;
+				return {
+					data: { isOK, currentStatus: connectionStatus.status.code as number },
+					error: undefined,
+				};
+			}
+			return { data: { isOK: false, currentStatus: undefined }, error: undefined };
+		} catch (error) {
+			LoggerService.error(namespaces.deploymentsService, translate().t("errors.connectionTestFailed"));
+			return { data: { isOK: false, currentStatus: undefined }, error };
 		}
 	}
 }
