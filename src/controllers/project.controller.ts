@@ -1142,13 +1142,4 @@ export class ProjectController {
 			}
 		});
 	}
-
-	openConnectionTestURL(connectionTestURL: string) {
-		const testURL = Uri.parse(`${BASE_URL}${connectionTestURL}`);
-		env.openExternal(testURL).then((success) => {
-			if (!success) {
-				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.failedOpenConnectionInit"));
-			}
-		});
-	}
 }
