@@ -1,3 +1,10 @@
+## [0.18.4](https://github.com/autokitteh/vscode-extension/compare/v0.18.3...v0.18.4) (2024-05-29)
+
+
+### Bug Fixes
+
+* fix publish pre-release workflow ([#317](https://github.com/autokitteh/vscode-extension/issues/317)) ([cae43d0](https://github.com/autokitteh/vscode-extension/commit/cae43d020a39cf56d9397f720a55327f5bce3a89))
+
 ## [0.18.3](https://github.com/autokitteh/vscode-extension/compare/v0.18.2...v0.18.3) (2024-05-29)
 
 
