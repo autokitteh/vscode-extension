@@ -1149,7 +1149,7 @@ export class ProjectController {
 	}
 
 	async testConnectionOnInit(connectionId: string) {
-		const { data: currentConnectionStatus } = await ConnectionsService.test(connectionId);
+		const { data: currentConnectionStatus } = await ConnectionsService.getCurrentStatus(connectionId);
 		const isConnectionOK = currentConnectionStatus === ("ok" as ConnectionStatus);
 		if (isConnectionOK) {
 			this.connectionInitRetryScheduler?.stopTimers();
