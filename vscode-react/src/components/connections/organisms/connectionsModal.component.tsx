@@ -16,6 +16,9 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 	const handleConnectionInitClick = (connectionId: string, connectionInitURL: string) => {
 		sendMessage(MessageType.openConnectionInitURL, { connectionId, initURL: connectionInitURL });
 	};
+	const handleConnectionTestClick = () => {
+		sendMessage(MessageType.testConnection);
+	};
 
 	return (
 		<Modal classes={["rounded-none"]} ref={modalRef} wrapperClasses={["z-50"]}>
@@ -49,6 +52,12 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 										{connection.initURL && (
 											<div
 												onClick={() => handleConnectionInitClick(connection.connectionId, connection.initURL)}
+												className="w-3 codicon codicon-gear text-vscode-background cursor-pointer"
+											/>
+										)}
+										{connection.testURL && (
+											<div
+												onClick={() => handleConnectionTestClick()}
 												className="w-3 codicon codicon-gear text-vscode-background cursor-pointer"
 											/>
 										)}

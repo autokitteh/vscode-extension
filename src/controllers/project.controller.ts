@@ -26,7 +26,7 @@ import { DeploymentsService, ProjectsService, SessionsService, LoggerService, Co
 import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
-import { Connection, Deployment, Project, Session } from "@type/models";
+import { Connection, ConnectionStatus, Deployment, Project, Session } from "@type/models";
 import { createDirectory, openFileExplorer } from "@utilities";
 import isEqual from "lodash.isequal";
 import { commands, OpenDialogOptions, window, env, Uri } from "vscode";
@@ -541,20 +541,7 @@ export class ProjectController {
 		this.view.show(project!.name);
 		this.setProjectNameInView();
 
-		this.startLoader();
-		const { data: connections, error: connectionsError } = await ConnectionsService.list(this.projectId);
-		this.stopLoader();
-
-		if (connectionsError) {
-			commands.executeCommand(vsCommands.showErrorMessage, (connectionsError as Error).message);
-		}
-
-		this.connections = connections;
-
-		this.view.update({
-			type: MessageType.setConnections,
-			payload: this.connections,
-		});
+		this.fetchConnections();
 
 		this.sessions = undefined;
 	}
@@ -1153,7 +1140,7 @@ export class ProjectController {
 
 		this.connectionInitRetryScheduler = new RetryScheduler(
 			CONNECTION_INIT_WAIT_RETRY_INTERVAL,
-			() => this.testConnection(connectionInit.connectionId),
+			() => this.testConnectionOnInit(connectionInit.connectionId),
 			(countdown) => this.updateViewWithCountdown(countdown),
 			10,
 			() => this.connectionInitRetryScheduler?.stopTimers()
@@ -1161,13 +1148,21 @@ export class ProjectController {
 		this.connectionInitRetryScheduler.startFetchInterval();
 	}
 
-	async testConnection(connectionId: string) {
-		const connectionOK = await ConnectionsService.test(connectionId);
-		if (!connectionOK) {
-			return;
+	async testConnectionOnInit(connectionId: string) {
+		const { data: currentConnectionStatus } = await ConnectionsService.test(connectionId);
+		const isConnectionOK = currentConnectionStatus === ("ok" as ConnectionStatus);
+		if (isConnectionOK) {
+			this.connectionInitRetryScheduler?.stopTimers();
 		}
-		this.connectionInitRetryScheduler?.stopTimers();
 
+		this.fetchConnections();
+	}
+
+	testConnection() {
+		this.fetchConnections();
+	}
+
+	async fetchConnections() {
 		this.startLoader();
 		const { data: connections, error: connectionsError } = await ConnectionsService.list(this.projectId);
 		this.stopLoader();

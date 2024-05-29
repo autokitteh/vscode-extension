@@ -92,8 +92,8 @@ export class ProjectView implements IProjectView {
 					case MessageType.openConnectionInitURL:
 						this.delegate?.openConnectionInitURL?.(message.payload as { connectionId: string; initURL: string });
 						break;
-					case MessageType.openConnectionTestURL:
-						this.delegate?.openConnectionTestURL?.(message.payload as string);
+					case MessageType.testConnection:
+						this.delegate?.testConnection?.();
 						break;
 					default:
 				}

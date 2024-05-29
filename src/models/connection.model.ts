@@ -1,19 +1,6 @@
 import { Status, Status_Code } from "@ak-proto-ts/common/v1/status_pb";
 import { Connection as ProtoConnection } from "@ak-proto-ts/connections/v1/connection_pb";
-
-// Define ConnectionStatus type
-export type ConnectionStatus = "unspecified" | "warning" | "error" | "ok";
-
-// Define Connection type
-export type Connection = {
-	connectionId: string;
-	name: string;
-	initURL: string;
-	integrationId?: string;
-	integrationName?: string;
-	status: ConnectionStatus;
-	statusInfoMessage: string;
-};
+import { Connection, ConnectionStatus } from "@type/models";
 
 export const mapProtoStatusToConnectionStatus = (protoStatus: Status | undefined): ConnectionStatus => {
 	if (!protoStatus) {
@@ -45,6 +32,7 @@ export const convertConnectionProtoToModel = (protoConnection: ProtoConnection):
 		integrationId: protoConnection.integrationId,
 		name: protoConnection.name,
 		initURL: protoConnection.links?.init_url || "",
+		testURL: protoConnection.links?.test_url || "",
 		status: mapProtoStatusToConnectionStatus(tempStatus),
 		statusInfoMessage: protoConnection.status?.message || "",
 	};

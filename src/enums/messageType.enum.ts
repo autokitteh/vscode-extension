@@ -33,5 +33,5 @@ export enum MessageType {
 	tryToReconnect = "TRY_TO_RECONNECT",
 	setConnections = "SET_CONNECTIONS",
 	openConnectionInitURL = "OPEN_CONNECTION_INIT_URL",
-	openConnectionTestURL = "OPEN_CONNECTION_TEST_URL",
+	testConnection = "TEST_CONNECTION",
 }
