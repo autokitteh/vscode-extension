@@ -55,7 +55,7 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 												className="w-3 codicon codicon-gear text-vscode-background cursor-pointer"
 											/>
 										)}
-										{connection.testURL && (
+										{connection.isTestable && (
 											<div
 												onClick={() => handleConnectionTestClick()}
 												className="w-3 codicon codicon-gear text-vscode-background cursor-pointer"

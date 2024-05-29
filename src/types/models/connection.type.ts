@@ -2,7 +2,7 @@ export type Connection = {
 	connectionId: string;
 	name: string;
 	initURL: string;
-	testURL: string;
+	isTestable: boolean;
 	integrationId?: string;
 	integrationName?: string;
 	status: ConnectionStatus;
