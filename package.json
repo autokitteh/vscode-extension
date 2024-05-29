@@ -15,32 +15,11 @@
 		"@views": "dist/src/views",
 		"@vscommands": "dist/src/vscommands"
 	},
-	"optionalDependencies": {
-		"@rollup/rollup-linux-x64-gnu": "4.17.2"
-	},
 	"activationEvents": [],
 	"contributes": {
 		"breakpoints": [
 			{
 				"language": "starlark"
-			}
-		],
-		"yamlValidation": [
-			{
-				"fileMatch": "*.ak.yaml",
-				"url": "./src/autokitteh/manifest.schema.yaml"
-			},
-			{
-				"fileMatch": "*.ak.yml",
-				"url": "./src/autokitteh/manifest.schema.yaml"
-			},
-			{
-				"fileMatch": "autokitteh.yaml",
-				"url": "./src/autokitteh/manifest.schema.yaml"
-			},
-			{
-				"fileMatch": "autokitteh.yml",
-				"url": "./src/autokitteh/manifest.schema.yaml"
 			}
 		],
 		"commands": [
@@ -76,19 +55,19 @@
 			},
 			{
 				"command": "autokitteh.buildProject",
-				"title": "autokitteh: Build Project",
 				"icon": {
 					"dark": "resources/sidebar/icons/dark/tools.svg",
 					"light": "resources/sidebar/icons/light/tools.svg"
-				}
+				},
+				"title": "autokitteh: Build Project"
 			},
 			{
 				"command": "autokitteh.runProject",
-				"title": "autokitteh: Run Project",
 				"icon": {
 					"dark": "resources/sidebar/icons/dark/rocket.svg",
 					"light": "resources/sidebar/icons/light/rocket.svg"
-				}
+				},
+				"title": "autokitteh: Run Project"
 			}
 		],
 		"configuration": {
@@ -103,6 +82,21 @@
 					"description": "Server URL",
 					"type": "string"
 				},
+				"autokitteh.notificationsLevel": {
+					"default": "All",
+					"description": "Adjust notification visibility in the extension, ranging from all notifications to errors only, or none",
+					"enum": [
+						"All",
+						"Errors",
+						"None"
+					],
+					"enumDescriptions": [
+						"Displays all notifications (info, errors)",
+						"Only shows error notifications",
+						"Suppresses all notifications"
+					],
+					"type": "string"
+				},
 				"autokitteh.project.refresh.interval": {
 					"default": 1,
 					"description": "Refresh interval in seconds for the projects panel",
@@ -113,26 +107,11 @@
 					"description": "Is extension ON",
 					"type": "boolean"
 				},
-				"autokitteh.notificationsLevel": {
-					"type": "string",
-					"default": "All",
-					"enum": [
-						"All",
-						"Errors",
-						"None"
-					],
-					"description": "Adjust notification visibility in the extension, ranging from all notifications to errors only, or none",
-					"enumDescriptions": [
-						"Displays all notifications (info, errors)",
-						"Only shows error notifications",
-						"Suppresses all notifications"
-					]
-				},
 				"autokitteh.starlarkLSPPath": {
 					"default": "",
 					"description": "The path to the starlark LSP Server",
-					"type": "string",
-					"title": "Starlark LSP executable or socket url path"
+					"title": "Starlark LSP executable or socket url path",
+					"type": "string"
 				}
 			},
 			"title": "autokitteh"
@@ -181,6 +160,18 @@
 					"when": "resourceLangId == yaml && resourceFilename =~ /autokitteh.yaml/"
 				}
 			],
+			"view/item/context": [
+				{
+					"command": "autokitteh.buildProject",
+					"group": "inline",
+					"when": "view == autokittehSidebarTree && viewItem =~ /prj.*/"
+				},
+				{
+					"command": "autokitteh.runProject",
+					"group": "inline",
+					"when": "view == autokittehSidebarTree && viewItem =~ /prj.*/"
+				}
+			],
 			"view/title": [
 				{
 					"command": "autokitteh.enable",
@@ -196,18 +187,6 @@
 					"command": "autokitteh.disable",
 					"group": "navigation",
 					"when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled"
-				}
-			],
-			"view/item/context": [
-				{
-					"command": "autokitteh.buildProject",
-					"group": "inline",
-					"when": "view == autokittehSidebarTree && viewItem =~ /prj.*/"
-				},
-				{
-					"command": "autokitteh.runProject",
-					"group": "inline",
-					"when": "view == autokittehSidebarTree && viewItem =~ /prj.*/"
 				}
 			]
 		},
@@ -272,6 +251,24 @@
 				],
 				"title": "Welcome to autokitteh"
 			}
+		],
+		"yamlValidation": [
+			{
+				"fileMatch": "*.ak.yaml",
+				"url": "./src/autokitteh/manifest.schema.yaml"
+			},
+			{
+				"fileMatch": "*.ak.yml",
+				"url": "./src/autokitteh/manifest.schema.yaml"
+			},
+			{
+				"fileMatch": "autokitteh.yaml",
+				"url": "./src/autokitteh/manifest.schema.yaml"
+			},
+			{
+				"fileMatch": "autokitteh.yml",
+				"url": "./src/autokitteh/manifest.schema.yaml"
+			}
 		]
 	},
 	"dependencies": {
@@ -314,6 +311,7 @@
 		"@types/winattr": "^3.0.0",
 		"@typescript-eslint/eslint-plugin": "^7.9.0",
 		"@typescript-eslint/parser": "^7.9.0",
+		"@vscode/test-electron": "^1.5.0",
 		"@vscode/vsce": "^2.26.1",
 		"esbuild": "^0.21.3",
 		"eslint": "^8.57.0",
@@ -331,8 +329,7 @@
 		"semantic-release-vsce": "^5.7.1",
 		"sinon": "^18.0.0",
 		"typescript": "^5.4.5",
-		"vitest": "^1.6.0",
-		"@vscode/test-electron": "^1.5.0"
+		"vitest": "^1.6.0"
 	},
 	"engines": {
 		"vscode": "^1.89.0"
@@ -342,6 +339,9 @@
 	"license": "SEE LICENSE IN LICENSE.md",
 	"main": "./dist/src/extension.js",
 	"name": "autokitteh",
+	"optionalDependencies": {
+		"@rollup/rollup-linux-x64-gnu": "4.17.2"
+	},
 	"private": true,
 	"publisher": "autokitteh",
 	"repository": {
@@ -349,24 +349,24 @@
 		"url": "https://github.com/autokitteh/vscode-extension"
 	},
 	"scripts": {
-		"start:webview": "cd vscode-react && npm run start",
-		"build:webview": "cd vscode-react && npm run build",
-		"check-types": "tsc --pretty --noEmit",
-		"compile": "tsc -p ./",
-		"compile:vscode-react": "npm run compile --workspace=vscode-react",
-		"compile:all": "npm run compile --workspace=vscode-react && npm run compile",
-		"build:vscode-react": "npm run build --workspace=vscode-react",
 		"build": "npm run esbuild-base -- --sourcemap",
 		"build:all": "npm run build --workspace=vscode-react && npm run build",
-		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --external:fswin",
+		"build:vscode-react": "npm run build --workspace=vscode-react",
+		"build:webview": "cd vscode-react && npm run build",
 		"check-format:staged": "prettier . --check",
+		"check-types": "tsc --pretty --noEmit",
+		"compile": "tsc -p ./",
+		"compile:all": "npm run compile --workspace=vscode-react && npm run compile",
+		"compile:vscode-react": "npm run compile --workspace=vscode-react",
+		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --external:fswin",
 		"fix-eslint:staged": "npm run lint --fix",
-		"test:run": "vitest run",
-		"test:watch": "vitest",
-		"test:all": "vitest run && npm run test:run --workspace=vscode-react",
 		"package": "vsce package",
 		"prepare": "husky install",
-		"source-map-explorer": "npx source-map-explorer dist/main.js dist/main.js.map --no-border-checks"
+		"source-map-explorer": "npx source-map-explorer dist/main.js dist/main.js.map --no-border-checks",
+		"start:webview": "cd vscode-react && npm run start",
+		"test:all": "vitest run && npm run test:run --workspace=vscode-react",
+		"test:run": "vitest run",
+		"test:watch": "vitest"
 	},
 	"version": "0.18.2",
 	"workspaces": [
