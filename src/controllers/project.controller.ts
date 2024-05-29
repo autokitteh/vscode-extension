@@ -1131,10 +1131,17 @@ export class ProjectController {
 
 	openConnectionInitURL(connectionInit: { connectionId: string; initURL: string }) {
 		const initURL = Uri.parse(`${BASE_URL}${connectionInit.initURL}`);
+		const connection = this.connections?.find((connection) => connection.connectionId === connectionInit.connectionId);
 
 		env.openExternal(initURL).then((success) => {
 			if (!success) {
-				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.failedOpenConnectionInit"));
+				commands.executeCommand(
+					vsCommands.showErrorMessage,
+					translate().t("errors.failedOpenConnectionInit", {
+						connectionName: connection?.name,
+						projectName: this.project?.name,
+					})
+				);
 			}
 		});
 

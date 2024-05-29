@@ -25,7 +25,10 @@ export class ConnectionsService {
 
 			return { data: convertedConnections, error: undefined };
 		} catch (error) {
-			LoggerService.error(namespaces.deploymentsService, translate().t("errors.connectionsListFetchFailed"));
+			LoggerService.error(
+				namespaces.deploymentsService,
+				translate().t("errors.connectionsListFetchFailed", { projectId })
+			);
 			return { data: undefined, error };
 		}
 	}

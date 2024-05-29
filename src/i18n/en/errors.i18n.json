@@ -38,7 +38,7 @@
 	"buildInformationForSingleshotNotLoaded": "Couldn't load build information for singleshot",
 	"buildInformationForSingleshotNotParsed": "Couldn't parse build information for singleshot",
 	"buildInfoFetchFailedForBuild": "Couldn't fetch build info for build {{buildId}}, error: {{error}}",
-	"connectionsListFetchFailed": "Couldn't fetch connections list",
+	"connectionsListFetchFailed": "Couldn't fetch connections list for project {{projectId}}",
 	"buildProjectError": "Couldn't build project {{projectId}}, error: {{error}}",
 	"creatingDirectory": "Project directory setup failed - project {{projectName}}",
 	"creatingDirectoryExtended": "Project directory setup failed - project {{projectName}}, error: {{error}}",
@@ -55,6 +55,5 @@
 	"sessionLogRecordFetchFailed": "Session log fetch failed for deployment ID: {{deploymentId}}, error: {{error}}",
 	"loadingCounterStopFailure": "Loading requests counter failure on stop - resetting",
 	"loadingCounterStartFailure": "Loading requests counter failure on start - resetting",
-	"failedOpenConnectionInit": "Failed to open connection initialization",
-	"failedOpenConnectionTest": "Failed to open connection test"
+	"failedOpenConnectionInit": "Failed to open connection initialization for {{connectionName}} in {{projectName}}"
 }
