@@ -1141,7 +1141,7 @@ export class ProjectController {
 		this.connectionInitRetryScheduler = new RetryScheduler(
 			CONNECTION_INIT_WAIT_RETRY_INTERVAL,
 			() => this.testConnectionOnInit(connectionInit.connectionId),
-			(countdown) => this.updateViewWithCountdown(countdown),
+			() => {},
 			10,
 			() => this.connectionInitRetryScheduler?.stopTimers()
 		);
