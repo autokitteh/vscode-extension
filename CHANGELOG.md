@@ -1,3 +1,10 @@
+## [0.18.3](https://github.com/autokitteh/vscode-extension/compare/v0.18.2...v0.18.3) (2024-05-29)
+
+
+### Bug Fixes
+
+* fix lag on extension/project open ([#313](https://github.com/autokitteh/vscode-extension/issues/313)) ([879b0fc](https://github.com/autokitteh/vscode-extension/commit/879b0fc7d634c3835bea8b9e5dc059ce67a9b4b1))
+
 ## [0.18.2](https://github.com/autokitteh/vscode-extension/compare/v0.18.1...v0.18.2) (2024-05-22)
 
 
