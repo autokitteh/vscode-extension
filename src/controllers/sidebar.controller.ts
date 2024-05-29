@@ -36,7 +36,6 @@ export class SidebarController {
 	};
 
 	public enable = async () => {
-		this.refreshProjects();
 		this.retryScheduler.startFetchInterval();
 	};
 
