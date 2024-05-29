@@ -20,30 +20,37 @@ jobs:
     name: Publish to VSCode Marketplace
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          ref: ${{ github.event.inputs.tag }}
+
       - uses: actions/setup-node@v3
         with:
           node-version: "21.2.0"
           cache: "npm"
 
-      - name: Download and prepare release vsix from GitHub repository
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Package VSCode extension
         run: |
-          DOWNLOAD_URL=$(curl -sH "Authorization: token ${{ secrets.PAT_TOKEN }}" "https://api.github.com/repos/autokitteh/vscode-extension/releases/tags/${{ github.event.inputs.tag }}" | jq -r '.assets[] | select(.name | endswith(".vsix")).browser_download_url')
-          echo "DOWNLOAD_URL=$DOWNLOAD_URL" 
-          if [ -z "$DOWNLOAD_URL" ] || [ "$DOWNLOAD_URL" == "null" ]; then
-            echo "Error: No asset found for download or failed to parse URL."
-            exit 1
+          if [ "${{ github.event.inputs.release-type }}" == "pre-release" ]; then
+            npx vsce package --pre-release
+          else
+            npx vsce package
           fi
-          HTTP_STATUS=$(curl -L -w "%{http_code}" -H "Authorization: token ${{ secrets.PAT_TOKEN }}" -o extension.vsix "$DOWNLOAD_URL")
-          if [ "$HTTP_STATUS" -ne 200 ]; then
-            echo "Error: Failed to download extension.vsix. HTTP status code: $HTTP_STATUS"
-            exit 1
-          fi
-          ls -l extension.vsix
+
+      - name: List the VSIX file
+        run: ls -l *.vsix
 
       - name: Publish to VSCode Marketplace
         run: |
-          VSCE_OPTIONS="--packagePath extension.vsix"
+          VSCE_OPTIONS="--packagePath *.vsix"
           if [ "${{ github.event.inputs.release-type }}" == "pre-release" ]; then
             VSCE_OPTIONS="$VSCE_OPTIONS --pre-release"
           fi
