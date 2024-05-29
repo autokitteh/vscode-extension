@@ -17,7 +17,7 @@ export type Connection = {
 
 export const mapProtoStatusToConnectionStatus = (protoStatus: Status | undefined): ConnectionStatus => {
 	if (!protoStatus) {
-		return "ok";
+		return "unspecified";
 	}
 
 	switch (protoStatus.code) {
@@ -28,7 +28,7 @@ export const mapProtoStatusToConnectionStatus = (protoStatus: Status | undefined
 		case Status_Code.ERROR:
 			return "error";
 		case Status_Code.UNSPECIFIED:
-			return "ok";
+			return "unspecified";
 		default:
 			return "unspecified";
 	}
@@ -36,12 +36,16 @@ export const mapProtoStatusToConnectionStatus = (protoStatus: Status | undefined
 
 // Convert function
 export const convertConnectionProtoToModel = (protoConnection: ProtoConnection): Connection => {
+	const temporaryStatusMapping =
+		protoConnection.status?.code === Status_Code.UNSPECIFIED ? Status_Code.OK : protoConnection.status?.code;
+	const tempStatus = { code: temporaryStatusMapping } as Status;
+
 	return {
 		connectionId: protoConnection.connectionId,
 		integrationId: protoConnection.integrationId,
 		name: protoConnection.name,
 		initURL: protoConnection.links?.init_url || "",
-		status: mapProtoStatusToConnectionStatus(protoConnection.status),
+		status: mapProtoStatusToConnectionStatus(tempStatus),
 		statusInfoMessage: protoConnection.status?.message || "",
 	};
 };

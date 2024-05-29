@@ -1,7 +1,14 @@
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
-import { vsCommands, namespaces, channels, BASE_URL, INITIAL_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
+import {
+	vsCommands,
+	namespaces,
+	channels,
+	BASE_URL,
+	INITIAL_RETRY_SCHEDULE_COUNTDOWN,
+	CONNECTION_INIT_WAIT_RETRY_INTERVAL,
+} from "@constants";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import {
@@ -45,7 +52,8 @@ export class ProjectController {
 	private loadingRequestsCounter: number = 0;
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
-	private retryScheduler?: RetryScheduler;
+	private deploymentsFetchRetryScheduler?: RetryScheduler;
+	private connectionInitRetryScheduler?: RetryScheduler;
 	private connections?: Connection[];
 
 	constructor(
@@ -187,7 +195,7 @@ export class ProjectController {
 			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
 			LoggerService.error(namespaces.projectController, log);
 			if (isResetCounters) {
-				this.retryScheduler?.startCountdown();
+				this.deploymentsFetchRetryScheduler?.startCountdown();
 			}
 			return;
 		}
@@ -197,7 +205,7 @@ export class ProjectController {
 			payload: "",
 		});
 
-		this.retryScheduler?.resetCountdown();
+		this.deploymentsFetchRetryScheduler?.resetCountdown();
 
 		if (isEqual(this.deployments, deployments)) {
 			return;
@@ -1106,12 +1114,12 @@ export class ProjectController {
 	async loadInitialDataOnceViewReady() {
 		this.deployments = undefined;
 
-		this.retryScheduler = new RetryScheduler(
+		this.deploymentsFetchRetryScheduler = new RetryScheduler(
 			INITIAL_RETRY_SCHEDULE_COUNTDOWN,
 			() => this.loadAndDisplayDeployments(),
 			(countdown) => this.updateViewWithCountdown(countdown)
 		);
-		this.retryScheduler.startFetchInterval();
+		this.deploymentsFetchRetryScheduler.startFetchInterval();
 
 		const isResourcesPathExist = await this.getResourcesPathFromContext();
 		if (isResourcesPathExist) {
@@ -1134,12 +1142,45 @@ export class ProjectController {
 		return;
 	}
 
-	openConnectionInitURL(connectionInitURL: string) {
-		const initURL = Uri.parse(`${BASE_URL}${connectionInitURL}`);
+	openConnectionInitURL(connectionInit: { connectionId: string; initURL: string }) {
+		const initURL = Uri.parse(`${BASE_URL}${connectionInit.initURL}`);
+
 		env.openExternal(initURL).then((success) => {
 			if (!success) {
 				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.failedOpenConnectionInit"));
 			}
+		});
+
+		this.connectionInitRetryScheduler = new RetryScheduler(
+			CONNECTION_INIT_WAIT_RETRY_INTERVAL,
+			() => this.testConnection(connectionInit.connectionId),
+			(countdown) => this.updateViewWithCountdown(countdown),
+			10,
+			() => this.connectionInitRetryScheduler?.stopTimers()
+		);
+		this.connectionInitRetryScheduler.startFetchInterval();
+	}
+
+	async testConnection(connectionId: string) {
+		const connectionOK = await ConnectionsService.test(connectionId);
+		if (!connectionOK) {
+			return;
+		}
+		this.connectionInitRetryScheduler?.stopTimers();
+
+		this.startLoader();
+		const { data: connections, error: connectionsError } = await ConnectionsService.list(this.projectId);
+		this.stopLoader();
+
+		if (connectionsError) {
+			commands.executeCommand(vsCommands.showErrorMessage, (connectionsError as Error).message);
+		}
+
+		this.connections = connections;
+
+		this.view.update({
+			type: MessageType.setConnections,
+			payload: this.connections,
 		});
 	}
 }

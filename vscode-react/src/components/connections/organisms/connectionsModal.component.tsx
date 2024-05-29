@@ -13,8 +13,8 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 	const [{ delayedLoading }] = useAppState();
 	const modalRef = useRef<HTMLDivElement>(null);
 
-	const handleConnectionInitClick = (connectionInitURL: string) => {
-		sendMessage(MessageType.openConnectionInitURL, connectionInitURL);
+	const handleConnectionInitClick = (connectionId: string, connectionInitURL: string) => {
+		sendMessage(MessageType.openConnectionInitURL, { connectionId, initURL: connectionInitURL });
 	};
 
 	return (
@@ -48,7 +48,7 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 									<Cell classes={["flex justify-center"]}>
 										{connection.initURL && (
 											<div
-												onClick={() => handleConnectionInitClick(connection.initURL)}
+												onClick={() => handleConnectionInitClick(connection.connectionId, connection.initURL)}
 												className="w-3 codicon codicon-gear text-vscode-background cursor-pointer"
 											/>
 										)}

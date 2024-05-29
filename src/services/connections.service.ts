@@ -4,7 +4,7 @@ import { translate } from "@i18n";
 import { convertConnectionProtoToModel, mapProtoStatusToConnectionStatus } from "@models";
 import { LoggerService } from "@services";
 import { ServiceResponse } from "@type";
-import { Connection, ConnectionStatus } from "@type/models";
+import { Connection } from "@type/models";
 
 export class ConnectionsService {
 	static async list(projectId: string): Promise<ServiceResponse<Connection[]>> {
@@ -30,23 +30,21 @@ export class ConnectionsService {
 		}
 	}
 
-	static async test(
-		connectionId: string
-	): Promise<ServiceResponse<{ isOK: boolean; currentStatus: ConnectionStatus | undefined }>> {
+	static async test(connectionId: string): Promise<ServiceResponse<boolean>> {
 		try {
+			await integrationsClient.testConnection({ connectionId });
 			const { status } = await connectionsClient.test({ connectionId });
 
 			const currentStatus = mapProtoStatusToConnectionStatus(status);
 			const isOK = currentStatus === "ok";
 
 			return {
-				data: { isOK, currentStatus },
+				data: isOK,
 				error: undefined,
 			};
-			return { data: { isOK: false, currentStatus: undefined }, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.deploymentsService, translate().t("errors.connectionTestFailed"));
-			return { data: { isOK: false, currentStatus: undefined }, error };
+			return { data: undefined, error };
 		}
 	}
 }
