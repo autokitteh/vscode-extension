@@ -360,6 +360,7 @@
 		"compile:vscode-react": "npm run compile --workspace=vscode-react",
 		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --external:fswin",
 		"fix-eslint:staged": "npm run lint --fix",
+		"lint": "eslint src --ext .ts,.tsx .",
 		"package": "vsce package",
 		"prepare": "husky install",
 		"source-map-explorer": "npx source-map-explorer dist/main.js dist/main.js.map --no-border-checks",
