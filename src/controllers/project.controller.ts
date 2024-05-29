@@ -1165,8 +1165,22 @@ export class ProjectController {
 		this.fetchConnections();
 	}
 
-	testConnection() {
-		this.fetchConnections();
+	async testConnection(connectionId: string) {
+		if (!this.connections) {
+			// Add error log and notification
+			return;
+		}
+		const currentConnection = this.connections.find((connection) => connection.connectionId === connectionId);
+		if (!currentConnection) {
+			// Add error log and notification
+			return;
+		}
+		const { data: currentConnectionStatus } = await ConnectionsService.getCurrentStatus(connectionId);
+		if (!currentConnectionStatus) {
+			// Add error log and notification
+			return;
+		}
+		currentConnection.status = currentConnectionStatus;
 	}
 
 	async fetchConnections() {

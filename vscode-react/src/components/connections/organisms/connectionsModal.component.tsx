@@ -16,8 +16,8 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 	const handleConnectionInitClick = (connectionId: string, connectionInitURL: string) => {
 		sendMessage(MessageType.openConnectionInitURL, { connectionId, initURL: connectionInitURL });
 	};
-	const handleConnectionTestClick = () => {
-		sendMessage(MessageType.testConnection);
+	const handleConnectionTestClick = (connectionId: string) => {
+		sendMessage(MessageType.testConnection, connectionId);
 	};
 
 	return (
@@ -57,8 +57,8 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 										)}
 										{connection.isTestable && (
 											<div
-												onClick={() => handleConnectionTestClick()}
-												className="w-3 codicon codicon-gear text-vscode-background cursor-pointer"
+												onClick={() => handleConnectionTestClick(connection.connectionId)}
+												className="w-3 codicon codicon-gear text-vscode-background cursor-pointer ml-2"
 											/>
 										)}
 									</Cell>

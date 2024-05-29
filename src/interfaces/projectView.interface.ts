@@ -30,7 +30,7 @@ export interface IProjectViewDelegate {
 		connectionId: string;
 		initURL: string;
 	}>;
-	testConnection?: Callback;
+	testConnection?: Callback<string>;
 }
 
 export interface IProjectView {
