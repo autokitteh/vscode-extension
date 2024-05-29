@@ -4,35 +4,29 @@ import { Connection, ConnectionStatus } from "@type/models";
 
 export const mapProtoStatusToConnectionStatus = (protoStatus: Status | undefined): ConnectionStatus => {
 	if (!protoStatus) {
-		return "unspecified";
+		return "ok"; // default to ok if no status is provided, as if it was unspecified
 	}
 
-	switch (protoStatus.code) {
+	const temporaryStatusMapping = protoStatus.code === Status_Code.UNSPECIFIED ? Status_Code.OK : protoStatus.code;
+
+	switch (temporaryStatusMapping) {
 		case Status_Code.OK:
 			return "ok";
 		case Status_Code.WARNING:
 			return "warning";
 		case Status_Code.ERROR:
 			return "error";
-		case Status_Code.UNSPECIFIED:
-			return "unspecified";
-		default:
-			return "unspecified";
 	}
 };
 
 export const convertConnectionProtoToModel = (protoConnection: ProtoConnection): Connection => {
-	const temporaryStatusMapping =
-		protoConnection.status?.code === Status_Code.UNSPECIFIED ? Status_Code.OK : protoConnection.status?.code;
-	const tempStatus = { code: temporaryStatusMapping } as Status;
-
 	return {
 		connectionId: protoConnection.connectionId,
 		integrationId: protoConnection.integrationId,
 		name: protoConnection.name,
 		initURL: protoConnection.links?.init_url || "",
 		isTestable: protoConnection.links?.test_url !== undefined,
-		status: mapProtoStatusToConnectionStatus(tempStatus),
+		status: mapProtoStatusToConnectionStatus(protoConnection.status),
 		statusInfoMessage: protoConnection.status?.message || "",
 	};
 };

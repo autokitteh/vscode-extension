@@ -5,5 +5,7 @@
 		"ok": "OK",
 		"error": "Error",
 		"warning": "Warning"
-	}
+	},
+	"init": "Initialize connection",
+	"test": "Test connection"
 }

@@ -1167,20 +1167,43 @@ export class ProjectController {
 
 	async testConnection(connectionId: string) {
 		if (!this.connections) {
-			// Add error log and notification
+			commands.executeCommand(vsCommands.showInfoMessage, translate().t("errors.failedRunningConnectionTest"));
+			LoggerService.error(namespaces.projectController, translate().t("errors.noConnectionsFound"));
 			return;
 		}
-		const currentConnection = this.connections.find((connection) => connection.connectionId === connectionId);
-		if (!currentConnection) {
-			// Add error log and notification
+
+		const connectionIndex = this.connections.findIndex((connection) => connection.connectionId === connectionId);
+		if (connectionIndex === -1) {
+			commands.executeCommand(vsCommands.showInfoMessage, translate().t("errors.failedRunningConnectionTest"));
+			LoggerService.error(namespaces.projectController, translate().t("errors.currentConnectionNotFound"));
 			return;
 		}
-		const { data: currentConnectionStatus } = await ConnectionsService.getCurrentStatus(connectionId);
-		if (!currentConnectionStatus) {
-			// Add error log and notification
+
+		const currentConnection = this.connections[connectionIndex];
+		const { data: currentConnectionStatus, error } = await ConnectionsService.getCurrentStatus(connectionId);
+		if (error) {
+			const notification = translate().t("errors.couldNotFetchConnectionStatus", {
+				projectName: this.project?.name,
+				connectionName: currentConnection.name,
+			});
+			const log = translate().t("errors.couldNotFetchConnectionStatusEnriched", {
+				projectName: this.project?.name,
+				connectionName: currentConnection.name,
+				error,
+			});
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
-		currentConnection.status = currentConnectionStatus;
+
+		currentConnection.status = currentConnectionStatus!;
+
+		this.connections[connectionIndex] = currentConnection;
+
+		this.view.update({
+			type: MessageType.setConnections,
+			payload: this.connections,
+		});
 	}
 
 	async fetchConnections() {

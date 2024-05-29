@@ -53,12 +53,14 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 											<div
 												onClick={() => handleConnectionInitClick(connection.connectionId, connection.initURL)}
 												className="w-3 codicon codicon-gear text-vscode-background cursor-pointer"
+												title={translate().t("reactApp.connections.init")}
 											/>
 										)}
 										{connection.isTestable && (
 											<div
+												title={translate().t("reactApp.connections.test")}
 												onClick={() => handleConnectionTestClick(connection.connectionId)}
-												className="w-3 codicon codicon-gear text-vscode-background cursor-pointer ml-2"
+												className="w-3 codicon codicon-beaker text-vscode-background cursor-pointer ml-2"
 											/>
 										)}
 									</Cell>
