@@ -1,9 +1,11 @@
 export type Connection = {
 	connectionId: string;
 	name: string;
-	initURL?: string;
+	initURL: string;
 	integrationId?: string;
 	integrationName?: string;
-	status: string;
+	status: ConnectionStatus;
 	statusInfoMessage: string;
 };
+
+export type ConnectionStatus = "unspecified" | "warning" | "error" | "ok";

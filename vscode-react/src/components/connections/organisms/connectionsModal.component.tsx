@@ -4,13 +4,13 @@ import { translate } from "@i18n";
 import { Cell, HeaderCell, TableMessage } from "@react-components/atoms/table";
 import { Modal, Row, TableHeader } from "@react-components/molecules";
 import { Table } from "@react-components/organisms";
+import { ConnectionStateLabel } from "@react-components/sessions/atoms";
 import { useAppState } from "@react-context";
 import { sendMessage } from "@react-utilities";
 import { Connection } from "@type/models";
 
 export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void; connections?: Connection[] }) => {
 	const [{ delayedLoading }] = useAppState();
-
 	const modalRef = useRef<HTMLDivElement>(null);
 
 	const handleConnectionInitClick = (connectionInitURL: string) => {
@@ -37,16 +37,18 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 								<HeaderCell>Information</HeaderCell>
 								<HeaderCell>Actions</HeaderCell>
 							</TableHeader>
-							{connections?.map((connection) => (
+							{connections.map((connection) => (
 								<Row key={connection.connectionId}>
 									<Cell classes={["text-vscode-foreground"]}>{connection.name}</Cell>
 									<Cell classes={["text-vscode-foreground"]}>{connection.integrationName}</Cell>
-									<Cell classes={["text-vscode-foreground"]}>{connection.status}</Cell>
+									<Cell classes={["text-vscode-foreground"]}>
+										<ConnectionStateLabel connectionStatus={connection.status} />
+									</Cell>
 									<Cell classes={["text-vscode-foreground"]}>{connection.statusInfoMessage}</Cell>
 									<Cell classes={["flex justify-center"]}>
 										{connection.initURL && (
 											<div
-												onClick={() => handleConnectionInitClick(connection.initURL!)}
+												onClick={() => handleConnectionInitClick(connection.initURL)}
 												className="w-3 codicon codicon-gear text-vscode-background cursor-pointer"
 											/>
 										)}

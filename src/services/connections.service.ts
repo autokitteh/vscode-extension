@@ -1,11 +1,10 @@
 import { connectionsClient, integrationsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
-import { ConnectionStatus } from "@enums";
 import { translate } from "@i18n";
-import { convertConnectionProtoToModel } from "@models";
+import { convertConnectionProtoToModel, mapProtoStatusToConnectionStatus } from "@models";
 import { LoggerService } from "@services";
 import { ServiceResponse } from "@type";
-import { Connection } from "@type/models";
+import { Connection, ConnectionStatus } from "@type/models";
 
 export class ConnectionsService {
 	static async list(projectId: string): Promise<ServiceResponse<Connection[]>> {
@@ -15,7 +14,7 @@ export class ConnectionsService {
 
 			const integrationsList = await integrationsClient.list({});
 
-			convertedConnections.map((connection) => {
+			convertedConnections.forEach((connection) => {
 				const integration = integrationsList.integrations.find(
 					(integration) => integration.integrationId === connection.integrationId
 				);
@@ -35,14 +34,15 @@ export class ConnectionsService {
 		connectionId: string
 	): Promise<ServiceResponse<{ isOK: boolean; currentStatus: ConnectionStatus | undefined }>> {
 		try {
-			const connectionStatus = await connectionsClient.test({ connectionId });
-			if (connectionStatus?.status?.code) {
-				const isOK = (connectionStatus.status.code as number) === ConnectionStatus.ok;
-				return {
-					data: { isOK, currentStatus: connectionStatus.status.code as number },
-					error: undefined,
-				};
-			}
+			const { status } = await connectionsClient.test({ connectionId });
+
+			const currentStatus = mapProtoStatusToConnectionStatus(status);
+			const isOK = currentStatus === "ok";
+
+			return {
+				data: { isOK, currentStatus },
+				error: undefined,
+			};
 			return { data: { isOK: false, currentStatus: undefined }, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.deploymentsService, translate().t("errors.connectionTestFailed"));

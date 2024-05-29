@@ -1,3 +1,9 @@
 {
-	"noConnectionsFound": "No connections found"
+	"noConnectionsFound": "No connections found",
+	"statuses": {
+		"unspecified": "Unspecified",
+		"ok": "OK",
+		"error": "Error",
+		"warning": "Warning"
+	}
 }
