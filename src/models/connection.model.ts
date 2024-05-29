@@ -21,7 +21,6 @@ export const mapProtoStatusToConnectionStatus = (protoStatus: Status | undefined
 	}
 };
 
-// Convert function
 export const convertConnectionProtoToModel = (protoConnection: ProtoConnection): Connection => {
 	const temporaryStatusMapping =
 		protoConnection.status?.code === Status_Code.UNSPECIFIED ? Status_Code.OK : protoConnection.status?.code;
