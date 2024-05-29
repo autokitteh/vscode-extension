@@ -27,6 +27,7 @@ export class RetryScheduler {
 
 	public async startFetchInterval() {
 		this.stopFetchInterval();
+		this.fetchFunction();
 		this.fetchIntervalId = setInterval(async () => {
 			await this.fetchFunction();
 		}, 1000);
