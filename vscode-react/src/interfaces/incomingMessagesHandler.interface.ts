@@ -3,7 +3,7 @@ import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
 import { Connection, SessionEntrypoint } from "@type/models";
 
 export interface IIncomingMessagesHandler {
-	setThemeVisualType?(themeKind: Theme | undefined): void;
+	setTheme?(theme: Theme | undefined): void;
 	setProjectName?(projectName: string | undefined): void;
 	setResourcesDir?(projectFolder: string): void;
 	setEntrypoints?: (value: Record<string, SessionEntrypoint[]> | undefined) => void;

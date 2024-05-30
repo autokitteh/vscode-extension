@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
+import RotateIcon from "@react-assets/icons/rotate.svg?react";
 import { Cell, HeaderCell, TableMessage } from "@react-components/atoms/table";
 import { Modal, Row, TableHeader } from "@react-components/molecules";
 import { Table } from "@react-components/organisms";
@@ -10,7 +11,7 @@ import { sendMessage } from "@react-utilities";
 import { Connection } from "@type/models";
 
 export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void; connections?: Connection[] }) => {
-	const [{ delayedLoading }] = useAppState();
+	const [{ themeType }] = useAppState();
 	const modalRef = useRef<HTMLDivElement>(null);
 
 	const handleConnectionInitClick = (connectionId: string, connectionInitURL: string) => {
@@ -19,6 +20,11 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 	const handleConnectionTestClick = (connectionId: string) => {
 		sendMessage(MessageType.testConnection, connectionId);
 	};
+	const handleRefreshClick = () => {
+		sendMessage(MessageType.fetchConnections);
+	};
+	const isDarkTheme = themeType === 2 || themeType === 3;
+	const refreshIconColor = isDarkTheme ? "white" : "black";
 
 	return (
 		<Modal classes={["rounded-none"]} ref={modalRef} wrapperClasses={["z-50"]}>
@@ -29,9 +35,24 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 				X
 			</div>
 			<div className="m-auto">
-				<div className="text-4xl text-vscode-foreground text-center mb-6">Connections</div>
+				<div className="flex justify-between items-center">
+					<div className="flex flex-1" />
+					<div className="flex flex-1 text-4xl text-vscode-foreground text-center mb-6">Connections</div>
+					<div className="flex flex-1 justify-end">
+						<div
+							className="flex flex-row items-center justify-center cursor-pointer mr-11"
+							onClick={() => handleRefreshClick()}
+							title="Refresh Connections"
+						>
+							<div className="w-3 mr-1">
+								<RotateIcon fill={refreshIconColor} />
+							</div>
+							<span>Refresh</span>
+						</div>
+					</div>
+				</div>
 				<div className="flex w-full justify-end mt-2">
-					{!delayedLoading && connections?.length ? (
+					{connections?.length ? (
 						<Table>
 							<TableHeader>
 								<HeaderCell>Name</HeaderCell>
@@ -70,7 +91,6 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 					) : (
 						<TableMessage>{translate().t("reactApp.connections.noConnectionsFound")}</TableMessage>
 					)}
-					{delayedLoading && <TableMessage>{translate().t("reactApp.general.loading")}</TableMessage>}
 				</div>
 			</div>
 		</Modal>

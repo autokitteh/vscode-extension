@@ -12,7 +12,7 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 
 			switch (type) {
 				case MessageType.setTheme:
-					handlers.setThemeVisualType?.(payload as Theme);
+					handlers.setTheme?.(payload as Theme);
 					break;
 				case MessageType.setProjectName:
 					handlers.setProjectName?.(payload as string);

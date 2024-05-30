@@ -11,16 +11,11 @@ export class RetryScheduler {
 	private hourlyRetryStarted: boolean = false;
 	private fetchFunction: () => Promise<void>;
 	private updateViewFunction: (countdown: string) => void;
-	private maxRetries?: number;
-	private retries: number = 0;
-	private onMaxRetriesReached?: () => void;
 
 	constructor(
 		initialDuration: number,
 		fetchFunction: () => Promise<void>,
-		updateViewFunction: (countdown: string) => void,
-		maxRetries?: number,
-		onMaxRetriesReached?: () => void
+		updateViewFunction: (countdown: string) => void
 	) {
 		this.currentCountdownDuration = initialDuration;
 		this.initialDuration = initialDuration;
@@ -28,8 +23,6 @@ export class RetryScheduler {
 		this.fetchFunction = fetchFunction;
 		this.updateViewFunction = updateViewFunction;
 		this.startTime = new Date();
-		this.maxRetries = maxRetries;
-		this.onMaxRetriesReached = onMaxRetriesReached;
 	}
 
 	public async startFetchInterval() {
@@ -63,15 +56,8 @@ export class RetryScheduler {
 				if (this.hourlyRetryStarted) {
 					this.startFetchInterval();
 				} else {
-					this.retries++;
-					if (this.maxRetries !== undefined && this.retries >= this.maxRetries) {
-						if (this.onMaxRetriesReached) {
-							this.onMaxRetriesReached();
-						}
-					} else {
-						this.currentCountdownDuration *= EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER;
-						this.startFetchInterval();
-					}
+					this.currentCountdownDuration *= EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER;
+					this.startFetchInterval();
 				}
 			}
 		}, 1000);
@@ -94,7 +80,6 @@ export class RetryScheduler {
 		this.countdown = this.currentCountdownDuration;
 		this.startTime = new Date();
 		this.hourlyRetryStarted = false;
-		this.retries = 0;
 		this.startFetchInterval();
 	}
 

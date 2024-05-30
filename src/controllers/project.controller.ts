@@ -1,14 +1,7 @@
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
-import {
-	vsCommands,
-	namespaces,
-	channels,
-	BASE_URL,
-	INITIAL_RETRY_SCHEDULE_COUNTDOWN,
-	CONNECTION_INIT_WAIT_RETRY_INTERVAL,
-} from "@constants";
+import { vsCommands, namespaces, channels, BASE_URL, INITIAL_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import {
@@ -26,7 +19,7 @@ import { DeploymentsService, ProjectsService, SessionsService, LoggerService, Co
 import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
-import { Connection, ConnectionStatus, Deployment, Project, Session } from "@type/models";
+import { Connection, Deployment, Project, Session } from "@type/models";
 import { createDirectory, openFileExplorer } from "@utilities";
 import isEqual from "lodash.isequal";
 import { commands, OpenDialogOptions, window, env, Uri } from "vscode";
@@ -53,7 +46,6 @@ export class ProjectController {
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
 	private deploymentsFetchRetryScheduler?: RetryScheduler;
-	private connectionInitRetryScheduler?: RetryScheduler;
 	private connections?: Connection[];
 
 	constructor(
@@ -540,8 +532,6 @@ export class ProjectController {
 		this.project = project;
 		this.view.show(project!.name);
 		this.setProjectNameInView();
-
-		this.fetchConnections();
 
 		this.sessions = undefined;
 	}
@@ -1144,25 +1134,6 @@ export class ProjectController {
 				);
 			}
 		});
-
-		this.connectionInitRetryScheduler = new RetryScheduler(
-			CONNECTION_INIT_WAIT_RETRY_INTERVAL,
-			() => this.testConnectionOnInit(connectionInit.connectionId),
-			() => {},
-			10,
-			() => this.connectionInitRetryScheduler?.stopTimers()
-		);
-		this.connectionInitRetryScheduler.startFetchInterval();
-	}
-
-	async testConnectionOnInit(connectionId: string) {
-		const { data: currentConnectionStatus } = await ConnectionsService.getCurrentStatus(connectionId);
-		const isConnectionOK = currentConnectionStatus === ("ok" as ConnectionStatus);
-		if (isConnectionOK) {
-			this.connectionInitRetryScheduler?.stopTimers();
-		}
-
-		this.fetchConnections();
 	}
 
 	async testConnection(connectionId: string) {

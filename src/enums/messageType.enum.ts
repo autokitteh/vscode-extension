@@ -34,4 +34,5 @@ export enum MessageType {
 	setConnections = "SET_CONNECTIONS",
 	openConnectionInitURL = "OPEN_CONNECTION_INIT_URL",
 	testConnection = "TEST_CONNECTION",
+	fetchConnections = "FETCH_CONNECTIONS",
 }

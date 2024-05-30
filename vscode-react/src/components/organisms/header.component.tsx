@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { MessageType, Theme } from "@enums";
+import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { DownloadIcon } from "@react-assets/icons/download.icon";
 import { Button, Logo, Overlay } from "@react-components/atoms";
@@ -14,25 +14,31 @@ import { Connection } from "@type/models";
 
 export const Header = () => {
 	const [projectName, setProjectName] = useState<string>();
-	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [resourcesDir, setResourcesDir] = useState<string>("");
 	const [settingsPopperVisible, setSettingsPopperVisible] = useState<boolean>(false);
 	const pathPopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [connections, setConnections] = useState<Connection[]>([]);
 	const { stopLoader, startLoader } = useAppDispatch();
+	const { setTheme } = useAppDispatch();
+
 	const [connectionsModalVisible, setConnectionsModalVisible] = useState<boolean>(false);
 	useIncomingMessageHandler({
 		stopLoader,
 		startLoader,
 		setProjectName,
-		setThemeVisualType,
 		setResourcesDir,
 		setConnections,
+		setTheme,
 	});
+
+	const openConnectionsModal = () => {
+		setConnectionsModalVisible(true);
+		sendMessage(MessageType.fetchConnections);
+	};
 
 	return (
 		<div className="flex items-center w-full">
-			<Logo className="w-9 h-9 m-2" themeVisualType={themeVisualType} />
+			<Logo className="w-9 h-9 m-2" />
 			<div className="text-vscode-input-foreground font-bold text-lg">{projectName}</div>
 			<Button
 				classes="mx-4"
@@ -54,7 +60,7 @@ export const Header = () => {
 			<div className="flex-grow"></div>
 			<div className="flex flex-row">
 				<Button
-					onClick={() => setConnectionsModalVisible(true)}
+					onClick={() => openConnectionsModal()}
 					classes="flex relative z-30 mr-2"
 					title={translate().t("reactApp.settings.openConnectionsSettingsScreen")}
 				>

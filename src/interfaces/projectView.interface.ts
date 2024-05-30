@@ -31,6 +31,8 @@ export interface IProjectViewDelegate {
 		initURL: string;
 	}>;
 	testConnection?: Callback<string>;
+	openConnectionsModal?: Callback;
+	fetchConnections?: Callback;
 }
 
 export interface IProjectView {
