@@ -1,3 +1,10 @@
+## [0.18.5](https://github.com/autokitteh/vscode-extension/compare/v0.18.4...v0.18.5) (2024-05-30)
+
+
+### Bug Fixes
+
+* remove loading state from sessions view ([#316](https://github.com/autokitteh/vscode-extension/issues/316)) ([f44281e](https://github.com/autokitteh/vscode-extension/commit/f44281e47462666b8121436fa21e440df589d4cc))
+
 ## [0.18.4](https://github.com/autokitteh/vscode-extension/compare/v0.18.3...v0.18.4) (2024-05-29)
 
 
