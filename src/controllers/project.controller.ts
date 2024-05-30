@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels, INITIAL_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
+import { INITIAL_SESSIONS_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
 import { ConnectionsController } from "@controllers";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
@@ -46,8 +47,9 @@ export class ProjectController {
 	private loadingRequestsCounter: number = 0;
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
-	private retryScheduler?: RetryScheduler;
 	public connections: ConnectionsViewDelegate;
+	private deploymentsRetryScheduler?: RetryScheduler;
+	private sessionLogRetryScheduler?: RetryScheduler;
 
 	constructor(projectView: IProjectView, projectId: string, sessionsLogRefreshRate: number) {
 		this.view = projectView;
@@ -116,12 +118,12 @@ export class ProjectController {
 		this.stopLoader();
 
 		if (sessionsError) {
-			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionHistory)) {
+			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionLogs)) {
 				const notificationErrorMessage = translate().t("errors.sessionLogRecordFetchFailedShort", {
 					deploymentId: this.selectedDeploymentId,
 				});
 				commands.executeCommand(vsCommands.showErrorMessage, notificationErrorMessage);
-				this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessionHistory, true);
+				this.hasDisplayedError.set(ProjectRecurringErrorMessages.sessionLogs, true);
 			}
 
 			const logErrorMessage = translate().t("errors.sessionLogRecordFetchFailed", {
@@ -149,8 +151,10 @@ export class ProjectController {
 			return;
 		}
 		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
-
-		this.initSessionLogsDisplay(selectedSessionId!);
+		if (!selectedSessionId) {
+			return;
+		}
+		this.initSessionLogsDisplay(selectedSessionId);
 	};
 
 	public reconnect = async () => {
@@ -159,9 +163,8 @@ export class ProjectController {
 	};
 
 	public disable = async () => {
-		this.stopInterval(ProjectIntervalTypes.deployments);
-		this.stopInterval(ProjectIntervalTypes.project);
-		this.stopInterval(ProjectIntervalTypes.sessionHistory);
+		this.sessionLogRetryScheduler?.stopTimers();
+		this.deploymentsRetryScheduler?.stopTimers();
 		this.deployments = undefined;
 		this.sessions = undefined;
 		this.hasDisplayedError = new Map();
@@ -187,7 +190,7 @@ export class ProjectController {
 			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
 			LoggerService.error(namespaces.projectController, log);
 			if (isResetCounters) {
-				this.retryScheduler?.startCountdown();
+				this.deploymentsRetryScheduler?.startCountdown();
 			}
 			return;
 		}
@@ -197,7 +200,7 @@ export class ProjectController {
 			payload: "",
 		});
 
-		this.retryScheduler?.resetCountdown();
+		this.deploymentsRetryScheduler?.resetCountdown();
 
 		if (isEqual(this.deployments, deployments)) {
 			return;
@@ -392,7 +395,7 @@ export class ProjectController {
 		}
 		this.sessionLogOutputCursor = 0;
 
-		this.stopInterval(ProjectIntervalTypes.sessionHistory);
+		this.sessionLogRetryScheduler?.stopTimers();
 	}
 
 	async displaySessionsHistory(sessionId: string): Promise<void> {
@@ -447,7 +450,7 @@ export class ProjectController {
 	}
 
 	async displaySessionLogs(sessionId: string, stopSessionsInterval: boolean = false): Promise<void> {
-		this.stopInterval(ProjectIntervalTypes.sessionHistory);
+		this.sessionLogRetryScheduler?.stopTimers();
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
 		this.initSessionLogsDisplay(sessionId);
@@ -489,27 +492,13 @@ export class ProjectController {
 			this.cachedSessionHistoryStates.set(sessionId, sessionHistoryStates);
 			return;
 		}
-		this.startInterval(
-			ProjectIntervalTypes.sessionHistory,
+
+		this.sessionLogRetryScheduler = new RetryScheduler(
+			INITIAL_SESSIONS_RETRY_SCHEDULE_COUNTDOWN,
 			() => this.displaySessionsHistory(sessionId),
-			this.sessionsLogRefreshRate
+			() => {}
 		);
-	}
-
-	async startInterval(intervalKey: ProjectIntervalTypes, loadFunc: () => Promise<any> | void, refreshRate: number) {
-		if (this.intervalKeeper.has(intervalKey)) {
-			this.stopInterval(intervalKey);
-		}
-		await loadFunc();
-		this.intervalKeeper.set(
-			intervalKey,
-			setInterval(() => loadFunc(), refreshRate)
-		);
-	}
-
-	stopInterval(intervalKey: ProjectIntervalTypes) {
-		clearInterval(this.intervalKeeper.get(intervalKey));
-		this.intervalKeeper.delete(intervalKey);
+		this.sessionLogRetryScheduler.startFetchInterval();
 	}
 
 	public async openProject(onProjectDisposeCB: Callback<string>, onProjectDeleteCB: Callback<string>) {
@@ -625,8 +614,8 @@ export class ProjectController {
 	}
 
 	onClose() {
-		this.stopInterval(ProjectIntervalTypes.sessionHistory);
-		this.stopInterval(ProjectIntervalTypes.deployments);
+		this.sessionLogRetryScheduler?.stopTimers();
+		this.deploymentsRetryScheduler?.stopTimers();
 		this.onProjectDisposeCB?.(this.projectId);
 		this.hasDisplayedError = new Map();
 		if (this.selectedDeploymentId) {
@@ -1090,12 +1079,12 @@ export class ProjectController {
 	async loadInitialDataOnceViewReady() {
 		this.deployments = undefined;
 
-		this.retryScheduler = new RetryScheduler(
+		this.deploymentsRetryScheduler = new RetryScheduler(
 			INITIAL_RETRY_SCHEDULE_COUNTDOWN,
 			() => this.loadAndDisplayDeployments(),
 			(countdown) => this.updateViewWithCountdown(countdown)
 		);
-		this.retryScheduler.startFetchInterval();
+		this.deploymentsRetryScheduler.startFetchInterval();
 
 		const isResourcesPathExist = await this.getResourcesPathFromContext();
 		if (isResourcesPathExist) {

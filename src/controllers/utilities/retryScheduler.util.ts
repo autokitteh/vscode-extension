@@ -30,7 +30,7 @@ export class RetryScheduler {
 		this.fetchFunction();
 		this.fetchIntervalId = setInterval(async () => {
 			await this.fetchFunction();
-		}, 1000);
+		}, this.initialDuration * 1000);
 	}
 
 	public startCountdown() {

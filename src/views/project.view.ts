@@ -116,7 +116,7 @@ export class ProjectView implements IProjectView {
 	}
 
 	public dispose() {
-		this.delegate?.onFocus?.();
+		this.delegate?.onBlur?.();
 	}
 
 	public show(projectName: string) {
