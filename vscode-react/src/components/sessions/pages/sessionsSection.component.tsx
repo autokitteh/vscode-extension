@@ -5,7 +5,6 @@ import { SessionSectionViewModel } from "@models/views";
 import RotateIcon from "@react-assets/icons/rotate.svg?react";
 import { TableMessage } from "@react-components/atoms/table";
 import { SessionsTableBody } from "@react-components/sessions/organisms";
-import { useAppState } from "@react-context";
 import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 
@@ -14,7 +13,6 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [stateFilter, setStateFilter] = useState<string>();
 	const [liveTailState, setLiveTailState] = useState<boolean>(true);
-	const [{ delayedLoading }] = useAppState();
 
 	const { sessions, showLiveTail, lastDeployment } = sessionsSection || {};
 
@@ -67,7 +65,7 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 				}
 			>
 				<div className="flex">{`${translate().t("reactApp.sessions.tableTitle")}`}</div>
-				{!delayedLoading && showLiveTail ? (
+				{showLiveTail ? (
 					<div
 						className="ml-3 w-5 h-5 cursor-pointer"
 						onClick={() => toggleLiveTail()}
@@ -95,10 +93,7 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 					</select>
 				</div>
 			</div>
-			{delayedLoading && <TableMessage>{translate().t("reactApp.general.loading")}</TableMessage>}
-			{!sessions && !delayedLoading && (
-				<TableMessage>{translate().t("reactApp.sessions.pickDeploymentToShowSessions")}</TableMessage>
-			)}
+			{!sessions && <TableMessage>{translate().t("reactApp.sessions.pickDeploymentToShowSessions")}</TableMessage>}
 			{sessions && sessions.length === 0 && (
 				<TableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</TableMessage>
 			)}
