@@ -35,8 +35,7 @@ export class ConnectionsService {
 
 	static async getCurrentStatus(connectionId: string): Promise<ServiceResponse<ConnectionStatus>> {
 		try {
-			// await integrationsClient.testConnection({ connectionId });
-			const { status } = await connectionsClient.test({ connectionId });
+			const { status } = await connectionsClient.test({ connectionId }); //current status
 
 			return {
 				data: mapProtoStatusToConnectionStatus(status),
