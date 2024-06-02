@@ -46,8 +46,8 @@ export class ProjectController {
 	private loadingRequestsCounter: number = 0;
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
-	private connections?: Connection[];
 	private retryScheduler?: RetryScheduler;
+	private connections?: Connection[];
 
 	constructor(
 		projectView: IProjectView,
