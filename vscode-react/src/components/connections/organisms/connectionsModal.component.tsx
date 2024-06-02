@@ -30,65 +30,67 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 	const refreshIconColor = isDarkTheme ? "white" : "black";
 
 	return (
-		<Modal classes={["rounded-none"]} wrapperClasses={["z-50"]}>
-			<div
-				className="flex justify-end cursor-pointer text-vscode-foreground font-extrabold pt-8 text-xl leading-3"
-				onClick={() => onClose()}
-			>
-				X
-			</div>
-			<div className="m-auto">
-				<div className="flex justify-between items-center">
-					<div className="flex flex-1" />
-					<div className="flex flex-1 text-4xl text-vscode-foreground text-center mb-6">
-						{translate().t("reactApp.connections.modalTitle")}
-					</div>
-					<div className="flex flex-1 justify-end">
-						<div
-							className="flex flex-row items-center justify-center cursor-pointer mr-11"
-							onClick={() => handleRefreshClick()}
-							title={translate().t("reactApp.connections.refreshConnections")}
-						>
-							<div className="w-3 mr-1">
-								<RotateIcon fill={refreshIconColor} />
+		<Modal wrapperClasses={["!bg-transparent z-50"]} classes={["bg-black-semi-transparent", "rounded-none"]}>
+			<div className="mt-4 h-[calc(100vh-6vh)] bg-vscode-editor-background">
+				<div
+					className="flex justify-end cursor-pointer text-vscode-foreground font-extrabold pt-8 text-xl leading-3 mr-4"
+					onClick={() => onClose()}
+				>
+					X
+				</div>
+				<div className="m-auto">
+					<div className="flex justify-between items-center">
+						<div className="flex flex-1" />
+						<div className="flex flex-1 text-4xl text-vscode-foreground text-center mb-6 justify-center">
+							{translate().t("reactApp.connections.modalTitle")}
+						</div>
+						<div className="flex flex-1 justify-end">
+							<div
+								className="flex flex-row items-center justify-center cursor-pointer mr-11"
+								onClick={() => handleRefreshClick()}
+								title={translate().t("reactApp.connections.refreshConnections")}
+							>
+								<div className="w-3 mr-1">
+									<RotateIcon fill={refreshIconColor} />
+								</div>
+								<span>{translate().t("reactApp.connections.refresh")}</span>
 							</div>
-							<span>{translate().t("reactApp.connections.refresh")}</span>
 						</div>
 					</div>
-				</div>
-				<div className="flex w-full justify-end mt-2">
-					{connections?.length ? (
-						<Table>
-							<TableHeader>
-								<HeaderCell>{translate().t("reactApp.connections.tableColumns.name")}</HeaderCell>
-								<HeaderCell>{translate().t("reactApp.connections.tableColumns.integration")}</HeaderCell>
-								<HeaderCell>{translate().t("reactApp.connections.tableColumns.status")}</HeaderCell>
-								<HeaderCell>{translate().t("reactApp.connections.tableColumns.information")}</HeaderCell>
-								<HeaderCell>{translate().t("reactApp.connections.tableColumns.actions")}</HeaderCell>
-							</TableHeader>
-							{connections.map((connection) => (
-								<Row key={connection.connectionId}>
-									<Cell classes={["text-vscode-foreground"]}>{connection.name}</Cell>
-									<Cell classes={["text-vscode-foreground"]}>{connection.integrationName}</Cell>
-									<Cell classes={["text-vscode-foreground"]}>
-										<ConnectionStateLabel connectionStatus={connection.status} />
-									</Cell>
-									<Cell classes={["text-vscode-foreground"]}>{connection.statusInfoMessage}</Cell>
-									<Cell classes={["flex justify-center align-center"]}>
-										{connection.initURL && (
-											<div
-												onClick={() => handleConnectionInitClick(connection.connectionId, connection.initURL)}
-												className="w-3 codicon codicon-gear text-white cursor-pointer"
-												title={translate().t("reactApp.connections.init")}
-											/>
-										)}
-									</Cell>
-								</Row>
-							))}
-						</Table>
-					) : (
-						<TableMessage>{translate().t("reactApp.connections.noConnectionsFound")}</TableMessage>
-					)}
+					<div className="flex w-full justify-end mt-2">
+						{connections?.length ? (
+							<Table>
+								<TableHeader>
+									<HeaderCell>{translate().t("reactApp.connections.tableColumns.name")}</HeaderCell>
+									<HeaderCell>{translate().t("reactApp.connections.tableColumns.integration")}</HeaderCell>
+									<HeaderCell>{translate().t("reactApp.connections.tableColumns.status")}</HeaderCell>
+									<HeaderCell>{translate().t("reactApp.connections.tableColumns.information")}</HeaderCell>
+									<HeaderCell>{translate().t("reactApp.connections.tableColumns.actions")}</HeaderCell>
+								</TableHeader>
+								{connections.map((connection) => (
+									<Row key={connection.connectionId}>
+										<Cell classes={["text-vscode-foreground"]}>{connection.name}</Cell>
+										<Cell classes={["text-vscode-foreground"]}>{connection.integrationName}</Cell>
+										<Cell classes={["text-vscode-foreground"]}>
+											<ConnectionStateLabel connectionStatus={connection.status} />
+										</Cell>
+										<Cell classes={["text-vscode-foreground"]}>{connection.statusInfoMessage}</Cell>
+										<Cell classes={["flex justify-center align-center"]}>
+											{connection.initURL && (
+												<div
+													onClick={() => handleConnectionInitClick(connection.connectionId, connection.initURL)}
+													className="w-3 codicon codicon-gear text-white cursor-pointer"
+													title={translate().t("reactApp.connections.init")}
+												/>
+											)}
+										</Cell>
+									</Row>
+								))}
+							</Table>
+						) : (
+							<TableMessage>{translate().t("reactApp.connections.noConnectionsFound")}</TableMessage>
+						)}
+					</div>
 				</div>
 			</div>
 		</Modal>
