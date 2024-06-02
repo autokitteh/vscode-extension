@@ -37,6 +37,7 @@ export class ProjectController {
 	private sessionLogOutputCursor: number = 0;
 	private deployments?: Deployment[];
 	private sessionsLogRefreshRate: number;
+	private deploymentsRefreshRate: number;
 	private selectedDeploymentId?: string;
 	private isDeploymentLiveTailPossible?: boolean;
 	private filterSessionsState?: string;
@@ -57,6 +58,7 @@ export class ProjectController {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
+		this.deploymentsRefreshRate = deploymentsRefreshRate;
 		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
 	}
 
