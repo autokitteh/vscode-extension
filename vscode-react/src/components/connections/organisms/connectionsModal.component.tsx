@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import RotateIcon from "@react-assets/icons/rotate.svg?react";
@@ -13,7 +13,6 @@ import { Connection } from "@type/models";
 
 export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 	const [{ themeType }] = useAppState();
-	const modalRef = useRef<HTMLDivElement>(null);
 	const [connections, setConnections] = useState<Connection[]>([]);
 
 	useIncomingMessageHandler({
@@ -31,7 +30,7 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 	const refreshIconColor = isDarkTheme ? "white" : "black";
 
 	return (
-		<Modal classes={["rounded-none"]} ref={modalRef} wrapperClasses={["z-50"]}>
+		<Modal classes={["rounded-none"]} wrapperClasses={["z-50"]}>
 			<div
 				className="flex justify-end cursor-pointer text-vscode-foreground font-extrabold pt-8 text-xl leading-3"
 				onClick={() => onClose()}
