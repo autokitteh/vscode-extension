@@ -69,20 +69,22 @@ export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void
 										<ConnectionStateLabel connectionStatus={connection.status} />
 									</Cell>
 									<Cell classes={["text-vscode-foreground"]}>{connection.statusInfoMessage}</Cell>
-									<Cell classes={["flex justify-center"]}>
+									<Cell classes={["flex justify-center align-center"]}>
 										{connection.initURL && (
 											<div
 												onClick={() => handleConnectionInitClick(connection.connectionId, connection.initURL)}
-												className="w-3 codicon codicon-gear text-vscode-background cursor-pointer"
+												className="w-3 codicon codicon-gear text-white cursor-pointer"
 												title={translate().t("reactApp.connections.init")}
 											/>
 										)}
 										{connection.isTestable && (
 											<div
-												title={translate().t("reactApp.connections.test")}
+												className="w-4 ml-4 justify-center cursor-pointer"
 												onClick={() => handleConnectionTestClick(connection.connectionId)}
-												className="w-3 codicon codicon-beaker text-vscode-background cursor-pointer ml-2"
-											/>
+												title={`Refresh Connection - ${connection.name} Status`}
+											>
+												<RotateIcon fill={refreshIconColor} />
+											</div>
 										)}
 									</Cell>
 								</Row>
