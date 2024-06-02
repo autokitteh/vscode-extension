@@ -1136,47 +1136,6 @@ export class ProjectController {
 		});
 	}
 
-	async testConnection(connectionId: string) {
-		if (!this.connections) {
-			commands.executeCommand(vsCommands.showInfoMessage, translate().t("errors.failedRunningConnectionTest"));
-			LoggerService.error(namespaces.projectController, translate().t("errors.noConnectionsFound"));
-			return;
-		}
-
-		const connectionIndex = this.connections.findIndex((connection) => connection.connectionId === connectionId);
-		if (connectionIndex === -1) {
-			commands.executeCommand(vsCommands.showInfoMessage, translate().t("errors.failedRunningConnectionTest"));
-			LoggerService.error(namespaces.projectController, translate().t("errors.currentConnectionNotFound"));
-			return;
-		}
-
-		const currentConnection = this.connections[connectionIndex];
-		const { data: currentConnectionStatus, error } = await ConnectionsService.getCurrentStatus(connectionId);
-		if (error) {
-			const notification = translate().t("errors.couldNotFetchConnectionStatus", {
-				projectName: this.project?.name,
-				connectionName: currentConnection.name,
-			});
-			const log = translate().t("errors.couldNotFetchConnectionStatusEnriched", {
-				projectName: this.project?.name,
-				connectionName: currentConnection.name,
-				error,
-			});
-			commands.executeCommand(vsCommands.showErrorMessage, notification);
-			LoggerService.error(namespaces.projectController, log);
-			return;
-		}
-
-		currentConnection.status = currentConnectionStatus!;
-
-		this.connections[connectionIndex] = currentConnection;
-
-		this.view.update({
-			type: MessageType.setConnections,
-			payload: this.connections,
-		});
-	}
-
 	async fetchConnections() {
 		this.startLoader();
 		const { data: connections, error: connectionsError } = await ConnectionsService.list(this.projectId);

@@ -2,7 +2,7 @@ import { Status, Status_Code } from "@ak-proto-ts/common/v1/status_pb";
 import { Connection as ProtoConnection } from "@ak-proto-ts/connections/v1/connection_pb";
 import { Connection, ConnectionStatus } from "@type/models";
 
-export const mapProtoStatusToConnectionStatus = (protoStatus: Status | undefined): ConnectionStatus => {
+const mapProtoStatusToConnectionStatus = (protoStatus: Status | undefined): ConnectionStatus => {
 	if (!protoStatus) {
 		return "ok"; // default to ok if no status is provided, as if it was unspecified
 	}

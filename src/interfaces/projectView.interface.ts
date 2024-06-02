@@ -30,7 +30,6 @@ export interface IProjectViewDelegate {
 		connectionId: string;
 		initURL: string;
 	}>;
-	testConnection?: Callback<string>;
 	openConnectionsModal?: Callback;
 	fetchConnections?: Callback;
 }

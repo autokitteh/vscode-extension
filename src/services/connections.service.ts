@@ -1,10 +1,10 @@
 import { connectionsClient, integrationsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { translate } from "@i18n";
-import { convertConnectionProtoToModel, mapProtoStatusToConnectionStatus } from "@models";
+import { convertConnectionProtoToModel } from "@models";
 import { LoggerService } from "@services";
 import { ServiceResponse } from "@type";
-import { Connection, ConnectionStatus } from "@type/models";
+import { Connection } from "@type/models";
 
 export class ConnectionsService {
 	static async list(projectId: string): Promise<ServiceResponse<Connection[]>> {
@@ -29,20 +29,6 @@ export class ConnectionsService {
 				namespaces.deploymentsService,
 				translate().t("errors.connectionsListFetchFailed", { projectId })
 			);
-			return { data: undefined, error };
-		}
-	}
-
-	static async getCurrentStatus(connectionId: string): Promise<ServiceResponse<ConnectionStatus>> {
-		try {
-			const { status } = await connectionsClient.test({ connectionId }); //current status
-
-			return {
-				data: mapProtoStatusToConnectionStatus(status),
-				error: undefined,
-			};
-		} catch (error) {
-			LoggerService.error(namespaces.deploymentsService, translate().t("errors.connectionTestFailed"));
 			return { data: undefined, error };
 		}
 	}

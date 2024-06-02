@@ -23,9 +23,7 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 	const handleConnectionInitClick = (connectionId: string, connectionInitURL: string) => {
 		sendMessage(MessageType.openConnectionInitURL, { connectionId, initURL: connectionInitURL });
 	};
-	const handleConnectionTestClick = (connectionId: string) => {
-		sendMessage(MessageType.testConnection, connectionId);
-	};
+
 	const handleRefreshClick = () => {
 		sendMessage(MessageType.fetchConnections);
 	};
@@ -82,17 +80,6 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 												className="w-3 codicon codicon-gear text-white cursor-pointer"
 												title={translate().t("reactApp.connections.init")}
 											/>
-										)}
-										{connection.isTestable && (
-											<div
-												className="w-4 ml-4 justify-center cursor-pointer"
-												onClick={() => handleConnectionTestClick(connection.connectionId)}
-												title={translate().t("reactApp.connections.refreshConnectionStatus", {
-													connectionName: connection.name,
-												})}
-											>
-												<RotateIcon fill={refreshIconColor} />
-											</div>
 										)}
 									</Cell>
 								</Row>
