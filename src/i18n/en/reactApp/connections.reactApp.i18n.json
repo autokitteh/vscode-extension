@@ -7,5 +7,15 @@
 		"warning": "Warning"
 	},
 	"init": "Initialize connection",
-	"test": "Test connection"
+	"test": "Test connection",
+	"tableColumns": {
+		"name": "Name",
+		"status": "Status",
+		"actions": "Actions",
+		"integration": "Integration",
+		"information": "Information"
+	},
+	"refresh": "Refresh",
+	"refreshConnections": "Refresh connections",
+	"refreshConnectionStatus": "Refresh Connection - {{connectionName}} Status"
 }

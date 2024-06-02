@@ -48,12 +48,12 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 						<div
 							className="flex flex-row items-center justify-center cursor-pointer mr-11"
 							onClick={() => handleRefreshClick()}
-							title="Refresh Connections"
+							title={translate().t("reactApp.connections.refreshConnections")}
 						>
 							<div className="w-3 mr-1">
 								<RotateIcon fill={refreshIconColor} />
 							</div>
-							<span>Refresh</span>
+							<span>{translate().t("reactApp.connections.refresh")}</span>
 						</div>
 					</div>
 				</div>
@@ -61,11 +61,11 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 					{connections?.length ? (
 						<Table>
 							<TableHeader>
-								<HeaderCell>Name</HeaderCell>
-								<HeaderCell>Integration</HeaderCell>
-								<HeaderCell>Status</HeaderCell>
-								<HeaderCell>Information</HeaderCell>
-								<HeaderCell>Actions</HeaderCell>
+								<HeaderCell>{translate().t("reactApp.connections.tableColumns.name")}</HeaderCell>
+								<HeaderCell>{translate().t("reactApp.connections.tableColumns.integration")}</HeaderCell>
+								<HeaderCell>{translate().t("reactApp.connections.tableColumns.status")}</HeaderCell>
+								<HeaderCell>{translate().t("reactApp.connections.tableColumns.information")}</HeaderCell>
+								<HeaderCell>{translate().t("reactApp.connections.tableColumns.actions")}</HeaderCell>
 							</TableHeader>
 							{connections.map((connection) => (
 								<Row key={connection.connectionId}>
@@ -87,7 +87,9 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 											<div
 												className="w-4 ml-4 justify-center cursor-pointer"
 												onClick={() => handleConnectionTestClick(connection.connectionId)}
-												title={`Refresh Connection - ${connection.name} Status`}
+												title={translate().t("reactApp.connections.refreshConnectionStatus", {
+													connectionName: connection.name,
+												})}
 											>
 												<RotateIcon fill={refreshIconColor} />
 											</div>
