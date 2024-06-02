@@ -16,5 +16,6 @@
 		"information": "Information"
 	},
 	"refresh": "Refresh",
-	"refreshConnections": "Refresh connections"
+	"refreshConnections": "Refresh connections",
+	"modalTitle": "Connections"
 }

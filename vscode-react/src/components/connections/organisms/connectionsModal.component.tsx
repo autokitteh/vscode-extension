@@ -40,7 +40,9 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 			<div className="m-auto">
 				<div className="flex justify-between items-center">
 					<div className="flex flex-1" />
-					<div className="flex flex-1 text-4xl text-vscode-foreground text-center mb-6">Connections</div>
+					<div className="flex flex-1 text-4xl text-vscode-foreground text-center mb-6">
+						{translate().t("reactApp.connections.modalTitle")}
+					</div>
 					<div className="flex flex-1 justify-end">
 						<div
 							className="flex flex-row items-center justify-center cursor-pointer mr-11"
