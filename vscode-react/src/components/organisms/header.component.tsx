@@ -10,14 +10,12 @@ import { useAppDispatch } from "@react-context/appState.context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import "split-pane-react/esm/themes/default.css";
-import { Connection } from "@type/models";
 
 export const Header = () => {
 	const [projectName, setProjectName] = useState<string>();
 	const [resourcesDir, setResourcesDir] = useState<string>("");
 	const [settingsPopperVisible, setSettingsPopperVisible] = useState<boolean>(false);
 	const pathPopperElementRef = useRef<HTMLDivElement | null>(null);
-	const [connections, setConnections] = useState<Connection[]>([]);
 	const { stopLoader, startLoader } = useAppDispatch();
 	const { setTheme } = useAppDispatch();
 
@@ -27,7 +25,6 @@ export const Header = () => {
 		startLoader,
 		setProjectName,
 		setResourcesDir,
-		setConnections,
 		setTheme,
 	});
 
@@ -88,9 +85,7 @@ export const Header = () => {
 					<ProjectSettingsPopper resourcesDir={resourcesDir} closePopper={() => setSettingsPopperVisible(false)} />
 				</Popper>
 			</div>
-			{connectionsModalVisible && (
-				<ConnectionsModal connections={connections} onClose={() => setConnectionsModalVisible(false)} />
-			)}
+			{connectionsModalVisible && <ConnectionsModal onClose={() => setConnectionsModalVisible(false)} />}
 		</div>
 	);
 };

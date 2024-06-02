@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import RotateIcon from "@react-assets/icons/rotate.svg?react";
@@ -7,12 +7,18 @@ import { Modal, Row, TableHeader } from "@react-components/molecules";
 import { Table } from "@react-components/organisms";
 import { ConnectionStateLabel } from "@react-components/sessions/atoms";
 import { useAppState } from "@react-context";
+import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import { Connection } from "@type/models";
 
-export const ConnectionsModal = ({ onClose, connections }: { onClose: () => void; connections?: Connection[] }) => {
+export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 	const [{ themeType }] = useAppState();
 	const modalRef = useRef<HTMLDivElement>(null);
+	const [connections, setConnections] = useState<Connection[]>([]);
+
+	useIncomingMessageHandler({
+		setConnections,
+	});
 
 	const handleConnectionInitClick = (connectionId: string, connectionInitURL: string) => {
 		sendMessage(MessageType.openConnectionInitURL, { connectionId, initURL: connectionInitURL });
