@@ -33,7 +33,7 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 		<Modal wrapperClasses={["!bg-transparent z-50"]} classes={["bg-black-semi-transparent", "rounded-none"]}>
 			<div className="mt-4 h-[calc(100vh-6vh)] bg-vscode-editor-background">
 				<div
-					className="flex justify-end cursor-pointer text-vscode-foreground font-extrabold pt-8 text-xl leading-3 mr-4"
+					className="flex justify-end cursor-pointer text-vscode-foreground font-extrabold pt-4 text-xl leading-3 mr-4"
 					onClick={() => onClose()}
 				>
 					X
