@@ -36,8 +36,8 @@ export class ProjectController {
 	private cachedSessionHistoryStates: Map<string, SessionLogRecord[]> = new Map();
 	private sessionLogOutputCursor: number = 0;
 	private deployments?: Deployment[];
-	private sessionsLogRefreshRate: number;
 	private deploymentsRefreshRate: number;
+	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
 	private isDeploymentLiveTailPossible?: boolean;
 	private filterSessionsState?: string;
