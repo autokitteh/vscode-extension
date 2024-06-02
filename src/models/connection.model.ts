@@ -25,7 +25,6 @@ export const convertConnectionProtoToModel = (protoConnection: ProtoConnection):
 		integrationId: protoConnection.integrationId,
 		name: protoConnection.name,
 		initURL: protoConnection.links?.init_url || "",
-		isTestable: protoConnection.links?.test_url !== undefined,
 		status: mapProtoStatusToConnectionStatus(protoConnection.status),
 		statusInfoMessage: protoConnection.status?.message || "",
 	};
