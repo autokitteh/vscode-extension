@@ -31,8 +31,8 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
 	const initialState: State = {
 		modalName: "",
 		loading: false,
-		delayedLoading: false,
 		selectedDeploymentId: undefined,
+		delayedLoading: false,
 		themeType: Theme.DARK,
 	};
 
