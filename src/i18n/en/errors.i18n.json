@@ -56,9 +56,7 @@
 	"loadingCounterStopFailure": "Loading requests counter failure on stop - resetting",
 	"loadingCounterStartFailure": "Loading requests counter failure on start - resetting",
 	"failedOpenConnectionInit": "Failed to open connection initialization for {{connectionName}} in {{projectName}}",
-	"failedRunningConnectionTest": "Couldn't accomplish connection test",
+	"failedOpenConnectionInitEnriched": "Failed to open connection initialization for {{connectionName}} in {{projectName}}, URL: {{connectionURL}}",
 	"noConnectionsFound": "No connections found",
-	"currentConnectionNotFound": "Current connection not found",
-	"couldNotFetchConnectionStatus": "Couldn't fetch connection status for {{projectName}} - {{connectionName}}",
-	"couldNotFetchConnectionStatusEnriched": "Couldn't fetch connection status for {{projectName}} - {{connectionName}}, error: {{error}}"
+	"connectionInitURLInvalid": "Connection initialization failed - invalid URL - for URL: {{url}} in {{projectName}}"
 }
