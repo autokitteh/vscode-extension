@@ -45,8 +45,8 @@ export class ProjectController {
 	private loadingRequestsCounter: number = 0;
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
-	private deploymentsFetchRetryScheduler?: RetryScheduler;
 	private connections?: Connection[];
+	private retryScheduler?: RetryScheduler;
 
 	constructor(
 		projectView: IProjectView,
@@ -187,7 +187,7 @@ export class ProjectController {
 			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
 			LoggerService.error(namespaces.projectController, log);
 			if (isResetCounters) {
-				this.deploymentsFetchRetryScheduler?.startCountdown();
+				this.retryScheduler?.startCountdown();
 			}
 			return;
 		}
@@ -197,7 +197,7 @@ export class ProjectController {
 			payload: "",
 		});
 
-		this.deploymentsFetchRetryScheduler?.resetCountdown();
+		this.retryScheduler?.resetCountdown();
 
 		if (isEqual(this.deployments, deployments)) {
 			return;
@@ -1091,12 +1091,12 @@ export class ProjectController {
 	async loadInitialDataOnceViewReady() {
 		this.deployments = undefined;
 
-		this.deploymentsFetchRetryScheduler = new RetryScheduler(
+		this.retryScheduler = new RetryScheduler(
 			INITIAL_RETRY_SCHEDULE_COUNTDOWN,
 			() => this.loadAndDisplayDeployments(),
 			(countdown) => this.updateViewWithCountdown(countdown)
 		);
-		this.deploymentsFetchRetryScheduler.startFetchInterval();
+		this.retryScheduler.startFetchInterval();
 
 		const isResourcesPathExist = await this.getResourcesPathFromContext();
 		if (isResourcesPathExist) {
