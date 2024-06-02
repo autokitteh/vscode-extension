@@ -1158,7 +1158,7 @@ export class ProjectController {
 		this.stopLoader();
 
 		if (connectionsError) {
-			commands.executeCommand(vsCommands.showErrorMessage, (connectionsError as Error).message);
+			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.fetchingConnectionsFailed"));
 		}
 
 		this.connections = connections;

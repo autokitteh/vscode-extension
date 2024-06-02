@@ -58,5 +58,6 @@
 	"failedOpenConnectionInit": "Failed to open connection initialization for {{connectionName}} in {{projectName}}",
 	"failedOpenConnectionInitEnriched": "Failed to open connection initialization for {{connectionName}} in {{projectName}}, URL: {{connectionURL}}",
 	"noConnectionsFound": "No connections found",
-	"connectionInitURLInvalid": "Connection initialization failed - invalid URL - for URL: {{url}} in {{projectName}}"
+	"connectionInitURLInvalid": "Connection initialization failed - invalid URL - for URL: {{url}} in {{projectName}}",
+	"fetchingConnectionsFailed": "Fetching connections failed for project {{projectName}}"
 }
