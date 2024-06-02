@@ -534,7 +534,6 @@ export class ProjectController {
 		this.project = project;
 		this.view.show(project!.name);
 		this.setProjectNameInView();
-
 		this.sessions = undefined;
 	}
 
