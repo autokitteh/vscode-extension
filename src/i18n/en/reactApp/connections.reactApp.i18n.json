@@ -16,6 +16,5 @@
 		"information": "Information"
 	},
 	"refresh": "Refresh",
-	"refreshConnections": "Refresh connections",
-	"refreshConnectionStatus": "Refresh Connection - {{connectionName}} Status"
+	"refreshConnections": "Refresh connections"
 }
