@@ -6,13 +6,7 @@ import { INITIAL_SESSIONS_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
 import { ConnectionsController } from "@controllers";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
-import {
-	DeploymentState,
-	MessageType,
-	ProjectIntervalTypes,
-	ProjectRecurringErrorMessages,
-	SessionStateType,
-} from "@enums";
+import { DeploymentState, MessageType, ProjectRecurringErrorMessages, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { ConnectionsViewDelegate, IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
@@ -28,7 +22,6 @@ import { commands, OpenDialogOptions, window, env, Uri } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
-	private intervalKeeper: Map<ProjectIntervalTypes, NodeJS.Timeout> = new Map();
 	private onProjectDisposeCB?: Callback<string>;
 	private onProjectDeleteCB?: Callback<string>;
 	public projectId: string;
