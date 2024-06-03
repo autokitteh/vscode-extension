@@ -20,7 +20,7 @@ import { DeploymentsService, ProjectsService, SessionsService, LoggerService } f
 import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
-import { Connection, Deployment, Project, Session } from "@type/models";
+import { Deployment, Project, Session } from "@type/models";
 import { createDirectory, openFileExplorer } from "@utilities";
 import isEqual from "lodash.isequal";
 import { commands, OpenDialogOptions, window, env, Uri } from "vscode";
@@ -48,7 +48,6 @@ export class ProjectController {
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
 	private retryScheduler?: RetryScheduler;
-	private connections?: Connection[];
 	private connectionsController: ConnectionsController;
 
 	constructor(
@@ -63,8 +62,8 @@ export class ProjectController {
 		this.deploymentsRefreshRate = deploymentsRefreshRate;
 		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
 		this.connectionsController = new ConnectionsController(projectId, projectView, {
-			startLoader: this.startLoader,
-			stopLoader: this.stopLoader,
+			startLoader: () => this.startLoader,
+			stopLoader: () => this.stopLoader,
 		});
 	}
 
