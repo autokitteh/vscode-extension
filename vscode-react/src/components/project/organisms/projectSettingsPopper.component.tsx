@@ -1,7 +1,7 @@
 import React from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
-import DownloadIcon from "@react-assets/icons/download.svg?react";
+import { DownloadIcon } from "@react-assets/icons/download.icon";
 import ImportIcon from "@react-assets/icons/file-import.svg?react";
 import { Button } from "@react-components/atoms/button.component";
 import { sendMessage } from "@react-utilities";

@@ -8,4 +8,4 @@ export type Connection = {
 	statusInfoMessage: string;
 };
 
-export type ConnectionStatus = "unspecified" | "warning" | "error" | "ok";
+export type ConnectionStatus = "warning" | "error" | "ok";

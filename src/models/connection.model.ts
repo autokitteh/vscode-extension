@@ -8,9 +8,9 @@ const mapProtoStatusToConnectionStatus = (protoStatus?: Status): ConnectionStatu
 		return "ok"; // default to ok if no status is provided, as if it was unspecified
 	}
 
-	const temporaryStatusMapping = protoStatus.code === Status_Code.UNSPECIFIED ? Status_Code.OK : protoStatus.code;
+	const status = protoStatus.code === Status_Code.UNSPECIFIED ? Status_Code.OK : protoStatus.code;
 
-	switch (temporaryStatusMapping) {
+	switch (status) {
 		case Status_Code.OK:
 			return "ok";
 		case Status_Code.WARNING:
