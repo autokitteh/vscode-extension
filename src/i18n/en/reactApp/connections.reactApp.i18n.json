@@ -4,7 +4,8 @@
 		"unspecified": "Unspecified",
 		"ok": "OK",
 		"error": "Error",
-		"warning": "Warning"
+		"warning": "Warning",
+		"": ""
 	},
 	"init": "Initialize connection",
 	"test": "Test connection",

@@ -10,7 +10,8 @@ export class ConnectionsService {
 	static async list(projectId: string): Promise<ServiceResponse<Connection[]>> {
 		let connections;
 		try {
-			connections = (await connectionsClient.list({ projectId })).connections.map(convertConnectionProtoToModel);
+			const connectionsList = await connectionsClient.list({ projectId });
+			connections = connectionsList.connections.map(convertConnectionProtoToModel);
 		} catch (error) {
 			LoggerService.error(
 				namespaces.deploymentsService,

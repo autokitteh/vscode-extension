@@ -5,13 +5,11 @@ import { Connection, ConnectionStatus } from "@type/models";
 import { ValidateURL } from "@utilities";
 
 const mapProtoStatusToConnectionStatus = (protoStatus?: Status): ConnectionStatus => {
-	if (!protoStatus) {
+	if (!protoStatus || protoStatus.code === Status_Code.UNSPECIFIED) {
 		return "";
 	}
 
-	const status = protoStatus.code === Status_Code.UNSPECIFIED ? Status_Code.OK : protoStatus.code;
-
-	switch (status) {
+	switch (protoStatus.code) {
 		case Status_Code.OK:
 			return "ok";
 		case Status_Code.WARNING:
