@@ -1130,7 +1130,7 @@ export class ProjectController {
 		await this.connectionsController.fetchConnections();
 	}
 
-	openConnectionInitURL(connectionInit: { connectionId: string; initURL: string }) {
+	openConnectionInitURL(connectionInit: { connectionName: string; initURL: string }) {
 		this.connectionsController.openConnectionInitURL(connectionInit);
 	}
 }

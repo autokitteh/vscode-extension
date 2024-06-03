@@ -35,35 +35,25 @@ export class ConnectionsController {
 		});
 	}
 
-	openConnectionInitURL(connectionInit: { connectionId: string; initURL: string }) {
+	async openConnectionInitURL(connectionInit: { connectionName: string; initURL: string }) {
 		const connectionInitURL = Uri.parse(`${BASE_URL}${connectionInit.initURL}`);
-		if (!connectionInitURL) {
-			const errorMessage = translate().t("errors.connectionInitURLInvalid", {
+
+		const initLinkOpenInBrowser = await env.openExternal(connectionInitURL);
+
+		if (!initLinkOpenInBrowser) {
+			const notification = translate().t("errors.failedOpenConnectionInit", {
 				projectName: this.view.project?.name,
-				url: connectionInitURL,
+				connectionName: connectionInit.connectionName,
 			});
 
-			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
-			LoggerService.error(namespaces.connectionsController, errorMessage);
+			const log = translate().t("errors.failedOpenConnectionInitEnriched", {
+				projectName: this.view.project?.name,
+				connectionName: connectionInit.connectionName,
+				connectionURL: connectionInitURL,
+			});
+
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.connectionsController, log);
 		}
-		const connection = this.connections?.find((connection) => connection.connectionId === connectionInit.connectionId);
-
-		env.openExternal(connectionInitURL).then((success) => {
-			if (!success) {
-				const notification = translate().t("errors.failedOpenConnectionInit", {
-					projectName: this.view.project?.name,
-					connectionName: connection?.name,
-				});
-
-				const log = translate().t("errors.failedOpenConnectionInitEnriched", {
-					projectName: this.view.project?.name,
-					connectionName: connection?.name,
-					connectionURL: connectionInitURL,
-				});
-
-				commands.executeCommand(vsCommands.showErrorMessage, notification);
-				LoggerService.error(namespaces.connectionsController, log);
-			}
-		});
 	}
 }

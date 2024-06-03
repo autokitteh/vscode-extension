@@ -19,8 +19,8 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 		setConnections,
 	});
 
-	const handleConnectionInitClick = (connectionId: string, connectionInitURL: string) => {
-		sendMessage(MessageType.openConnectionInitURL, { connectionId, initURL: connectionInitURL });
+	const handleConnectionInitClick = (connectionName: string, connectionInitURL: string) => {
+		sendMessage(MessageType.openConnectionInitURL, { connectionName, initURL: connectionInitURL });
 	};
 
 	const handleRefreshClick = () => {
@@ -78,7 +78,7 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 										<Cell classes={["flex justify-center align-center"]}>
 											{connection.initURL && (
 												<div
-													onClick={() => handleConnectionInitClick(connection.connectionId, connection.initURL)}
+													onClick={() => handleConnectionInitClick(connection.name, connection.initURL)}
 													className="w-3 codicon codicon-gear text-white cursor-pointer"
 													title={translate().t("reactApp.connections.init")}
 												/>

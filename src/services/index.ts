@@ -9,3 +9,4 @@ export { StarlarkVersionManagerService } from "@services/starlark/starlarkVersio
 export { StarlarkSocketStreamingService } from "@services/starlark/starlarkSocketStreaming.service";
 export { BuildsService } from "@services/builds.service";
 export { ConnectionsService } from "@services/connections.service";
+export { IntegrationsService } from "@services/integrations.service";

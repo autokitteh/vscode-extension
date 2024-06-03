@@ -27,7 +27,7 @@ export interface IProjectViewDelegate {
 	toggleSessionsLiveTail?: Callback<Boolean>;
 	tryToReenable?: Callback;
 	openConnectionInitURL?: Callback<{
-		connectionId: string;
+		connectionName: string;
 		initURL: string;
 	}>;
 	openConnectionsModal?: Callback;

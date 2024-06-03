@@ -1,8 +1,8 @@
-import { connectionsClient, integrationsClient } from "@api/grpc/clients.grpc.api";
+import { connectionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { translate } from "@i18n";
 import { convertConnectionProtoToModel } from "@models";
-import { LoggerService } from "@services";
+import { IntegrationsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
 import { Connection } from "@type/models";
 
@@ -12,15 +12,18 @@ export class ConnectionsService {
 			const connections = await connectionsClient.list({ projectId });
 			const convertedConnections = connections.connections.map(convertConnectionProtoToModel);
 
-			const integrationsList = await integrationsClient.list({});
+			const { data: integrations } = await IntegrationsService.list();
 
 			convertedConnections.forEach((connection) => {
-				const integration = integrationsList.integrations.find(
-					(integration) => integration.integrationId === connection.integrationId
-				);
-				if (integration) {
-					connection.integrationName = integration.displayName;
+				const integration = integrations?.find((integration) => integration.integrationId === connection.integrationId);
+				if (!integration) {
+					LoggerService.error(
+						namespaces.deploymentsService,
+						translate().t("errors.integrationsMatchIntegrationNameFailed", { projectId })
+					);
+					return;
 				}
+				connection.integrationName = integration.name;
 			});
 
 			return { data: convertedConnections, error: undefined };
