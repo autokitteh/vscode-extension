@@ -40,21 +40,21 @@ export const ProjectSettingsPopper = ({
 					classes="w-1/5"
 					title={translate().t("reactApp.settings.copyPath")}
 				>
-					<div className="codicon codicon-copy text-vscode-foreground"></div>
+					<div className="codicon codicon-copy fill-text-vscode-foreground"></div>
 				</Button>
 				<Button
 					onClick={() => postMessage(MessageType.openProjectResourcesDirectory, resourcesDir)}
 					classes="ml-4 w-1/5"
 					title={translate().t("reactApp.settings.openProjectResourcesDirectory")}
 				>
-					<div className="codicon codicon-folder-opened text-vscode-foreground"></div>
+					<div className="codicon codicon-folder-opened fill-text-vscode-foreground"></div>
 				</Button>
 				<Button
 					onClick={() => postMessage(MessageType.setProjectResourcesDirectory, resourcesDir)}
 					classes="ml-4 w-1/5"
 					title={translate().t("reactApp.settings.setProjectResourcesDirectory")}
 				>
-					<ImportIcon className="text-vscode-foreground" />
+					<ImportIcon className="fill-text-vscode-foreground" />
 				</Button>
 				<Button
 					onClick={() => postMessage(MessageType.onClickSetResourcesDirectory, undefined)}
@@ -68,7 +68,7 @@ export const ProjectSettingsPopper = ({
 					classes="ml-4 w-1/5"
 					title={translate().t("reactApp.settings.deleteProject")}
 				>
-					<div className="codicon codicon-trash text-vscode-foreground" />
+					<div className="codicon codicon-trash fill-text-vscode-foreground" />
 				</Button>
 			</div>
 		</div>

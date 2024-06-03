@@ -69,7 +69,7 @@ export const Header = () => {
 						classes="flex relative z-30"
 						title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
 					>
-						<DownloadIcon className="fill-vscode-foreground" />
+						<DownloadIcon className="fill-text-vscode-foreground" />
 					</Button>
 				) : (
 					<Button
