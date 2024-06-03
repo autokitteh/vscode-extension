@@ -13,7 +13,7 @@ import {
 	SessionStateType,
 } from "@enums";
 import { translate } from "@i18n";
-import { IProjectView } from "@interfaces";
+import { ConnectionsViewDelegate, IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
 import { reverseSessionStateConverter } from "@models/utils";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
@@ -48,7 +48,7 @@ export class ProjectController {
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
 	private retryScheduler?: RetryScheduler;
-	private connectionsController: ConnectionsController;
+	public connections: ConnectionsViewDelegate;
 
 	constructor(
 		projectView: IProjectView,
@@ -61,7 +61,7 @@ export class ProjectController {
 		this.view.delegate = this;
 		this.deploymentsRefreshRate = deploymentsRefreshRate;
 		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
-		this.connectionsController = new ConnectionsController(projectId, projectView, {
+		this.connections = new ConnectionsController(projectId, projectView, {
 			startLoader: () => this.startLoader,
 			stopLoader: () => this.stopLoader,
 		});
@@ -1123,13 +1123,5 @@ export class ProjectController {
 		this.fetchSessions();
 		this.sessionsNextPageToken = undefined;
 		return;
-	}
-
-	async fetchConnections() {
-		await this.connectionsController.fetchConnections();
-	}
-
-	openConnectionInitURL(connectionInit: { connectionName: string; initURL: string }) {
-		this.connectionsController.openConnectionInitURL(connectionInit);
 	}
 }

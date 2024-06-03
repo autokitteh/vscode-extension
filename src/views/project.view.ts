@@ -1,6 +1,6 @@
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n/translation.i18n";
-import { IProjectView, IProjectViewDelegate } from "@interfaces";
+import { IProjectView, ProjectViewDelegate } from "@interfaces";
 import { StartSessionArgsType, Message } from "@type";
 import { getNonce } from "@utilities";
 import { getUri } from "@utilities/getUri.utils";
@@ -9,7 +9,7 @@ import { Uri, window } from "vscode";
 
 export class ProjectView implements IProjectView {
 	private panel?: vscode.WebviewPanel;
-	public delegate?: IProjectViewDelegate;
+	public delegate?: ProjectViewDelegate;
 
 	constructor(private context: vscode.ExtensionContext) {}
 
@@ -90,10 +90,12 @@ export class ProjectView implements IProjectView {
 					case MessageType.tryToReconnect:
 						this.delegate?.tryToReenable?.();
 					case MessageType.openConnectionInitURL:
-						this.delegate?.openConnectionInitURL?.(message.payload as { connectionName: string; initURL: string });
+						this.delegate?.connections.openConnectionInitURL?.(
+							message.payload as { connectionName: string; initURL: string }
+						);
 						break;
 					case MessageType.fetchConnections:
-						this.delegate?.fetchConnections?.();
+						this.delegate?.connections.fetchConnections?.();
 						break;
 					default:
 				}
