@@ -6,7 +6,7 @@ import { ValidateURL } from "@utilities";
 
 const mapProtoStatusToConnectionStatus = (protoStatus?: Status): ConnectionStatus => {
 	if (!protoStatus) {
-		return "ok"; // default to ok if no status is provided, as if it was unspecified
+		return "";
 	}
 
 	const status = protoStatus.code === Status_Code.UNSPECIFIED ? Status_Code.OK : protoStatus.code;

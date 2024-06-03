@@ -3,7 +3,6 @@ import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { ConnectionsService, LoggerService } from "@services";
 import { Connection } from "@type/models";
-import isEqual from "lodash.isequal";
 import { commands, env, Uri } from "vscode";
 
 export class ConnectionsController {
@@ -28,10 +27,6 @@ export class ConnectionsController {
 				vsCommands.showErrorMessage,
 				translate().t("errors.fetchingConnectionsFailed", { projectId: this.projectId })
 			);
-			return;
-		}
-
-		if (isEqual(this.connections, connections)) {
 			return;
 		}
 

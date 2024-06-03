@@ -83,6 +83,8 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	const isLastDeployment = (deploymentId: string) => deploymentId === deployments?.[0]?.deploymentId;
 
 	const startSession = () => {
+		console.log("startSession");
+
 		const lastDeployment = deployments![0];
 
 		setDisplayedErrors({});
