@@ -3,7 +3,7 @@ import { Connection as ProtoConnection } from "@ak-proto-ts/connections/v1/conne
 import { Connection, ConnectionStatus } from "@type/models";
 import { ValidateURL } from "@utilities";
 
-const mapProtoStatusToConnectionStatus = (protoStatus: Status | undefined): ConnectionStatus => {
+const mapProtoStatusToConnectionStatus = (protoStatus?: Status): ConnectionStatus => {
 	if (!protoStatus) {
 		return "ok"; // default to ok if no status is provided, as if it was unspecified
 	}
