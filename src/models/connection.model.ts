@@ -1,5 +1,6 @@
 import { Status, Status_Code } from "@ak-proto-ts/common/v1/status_pb";
 import { Connection as ProtoConnection } from "@ak-proto-ts/connections/v1/connection_pb";
+import { BASE_URL } from "@constants";
 import { Connection, ConnectionStatus } from "@type/models";
 import { ValidateURL } from "@utilities";
 
@@ -25,7 +26,7 @@ export const convertConnectionProtoToModel = (protoConnection: ProtoConnection):
 		connectionId: protoConnection.connectionId,
 		integrationId: protoConnection.integrationId,
 		name: protoConnection.name,
-		initURL: ValidateURL(protoConnection.links?.init_url) ? protoConnection.links.init_url : "",
+		initURL: ValidateURL(`${BASE_URL}${protoConnection.links?.init_url}`) ? protoConnection.links.init_url : "",
 		status: mapProtoStatusToConnectionStatus(protoConnection.status),
 		statusInfoMessage: protoConnection.status?.message || "",
 	};
