@@ -2,7 +2,6 @@ export const DEFAULT_SERVER_URL = "http://localhost:9980";
 export const EXT_PUBLISHER = "undefined_publisher";
 export const DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL = 1000;
 export const DEFAULT_ENVIRONMENT = "default";
-export const DEFAULT_CONNECTION_TEST_INTERVAL = 5000;
 export const INITIAL_RETRY_SCHEDULE_COUNTDOWN = 60;
 export const INITIAL_SESSIONS_RETRY_SCHEDULE_COUNTDOWN = 5;
 export const EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER = 2;
