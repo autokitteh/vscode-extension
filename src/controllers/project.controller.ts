@@ -1,8 +1,13 @@
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
-import { vsCommands, namespaces, channels, INITIAL_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
-import { INITIAL_SESSIONS_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
+import {
+	vsCommands,
+	namespaces,
+	channels,
+	INITIAL_DEPLOYMENTS_RETRY_SCHEDULE_INTERVAL,
+	INITIAL_SESSION_LOG_RETRY_SCHEDULE_INTERVAL,
+} from "@constants";
 import { ConnectionsController } from "@controllers";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
@@ -487,7 +492,7 @@ export class ProjectController {
 		}
 
 		this.sessionLogRetryScheduler = new RetryScheduler(
-			INITIAL_SESSIONS_RETRY_SCHEDULE_COUNTDOWN,
+			INITIAL_SESSION_LOG_RETRY_SCHEDULE_INTERVAL,
 			() => this.displaySessionsHistory(sessionId),
 			() => {}
 		);
@@ -1073,7 +1078,7 @@ export class ProjectController {
 		this.deployments = undefined;
 
 		this.deploymentsRetryScheduler = new RetryScheduler(
-			INITIAL_RETRY_SCHEDULE_COUNTDOWN,
+			INITIAL_DEPLOYMENTS_RETRY_SCHEDULE_INTERVAL,
 			() => this.loadAndDisplayDeployments(),
 			(countdown) => this.updateViewWithCountdown(countdown)
 		);

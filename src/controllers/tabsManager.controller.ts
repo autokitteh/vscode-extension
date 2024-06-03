@@ -1,4 +1,4 @@
-import { projectControllerRefreshRate } from "@constants";
+import { INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL } from "@constants";
 import { ProjectController } from "@controllers";
 import { SidebarTreeItem } from "@type/views";
 import { ProjectView } from "@views";
@@ -18,7 +18,7 @@ export class TabsManagerController {
 			if (!this.openWebviews[project.key]) {
 				const newView = new ProjectView(this.context);
 
-				const newController = new ProjectController(newView, project.key, projectControllerRefreshRate);
+				const newController = new ProjectController(newView, project.key, INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL);
 				newController.openProject(
 					() => this.onProjectDispose(project.key as string),
 					() => this.onProjectDelete(project.key as string)

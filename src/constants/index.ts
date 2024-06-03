@@ -1,14 +1,14 @@
 export {
 	DEFAULT_SERVER_URL,
 	EXT_PUBLISHER,
-	DEFAULT_PROJECT_VIEW_REFRESH_INTERVAL,
 	AK_FRONTEND_URL,
 	DEFAULT_SESSIONS_VISIBLE_PAGE_SIZE,
-	INITIAL_RETRY_SCHEDULE_COUNTDOWN,
+	INITIAL_DEPLOYMENTS_RETRY_SCHEDULE_INTERVAL,
 	EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER,
-	INITIAL_SESSIONS_RETRY_SCHEDULE_COUNTDOWN,
+	INITIAL_SESSION_LOG_RETRY_SCHEDULE_INTERVAL,
+	INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL,
 } from "@constants/extensionConfiguration.constants";
-export { BASE_URL, projectControllerRefreshRate } from "@constants/api.constants";
+export { BASE_URL } from "@constants/api.constants";
 export { vsCommands } from "@constants/vsCommands.constants";
 export { namespaces } from "@constants/namespaces.logger.constants";
 export { channels } from "@constants/output.constants";

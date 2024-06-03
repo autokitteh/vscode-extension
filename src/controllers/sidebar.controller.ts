@@ -1,5 +1,5 @@
 import { Code, ConnectError } from "@connectrpc/connect";
-import { INITIAL_RETRY_SCHEDULE_COUNTDOWN, namespaces, vsCommands } from "@constants";
+import { INITIAL_DEPLOYMENTS_RETRY_SCHEDULE_INTERVAL, namespaces, vsCommands } from "@constants";
 import { getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import { translate } from "@i18n";
@@ -19,7 +19,7 @@ export class SidebarController {
 		this.view = sidebarView;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
 		this.retryScheduler = new RetryScheduler(
-			INITIAL_RETRY_SCHEDULE_COUNTDOWN,
+			INITIAL_DEPLOYMENTS_RETRY_SCHEDULE_INTERVAL,
 			() => this.refreshProjects(),
 			(countdown) =>
 				this.updateViewWithCountdown(
