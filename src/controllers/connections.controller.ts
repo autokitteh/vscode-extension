@@ -1,9 +1,9 @@
-// ConnectionsController.ts
 import { BASE_URL, namespaces, vsCommands } from "@constants";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { ConnectionsService, LoggerService } from "@services";
 import { Connection } from "@type/models";
+import isEqual from "lodash.isequal";
 import { commands, env, Uri } from "vscode";
 
 export class ConnectionsController {
@@ -20,11 +20,19 @@ export class ConnectionsController {
 
 	async fetchConnections() {
 		this.loaderFuncs.startLoader();
-		const { data: connections, error: connectionsError } = await ConnectionsService.list(this.projectId);
+		const { data: connections, error } = await ConnectionsService.list(this.projectId);
 		this.loaderFuncs.stopLoader();
 
-		if (connectionsError) {
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.fetchingConnectionsFailed"));
+		if (error) {
+			commands.executeCommand(
+				vsCommands.showErrorMessage,
+				translate().t("errors.fetchingConnectionsFailed", { projectId: this.projectId })
+			);
+			return;
+		}
+
+		if (isEqual(this.connections, connections)) {
+			return;
 		}
 
 		this.connections = connections;
