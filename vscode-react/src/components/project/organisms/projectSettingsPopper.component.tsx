@@ -61,7 +61,7 @@ export const ProjectSettingsPopper = ({
 					title={translate().t("reactApp.settings.downloadDirectoryOfExecutables")}
 					classes="ml-4 w-1/5"
 				>
-					<DownloadIcon className="text-vscode-background text-vscode-foreground" />
+					<DownloadIcon className="fill-vscode-button-background" />
 				</Button>
 				<Button
 					onClick={() => postMessage(MessageType.deleteProject, undefined)}
