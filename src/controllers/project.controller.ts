@@ -1,7 +1,8 @@
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
-import { vsCommands, namespaces, channels, BASE_URL, INITIAL_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
+import { vsCommands, namespaces, channels, INITIAL_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
+import { ConnectionsController } from "@controllers";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import {
@@ -15,7 +16,7 @@ import { translate } from "@i18n";
 import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
 import { reverseSessionStateConverter } from "@models/utils";
-import { DeploymentsService, ProjectsService, SessionsService, LoggerService, ConnectionsService } from "@services";
+import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
 import { BuildsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
@@ -48,6 +49,7 @@ export class ProjectController {
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
 	private retryScheduler?: RetryScheduler;
 	private connections?: Connection[];
+	private connectionsController: ConnectionsController;
 
 	constructor(
 		projectView: IProjectView,
@@ -60,6 +62,10 @@ export class ProjectController {
 		this.view.delegate = this;
 		this.deploymentsRefreshRate = deploymentsRefreshRate;
 		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
+		this.connectionsController = new ConnectionsController(projectId, projectView, {
+			startLoader: this.startLoader,
+			stopLoader: this.stopLoader,
+		});
 	}
 
 	private updateViewWithCountdown(countdown: string) {
@@ -1120,52 +1126,11 @@ export class ProjectController {
 		return;
 	}
 
-	openConnectionInitURL(connectionInit: { connectionId: string; initURL: string }) {
-		const connectionInitURL = Uri.parse(`${BASE_URL}${connectionInit.initURL}`);
-		if (!connectionInitURL) {
-			const errorMessage = translate().t("errors.connectionInitURLInvalid", {
-				projectName: this.project?.name,
-				url: connectionInitURL,
-			});
-
-			commands.executeCommand(vsCommands.showErrorMessage, errorMessage);
-			LoggerService.error(namespaces.projectController, errorMessage);
-		}
-		const connection = this.connections?.find((connection) => connection.connectionId === connectionInit.connectionId);
-
-		env.openExternal(connectionInitURL).then((success) => {
-			if (!success) {
-				const notification = translate().t("errors.failedOpenConnectionInit", {
-					projectName: this.project?.name,
-					connectionName: connection?.name,
-				});
-
-				const log = translate().t("errors.failedOpenConnectionInitEnriched", {
-					projectName: this.project?.name,
-					connectionName: connection?.name,
-					connectionURL: connectionInitURL,
-				});
-
-				commands.executeCommand(vsCommands.showErrorMessage, notification);
-				LoggerService.error(namespaces.projectController, log);
-			}
-		});
+	async fetchConnections() {
+		await this.connectionsController.fetchConnections();
 	}
 
-	async fetchConnections() {
-		this.startLoader();
-		const { data: connections, error: connectionsError } = await ConnectionsService.list(this.projectId);
-		this.stopLoader();
-
-		if (connectionsError) {
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.fetchingConnectionsFailed"));
-		}
-
-		this.connections = connections;
-
-		this.view.update({
-			type: MessageType.setConnections,
-			payload: this.connections,
-		});
+	openConnectionInitURL(connectionInit: { connectionId: string; initURL: string }) {
+		this.connectionsController.openConnectionInitURL(connectionInit);
 	}
 }
