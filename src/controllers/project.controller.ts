@@ -36,7 +36,6 @@ export class ProjectController {
 	private cachedSessionHistoryStates: Map<string, SessionLogRecord[]> = new Map();
 	private sessionLogOutputCursor: number = 0;
 	private deployments?: Deployment[];
-	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
 	private isDeploymentLiveTailPossible?: boolean;
 	private filterSessionsState?: string;
@@ -49,11 +48,10 @@ export class ProjectController {
 	private deploymentsRetryScheduler?: RetryScheduler;
 	private sessionLogRetryScheduler?: RetryScheduler;
 
-	constructor(projectView: IProjectView, projectId: string, sessionsLogRefreshRate: number) {
+	constructor(projectView: IProjectView, projectId: string) {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
-		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
 		this.connections = new ConnectionsController(projectId, projectView, {
 			startLoader: () => this.startLoader,
 			stopLoader: () => this.stopLoader,
