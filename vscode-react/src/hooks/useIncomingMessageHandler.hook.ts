@@ -3,7 +3,7 @@ import { MessageType, Theme } from "@enums";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
-import { SessionEntrypoint } from "@type/models";
+import { Connection, SessionEntrypoint } from "@type/models";
 
 export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) => {
 	useEffect(() => {
@@ -12,7 +12,7 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 
 			switch (type) {
 				case MessageType.setTheme:
-					handlers.setThemeVisualType?.(payload as Theme);
+					handlers.setTheme?.(payload as Theme);
 					break;
 				case MessageType.setProjectName:
 					handlers.setProjectName?.(payload as string);
@@ -34,6 +34,9 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 					break;
 				case MessageType.selectSession:
 					handlers.setSelectedSession?.(payload as string);
+					break;
+				case MessageType.setConnections:
+					handlers.setConnections?.(payload as Connection[]);
 					break;
 				case MessageType.startLoader:
 					handlers.startLoader?.();

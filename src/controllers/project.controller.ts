@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import { vsCommands, namespaces, channels, INITIAL_RETRY_SCHEDULE_COUNTDOWN } from "@constants";
+import { ConnectionsController } from "@controllers";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import {
@@ -12,7 +13,7 @@ import {
 	SessionStateType,
 } from "@enums";
 import { translate } from "@i18n";
-import { IProjectView } from "@interfaces";
+import { ConnectionsViewDelegate, IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
 import { reverseSessionStateConverter } from "@models/utils";
 import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
@@ -36,7 +37,6 @@ export class ProjectController {
 	private cachedSessionHistoryStates: Map<string, SessionLogRecord[]> = new Map();
 	private sessionLogOutputCursor: number = 0;
 	private deployments?: Deployment[];
-	private deploymentsRefreshRate: number;
 	private sessionsLogRefreshRate: number;
 	private selectedDeploymentId?: string;
 	private isDeploymentLiveTailPossible?: boolean;
@@ -47,18 +47,17 @@ export class ProjectController {
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
 	private retryScheduler?: RetryScheduler;
+	public connections: ConnectionsViewDelegate;
 
-	constructor(
-		projectView: IProjectView,
-		projectId: string,
-		deploymentsRefreshRate: number,
-		sessionsLogRefreshRate: number
-	) {
+	constructor(projectView: IProjectView, projectId: string, sessionsLogRefreshRate: number) {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
-		this.deploymentsRefreshRate = deploymentsRefreshRate;
 		this.sessionsLogRefreshRate = sessionsLogRefreshRate;
+		this.connections = new ConnectionsController(projectId, projectView, {
+			startLoader: () => this.startLoader,
+			stopLoader: () => this.stopLoader,
+		});
 	}
 
 	private updateViewWithCountdown(countdown: string) {
@@ -530,7 +529,6 @@ export class ProjectController {
 		if (!project) {
 			LoggerService.error(namespaces.projectController, log);
 		}
-
 		this.project = project;
 		this.view.show(project!.name);
 		this.setProjectNameInView();

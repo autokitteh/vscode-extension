@@ -1,7 +1,7 @@
 import React from "react";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
-import DownloadIcon from "@react-assets/icons/download.svg?react";
+import { DownloadIcon } from "@react-assets/icons/download.icon";
 import ImportIcon from "@react-assets/icons/file-import.svg?react";
 import { Button } from "@react-components/atoms/button.component";
 import { sendMessage } from "@react-utilities";
@@ -40,35 +40,35 @@ export const ProjectSettingsPopper = ({
 					classes="w-1/5"
 					title={translate().t("reactApp.settings.copyPath")}
 				>
-					<div className="codicon codicon-copy text-vscode-foreground"></div>
+					<div className="codicon codicon-copy fill-text-vscode-foreground"></div>
 				</Button>
 				<Button
 					onClick={() => postMessage(MessageType.openProjectResourcesDirectory, resourcesDir)}
 					classes="ml-4 w-1/5"
 					title={translate().t("reactApp.settings.openProjectResourcesDirectory")}
 				>
-					<div className="codicon codicon-folder-opened text-vscode-foreground"></div>
+					<div className="codicon codicon-folder-opened fill-text-vscode-foreground"></div>
 				</Button>
 				<Button
 					onClick={() => postMessage(MessageType.setProjectResourcesDirectory, resourcesDir)}
 					classes="ml-4 w-1/5"
 					title={translate().t("reactApp.settings.setProjectResourcesDirectory")}
 				>
-					<ImportIcon className="text-vscode-background text-vscode-foreground" />
+					<ImportIcon className="fill-text-vscode-foreground" />
 				</Button>
 				<Button
 					onClick={() => postMessage(MessageType.onClickSetResourcesDirectory, undefined)}
 					title={translate().t("reactApp.settings.downloadDirectoryOfExecutables")}
 					classes="ml-4 w-1/5"
 				>
-					<DownloadIcon className="text-vscode-background text-vscode-foreground" />
+					<DownloadIcon className="fill-text-vscode-foreground" />
 				</Button>
 				<Button
 					onClick={() => postMessage(MessageType.deleteProject, undefined)}
 					classes="ml-4 w-1/5"
 					title={translate().t("reactApp.settings.deleteProject")}
 				>
-					<div className="codicon codicon-trash text-vscode-foreground" />
+					<div className="codicon codicon-trash fill-text-vscode-foreground" />
 				</Button>
 			</div>
 		</div>

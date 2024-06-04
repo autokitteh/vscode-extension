@@ -1,8 +1,9 @@
 import { useRef, useState } from "react";
-import { MessageType, Theme } from "@enums";
+import { MessageType } from "@enums";
 import { translate } from "@i18n";
-import DownloadIcon from "@react-assets/icons/download.svg?react";
+import { DownloadIcon } from "@react-assets/icons/download.icon";
 import { Button, Logo, Overlay } from "@react-components/atoms";
+import { ConnectionsModal } from "@react-components/connections";
 import { Popper } from "@react-components/molecules";
 import { ProjectSettingsPopper } from "@react-components/project/organisms";
 import { useAppDispatch } from "@react-context/appState.context";
@@ -12,24 +13,29 @@ import "split-pane-react/esm/themes/default.css";
 
 export const Header = () => {
 	const [projectName, setProjectName] = useState<string>();
-	const [themeVisualType, setThemeVisualType] = useState<Theme | undefined>();
 	const [resourcesDir, setResourcesDir] = useState<string>("");
 	const [settingsPopperVisible, setSettingsPopperVisible] = useState<boolean>(false);
 	const pathPopperElementRef = useRef<HTMLDivElement | null>(null);
-
 	const { stopLoader, startLoader } = useAppDispatch();
+	const { setTheme } = useAppDispatch();
 
+	const [connectionsModalVisible, setConnectionsModalVisible] = useState<boolean>(false);
 	useIncomingMessageHandler({
 		stopLoader,
 		startLoader,
 		setProjectName,
-		setThemeVisualType,
 		setResourcesDir,
+		setTheme,
 	});
+
+	const openConnectionsModal = () => {
+		setConnectionsModalVisible(true);
+		sendMessage(MessageType.fetchConnections);
+	};
 
 	return (
 		<div className="flex items-center w-full">
-			<Logo className="w-9 h-9 m-2" themeVisualType={themeVisualType} />
+			<Logo className="w-9 h-9 m-2" />
 			<div className="text-vscode-input-foreground font-bold text-lg">{projectName}</div>
 			<Button
 				classes="mx-4"
@@ -49,14 +55,21 @@ export const Header = () => {
 				{translate().t("reactApp.general.deploy")}
 			</Button>
 			<div className="flex-grow"></div>
-			<div className="flex-col">
+			<div className="flex flex-row">
+				<Button
+					onClick={() => openConnectionsModal()}
+					classes="flex relative z-30 mr-2"
+					title={translate().t("reactApp.settings.openConnectionsSettingsScreen")}
+				>
+					<div className="codicon codicon-link text-vscode-background mr-1" /> Connections
+				</Button>
 				{!resourcesDir ? (
 					<Button
 						onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
 						classes="flex relative z-30"
 						title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
 					>
-						<DownloadIcon className="text-vscode-background" />
+						<DownloadIcon className="fill-text-vscode-foreground" />
 					</Button>
 				) : (
 					<Button
@@ -72,6 +85,7 @@ export const Header = () => {
 					<ProjectSettingsPopper resourcesDir={resourcesDir} closePopper={() => setSettingsPopperVisible(false)} />
 				</Popper>
 			</div>
+			{connectionsModalVisible && <ConnectionsModal onClose={() => setConnectionsModalVisible(false)} />}
 		</div>
 	);
 };

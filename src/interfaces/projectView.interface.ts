@@ -1,7 +1,7 @@
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 
-export interface IProjectViewDelegate {
+export interface ProjectViewDelegate {
 	onClose?: Callback;
 	onBlur?: Callback;
 	onFocus?: Callback;
@@ -26,6 +26,15 @@ export interface IProjectViewDelegate {
 	loadMoreSessions?: Callback;
 	toggleSessionsLiveTail?: Callback<Boolean>;
 	tryToReenable?: Callback;
+	connections: ConnectionsViewDelegate;
+}
+export interface ConnectionsViewDelegate {
+	openConnectionInitURL?: Callback<{
+		connectionName: string;
+		initURL: string;
+	}>;
+	openConnectionsModal?: Callback;
+	fetchConnections?: Callback;
 }
 
 export interface IProjectView {
@@ -33,5 +42,5 @@ export interface IProjectView {
 	reveal(projectName: string): void;
 	update(data: any): void;
 	dispose(): void;
-	delegate?: IProjectViewDelegate;
+	delegate?: ProjectViewDelegate;
 }

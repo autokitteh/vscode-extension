@@ -31,4 +31,7 @@ export enum MessageType {
 	toggleSessionsLiveTail = "TOGGLE_SESSIONS_LIVE_TAIL",
 	setRetryCountdown = "SET_RETRY_COUNTDOWN",
 	tryToReconnect = "TRY_TO_RECONNECT",
+	setConnections = "SET_CONNECTIONS",
+	openConnectionInitURL = "OPEN_CONNECTION_INIT_URL",
+	fetchConnections = "FETCH_CONNECTIONS",
 }

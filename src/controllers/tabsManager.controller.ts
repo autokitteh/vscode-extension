@@ -1,4 +1,4 @@
-import { projectControllerRefreshRate, projectControllerSessionsLogRefreshRate } from "@constants";
+import { projectControllerRefreshRate } from "@constants";
 import { ProjectController } from "@controllers";
 import { SidebarTreeItem } from "@type/views";
 import { ProjectView } from "@views";
@@ -18,12 +18,7 @@ export class TabsManagerController {
 			if (!this.openWebviews[project.key]) {
 				const newView = new ProjectView(this.context);
 
-				const newController = new ProjectController(
-					newView,
-					project.key,
-					projectControllerRefreshRate,
-					projectControllerSessionsLogRefreshRate
-				);
+				const newController = new ProjectController(newView, project.key, projectControllerRefreshRate);
 				newController.openProject(
 					() => this.onProjectDispose(project.key as string),
 					() => this.onProjectDelete(project.key as string)

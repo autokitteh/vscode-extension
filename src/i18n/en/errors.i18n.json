@@ -38,6 +38,9 @@
 	"buildInformationForSingleshotNotLoaded": "Couldn't load build information for singleshot",
 	"buildInformationForSingleshotNotParsed": "Couldn't parse build information for singleshot",
 	"buildInfoFetchFailedForBuild": "Couldn't fetch build info for build {{buildId}}, error: {{error}}",
+	"connectionsListFetchFailed": "Couldn't fetch connections list for project {{projectId}}",
+	"integrationsListFetchFailed": "Couldn't fetch integrations list",
+	"integrationsMatchIntegrationNameFailed": "Couldn't match integration name during fetch for project {{projectId}}",
 	"buildProjectError": "Couldn't build project {{projectId}}, error: {{error}}",
 	"creatingDirectory": "Project directory setup failed - project {{projectName}}",
 	"creatingDirectoryExtended": "Project directory setup failed - project {{projectName}}, error: {{error}}",
@@ -53,5 +56,9 @@
 	"sessionLogRecordFetchFailedShort": "Session log fetch failed for deployment ID: {{deploymentId}}",
 	"sessionLogRecordFetchFailed": "Session log fetch failed for deployment ID: {{deploymentId}}, error: {{error}}",
 	"loadingCounterStopFailure": "Loading requests counter failure on stop - resetting",
-	"loadingCounterStartFailure": "Loading requests counter failure on start - resetting"
+	"loadingCounterStartFailure": "Loading requests counter failure on start - resetting",
+	"failedOpenConnectionInit": "Failed to open connection initialization for {{connectionName}} in {{projectName}}",
+	"failedOpenConnectionInitEnriched": "Failed to open connection initialization for {{connectionName}} in {{projectName}}, URL: {{connectionURL}}",
+	"connectionInitURLInvalid": "Connection initialization failed - invalid URL - for URL: {{url}} in {{projectName}}",
+	"fetchingConnectionsFailed": "Fetching connections failed for project ID: {{projectId}}"
 }

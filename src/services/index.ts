@@ -8,3 +8,5 @@ export { StarlarkLSPService } from "@services/starlark.service";
 export { StarlarkVersionManagerService } from "@services/starlark/starlarkVersionManager.service";
 export { StarlarkSocketStreamingService } from "@services/starlark/starlarkSocketStreaming.service";
 export { BuildsService } from "@services/builds.service";
+export { ConnectionsService } from "@services/connections.service";
+export { IntegrationsService } from "@services/integrations.service";

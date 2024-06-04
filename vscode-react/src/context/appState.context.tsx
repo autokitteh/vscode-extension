@@ -1,9 +1,11 @@
 import React, { createContext, ReactNode, useContext, useEffect, useReducer, useState } from "react";
+import { Theme } from "@enums";
 import { Action } from "src/types";
 
 type State = {
 	modalName: string;
 	loading: boolean;
+	themeType: Theme;
 	delayedLoading: boolean;
 	selectedDeploymentId?: string;
 };
@@ -14,6 +16,8 @@ export const appStateReducer = (state: State, action: Action): State => {
 	switch (action.type) {
 		case "SET_MODAL_NAME":
 			return { ...state, modalName: action.payload };
+		case "SET_THEME":
+			return { ...state, themeType: action.payload };
 		case "SET_LOADER":
 			return { ...state, loading: action.payload };
 		case "SET_SELECTED_DEPLOYMENT":
@@ -26,9 +30,10 @@ export const appStateReducer = (state: State, action: Action): State => {
 export const AppStateProvider = ({ children }: { children: ReactNode }) => {
 	const initialState: State = {
 		modalName: "",
-		loading: true,
+		loading: false,
 		selectedDeploymentId: undefined,
 		delayedLoading: false,
+		themeType: Theme.DARK,
 	};
 
 	const [state, dispatch] = useReducer(appStateReducer, initialState);
@@ -73,10 +78,14 @@ export const useAppDispatch = () => {
 	const setModalName = (modalName: string) => {
 		dispatch({ type: "SET_MODAL_NAME", payload: modalName });
 	};
+	const setTheme = (themeType: Theme) => {
+		dispatch({ type: "SET_THEME", payload: themeType });
+	};
 
 	return {
 		stopLoader,
 		startLoader,
 		setModalName,
+		setTheme,
 	};
 };
