@@ -369,7 +369,7 @@
 		"test:run": "vitest run",
 		"test:watch": "vitest"
 	},
-	"version": "0.18.5",
+	"version": "0.19.0",
 	"workspaces": [
 		"vscode-react"
 	]

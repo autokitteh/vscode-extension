@@ -1,3 +1,10 @@
+# [0.19.0](https://github.com/autokitteh/vscode-extension/compare/v0.18.5...v0.19.0) (2024-06-04)
+
+
+### Features
+
+* connections management ([#295](https://github.com/autokitteh/vscode-extension/issues/295)) ([0516c9b](https://github.com/autokitteh/vscode-extension/commit/0516c9b0d0c3f1f12f5fe861d752923fa6dca87f))
+
 ## [0.18.5](https://github.com/autokitteh/vscode-extension/compare/v0.18.4...v0.18.5) (2024-05-30)
 
 
