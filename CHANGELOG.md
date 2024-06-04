@@ -1,3 +1,10 @@
+## [0.19.1](https://github.com/autokitteh/vscode-extension/compare/v0.19.0...v0.19.1) (2024-06-04)
+
+
+### Bug Fixes
+
+* adjust retry mechanism for session and session logs - interval bugs ([#319](https://github.com/autokitteh/vscode-extension/issues/319)) ([965a032](https://github.com/autokitteh/vscode-extension/commit/965a032250abd2dec718e2311773cb29021b9f18))
+
 # [0.19.0](https://github.com/autokitteh/vscode-extension/compare/v0.18.5...v0.19.0) (2024-06-04)
 
 
