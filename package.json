@@ -97,11 +97,6 @@
 					],
 					"type": "string"
 				},
-				"autokitteh.project.refresh.interval": {
-					"default": 1,
-					"description": "Refresh interval in seconds for the projects panel",
-					"type": "number"
-				},
 				"autokitteh.serviceEnabled": {
 					"default": false,
 					"description": "Is extension ON",
