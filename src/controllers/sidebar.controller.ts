@@ -14,6 +14,7 @@ export class SidebarController {
 	private projects?: SidebarTreeItem[];
 	private retryScheduler: RetryScheduler;
 	private disposables: Disposable[] = [];
+	private projectsRetryRestarted: boolean = false;
 
 	constructor(sidebarView: ISidebarView) {
 		this.view = sidebarView;
@@ -51,6 +52,7 @@ export class SidebarController {
 
 			if ((error as ConnectError).code === Code.Unavailable || (error as ConnectError).code === Code.Aborted) {
 				if (resetCountdown) {
+					this.projectsRetryRestarted = false;
 					this.retryScheduler.startCountdown();
 					return;
 				}
@@ -61,7 +63,10 @@ export class SidebarController {
 			}
 		}
 
-		this.retryScheduler.resetCountdown();
+		if (!this.projectsRetryRestarted) {
+			this.projectsRetryRestarted = true;
+			this.retryScheduler.resetCountdown();
+		}
 
 		if (projects!.length) {
 			return projects!.map((project) => ({
