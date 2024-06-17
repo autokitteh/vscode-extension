@@ -47,8 +47,8 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 				case MessageType.setRetryCountdown:
 					handlers.setRetryCountdown?.(payload as string);
 					break;
-				case MessageType.setLiveTailInView:
-					handlers.setLiveTailInView?.(payload as boolean);
+				case MessageType.displayLiveTailButtonInView:
+					handlers.displayLiveTailButtonInView?.(payload as boolean);
 					break;
 			}
 		};

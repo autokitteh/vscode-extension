@@ -34,5 +34,5 @@ export enum MessageType {
 	setConnections = "SET_CONNECTIONS",
 	openConnectionInitURL = "OPEN_CONNECTION_INIT_URL",
 	fetchConnections = "FETCH_CONNECTIONS",
-	setLiveTailInView = "SET_LIVE_TAIL_IN_VIEW",
+	displayLiveTailButtonInView = "DISPLAY_LIVE_TAIL_BUTTON_IN_VIEW",
 }

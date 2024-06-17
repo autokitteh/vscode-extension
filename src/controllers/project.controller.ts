@@ -385,7 +385,7 @@ export class ProjectController {
 		});
 
 		this.view.update({
-			type: MessageType.setLiveTailInView,
+			type: MessageType.displayLiveTailButtonInView,
 			payload: this.isDeploymentLiveTailPossible,
 		});
 	}

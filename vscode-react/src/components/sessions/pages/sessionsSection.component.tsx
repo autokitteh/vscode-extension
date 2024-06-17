@@ -19,7 +19,7 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 	useIncomingMessageHandler({
 		setSessionsSection,
 		setSelectedSession,
-		setLiveTailInView: setIsLiveTailButtonDisplayed,
+		displayLiveTailButtonInView: setIsLiveTailButtonDisplayed,
 	});
 
 	useEffect(() => {
