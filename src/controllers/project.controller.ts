@@ -47,6 +47,7 @@ export class ProjectController {
 	public connections: ConnectionsViewDelegate;
 	private deploymentsRetryScheduler?: RetryScheduler;
 	private sessionLogRetryScheduler?: RetryScheduler;
+	private deploymentsRetryStarted: boolean = false;
 
 	constructor(projectView: IProjectView, projectId: string) {
 		this.view = projectView;
@@ -187,6 +188,7 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 			if (isResetCounters) {
 				this.deploymentsRetryScheduler?.startCountdown();
+				this.deploymentsRetryStarted = true;
 			}
 			return;
 		}
@@ -196,7 +198,10 @@ export class ProjectController {
 			payload: "",
 		});
 
-		this.deploymentsRetryScheduler?.resetCountdown();
+		if (this.deploymentsRetryStarted) {
+			this.deploymentsRetryStarted = false;
+			this.deploymentsRetryScheduler?.resetCountdown();
+		}
 
 		if (isEqual(this.deployments, deployments)) {
 			return;
