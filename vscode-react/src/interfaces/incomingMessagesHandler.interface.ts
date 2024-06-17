@@ -15,5 +15,6 @@ export interface IIncomingMessagesHandler {
 	setSessionsSection?: (sessions: SessionSectionViewModel | undefined) => void;
 	setPathResponse?: (pathResponse: boolean) => void;
 	setRetryCountdown?: (countdown: string) => void;
+	setLiveTailInView?: (countdown: boolean) => void;
 	setConnections?: (connections: Connection[]) => void;
 }
