@@ -4,4 +4,5 @@ export type SessionSectionViewModel = {
 	sessions?: Session[];
 	showLiveTail: boolean;
 	lastDeployment?: Deployment;
+	isLiveStateOn?: boolean;
 };

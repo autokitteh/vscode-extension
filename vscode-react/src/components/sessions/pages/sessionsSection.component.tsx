@@ -13,7 +13,7 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [stateFilter, setStateFilter] = useState<string>();
 	const [liveTailState, setLiveTailState] = useState<boolean>(true);
-	const { sessions, showLiveTail, lastDeployment } = sessionsSection || {};
+	const { sessions, showLiveTail, lastDeployment, isLiveStateOn } = sessionsSection || {};
 	const [isLiveTailButtonDisplayed, setIsLiveTailButtonDisplayed] = useState<boolean>(false);
 
 	useIncomingMessageHandler({
@@ -23,8 +23,8 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 	});
 
 	useEffect(() => {
-		setLiveTailState(!!showLiveTail || isLiveTailButtonDisplayed);
-	}, [showLiveTail]);
+		setLiveTailState(!!isLiveStateOn || isLiveTailButtonDisplayed);
+	}, [isLiveStateOn, showLiveTail]);
 
 	useForceRerender();
 
