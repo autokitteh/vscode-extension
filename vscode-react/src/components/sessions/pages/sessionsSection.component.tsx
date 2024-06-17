@@ -13,13 +13,18 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [stateFilter, setStateFilter] = useState<string>();
 	const [liveTailState, setLiveTailState] = useState<boolean>(true);
-
 	const { sessions, showLiveTail, lastDeployment } = sessionsSection || {};
+	const [isLiveTailButtonDisplayed, setIsLiveTailButtonDisplayed] = useState<boolean>(false);
 
 	useIncomingMessageHandler({
 		setSessionsSection,
 		setSelectedSession,
+		displayLiveTailButtonInView: setIsLiveTailButtonDisplayed,
 	});
+
+	useEffect(() => {
+		setLiveTailState(!!showLiveTail || isLiveTailButtonDisplayed);
+	}, [showLiveTail]);
 
 	useForceRerender();
 
@@ -65,7 +70,7 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 				}
 			>
 				<div className="flex">{`${translate().t("reactApp.sessions.tableTitle")}`}</div>
-				{showLiveTail ? (
+				{isLiveTailButtonDisplayed ? (
 					<div
 						className="ml-3 w-5 h-5 cursor-pointer"
 						onClick={() => toggleLiveTail()}

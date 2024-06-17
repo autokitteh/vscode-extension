@@ -370,6 +370,7 @@ export class ProjectController {
 		const existingLiveTailState = this.deploymentsWithLiveTail.has(deploymentId);
 		const isFirstTime = !existingLiveTailState;
 		let isLiveStateOn = this.deploymentsWithLiveTail.get(deploymentId);
+
 		if (isFirstTime && this.isDeploymentLiveTailPossible) {
 			isLiveStateOn = true;
 			this.deploymentsWithLiveTail.set(deploymentId, true);
@@ -381,6 +382,11 @@ export class ProjectController {
 		this.view.update({
 			type: MessageType.selectDeployment,
 			payload: this.selectedDeploymentId,
+		});
+
+		this.view.update({
+			type: MessageType.displayLiveTailButtonInView,
+			payload: this.isDeploymentLiveTailPossible,
 		});
 	}
 
