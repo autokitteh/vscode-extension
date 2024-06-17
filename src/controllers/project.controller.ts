@@ -395,28 +395,6 @@ export class ProjectController {
 			isLiveStateOn = true;
 			this.deploymentsWithLiveTail.set(deploymentId, true);
 		}
-		if (isFirstTime || isLiveStateOn || (!isLiveStateOn && !this.isDeploymentLiveTailPossible)) {
-			await this.fetchSessions();
-		} else {
-			const sessionsViewObject: SessionSectionViewModel = {
-				sessions: this.activeDeploymentSessions,
-				showLiveTail: this.isDeploymentLiveTailPossible!,
-				isLiveStateOn,
-				lastDeployment: this.deployments ? this.deployments[0] : undefined,
-			};
-
-			this.view.update({
-				type: MessageType.setSessionsSection,
-				payload: sessionsViewObject,
-			});
-		}
-
-		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
-
-		this.view.update({
-			type: MessageType.selectSession,
-			payload: selectedSessionId,
-		});
 
 		this.view.update({
 			type: MessageType.selectDeployment,
@@ -426,6 +404,32 @@ export class ProjectController {
 		this.view.update({
 			type: MessageType.displayLiveTailButtonInView,
 			payload: this.isDeploymentLiveTailPossible,
+		});
+
+		if (isFirstTime || isLiveStateOn || (!isLiveStateOn && !this.isDeploymentLiveTailPossible)) {
+			await this.fetchSessions();
+			return;
+		}
+		const sessionsViewObject: SessionSectionViewModel = {
+			sessions: this.activeDeploymentSessions,
+			showLiveTail: this.isDeploymentLiveTailPossible!,
+			isLiveStateOn,
+			lastDeployment: this.deployments ? this.deployments[0] : undefined,
+		};
+
+		this.view.update({
+			type: MessageType.setSessionsSection,
+			payload: sessionsViewObject,
+		});
+
+		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
+
+		if (!selectedSessionId) {
+			return;
+		}
+		this.view.update({
+			type: MessageType.selectSession,
+			payload: selectedSessionId,
 		});
 	}
 
