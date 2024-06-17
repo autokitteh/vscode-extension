@@ -1,3 +1,10 @@
+## [0.19.2](https://github.com/autokitteh/vscode-extension/compare/v0.19.1...v0.19.2) (2024-06-17)
+
+
+### Bug Fixes
+
+* live-tail button not displayed after choosing another deployment ([#322](https://github.com/autokitteh/vscode-extension/issues/322)) ([356a7ff](https://github.com/autokitteh/vscode-extension/commit/356a7ff90157f789054d806b0f7d7d0d7de5e95f))
+
 ## [0.19.1](https://github.com/autokitteh/vscode-extension/compare/v0.19.0...v0.19.1) (2024-06-04)
 
 
