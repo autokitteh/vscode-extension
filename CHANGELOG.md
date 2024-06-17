@@ -1,3 +1,10 @@
+## [0.19.4](https://github.com/autokitteh/vscode-extension/compare/v0.19.3...v0.19.4) (2024-06-17)
+
+
+### Bug Fixes
+
+* avoid ui issues working with deployments and sessions ([#325](https://github.com/autokitteh/vscode-extension/issues/325)) ([cfe73a6](https://github.com/autokitteh/vscode-extension/commit/cfe73a6ca7a6ab41905e069fa6aa9201ddba9c20))
+
 ## [0.19.3](https://github.com/autokitteh/vscode-extension/compare/v0.19.2...v0.19.3) (2024-06-17)
 
 
