@@ -1,3 +1,10 @@
+## [0.19.3](https://github.com/autokitteh/vscode-extension/compare/v0.19.2...v0.19.3) (2024-06-17)
+
+
+### Bug Fixes
+
+* stop intervals on project window blur ([#324](https://github.com/autokitteh/vscode-extension/issues/324)) ([7143929](https://github.com/autokitteh/vscode-extension/commit/714392976f02a54747c566b19bed2b430e70e811))
+
 ## [0.19.2](https://github.com/autokitteh/vscode-extension/compare/v0.19.1...v0.19.2) (2024-06-17)
 
 
