@@ -10,8 +10,10 @@ on:
           - "pre-release"
           - "release"
         required: true
+
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   publish-to-marketplace:
     name: Publish to VSCode Marketplace
@@ -40,15 +42,13 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           RELEASE_TYPE: ${{ env.RELEASE_TYPE }}
-        run: |
-          npx semantic-release --no-ci
+        run: npx semantic-release
       - name: Re-Compile and Build with New Version
         run: npm run compile:all && npm run build:all
       - name: Package & Publish VSCode Extension
         run: |
           VSCE_OPTIONS="--packagePath autokitteh.vsix"
-
-          if [ "${{ github.event.inputs.release-type }}" == "pre-release" ]; then
+          if [ "${{ github.event.inputs['release-type'] }}" == "pre-release" ]; then
             npx vsce package --pre-release -o autokitteh.vsix
             VSCE_OPTIONS="$VSCE_OPTIONS --pre-release"
           else
