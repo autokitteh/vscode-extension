@@ -1,7 +1,8 @@
 const releaseType = process.env.RELEASE_TYPE;
 console.log("Release Type:", releaseType);
 
-const preRelease = [{ name: "main", channel: "dev", prerelease: "dev" }, { name: "main" }];
+// When we are in a pre-release, we need to have at least one release branch specified - in this case, the "semantic-release-do-not-delete" branch.
+const preRelease = [{ name: "main", channel: "dev", prerelease: "dev" }, { name: "semantic-release-do-not-delete" }];
 const regularRelease = [{ name: "main" }];
 const branches = releaseType === "pre-release" ? preRelease : regularRelease;
 
