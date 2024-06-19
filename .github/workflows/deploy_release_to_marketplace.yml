@@ -17,6 +17,7 @@ on:
 
 jobs:
   publish-to-marketplace:
+    name: Publish to VSCode Marketplace
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -30,6 +31,9 @@ jobs:
         with:
           node-version: "21.2.0"
           cache: "npm"
+
+      - name: Pull submodule from remote
+        run: git submodule update --init
 
       - name: Install dependencies
         run: npm ci
