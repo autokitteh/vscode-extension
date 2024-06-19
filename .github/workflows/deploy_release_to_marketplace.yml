@@ -47,9 +47,6 @@ jobs:
             npx semantic-release
           fi
 
-      - name: Install Dependencies Again (If needed)
-        run: npm ci
-
       - name: Re-Compile and Build with New Version
         run: npm run compile:all && npm run build:all
 
