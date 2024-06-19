@@ -38,7 +38,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
           if [ "${{ github.event.inputs.release-type }}" == "pre-release" ]; then
-            npx semantic-release --branches rc
+            npx semantic-release --branches main --tag-format 'v${version}-rc.${build}'
           else
             npx semantic-release
           fi
