@@ -1,10 +1,13 @@
 const releaseType = process.env.RELEASE_TYPE;
+console.log("Release Type:", releaseType);
 
+// When we are in a pre-release, we need to have at least one release branch specified
+const preRelease = [{ name: "main", channel: "rc", prerelease: "rc" }, { name: "semantic-release-do-not-delete" }];
+const regularRelease = [{ name: "main" }];
+
+const branches = releaseType === "pre-release" ? preRelease : regularRelease;
 module.exports = {
-	branches:
-		releaseType === "pre-release"
-			? [{ name: "main", channel: "rc", prerelease: "rc" }, { name: "semantic-release-do-not-delete" }]
-			: [{ name: "main" }],
+	branches: branches,
 	plugins: [
 		[
 			"@semantic-release/commit-analyzer",
