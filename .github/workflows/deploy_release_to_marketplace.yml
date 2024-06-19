@@ -44,6 +44,11 @@ jobs:
       - name: Build Extension and React App
         run: npm run build:all
 
+      - name: Release and tag a new version
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: npx semantic-release
+
       - name: Package & Publish VSCode extension
         run: |
           VSCE_OPTIONS="--packagePath autokitteh.vsix"
