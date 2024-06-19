@@ -1,8 +1,7 @@
+const releaseType = process.env.RELEASE_TYPE;
+
 module.exports = {
-	branches: [
-		{ name: "main", prerelease: false },
-		{ name: "main", channel: "rc", prerelease: "rc" },
-	],
+	branches: [releaseType === "pre-release" ? { name: "main", prerelease: "rc" } : { name: "main" }],
 	plugins: [
 		[
 			"@semantic-release/commit-analyzer",
@@ -34,6 +33,10 @@ module.exports = {
 						path: "*.vsix",
 					},
 				],
+				successComment: true,
+				failComment: false,
+				releasedLabels: ["released"],
+				addReleases: "bottom",
 			},
 		],
 		[
@@ -73,11 +76,6 @@ module.exports = {
 				branchesConfig: [
 					{
 						pattern: "main",
-						notifyOnSuccess: true,
-						notifyOnFail: true,
-					},
-					{
-						pattern: "dev",
 						notifyOnSuccess: true,
 						notifyOnFail: true,
 					},

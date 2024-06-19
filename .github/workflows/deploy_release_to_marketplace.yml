@@ -1,4 +1,5 @@
 name: Publish to VSCode Marketplace
+
 on:
   workflow_dispatch:
     inputs:
@@ -9,8 +10,10 @@ on:
           - "pre-release"
           - "release"
         required: true
+
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   publish-to-marketplace:
     name: Publish to VSCode Marketplace
@@ -33,15 +36,14 @@ jobs:
         run: npm run test:all
       - name: Compile and Build
         run: npm run compile:all && npm run build:all
+      - name: Set Release Type
+        run: echo "RELEASE_TYPE=${{ github.event.inputs['release-type'] }}" >> $GITHUB_ENV
       - name: Release and Tag a New Version
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          RELEASE_TYPE: ${{ env.RELEASE_TYPE }}
         run: |
-          if [ "${{ github.event.inputs.release-type }}" == "pre-release" ]; then
-            npx semantic-release --branches main --tag-format 'v${version}-rc.${build}'
-          else
-            npx semantic-release
-          fi
+          npx semantic-release --no-ci
       - name: Re-Compile and Build with New Version
         run: npm run compile:all && npm run build:all
       - name: Package & Publish VSCode Extension
