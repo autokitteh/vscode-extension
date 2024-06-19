@@ -1,7 +1,4 @@
-const releaseType = process.env.RELEASE_TYPE;
-
 module.exports = {
-	branches: releaseType === "pre-release" ? [{ name: "main", channel: "rc", prerelease: "rc" }] : [{ name: "main" }],
 	plugins: [
 		[
 			"@semantic-release/commit-analyzer",
