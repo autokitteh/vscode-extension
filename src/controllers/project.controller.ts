@@ -567,6 +567,7 @@ export class ProjectController {
 		this.view.show(project!.name);
 		this.setProjectNameInView();
 		this.sessions = undefined;
+		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 	}
 
 	displayErrorWithoutActionButton(errorMessage: string) {
