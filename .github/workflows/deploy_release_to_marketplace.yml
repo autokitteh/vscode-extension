@@ -36,15 +36,13 @@ jobs:
         run: npm run test:all
       - name: Compile and Build
         run: npm run compile:all && npm run build:all
+      - name: Set Release Type
+        run: echo "RELEASE_TYPE=${{ github.event.inputs['release-type'] }}" >> $GITHUB_ENV
       - name: Release and Tag a New Version
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          if [ "${{ github.event.inputs['release-type'] }}" == "pre-release" ]; then
-            npx semantic-release --branches '[{"name":"main","channel":"rc","prerelease":"rc"}]'
-          else
-            npx semantic-release --branches '[{"name":"main"}]'
-          fi
+          RELEASE_TYPE: ${{ env.RELEASE_TYPE }}
+        run: npx semantic-release
       - name: Re-Compile and Build with New Version
         run: npm run compile:all && npm run build:all
       - name: Package & Publish VSCode Extension
