@@ -1,5 +1,4 @@
 name: Publish to VSCode Marketplace
-
 on:
   workflow_dispatch:
     inputs:
@@ -10,7 +9,8 @@ on:
           - "pre-release"
           - "release"
         required: true
-
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   publish-to-marketplace:
     name: Publish to VSCode Marketplace
@@ -21,24 +21,18 @@ jobs:
         with:
           token: ${{ secrets.PAT_TOKEN }}
           submodules: true
-
       - uses: actions/setup-node@v3
         with:
           node-version: "21.2.0"
           cache: "npm"
-
       - name: Pull submodule from remote
         run: git submodule update --init
-
       - name: Install dependencies
         run: npm ci
-
       - name: Run Tests
         run: npm run test:all
-
       - name: Compile and Build
         run: npm run compile:all && npm run build:all
-
       - name: Release and Tag a New Version
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -48,10 +42,8 @@ jobs:
           else
             npx semantic-release
           fi
-
       - name: Re-Compile and Build with New Version
         run: npm run compile:all && npm run build:all
-
       - name: Package & Publish VSCode Extension
         run: |
           VSCE_OPTIONS="--packagePath autokitteh.vsix"
@@ -62,6 +54,5 @@ jobs:
           else
             npx vsce package -o autokitteh.vsix
           fi
-
           echo "Running vsce publish with options: $VSCE_OPTIONS"
           npx vsce publish -p ${{ secrets.VSCE_TOKEN }} $VSCE_OPTIONS
