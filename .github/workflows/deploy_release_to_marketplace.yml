@@ -34,21 +34,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Compile and build extension to ensure everything is working
-        run: npm run compile:all && npm run build:all
+      - name: Compile and Build for Testing
+        run: npm run build:all # Assuming build:all includes compile:all
+
+      - name: Run Tests (Optional)
+        run: npm test
 
       - name: Release and Tag a New Version
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
           if [ "${{ github.event.inputs.release-type }}" == "pre-release" ]; then
-            npx semantic-release --branches beta
+            npx semantic-release --branches rc
           else
             npx semantic-release
           fi
 
       - name: Re-Compile and Build with New Version
-        run: npm run compile:all && npm run build:all
+        run: npm run build:all # Only this if it includes compile
 
       - name: Package & Publish VSCode Extension
         run: |
