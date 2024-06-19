@@ -1,0 +1,33 @@
+name: Build & Release
+on:
+  push:
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          submodules: true
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "21.2.0"
+          cache: "npm"
+      - name: Pull submodule from remote
+        run: git submodule update --remote
+      - name: Install dependencies for both vscode and react app
+        run: npm ci
+      - name: Run vscode and react app tests
+        run: npm run test:all
+      - name: Run vscode TS validation extension and react app
+        run: npm run compile:all
+      - name: Run vscode TS build extension and react app
+        run: npm run build:all
