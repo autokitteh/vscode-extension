@@ -35,10 +35,7 @@ jobs:
         run: npm ci
 
       - name: Compile and Build for Testing
-        run: npm run build:all # Assuming build:all includes compile:all
-
-      - name: Run Tests (Optional)
-        run: npm test
+        run: npm run compile:all && npm run build:all
 
       - name: Release and Tag a New Version
         env:
@@ -51,7 +48,7 @@ jobs:
           fi
 
       - name: Re-Compile and Build with New Version
-        run: npm run build:all # Only this if it includes compile
+        run: npm run compile:all && npm run build:all
 
       - name: Package & Publish VSCode Extension
         run: |
