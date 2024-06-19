@@ -38,6 +38,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run vscode and react app tests
+        run: npm run test:all
+
       - name: Compile and Build
         run: npm run compile:all && npm run build:all
 
