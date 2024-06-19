@@ -38,7 +38,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run vscode and react app tests
+      - name: Run Tests
         run: npm run test:all
 
       - name: Compile and Build
