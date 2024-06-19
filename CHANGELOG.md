@@ -1,3 +1,10 @@
+## [0.19.5-rc.1](https://github.com/autokitteh/vscode-extension/compare/v0.19.4...v0.19.5-rc.1) (2024-06-19)
+
+
+### Bug Fixes
+
+* clear sessions output when we're moving between projects ([#327](https://github.com/autokitteh/vscode-extension/issues/327)) ([ecf54bc](https://github.com/autokitteh/vscode-extension/commit/ecf54bcd45908341f860336254e1ac64d08a9342))
+
 ## [0.19.4](https://github.com/autokitteh/vscode-extension/compare/v0.19.3...v0.19.4) (2024-06-17)
 
 
