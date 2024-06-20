@@ -1,3 +1,10 @@
+## [0.19.6](https://github.com/autokitteh/vscode-extension/compare/v0.19.5...v0.19.6) (2024-06-20)
+
+
+### Bug Fixes
+
+* sessions logs duplication for running sessions ([#340](https://github.com/autokitteh/vscode-extension/issues/340)) ([691a84f](https://github.com/autokitteh/vscode-extension/commit/691a84f454b6767b51256918f93ea35c928eaadf))
+
 ## [0.19.5](https://github.com/autokitteh/vscode-extension/compare/v0.19.4...v0.19.5) (2024-06-19)
 
 
