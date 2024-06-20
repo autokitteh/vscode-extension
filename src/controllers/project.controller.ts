@@ -431,6 +431,13 @@ export class ProjectController {
 			this.outputErrorDetails(lastState);
 			this.outputCallstackDetails(lastState);
 		}
+
+		LoggerService.sessionLog(
+			translate().t("sessions.lastPrintForSessionLog", {
+				sessionState: lastState.getStateName() || "unknown",
+			})
+		);
+
 		this.sessionLogOutputCursor = 0;
 
 		this.sessionLogRetryScheduler?.stopTimers();
