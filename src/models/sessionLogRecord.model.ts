@@ -154,6 +154,10 @@ export class SessionLogRecord {
 		);
 	}
 
+	getStateName(): string | undefined {
+		return this.state;
+	}
+
 	containLogs(): boolean {
 		return !!(this.logs && this.logs.length);
 	}
