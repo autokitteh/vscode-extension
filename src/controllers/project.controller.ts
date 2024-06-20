@@ -142,17 +142,10 @@ export class ProjectController {
 		this.setProjectNameInView();
 		this.notifyViewResourcesPathChanged();
 
+		this.sessionLogRetryScheduler?.stopTimers();
+		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		this.sessions = undefined;
 		await this.fetchSessions();
-
-		if (!this.selectedDeploymentId) {
-			return;
-		}
-		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
-		if (!selectedSessionId) {
-			return;
-		}
-		this.initSessionLogsDisplay(selectedSessionId);
 	};
 
 	public reconnect = async () => {
@@ -537,6 +530,9 @@ export class ProjectController {
 			this.cachedSessionHistoryStates.set(sessionId, sessionHistoryStates);
 			return;
 		}
+
+		this.sessionLogRetryScheduler?.stopTimers();
+		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
 		this.sessionLogRetryScheduler = new RetryScheduler(
 			INITIAL_SESSION_LOG_RETRY_SCHEDULE_INTERVAL,
