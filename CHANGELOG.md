@@ -1,3 +1,10 @@
+## [0.19.7](https://github.com/autokitteh/vscode-extension/compare/v0.19.6...v0.19.7) (2024-06-24)
+
+
+### Bug Fixes
+
+* block session deletion in case the status of it is stopped and correct the deletion message ([#342](https://github.com/autokitteh/vscode-extension/issues/342)) ([90e341e](https://github.com/autokitteh/vscode-extension/commit/90e341e178c955018d455ecffeb9460106fad2fa))
+
 ## [0.19.6](https://github.com/autokitteh/vscode-extension/compare/v0.19.5...v0.19.6) (2024-06-20)
 
 
