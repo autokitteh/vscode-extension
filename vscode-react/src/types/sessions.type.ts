@@ -10,6 +10,7 @@ export type SessionsTableRowProps = {
 		displayInputsModal: (sessionInputs: string) => void;
 		displaySessionDeletePopper: (event: React.MouseEvent<HTMLDivElement>, session: Session) => void;
 		isRunning: (sessionState: SessionState) => boolean;
+		isStopped: (sessionState: SessionState) => boolean;
 		getStopSessionClass: (sessionState: SessionState) => string;
 		isLastDeployment: (deploymentId: string) => boolean;
 	};

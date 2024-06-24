@@ -12,6 +12,7 @@ export const SessionActions = ({
 	isLastDeployment,
 	getStopSessionClass,
 	isRunning,
+	isStopped,
 }: {
 	session: Session;
 	startSession: (session: Session) => void;
@@ -19,6 +20,7 @@ export const SessionActions = ({
 	displayInputsModal: (sessionInputs: string) => void;
 	displaySessionDeletePopper: (event: React.MouseEvent<HTMLDivElement>, session: Session) => void;
 	isRunning: (sessionState: SessionState) => boolean;
+	isStopped: (sessionState: SessionState) => boolean;
 	getStopSessionClass: (sessionState: SessionState) => string;
 	isLastDeployment: (deploymentId: string) => boolean;
 }) => {
@@ -52,10 +54,10 @@ export const SessionActions = ({
 			)}
 			<div
 				className={`codicon codicon-trash mr-2 z-20 ${
-					isRunning(session.state) ? "cursor-not-allowed" : "cursor-pointer"
+					isRunning(session.state) || isStopped(session.state) ? "cursor-not-allowed" : "cursor-pointer"
 				}`}
 				title={
-					isRunning(session.state)
+					isRunning(session.state) || isStopped(session.state)
 						? translate().t("reactApp.sessions.deleteSessionDisabled")
 						: translate().t("reactApp.sessions.delete")
 				}

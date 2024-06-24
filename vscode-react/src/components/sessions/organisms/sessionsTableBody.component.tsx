@@ -78,7 +78,7 @@ export const SessionsTableBody = ({
 	};
 
 	const displaySessionDeletePopper = (event: React.MouseEvent<HTMLDivElement>, session: Session) => {
-		if (session.state === SessionState.RUNNING) {
+		if (session.state === SessionState.RUNNING || session.state === SessionState.STOPPED) {
 			sendMessage(
 				MessageType.displayErrorWithoutActionButton,
 				translate().t("reactApp.sessions.deleteSessionDisabled")

@@ -9,6 +9,7 @@ interface SessionActions {
 	startSession: (session: Session) => void;
 	stopSession: (session: Session) => void;
 	isRunning: (sessionState: SessionState) => boolean;
+	isStopped: (sessionState: SessionState) => boolean;
 	getStopSessionClass: (sessionState: SessionState) => string;
 	isLastDeployment: (deploymentId: string) => boolean;
 }
@@ -33,6 +34,9 @@ export function getSessionActions(lastDeployment: Deployment): SessionActions {
 		},
 		isRunning: (sessionState: SessionState) => {
 			return sessionState === SessionState.RUNNING;
+		},
+		isStopped: (sessionState: SessionState) => {
+			return sessionState === SessionState.STOPPED;
 		},
 		getStopSessionClass: (sessionState: SessionState) => {
 			return sessionState === SessionState.RUNNING ? "text-red-500 cursor-pointer" : "text-gray-500 cursor-not-allowed";
