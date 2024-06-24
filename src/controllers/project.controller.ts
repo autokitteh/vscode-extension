@@ -1039,6 +1039,17 @@ export class ProjectController {
 		}
 
 		if (!this.sessions || !this.sessions.length) {
+			const sessionsViewObject: SessionSectionViewModel = {
+				sessions: [],
+				showLiveTail: !!this.isDeploymentLiveTailPossible,
+				lastDeployment: this.deployments ? this.deployments[0] : undefined,
+			};
+
+			this.view.update({
+				type: MessageType.setSessionsSection,
+				payload: sessionsViewObject,
+			});
+
 			return;
 		}
 
