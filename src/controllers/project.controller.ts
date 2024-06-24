@@ -1049,8 +1049,6 @@ export class ProjectController {
 
 		sessionsBeforeRemove.splice(sessionIndex, 1);
 
-		const followingSessionIdAfterDelete = sessionsBeforeRemove[0].sessionId;
-
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions: sessionsBeforeRemove,
 			showLiveTail: !!this.isDeploymentLiveTailPossible,
@@ -1061,14 +1059,6 @@ export class ProjectController {
 			type: MessageType.setSessionsSection,
 			payload: sessionsViewObject,
 		});
-
-		this.view.update({
-			type: MessageType.selectSession,
-			payload: followingSessionIdAfterDelete,
-		});
-
-		this.selectedSessionPerDeployment.set(this.selectedDeploymentId!, followingSessionIdAfterDelete);
-		this.displaySessionLogs(followingSessionIdAfterDelete);
 
 		const log = translate().t("sessions.sessionDeleteSuccessIdProject", {
 			deploymentId: this.selectedDeploymentId,
