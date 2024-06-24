@@ -90,6 +90,7 @@ export class ProjectView implements IProjectView {
 						break;
 					case MessageType.tryToReconnect:
 						this.delegate?.tryToReenable?.();
+						break;
 					case MessageType.openConnectionInitURL:
 						this.delegate?.connections.openConnectionInitURL?.(
 							message.payload as { connectionName: string; initURL: string }
