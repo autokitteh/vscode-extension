@@ -18,7 +18,7 @@
 	"deletionApprovalQuestionSubtitle": "You will not be able to recover it",
 	"errorDeletingLine1": "Something went wrong",
 	"errorDeletingLine2": "Check the logs",
-	"deleteSessionDisabled": "Cannot delete running session",
+	"deleteSessionDisabled": "Cannot delete running or stopped session",
 	"delete": "Delete",
 	"stopSession": "Stop session",
 	"startSession": "Start session",
