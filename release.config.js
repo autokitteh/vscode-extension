@@ -35,7 +35,9 @@ module.exports = {
 						path: "*.vsix",
 					},
 				],
-				successComment: true,
+				successComment:
+					":tada: This issue has been resolved in version ${nextRelease.version} :tada:\n\n" +
+					"The release is available on [GitHub release](<github_release_url>)",
 				failComment: false,
 				releasedLabels: ["released"],
 				addReleases: "bottom",
