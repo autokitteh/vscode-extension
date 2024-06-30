@@ -133,7 +133,8 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 			return;
 		}
 		const refElement = event.currentTarget;
-		showPopper("deploymentDelete");
+
+		showPopper(event, "deploymentDelete");
 		deletePopperElementRef.current = refElement;
 		setDeleteDeploymentId(deployment.deploymentId);
 	};
