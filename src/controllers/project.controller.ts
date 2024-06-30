@@ -825,9 +825,11 @@ export class ProjectController {
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
 			return;
 		}
-		await this.selectDeployment(startSessionArgs.deploymentId);
-		await this.loadAndDisplayDeployments();
-		await this.fetchSessions();
+
+		setTimeout(async () => {
+			await this.loadAndDisplayDeployments();
+			await this.fetchSessions();
+		}, 500);
 
 		const successMessage = translate().t("sessions.executionSucceed", { sessionId });
 		LoggerService.info(namespaces.projectController, successMessage);
