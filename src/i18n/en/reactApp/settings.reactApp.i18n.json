@@ -1,11 +1,12 @@
 {
-	"downloadDirectoryOfExecutables": "Download remote resources folder",
-	"openProjectResourcesDirectory": "Open resources folder in file browser",
-	"setProjectResourcesDirectory": "Set resources folder",
 	"copyPath": "Copy Path",
 	"deleteProject": "Delete Project",
-	"viewProjectResourcesDirectoryPath": "View project resources directory path",
-	"viewProjectSettings": "View project settings",
+	"downloadDirectoryOfExecutables": "Download remote resources folder",
+	"openConnectionsSettingsScreen": "Connections Settings",
+	"openProjectResourcesDirectory": "Open resources folder in file browser",
 	"pickDirectoryOfExecutables": "Pick directory of project files",
-	"openConnectionsSettingsScreen": "Connections Settings"
+	"refresh": "Refresh",
+	"setProjectResourcesDirectory": "Set resources folder",
+	"viewProjectResourcesDirectoryPath": "View project resources directory path",
+	"viewProjectSettings": "View project settings"
 }

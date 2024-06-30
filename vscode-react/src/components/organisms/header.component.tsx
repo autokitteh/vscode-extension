@@ -56,6 +56,10 @@ export const Header = () => {
 			</Button>
 			<div className="flex-grow"></div>
 			<div className="flex flex-row">
+				<Button onClick={() => {}} classes="flex relative z-30 mr-2" title={translate().t("reactApp.settings.refresh")}>
+					<div className="codicon codicon-sync text-vscode-background mr-1" />{" "}
+					{translate().t("reactApp.settings.refresh")}
+				</Button>
 				<Button
 					onClick={() => openConnectionsModal()}
 					classes="flex relative z-30 mr-2"
