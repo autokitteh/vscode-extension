@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, MouseEvent } from "react";
 import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { Overlay } from "@react-components/atoms";
@@ -42,7 +42,10 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	useIncomingMessageHandler({ setSelectedDeploymentId, setEntrypoints });
 
 	// Functions Section
-	const showPopper = (popperId: string) => dispatch({ type: "SET_MODAL_NAME", payload: popperId });
+	const showPopper = (event: MouseEvent<HTMLElement>, popperId: string) => {
+		event.stopPropagation();
+		dispatch({ type: "SET_MODAL_NAME", payload: popperId });
+	};
 	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
 
 	const isDeploymentStateStartable = (deploymentState: number) =>
@@ -82,7 +85,12 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	const isActive = (deploymentState: DeploymentState) => deploymentState === DeploymentState.ACTIVE_DEPLOYMENT;
 	const isLastDeployment = (deploymentId: string) => deploymentId === deployments?.[0]?.deploymentId;
 
-	const startSession = () => {
+	const startSession = (event?: MouseEvent<HTMLElement>) => {
+		if (!event) {
+			return;
+		}
+
+		event.stopPropagation();
 		const lastDeployment = deployments![0];
 
 		setDisplayedErrors({});
@@ -118,6 +126,7 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	};
 
 	const showDeleteDeploymentPopper = (event: React.MouseEvent<HTMLDivElement>, deployment: Deployment) => {
+		event.stopPropagation();
 		if (deployment.state === DeploymentState.ACTIVE_DEPLOYMENT) {
 			sendMessage(MessageType.displayErrorWithoutActionButton, translate().t("reactApp.deployments.deleteDisabled"));
 
@@ -170,7 +179,7 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 							${isLastDeployment(deployment.deploymentId) ? "" : "invisible"}`}
 							ref={isLastDeployment(deployment.deploymentId) ? executePopperElementRef : null}
 							title={translate().t("reactApp.deployments.execute")}
-							onClick={() => showPopper("deploymentExecute")}
+							onClick={(event) => showPopper(event, "deploymentExecute")}
 						></div>
 						{isDeploymentStateStartable(deployment.state) ? (
 							<div
