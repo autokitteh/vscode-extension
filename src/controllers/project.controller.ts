@@ -922,6 +922,8 @@ export class ProjectController {
 			return;
 		}
 
+		this.loadAndDisplayDeployments();
+
 		const log = translate().t("deployments.deleteSucceedIdProject", {
 			deploymentId,
 			projectId: this.projectId,
