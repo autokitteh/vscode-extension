@@ -99,6 +99,9 @@ export class ProjectView implements IProjectView {
 					case MessageType.fetchConnections:
 						this.delegate?.connections.fetchConnections?.();
 						break;
+					case MessageType.refreshUI:
+						this.delegate?.refreshUI?.();
+						break;
 					default:
 				}
 			},

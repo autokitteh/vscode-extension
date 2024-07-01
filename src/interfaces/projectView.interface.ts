@@ -26,6 +26,7 @@ export interface ProjectViewDelegate {
 	loadMoreSessions?: Callback;
 	toggleSessionsLiveTail?: Callback<Boolean>;
 	tryToReenable?: Callback;
+	refreshUI?: Callback;
 	connections: ConnectionsViewDelegate;
 }
 export interface ConnectionsViewDelegate {

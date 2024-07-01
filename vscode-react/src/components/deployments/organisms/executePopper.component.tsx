@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 import { translate } from "@i18n";
 import { Button } from "@react-components/atoms/button.component";
 import { SessionEntrypoint } from "@type/models";
@@ -11,7 +11,7 @@ interface ExecutePopperProps {
 	selectedFunction: string;
 	onFileChange: (file: string) => void;
 	onFunctionChange: (func: string) => void;
-	onStartSession: () => void;
+	onStartSession: (event?: MouseEvent<HTMLElement>) => void;
 	onClose: () => void;
 	displayedErrors: Record<string, boolean>;
 }
@@ -26,43 +26,41 @@ export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 	onStartSession,
 	onClose,
 	displayedErrors,
-}) => {
-	return (
-		<div className="relative p-4shadow-lg">
-			<div className="mb-3 text-left">
-				<strong>{translate().t("reactApp.deployments.executeFile")}</strong>
-				<VSCodeDropdown value={selectedFile} onChange={(e: any) => onFileChange(e.target.value)} className="flex">
-					{Object.keys(files).map((file) => (
-						<option key={file} value={file}>
-							{file}
-						</option>
-					))}
-				</VSCodeDropdown>
-				{displayedErrors["selectedFile"] && <div className="text-red-500">Please choose a file</div>}
-			</div>
-			<div className="mb-3 text-left">
-				<strong>{translate().t("reactApp.deployments.executeEntrypoint")}</strong>
-				<VSCodeDropdown
-					value={selectedFunction}
-					onChange={(e: any) => onFunctionChange(e.target.value)}
-					disabled={functions.length <= 1}
-					className="flex"
-				>
-					{functions.map((func) => (
-						<option key={func.name} value={JSON.stringify(func)}>
-							{func.name}
-						</option>
-					))}
-				</VSCodeDropdown>
-				{displayedErrors["selectedFunction"] && <div className="text-red-500">Please choose a function</div>}
-			</div>
-			<div className="flex">
-				<Button classes="bg-vscode-editor-background text-vscode-foreground" onClick={onClose}>
-					{translate().t("reactApp.deployments.dismiss")}
-				</Button>
-				<div className="flex-grow" />
-				<Button onClick={onStartSession}>{translate().t("reactApp.deployments.saveAndRun")}</Button>
-			</div>
+}) => (
+	<div className="relative p-4shadow-lg">
+		<div className="mb-3 text-left">
+			<strong>{translate().t("reactApp.deployments.executeFile")}</strong>
+			<VSCodeDropdown value={selectedFile} onChange={(e: any) => onFileChange(e.target.value)} className="flex">
+				{Object.keys(files).map((file) => (
+					<option key={file} value={file}>
+						{file}
+					</option>
+				))}
+			</VSCodeDropdown>
+			{displayedErrors["selectedFile"] && <div className="text-red-500">Please choose a file</div>}
 		</div>
-	);
-};
+		<div className="mb-3 text-left">
+			<strong>{translate().t("reactApp.deployments.executeEntrypoint")}</strong>
+			<VSCodeDropdown
+				value={selectedFunction}
+				onChange={(e: any) => onFunctionChange(e.target.value)}
+				disabled={functions.length <= 1}
+				className="flex"
+			>
+				{functions.map((func) => (
+					<option key={func.name} value={JSON.stringify(func)}>
+						{func.name}
+					</option>
+				))}
+			</VSCodeDropdown>
+			{displayedErrors["selectedFunction"] && <div className="text-red-500">Please choose a function</div>}
+		</div>
+		<div className="flex">
+			<Button classes="bg-vscode-editor-background text-vscode-foreground" onClick={onClose}>
+				{translate().t("reactApp.deployments.dismiss")}
+			</Button>
+			<div className="flex-grow" />
+			<Button onClick={onStartSession}>{translate().t("reactApp.deployments.saveAndRun")}</Button>
+		</div>
+	</div>
+);

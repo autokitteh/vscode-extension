@@ -148,9 +148,10 @@ export class ProjectController {
 		await this.fetchSessions();
 	};
 
-	public reconnect = async () => {
+	public reconnect = () => {
 		this.deployments = undefined;
 		this.loadAndDisplayDeployments(false);
+		this.fetchSessions();
 	};
 
 	public disable = async () => {
@@ -750,7 +751,7 @@ export class ProjectController {
 		}
 
 		this.startLoader();
-		const { data: deploymentId, error } = await ProjectsService.run(this.projectId, mappedResources!);
+		const { error } = await ProjectsService.run(this.projectId, mappedResources!);
 		this.stopLoader();
 
 		if (error) {
@@ -764,18 +765,12 @@ export class ProjectController {
 			return;
 		}
 
+		await this.loadAndDisplayDeployments();
+		await this.fetchSessions();
+
 		const successMessage = translate().t("projects.projectDeploySucceed", { id: this.projectId });
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 		LoggerService.info(namespaces.projectController, successMessage);
-
-		this.selectedDeploymentId = this.deployments?.find(
-			(deployment: Deployment) => deployment.deploymentId === deploymentId
-		)?.deploymentId;
-
-		this.view.update({
-			type: MessageType.selectDeployment,
-			payload: this.selectedDeploymentId,
-		});
 	}
 
 	async activateDeployment(deploymentId: string) {
@@ -792,6 +787,8 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
+		await this.loadAndDisplayDeployments();
+		await this.fetchSessions();
 
 		LoggerService.info(
 			namespaces.projectController,
@@ -819,6 +816,9 @@ export class ProjectController {
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
 			return;
 		}
+		await this.loadAndDisplayDeployments();
+		await this.fetchSessions();
+
 		const successMessage = translate().t("sessions.executionSucceed", { sessionId });
 		LoggerService.info(namespaces.projectController, successMessage);
 	}
@@ -839,6 +839,9 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
+
+		await this.loadAndDisplayDeployments();
+		await this.fetchSessions();
 
 		const successMessage = translate().t("deployments.deactivationSucceed");
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
@@ -890,6 +893,8 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
+		await this.loadAndDisplayDeployments();
+		await this.fetchSessions();
 	}
 
 	async deleteDeployment(deploymentId: string) {
@@ -903,6 +908,9 @@ export class ProjectController {
 
 			return;
 		}
+
+		await this.loadAndDisplayDeployments();
+		await this.fetchSessions();
 
 		const log = translate().t("deployments.deleteSucceedIdProject", {
 			deploymentId,
@@ -1157,5 +1165,10 @@ export class ProjectController {
 		this.fetchSessions();
 		this.sessionsNextPageToken = undefined;
 		return;
+	}
+
+	refreshUI() {
+		this.loadAndDisplayDeployments;
+		this.fetchSessions();
 	}
 }
