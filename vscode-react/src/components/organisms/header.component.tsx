@@ -65,8 +65,7 @@ export const Header = () => {
 					classes="flex relative z-30 mr-2"
 					title={translate().t("reactApp.settings.refresh")}
 				>
-					<div className="codicon codicon-sync text-vscode-background mr-1" />{" "}
-					{translate().t("reactApp.settings.refresh")}
+					<div className="codicon codicon-sync text-vscode-background" />
 				</Button>
 				<Button
 					onClick={() => openConnectionsModal()}
