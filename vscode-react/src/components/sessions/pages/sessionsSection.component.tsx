@@ -107,10 +107,10 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 										: translate().t("reactApp.sessions.resumeLiveTail")
 								}
 							/>
+							<div className="text-bold text-lg mx-3">|</div>
 						</div>
 					) : null}
-					<div className="text-bold text-lg mx-3">|</div>
-					<div className="codicon codicon-filter h-6 mt-1" />
+					<div className="codicon codicon-filter h-6 mt-2 mr-2" />
 					<select
 						className="text-white bg-black rounded h-6 mr-2"
 						onChange={(value) => filterSessions(value.target.value)}

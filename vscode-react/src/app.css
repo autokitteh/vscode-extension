@@ -77,8 +77,13 @@ main {
 
 .react-toggle--checked .react-toggle-thumb {
 	left: 30px !important;
+	border-color: gray !important;
+}
+
+.react-toggle--checked .react-toggle-track {
+	background-color: #484848 !important;
 }
 
 .react-toggle-track-check {
-	height: 20px !important;
+	height: 21px !important;
 }
