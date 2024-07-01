@@ -148,9 +148,10 @@ export class ProjectController {
 		await this.fetchSessions();
 	};
 
-	public reconnect = async () => {
+	public reconnect = () => {
 		this.deployments = undefined;
 		this.loadAndDisplayDeployments(false);
+		this.fetchSessions();
 	};
 
 	public disable = async () => {
@@ -764,7 +765,8 @@ export class ProjectController {
 			return;
 		}
 
-		this.loadAndDisplayDeployments();
+		await this.loadAndDisplayDeployments();
+		await this.fetchSessions();
 
 		const successMessage = translate().t("projects.projectDeploySucceed", { id: this.projectId });
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
@@ -786,6 +788,7 @@ export class ProjectController {
 			return;
 		}
 		await this.loadAndDisplayDeployments();
+		await this.fetchSessions();
 
 		LoggerService.info(
 			namespaces.projectController,
@@ -814,6 +817,7 @@ export class ProjectController {
 			return;
 		}
 		await this.loadAndDisplayDeployments();
+		await this.fetchSessions();
 
 		const successMessage = translate().t("sessions.executionSucceed", { sessionId });
 		LoggerService.info(namespaces.projectController, successMessage);
@@ -837,6 +841,7 @@ export class ProjectController {
 		}
 
 		await this.loadAndDisplayDeployments();
+		await this.fetchSessions();
 
 		const successMessage = translate().t("deployments.deactivationSucceed");
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
@@ -889,6 +894,7 @@ export class ProjectController {
 			return;
 		}
 		await this.loadAndDisplayDeployments();
+		await this.fetchSessions();
 	}
 
 	async deleteDeployment(deploymentId: string) {
@@ -903,7 +909,8 @@ export class ProjectController {
 			return;
 		}
 
-		this.loadAndDisplayDeployments();
+		await this.loadAndDisplayDeployments();
+		await this.fetchSessions();
 
 		const log = translate().t("deployments.deleteSucceedIdProject", {
 			deploymentId,
@@ -1161,6 +1168,7 @@ export class ProjectController {
 	}
 
 	refreshUI() {
-		this.loadAndDisplayDeployments();
+		this.loadAndDisplayDeployments;
+		this.fetchSessions();
 	}
 }
