@@ -1,12 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
-import RotateIcon from "@react-assets/icons/rotate.svg?react";
+import { Button } from "@react-components/atoms";
 import { TableMessage } from "@react-components/atoms/table";
 import { SessionsTableBody } from "@react-components/sessions/organisms";
 import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
+import { cn } from "@react-utilities/cnClasses.utils";
 
 export const SessionsSection = ({ height }: { height: string | number }) => {
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
@@ -16,6 +17,12 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 	const { sessions, showLiveTail, lastDeployment, isLiveStateOn } = sessionsSection || {};
 	const [isLiveTailButtonDisplayed, setIsLiveTailButtonDisplayed] = useState<boolean>(false);
 
+	const liveTailStateRef = useRef(liveTailState);
+
+	useEffect(() => {
+		liveTailStateRef.current = liveTailState;
+	}, [liveTailState]);
+
 	useIncomingMessageHandler({
 		setSessionsSection,
 		setSelectedSession,
@@ -23,8 +30,14 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 	});
 
 	useEffect(() => {
-		setLiveTailState(!!isLiveStateOn || isLiveTailButtonDisplayed);
-	}, [isLiveStateOn, showLiveTail]);
+		if (isLiveStateOn !== undefined) {
+			setLiveTailState(isLiveStateOn);
+		}
+	}, [isLiveStateOn]);
+
+	useEffect(() => {
+		setIsLiveTailButtonDisplayed(!!showLiveTail);
+	}, [showLiveTail]);
 
 	useForceRerender();
 
@@ -51,15 +64,25 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 		setDivWidth(ref?.current?.clientWidth || 0);
 	});
 
-	const disableLiveTail = () => {
+	const disableLiveTail = useCallback(() => {
 		setLiveTailState(false);
 		sendMessage(MessageType.toggleSessionsLiveTail, false);
-	};
+	}, []);
 
-	const toggleLiveTail = () => {
-		setLiveTailState(!liveTailState);
-		sendMessage(MessageType.toggleSessionsLiveTail, !liveTailState);
-	};
+	const toggleLiveTail = useCallback(() => {
+		setLiveTailState((prevState) => {
+			const newState = !prevState;
+			sendMessage(MessageType.toggleSessionsLiveTail, newState);
+			return newState;
+		});
+	}, []);
+
+	const liveTailButtonClass = cn("ml-3 h-5", {
+		// eslint-disable-next-line @typescript-eslint/naming-convention
+		"bg-green-700": liveTailState,
+		// eslint-disable-next-line @typescript-eslint/naming-convention
+		"bg-red-700": !liveTailState,
+	});
 
 	return (
 		<div style={{ height: `${parseInt(height as string, 10) * 0.85}px` }} ref={ref}>
@@ -71,17 +94,17 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 			>
 				<div className="flex">{`${translate().t("reactApp.sessions.tableTitle")}`}</div>
 				{isLiveTailButtonDisplayed ? (
-					<div
-						className="ml-3 w-5 h-5 cursor-pointer"
-						onClick={() => toggleLiveTail()}
+					<Button
+						classes={liveTailButtonClass}
+						onClick={toggleLiveTail}
 						title={
 							liveTailState
 								? translate().t("reactApp.sessions.pauseLiveTail")
 								: translate().t("reactApp.sessions.resumeLiveTail")
 						}
 					>
-						<RotateIcon fill={liveTailState ? "green" : "gray"} />
-					</div>
+						{translate().t("reactApp.sessions.liveTailButtonText", { liveTailState: liveTailState ? "ON" : "OFF" })}
+					</Button>
 				) : null}
 				<div className="flex-grow" />
 				<div className="flex w-1/3 text-xs justify-end">
@@ -93,7 +116,9 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 					>
 						<option value="all">All</option>
 						{(Object.keys(SessionStateType) as Array<keyof typeof SessionStateType>).map((sessionState) => (
-							<option value={sessionState}>{capitalizeFirstLetter(sessionState)}</option>
+							<option key={sessionState} value={sessionState}>
+								{capitalizeFirstLetter(sessionState)}
+							</option>
 						))}
 					</select>
 				</div>

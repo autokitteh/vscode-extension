@@ -5,6 +5,7 @@
 	"sessionId": "Session ID",
 	"actions": "Actions",
 	"pickDeploymentToShowSessions": "Pick a deployment to show its sessions",
+	"liveTailButtonText": "Live Tail is {{liveTailState}}",
 	"noSessionsFound": "No sessions found",
 	"statuses": {
 		"created": "Created",

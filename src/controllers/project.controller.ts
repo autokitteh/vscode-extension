@@ -1178,4 +1178,9 @@ export class ProjectController {
 		this.sessionsNextPageToken = undefined;
 		return;
 	}
+
+	refreshUI() {
+		this.loadAndDisplayDeployments();
+		this.fetchSessions();
+	}
 }

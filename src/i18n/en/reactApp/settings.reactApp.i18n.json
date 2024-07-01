@@ -2,6 +2,7 @@
 	"copyPath": "Copy Path",
 	"deleteProject": "Delete Project",
 	"downloadDirectoryOfExecutables": "Download remote resources folder",
+	"headerConnectionsButton": "Connections",
 	"openConnectionsSettingsScreen": "Connections Settings",
 	"openProjectResourcesDirectory": "Open resources folder in file browser",
 	"pickDirectoryOfExecutables": "Pick directory of project files",
