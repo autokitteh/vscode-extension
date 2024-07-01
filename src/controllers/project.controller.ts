@@ -786,18 +786,6 @@ export class ProjectController {
 			return;
 		}
 		await this.loadAndDisplayDeployments();
-		await this.selectDeployment(deploymentId);
-
-		const sessionsViewObject: SessionSectionViewModel = {
-			sessions: this.sessions,
-			showLiveTail: true,
-			lastDeployment: this.deployments ? this.deployments[0] : undefined,
-		};
-
-		this.view.update({
-			type: MessageType.setSessionsSection,
-			payload: sessionsViewObject,
-		});
 
 		LoggerService.info(
 			namespaces.projectController,
@@ -825,11 +813,7 @@ export class ProjectController {
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
 			return;
 		}
-
-		setTimeout(async () => {
-			await this.loadAndDisplayDeployments();
-			await this.fetchSessions();
-		}, 500);
+		await this.loadAndDisplayDeployments();
 
 		const successMessage = translate().t("sessions.executionSucceed", { sessionId });
 		LoggerService.info(namespaces.projectController, successMessage);
@@ -852,9 +836,7 @@ export class ProjectController {
 			return;
 		}
 
-		this.loadAndDisplayDeployments();
-
-		await this.fetchSessions();
+		await this.loadAndDisplayDeployments();
 
 		const successMessage = translate().t("deployments.deactivationSucceed");
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
@@ -907,7 +889,6 @@ export class ProjectController {
 			return;
 		}
 		await this.loadAndDisplayDeployments();
-		await this.fetchSessions();
 	}
 
 	async deleteDeployment(deploymentId: string) {
