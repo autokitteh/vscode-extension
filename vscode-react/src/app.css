@@ -56,3 +56,29 @@ main {
 		transform: rotate(359deg);
 	}
 }
+
+.react-toggle-track-check {
+	display: flex !important;
+	align-items: center !important;
+	top: auto !important;
+	bottom: auto !important;
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+}
+
+.react-toggle-track {
+	height: 20px !important;
+}
+
+.react-toggle-thumb {
+	height: 18px !important;
+	width: 18px !important;
+}
+
+.react-toggle--checked .react-toggle-thumb {
+	left: 30px !important;
+}
+
+.react-toggle-track-check {
+	height: 20px !important;
+}
