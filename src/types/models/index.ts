@@ -1,4 +1,4 @@
-export type { Deployment } from "@type/models/deployment.type";
+export type { Deployment, DeploymentSessionsStats } from "@type/models/deployment.type";
 export type { Project } from "@type/models/project.type";
 export type {
 	Session,
