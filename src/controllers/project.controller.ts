@@ -1181,6 +1181,5 @@ export class ProjectController {
 
 	refreshUI() {
 		this.loadAndDisplayDeployments();
-		this.fetchSessions();
 	}
 }
