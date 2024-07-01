@@ -40,7 +40,7 @@ export const sessionStateStatsConverter = (
 		}
 	});
 
-	if (runningCount > 0 || createdCount > 0) {
+	if (runningCount >= 0 || createdCount >= 0) {
 		sessionStats.push({
 			state: SessionStateType.running,
 			count: runningCount + createdCount,
