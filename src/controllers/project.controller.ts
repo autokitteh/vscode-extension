@@ -766,7 +766,6 @@ export class ProjectController {
 		}
 
 		await this.loadAndDisplayDeployments();
-		await this.fetchSessions();
 
 		const successMessage = translate().t("projects.projectDeploySucceed", { id: this.projectId });
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
