@@ -906,6 +906,7 @@ export class ProjectController {
 		}
 
 		this.selectedDeploymentId = undefined;
+		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
 		await this.loadAndDisplayDeployments();
 
