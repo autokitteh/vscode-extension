@@ -788,7 +788,6 @@ export class ProjectController {
 			return;
 		}
 		await this.loadAndDisplayDeployments();
-		await this.fetchSessions();
 
 		LoggerService.info(
 			namespaces.projectController,
@@ -839,9 +838,6 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
-
-		await this.loadAndDisplayDeployments();
-		await this.fetchSessions();
 
 		const successMessage = translate().t("deployments.deactivationSucceed");
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
@@ -910,7 +906,6 @@ export class ProjectController {
 		}
 
 		await this.loadAndDisplayDeployments();
-		await this.fetchSessions();
 
 		const log = translate().t("deployments.deleteSucceedIdProject", {
 			deploymentId,
