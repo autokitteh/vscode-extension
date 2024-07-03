@@ -16,6 +16,10 @@ export const DeletePopper: React.FC<DeletePopperProps> = ({ onConfirm, onDismiss
 		event?.stopPropagation();
 		onConfirm();
 	};
+	const onDismissClick = (event: MouseEvent<HTMLElement> | undefined) => {
+		event?.stopPropagation();
+		onDismiss();
+	};
 
 	return (
 		<div className="relative shadow-lg">
@@ -26,7 +30,7 @@ export const DeletePopper: React.FC<DeletePopperProps> = ({ onConfirm, onDismiss
 			<div className="flex">
 				<Button
 					classes="bg-vscode-editor-background text-vscode-foreground"
-					onClick={onDismiss}
+					onClick={onDismissClick}
 					title={translate().t("reactApp.general.dismiss")}
 				>
 					{translate().t("reactApp.general.dismiss")}
