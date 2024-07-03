@@ -145,7 +145,7 @@ export class ProjectController {
 		this.sessionLogRetryScheduler?.stopTimers();
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		this.sessions = undefined;
-		await this.fetchSessions();
+		this.fetchSessions();
 	};
 
 	public reconnect = () => {
