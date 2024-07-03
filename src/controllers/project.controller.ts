@@ -320,6 +320,8 @@ export class ProjectController {
 			return;
 		}
 
+		this.loadAndDisplayDeployments();
+
 		this.sessions = sessions;
 		this.sessionsNextPageToken = nextPageToken;
 
@@ -899,7 +901,6 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
-		await this.loadAndDisplayDeployments();
 		await this.fetchSessions();
 	}
 
