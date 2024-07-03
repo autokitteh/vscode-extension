@@ -508,6 +508,18 @@ export class ProjectController {
 		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessionId);
 		if (stopSessionsInterval) {
 			this.deploymentsWithLiveTail.set(this.selectedDeploymentId, false);
+
+			const sessionsViewObject: SessionSectionViewModel = {
+				sessions: this.sessions,
+				showLiveTail: !!this.isDeploymentLiveTailPossible,
+				isLiveStateOn: false,
+				lastDeployment: this.deployments ? this.deployments[0] : undefined,
+			};
+
+			this.view.update({
+				type: MessageType.setSessionsSection,
+				payload: sessionsViewObject,
+			});
 		}
 	}
 
@@ -815,7 +827,6 @@ export class ProjectController {
 			return;
 		}
 		await this.loadAndDisplayDeployments();
-		await this.fetchSessions();
 
 		const successMessage = translate().t("sessions.executionSucceed", { sessionId });
 		LoggerService.info(namespaces.projectController, successMessage);
@@ -1165,7 +1176,6 @@ export class ProjectController {
 	}
 
 	refreshUI() {
-		this.loadAndDisplayDeployments;
-		this.fetchSessions();
+		this.loadAndDisplayDeployments();
 	}
 }

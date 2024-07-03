@@ -16,12 +16,6 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 	const { sessions, showLiveTail, lastDeployment, isLiveStateOn } = sessionsSection || {};
 	const [isLiveTailButtonDisplayed, setIsLiveTailButtonDisplayed] = useState<boolean>(false);
 
-	const liveTailStateRef = useRef(liveTailState);
-
-	useEffect(() => {
-		liveTailStateRef.current = liveTailState;
-	}, [liveTailState]);
-
 	useIncomingMessageHandler({
 		setSessionsSection,
 		setSelectedSession,
@@ -96,6 +90,7 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 								id="live-tail-status"
 								defaultChecked={liveTailState}
 								onChange={toggleLiveTail}
+								checked={liveTailState}
 								aria-label={
 									liveTailState
 										? translate().t("reactApp.sessions.pauseLiveTail")
