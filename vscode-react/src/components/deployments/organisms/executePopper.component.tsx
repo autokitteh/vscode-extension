@@ -32,25 +32,21 @@ export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 		onStartSession();
 	};
 
-	const onFileChangeClick = (event: MouseEvent<HTMLElement>): void => {
+	const onFileChangeClick = (event: any): void => {
 		event.stopPropagation();
-		onFileChange((event.target as HTMLInputElement).value);
+		onFileChange(event.target.value);
 	};
 
-	const onEntrypointClick = (event: MouseEvent<HTMLElement>): void => {
+	const onEntrypointClick = (event: any): void => {
 		event.stopPropagation();
-		onFunctionChange((event.target as HTMLInputElement).value);
+		onFunctionChange(event.target.value);
 	};
 
 	return (
-		<div className="relative p-4shadow-lg">
+		<div className="relative p-4shadow-lg" onClick={(event) => event.stopPropagation()}>
 			<div className="mb-3 text-left">
 				<strong>{translate().t("reactApp.deployments.executeFile")}</strong>
-				<VSCodeDropdown
-					value={selectedFile}
-					onChange={(event) => onFileChangeClick(event as unknown as MouseEvent<HTMLElement>)}
-					className="flex"
-				>
+				<VSCodeDropdown value={selectedFile} onChange={onFileChangeClick} className="flex">
 					{Object.keys(files).map((file) => (
 						<option key={file} value={file}>
 							{file}
@@ -63,7 +59,7 @@ export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 				<strong>{translate().t("reactApp.deployments.executeEntrypoint")}</strong>
 				<VSCodeDropdown
 					value={selectedFunction}
-					onChange={(event) => onEntrypointClick(event as unknown as MouseEvent<HTMLElement>)}
+					onChange={onEntrypointClick}
 					disabled={functions.length <= 1}
 					className="flex"
 				>

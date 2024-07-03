@@ -40,7 +40,13 @@ export const Popper: React.FC<PopperProps> = ({ visible, children, referenceRef 
 	return (
 		<>
 			{visible && (
-				<div ref={popperRef} style={styles.popper} {...attributes.popper} className={popperClasses}>
+				<div
+					ref={popperRef}
+					style={styles.popper}
+					{...attributes.popper}
+					className={popperClasses}
+					onClick={(event) => event.stopPropagation()}
+				>
 					{children}
 				</div>
 			)}

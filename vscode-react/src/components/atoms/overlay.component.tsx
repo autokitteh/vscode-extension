@@ -7,6 +7,9 @@ export const Overlay = ({ onOverlayClick = () => {}, isVisibile, className }: Ov
 	isVisibile && (
 		<div
 			className={`absolute h-screen w-screen top-0 left-0 bg-black opacity-50 z-50 ${className}`}
-			onClick={() => onOverlayClick()}
+			onClick={(event) => {
+				event.stopPropagation();
+				onOverlayClick();
+			}}
 		></div>
 	);
