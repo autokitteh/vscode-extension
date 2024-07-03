@@ -1,3 +1,10 @@
+## [0.19.8](https://github.com/autokitteh/vscode-extension/compare/v0.19.7...v0.19.8) (2024-07-03)
+
+
+### Bug Fixes
+
+* modifications to make the ui to be more responsive ([#344](https://github.com/autokitteh/vscode-extension/issues/344)) ([6023f4f](https://github.com/autokitteh/vscode-extension/commit/6023f4fad4ae4257d69ba53ed24121df7ec40abd))
+
 ## [0.19.7](https://github.com/autokitteh/vscode-extension/compare/v0.19.6...v0.19.7) (2024-06-24)
 
 
