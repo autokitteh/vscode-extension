@@ -70,13 +70,7 @@ export class ProjectController {
 
 	reveal(): void {
 		this.startLoader();
-		if (!this.project) {
-			const projectNotFoundMessage = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
-			commands.executeCommand(vsCommands.showErrorMessage, projectNotFoundMessage);
-			LoggerService.error(namespaces.projectController, projectNotFoundMessage);
-			return;
-		}
-		this.view.reveal(this.project.name);
+		this.view.reveal(this.project!.name);
 
 		this.notifyViewResourcesPathChanged();
 		this.stopLoader();
@@ -145,12 +139,13 @@ export class ProjectController {
 		this.sessionLogRetryScheduler?.stopTimers();
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		this.sessions = undefined;
-		await this.fetchSessions();
+		this.fetchSessions();
 	};
 
-	public reconnect = async () => {
+	public reconnect = () => {
 		this.deployments = undefined;
 		this.loadAndDisplayDeployments(false);
+		this.fetchSessions();
 	};
 
 	public disable = async () => {
@@ -318,6 +313,8 @@ export class ProjectController {
 		if (isEqual(this.sessions, sessions)) {
 			return;
 		}
+
+		this.loadAndDisplayDeployments();
 
 		this.sessions = sessions;
 		this.sessionsNextPageToken = nextPageToken;
@@ -507,6 +504,18 @@ export class ProjectController {
 		this.selectedSessionPerDeployment.set(this.selectedDeploymentId, sessionId);
 		if (stopSessionsInterval) {
 			this.deploymentsWithLiveTail.set(this.selectedDeploymentId, false);
+
+			const sessionsViewObject: SessionSectionViewModel = {
+				sessions: this.sessions,
+				showLiveTail: !!this.isDeploymentLiveTailPossible,
+				isLiveStateOn: false,
+				lastDeployment: this.deployments ? this.deployments[0] : undefined,
+			};
+
+			this.view.update({
+				type: MessageType.setSessionsSection,
+				payload: sessionsViewObject,
+			});
 		}
 	}
 
@@ -555,7 +564,7 @@ export class ProjectController {
 
 		this.startLoader();
 		const { data: project, error } = await ProjectsService.get(this.projectId);
-		const log = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
+		const log = translate().t("errors.projectNotFoundWithID", { id: this.projectId });
 		this.stopLoader();
 
 		if (error) {
@@ -750,7 +759,7 @@ export class ProjectController {
 		}
 
 		this.startLoader();
-		const { data: deploymentId, error } = await ProjectsService.run(this.projectId, mappedResources!);
+		const { error } = await ProjectsService.run(this.projectId, mappedResources!);
 		this.stopLoader();
 
 		if (error) {
@@ -764,18 +773,11 @@ export class ProjectController {
 			return;
 		}
 
+		await this.loadAndDisplayDeployments();
+
 		const successMessage = translate().t("projects.projectDeploySucceed", { id: this.projectId });
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 		LoggerService.info(namespaces.projectController, successMessage);
-
-		this.selectedDeploymentId = this.deployments?.find(
-			(deployment: Deployment) => deployment.deploymentId === deploymentId
-		)?.deploymentId;
-
-		this.view.update({
-			type: MessageType.selectDeployment,
-			payload: this.selectedDeploymentId,
-		});
 	}
 
 	async activateDeployment(deploymentId: string) {
@@ -792,6 +794,7 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
+		await this.loadAndDisplayDeployments();
 
 		LoggerService.info(
 			namespaces.projectController,
@@ -819,6 +822,8 @@ export class ProjectController {
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
 			return;
 		}
+		await this.loadAndDisplayDeployments();
+
 		const successMessage = translate().t("sessions.executionSucceed", { sessionId });
 		LoggerService.info(namespaces.projectController, successMessage);
 	}
@@ -890,6 +895,7 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 			return;
 		}
+		await this.fetchSessions();
 	}
 
 	async deleteDeployment(deploymentId: string) {
@@ -903,6 +909,11 @@ export class ProjectController {
 
 			return;
 		}
+
+		this.selectedDeploymentId = undefined;
+		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+
+		await this.loadAndDisplayDeployments();
 
 		const log = translate().t("deployments.deleteSucceedIdProject", {
 			deploymentId,
@@ -1157,5 +1168,9 @@ export class ProjectController {
 		this.fetchSessions();
 		this.sessionsNextPageToken = undefined;
 		return;
+	}
+
+	refreshUI() {
+		this.loadAndDisplayDeployments();
 	}
 }

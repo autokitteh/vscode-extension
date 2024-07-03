@@ -79,6 +79,12 @@ export async function activate(context: ExtensionContext) {
 	);
 
 	context.subscriptions.push(
+		commands.registerCommand(vsCommands.refreshSidebar, async () => {
+			sidebarController.enable();
+		})
+	);
+
+	context.subscriptions.push(
 		commands.registerCommand(vsCommands.disable, async () => {
 			sidebarController.disable();
 			tabsManager.disable();

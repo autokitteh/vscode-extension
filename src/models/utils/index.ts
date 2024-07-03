@@ -1,1 +1,5 @@
-export { sessionStateConverter, reverseSessionStateConverter } from "@models/utils/sessionsStateConverter.utils";
+export {
+	sessionStateConverter,
+	reverseSessionStateConverter,
+	sessionStateStatsConverter,
+} from "@models/utils/sessionsStateConverter.utils";

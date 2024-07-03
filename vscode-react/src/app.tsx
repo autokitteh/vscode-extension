@@ -9,9 +9,10 @@ import { AppStateProvider } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import LottieLoader from "react-lottie-loader";
-import "./app.css";
 import SplitPane from "split-pane-react";
+import "./app.css";
 import "split-pane-react/esm/themes/default.css";
+import "react-toggle/style.css";
 
 function App() {
 	const [sizes, setSizes] = useState<(number | string)[]>([]);

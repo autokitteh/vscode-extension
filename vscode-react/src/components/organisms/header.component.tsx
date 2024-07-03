@@ -33,6 +33,10 @@ export const Header = () => {
 		sendMessage(MessageType.fetchConnections);
 	};
 
+	const refreshUI = () => {
+		sendMessage(MessageType.refreshUI);
+	};
+
 	return (
 		<div className="flex items-center w-full">
 			<Logo className="w-9 h-9 m-2" />
@@ -57,11 +61,19 @@ export const Header = () => {
 			<div className="flex-grow"></div>
 			<div className="flex flex-row">
 				<Button
+					onClick={refreshUI}
+					classes="flex relative z-30 mr-2"
+					title={translate().t("reactApp.settings.refresh")}
+				>
+					<div className="codicon codicon-sync text-vscode-background" />
+				</Button>
+				<Button
 					onClick={() => openConnectionsModal()}
 					classes="flex relative z-30 mr-2"
 					title={translate().t("reactApp.settings.openConnectionsSettingsScreen")}
 				>
-					<div className="codicon codicon-link text-vscode-background mr-1" /> Connections
+					<div className="codicon codicon-link text-vscode-background mr-1" />{" "}
+					{translate().t("reactApp.settings.headerConnectionsButton")}
 				</Button>
 				{!resourcesDir ? (
 					<Button
