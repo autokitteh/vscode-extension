@@ -29,4 +29,5 @@ export const applyManifest = async () => {
 
 	(logs || []).forEach((log) => LoggerService.info(namespaces.applyManifest, `${log}`));
 	commands.executeCommand(vsCommands.showInfoMessage, translate().t("manifest.appliedSuccessfully"));
+	setTimeout(() => commands.executeCommand(vsCommands.refreshSidebar), 2500);
 };
