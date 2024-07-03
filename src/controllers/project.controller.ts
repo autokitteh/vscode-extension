@@ -70,13 +70,7 @@ export class ProjectController {
 
 	reveal(): void {
 		this.startLoader();
-		if (!this.project) {
-			const projectNotFoundMessage = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
-			commands.executeCommand(vsCommands.showErrorMessage, projectNotFoundMessage);
-			LoggerService.error(namespaces.projectController, projectNotFoundMessage);
-			return;
-		}
-		this.view.reveal(this.project.name);
+		this.view.reveal(this.project!.name);
 
 		this.notifyViewResourcesPathChanged();
 		this.stopLoader();
@@ -570,7 +564,7 @@ export class ProjectController {
 
 		this.startLoader();
 		const { data: project, error } = await ProjectsService.get(this.projectId);
-		const log = translate().t("projects.projectNotFoundWithID", { id: this.projectId });
+		const log = translate().t("errors.projectNotFoundWithID", { id: this.projectId });
 		this.stopLoader();
 
 		if (error) {
