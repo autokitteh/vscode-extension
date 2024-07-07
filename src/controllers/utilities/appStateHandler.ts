@@ -1,6 +1,7 @@
+import { ConfigurationTarget, workspace } from "vscode";
+
 import { namespaces } from "@constants";
 import { LoggerService } from "@services";
-import { ConfigurationTarget, workspace } from "vscode";
 
 export class AppStateHandler {
 	static async set(isEnabled: boolean): Promise<void> {

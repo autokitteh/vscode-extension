@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+
+import Toggle from "react-toggle";
+
 import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
@@ -6,7 +9,6 @@ import { TableMessage } from "@react-components/atoms/table";
 import { SessionsTableBody } from "@react-components/sessions/organisms";
 import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
-import Toggle from "react-toggle";
 
 export const SessionsSection = ({ height }: { height: string | number }) => {
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();

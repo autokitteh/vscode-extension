@@ -1,13 +1,14 @@
+import axios from "axios";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
+import { commands, window } from "vscode";
+
 import { namespaces, starlarkExecutableGithubRepository, starlarkLSPExtractedDirectory, vsCommands } from "@constants";
 import { translate } from "@i18n";
 import { AssetInfo, GitHubRelease } from "@interfaces";
 import { LoggerService } from "@services";
 import { extractArchive, listFilesInDirectory } from "@utilities";
-import axios from "axios";
-import { commands, window } from "vscode";
 
 export class StarlarkVersionManagerService {
 	public static async updateLSPVersionIfNeeded(

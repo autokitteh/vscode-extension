@@ -1,11 +1,12 @@
+import * as vscode from "vscode";
+import { Uri, window } from "vscode";
+
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n/translation.i18n";
 import { IProjectView, ProjectViewDelegate } from "@interfaces";
 import { StartSessionArgsType, Message } from "@type";
 import { getNonce } from "@utilities";
 import { getUri } from "@utilities/getUri.utils";
-import * as vscode from "vscode";
-import { Uri, window } from "vscode";
 
 export class ProjectView implements IProjectView {
 	private panel?: vscode.WebviewPanel;

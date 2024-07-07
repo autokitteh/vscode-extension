@@ -1,3 +1,8 @@
+import isEqual from "lodash.isequal";
+import { commands, window, Disposable } from "vscode";
+
+import { ISidebarView } from "interfaces";
+
 import { Code, ConnectError } from "@connectrpc/connect";
 import { INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL, namespaces, vsCommands } from "@constants";
 import { getLocalResources } from "@controllers/utilities";
@@ -5,9 +10,6 @@ import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import { translate } from "@i18n";
 import { LoggerService, ProjectsService } from "@services";
 import { SidebarTreeItem } from "@type/views";
-import { ISidebarView } from "interfaces";
-import isEqual from "lodash.isequal";
-import { commands, window, Disposable } from "vscode";
 
 export class SidebarController {
 	private view: ISidebarView;

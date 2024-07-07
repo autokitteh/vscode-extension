@@ -1,7 +1,8 @@
-import { channels } from "@constants";
-import { LoggerLevel } from "@enums";
 import moment from "moment";
 import { window, OutputChannel } from "vscode";
+
+import { channels } from "@constants";
+import { LoggerLevel } from "@enums";
 
 export class LoggerService {
 	private static outputChannels: { [key: string]: OutputChannel } = {};

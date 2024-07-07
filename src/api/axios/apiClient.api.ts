@@ -1,8 +1,9 @@
+import Axios, { AxiosError, AxiosInstance } from "axios";
+
 import { baseApi } from "@api";
 import { handleErrorResponse } from "@api/axios";
 import { IApiClient } from "@interfaces";
 import { RequestConfig } from "@type";
-import Axios, { AxiosError, AxiosInstance } from "axios";
 
 export class ApiClient implements IApiClient {
 	private client: AxiosInstance;

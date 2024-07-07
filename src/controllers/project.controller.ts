@@ -1,12 +1,15 @@
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
+import isEqual from "lodash.isequal";
 import * as path from "path";
+import { commands, env, OpenDialogOptions, Uri, window } from "vscode";
+
 import {
-	vsCommands,
-	namespaces,
 	channels,
 	INITIAL_DEPLOYMENTS_RETRY_SCHEDULE_INTERVAL,
 	INITIAL_SESSION_LOG_RETRY_SCHEDULE_INTERVAL,
+	namespaces,
+	vsCommands,
 } from "@constants";
 import { ConnectionsController } from "@controllers";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
@@ -16,14 +19,11 @@ import { translate } from "@i18n";
 import { ConnectionsViewDelegate, IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
 import { reverseSessionStateConverter } from "@models/utils";
-import { DeploymentsService, ProjectsService, SessionsService, LoggerService } from "@services";
-import { BuildsService } from "@services";
+import { BuildsService, DeploymentsService, LoggerService, ProjectsService, SessionsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import { createDirectory, openFileExplorer } from "@utilities";
-import isEqual from "lodash.isequal";
-import { commands, OpenDialogOptions, window, env, Uri } from "vscode";
 
 export class ProjectController {
 	private view: IProjectView;
@@ -555,6 +555,7 @@ export class ProjectController {
 			() => this.displaySessionsHistory(sessionId),
 			() => {}
 		);
+
 		this.sessionLogRetryScheduler.startFetchInterval();
 	}
 

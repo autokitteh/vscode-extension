@@ -1,7 +1,8 @@
+import { window, commands, workspace } from "vscode";
+
 import { DEFAULT_SERVER_URL, vsCommands } from "@constants";
 import { translate } from "@i18n";
 import { ValidateURL } from "@utilities";
-import { window, commands, workspace } from "vscode";
 
 export const openBaseURLInputDialog = async () => {
 	let baseURL = await window.showInputBox({

@@ -1,4 +1,7 @@
 import React, { useEffect, useRef, useState, MouseEvent } from "react";
+
+import { createPortal } from "react-dom";
+
 import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { Overlay } from "@react-components/atoms";
@@ -10,7 +13,6 @@ import { useAppState } from "@react-context/appState.context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment, SessionEntrypoint } from "@type/models";
-import { createPortal } from "react-dom";
 
 export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
 	// State Hooks Section

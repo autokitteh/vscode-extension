@@ -1,6 +1,7 @@
+import { window } from "vscode";
+
 import { LoggerService } from "@services";
 import { WorkspaceConfig } from "@utilities/workspaceConfig.util";
-import { window } from "vscode";
 
 export class MessageHandler {
 	private static notificationsLevel = WorkspaceConfig.getFromWorkspace<string>("notificationsLevel", "");

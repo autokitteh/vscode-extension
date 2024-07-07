@@ -1,8 +1,9 @@
+import { commands, window } from "vscode";
+
 import { namespaces, vsCommands } from "@constants";
 import { translate } from "@i18n";
 import { LoggerService, ManifestService } from "@services";
 import { getDirectoryOfFile } from "@utilities";
-import { commands, window } from "vscode";
 
 export const applyManifest = async () => {
 	if (!window.activeTextEditor) {

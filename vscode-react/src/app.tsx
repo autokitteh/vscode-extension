@@ -1,4 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+
+import LottieLoader from "react-lottie-loader";
+import SplitPane from "split-pane-react";
+
 import retryLoader from "@assets/animations/retry-loader.json";
 import { MessageType } from "@enums";
 import { Overlay } from "@react-components/atoms";
@@ -8,8 +12,6 @@ import { SessionsSection } from "@react-components/sessions/pages";
 import { AppStateProvider } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
-import LottieLoader from "react-lottie-loader";
-import SplitPane from "split-pane-react";
 import "./app.css";
 import "split-pane-react/esm/themes/default.css";
 import "react-toggle/style.css";
