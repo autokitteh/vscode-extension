@@ -1,5 +1,6 @@
-import { ValidateURL } from "@utilities/validateUrl.utils";
 import { describe, it, expect } from "vitest";
+
+import { ValidateURL } from "@utilities/validateUrl.utils";
 
 describe("ValidateURL", () => {
 	it("should return true for a valid URL", () => {

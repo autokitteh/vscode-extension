@@ -6,6 +6,74 @@
 	},
 	"plugins": ["@typescript-eslint", "import", "unicorn"],
 	"root": true,
+	"settings": {
+		"react": {
+			"version": "detect"
+		},
+		"import/parsers": {
+			"@typescript-eslint/parser": [".ts", ".tsx"]
+		},
+		"import/resolver": {
+			"typescript": {
+				"alwaysTryTypes": true,
+				"project": ["./tsconfig.json"]
+			},
+			"alias": {
+				"map": [
+					["@ak-proto-ts/*", "./src/autokitteh/proto/gen/ts/autokitteh/*"],
+					["@assets/*", "assets/*"],
+					["@api/*", "./src/api/*"],
+					["@api", "./src/api/index"],
+					["@constants", "./src/constants/index"],
+					["@constants/*", "./src/constants/*"],
+					["@enums", "./src/enums/index"],
+					["@enums/*", "./src/enums/*"],
+					["@interfaces", "./src/interfaces/index"],
+					["@interfaces/*", "./src/interfaces/*"],
+					["@i18n", "./src/i18n/index"],
+					["@i18n/*", "./src/i18n/*"],
+					["@models", "./src/models/index"],
+					["@models/*", "./src/models/*"],
+					["@react-assets", "vscode-react/assets/index"],
+					["@react-assets/*", "vscode-react/assets/*"],
+					["@react-components", "vscode-react/src/components/index"],
+					["@react-components/*", "vscode-react/src/components/*"],
+					["@react-constants", "vscode-react/src/constants/index"],
+					["@react-constants/*", "vscode-react/src/constants/*"],
+					["@react-context", "vscode-react/src/context/index"],
+					["@react-context/*", "vscode-react/src/context/*"],
+					["@react-enums", "vscode-react/src/enums/index"],
+					["@react-enums/*", "vscode-react/src/enums/*"],
+					["@react-hooks", "vscode-react/src/hooks/index"],
+					["@react-hooks/*", "vscode-react/src/hooks/*"],
+					["@react-interfaces", "vscode-react/src/interfaces/index"],
+					["@react-interfaces/*", "vscode-react/src/interfaces/*"],
+					["@react-sections", "vscode-react/src/sections/index"],
+					["@react-sections/*", "vscode-react/src/sections/*"],
+					["@react-utilities", "vscode-react/src/utilities/index"],
+					["@react-utilities/*", "vscode-react/src/utilities/*"],
+					["@react-types", "vscode-react/src/types/index"],
+					["@react-types/*", "vscode-react/src/types/*"],
+					["@sections/*", "vscode-react/src/sections/*"],
+					["@type", "./src/types/index"],
+					["@type/*", "./src/types/*"],
+					["@utilities", "./src/utilities/index"],
+					["@utilities/*", "./src/utilities/*"],
+					["@services", "./src/services/index"],
+					["@services/*", "./src/services/*"],
+					["@starlark", "./src/starlark/index"],
+					["@starlark/*", "./src/starlark/*"],
+					["@utils", "./src/utilities/index"],
+					["@utils/*", "./src/utilities/*"]
+				],
+				"extensions": [".js", ".jsx", ".ts", ".tsx"]
+			},
+			"node": {
+				"paths": ["src"],
+				"extensions": [".js", ".jsx", ".ts", ".tsx"]
+			}
+		}
+	},
 	"rules": {
 		"@typescript-eslint/no-unused-vars": "error",
 		"@typescript-eslint/naming-convention": [
@@ -39,55 +107,39 @@
 				"selector": "classMethod"
 			}
 		],
-		"@typescript-eslint/semi": "warn",
-		"comma-spacing": [
-			"error",
-			{
-				"after": true,
-				"before": false
-			}
-		],
 		"curly": "warn",
 		"eqeqeq": "warn",
 		"import/order": [
 			"error",
 			{
-				"alphabetize": {
-					"caseInsensitive": true,
-					"order": "asc"
-				},
-				"groups": ["external", "builtin", "parent", ["sibling", "index"]],
-				"newlines-between": "never",
+				"groups": [
+					["builtin", "external"],
+					["internal", "parent", "sibling", "index"]
+				],
 				"pathGroups": [
 					{
-						"group": "external",
 						"pattern": "react",
+						"group": "external",
 						"position": "before"
 					},
 					{
-						"group": "builtin",
-						"pattern": "**",
-						"position": "after"
-					},
-					{
-						"group": "external",
-						"pattern": "./**",
+						"pattern": "@{*,**/**}",
+						"group": "internal",
 						"position": "after"
 					}
 				],
-				"pathGroupsExcludedImportTypes": ["builtin"]
+				"pathGroupsExcludedImportTypes": ["react"],
+				"newlines-between": "always",
+				"alphabetize": {
+					"order": "asc",
+					"caseInsensitive": true
+				}
 			}
 		],
-		"max-len": [
-			"error",
-			{
-				"code": 120,
-				"ignoreComments": true,
-				"tabWidth": 2
-			}
-		],
+		"import/first": "error",
+		"import/no-duplicates": "error",
+		"import/newline-after-import": "error",
 		"no-throw-literal": "warn",
-		"semi": "off",
 		"unicorn/filename-case": [
 			"error",
 			{

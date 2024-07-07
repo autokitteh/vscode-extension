@@ -1,5 +1,6 @@
-import { RequestConfig } from "@type";
 import { AxiosRequestConfig } from "axios";
+
+import { RequestConfig } from "@type";
 
 export interface IApiClient {
 	post<TRequest, TResponse>(path: string, object: TRequest, config?: RequestConfig): Promise<TResponse>;

@@ -1,6 +1,8 @@
 import React, { createContext, ReactNode, useContext, useEffect, useReducer, useState } from "react";
-import { Theme } from "@enums";
+
 import { Action } from "src/types";
+
+import { Theme } from "@enums";
 
 type State = {
 	modalName: string;

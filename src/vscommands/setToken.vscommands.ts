@@ -1,6 +1,7 @@
+import { commands, ConfigurationTarget, window, workspace } from "vscode";
+
 import { vsCommands } from "@constants";
 import { translate } from "@i18n";
-import { commands, ConfigurationTarget, window, workspace } from "vscode";
 
 export const setToken = async () => {
 	const inputToken = await window.showInputBox({ prompt: translate().t("token.enterToken") });

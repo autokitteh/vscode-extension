@@ -1,8 +1,7 @@
-require("module-alias/register");
+import { commands, ExtensionContext, window, workspace } from "vscode";
 
-import { vsCommands, namespaces, starlarkLocalLSPDefaultArgs } from "@constants";
-import { SidebarController } from "@controllers";
-import { TabsManagerController } from "@controllers";
+import { namespaces, starlarkLocalLSPDefaultArgs, vsCommands } from "@constants";
+import { SidebarController, TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { translate } from "@i18n";
 import {
@@ -12,12 +11,13 @@ import {
 	StarlarkVersionManagerService,
 } from "@services";
 import { SidebarTreeItem } from "@type/views";
-import { ValidateURL, WorkspaceConfig, isStalarkLSPSocketMode } from "@utilities";
+import { isStalarkLSPSocketMode, ValidateURL, WorkspaceConfig } from "@utilities";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject, setToken } from "@vscommands";
 import { openAddConnectionsPage } from "@vscommands/sideBarActions";
 import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough";
-import { commands, ExtensionContext, workspace, window } from "vscode";
+
+require("module-alias/register");
 
 export async function activate(context: ExtensionContext) {
 	workspace.onDidChangeConfiguration(async (event) => {

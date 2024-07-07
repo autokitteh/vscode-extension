@@ -1,9 +1,10 @@
 import * as fs from "fs";
 import * as path from "path";
+import { commands } from "vscode";
+
 import { vsCommands } from "@constants";
 import { translate } from "@i18n";
 import { mapFilesToContentInBytes, readDirectoryRecursive } from "@utilities";
-import { commands } from "vscode";
 
 const getResourcesPath = async (projectId: string) => {
 	const { path }: { path: string } = await commands.executeCommand(vsCommands.getContext, projectId);

@@ -1,11 +1,12 @@
+import AdmZip from "adm-zip";
 import { createReadStream } from "fs";
 import * as path from "path";
 import { pipeline } from "stream/promises";
+import tarFs from "tar-fs";
 import * as zlib from "zlib";
+
 import { starlarkLSPExtractedDirectory } from "@constants/starlark.constants";
 import { createDirectory, directoryExists } from "@utilities";
-import AdmZip from "adm-zip";
-import tarFs from "tar-fs";
 
 const getArchiveType = (filename: string): string => {
 	const ext = path.extname(filename).toLowerCase();

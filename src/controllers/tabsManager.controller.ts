@@ -1,7 +1,8 @@
+import { ExtensionContext } from "vscode";
+
 import { ProjectController } from "@controllers";
 import { SidebarTreeItem } from "@type/views";
 import { ProjectView } from "@views";
-import { ExtensionContext } from "vscode";
 
 export class TabsManagerController {
 	openWebviews: { [key: string]: any };

@@ -1,8 +1,9 @@
+import { workspace } from "vscode";
+import { LanguageClient, ServerOptions } from "vscode-languageclient";
+
 import { namespaces, starlarkLSPClientOptions, starlarkLSPUriScheme, starlarkLocalLSPDefaultArgs } from "@constants";
 import { LoggerService } from "@services";
 import { StarlarkFileHandler } from "@starlark";
-import { workspace } from "vscode";
-import { LanguageClient, ServerOptions } from "vscode-languageclient";
 
 export class StarlarkLSPService {
 	private static languageClient: LanguageClient | undefined = undefined;

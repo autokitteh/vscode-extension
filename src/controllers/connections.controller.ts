@@ -1,9 +1,10 @@
+import { commands, env, Uri } from "vscode";
+
 import { BASE_URL, namespaces, vsCommands } from "@constants";
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { ConnectionsService, LoggerService } from "@services";
 import { Connection } from "@type/models";
-import { commands, env, Uri } from "vscode";
 
 export class ConnectionsController {
 	private projectId: string;

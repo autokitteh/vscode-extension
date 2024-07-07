@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+
 import { appStateReducer } from "../../src/context/appState.context";
 import { Action } from "../../src/types/contextAction.type";
 

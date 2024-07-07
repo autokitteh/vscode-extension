@@ -1,5 +1,6 @@
-import { EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER } from "@constants";
 import moment from "moment";
+
+import { EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER } from "@constants";
 
 export class RetryScheduler {
 	private countdown: number;

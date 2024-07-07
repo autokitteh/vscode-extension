@@ -1,5 +1,6 @@
-import { english } from "@i18n/en";
 import * as i18n from "i18next";
+
+import { english } from "@i18n/en";
 
 const englishResources = {
 	en: {

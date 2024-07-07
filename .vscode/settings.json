@@ -1,9 +1,7 @@
 {
-	"eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
-	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": "explicit"
-	},
 	"editor.formatOnSave": true,
 	"typescript.preferences.importModuleSpecifier": "non-relative",
-	"git.enableCommitSigning": true
+	"git.enableCommitSigning": true,
+	"javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
+	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false
 }

@@ -1,4 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+import { createPortal } from "react-dom";
+import { FixedSizeList as List, ListOnItemsRenderedProps, ListOnScrollProps } from "react-window";
+
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { HeaderCell } from "@react-components/atoms/table";
@@ -11,8 +15,6 @@ import { useCloseOnEscape } from "@react-hooks";
 import { SessionsTableRowProps } from "@react-types";
 import { sendMessage, getSessionActions } from "@react-utilities";
 import { Deployment, Session } from "@type/models";
-import { createPortal } from "react-dom";
-import { FixedSizeList as List, ListOnItemsRenderedProps, ListOnScrollProps } from "react-window";
 
 export const SessionsTableBody = ({
 	sessions,

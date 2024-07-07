@@ -1,8 +1,9 @@
 import { Socket, connect } from "net";
+import { StreamInfo } from "vscode-languageclient";
+
 import { namespaces, starlarkLSPSocketReconnectRefreshRate } from "@constants";
 import { translate } from "@i18n";
 import { LoggerService } from "@services";
-import { StreamInfo } from "vscode-languageclient";
 
 export class StarlarkSocketStreamingService {
 	private static retryTimer: NodeJS.Timeout | undefined;
