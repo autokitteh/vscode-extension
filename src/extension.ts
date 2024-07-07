@@ -1,3 +1,6 @@
+/* eslint-disable import/first */
+require("module-alias/register");
+
 import { commands, ExtensionContext, window, workspace } from "vscode";
 
 import { namespaces, starlarkLocalLSPDefaultArgs, vsCommands } from "@constants";
@@ -16,8 +19,6 @@ import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject, setToken } from "@vscommands";
 import { openAddConnectionsPage } from "@vscommands/sideBarActions";
 import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough";
-
-require("module-alias/register");
 
 export async function activate(context: ExtensionContext) {
 	workspace.onDidChangeConfiguration(async (event) => {
