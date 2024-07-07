@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import path from "path";
-import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig, type PluginOption } from "vite";
 import svgr from "vite-plugin-svgr";
+
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
 	resolve: {
