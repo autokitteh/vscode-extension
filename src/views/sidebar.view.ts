@@ -12,7 +12,7 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 
 	private rootNode?: TreeItem;
 	private childNodeMap?: Map<TreeItem, TreeItem[]>;
-	private strippedBaseURL = BASE_URL.replace(/^https?\:\/\//i, "");
+	private strippedBaseURL = BASE_URL.replace(/^https?\:\/\/|\/$/g, "");
 
 	constructor() {}
 
@@ -24,7 +24,7 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 			return;
 		}
 		this.rootNode = new TreeItem(
-			`${translate().t("projects.projects")} - ${this.strippedBaseURL}`,
+			`${translate().t("projects.projects")} on ${this.strippedBaseURL}`,
 			TreeItemCollapsibleState.Expanded
 		);
 		this.childNodeMap = new Map();
@@ -38,7 +38,7 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 		const isInvalidState = children.some((child) => child.key === undefined);
 
 		if (isInvalidState) {
-			this.rootNode = new TreeItem(children[0].label, TreeItemCollapsibleState.Expanded);
+			this.rootNode = new TreeItem(children[0].label, TreeItemCollapsibleState.None);
 			childItems = childItems.slice(1);
 		}
 
