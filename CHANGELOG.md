@@ -1,3 +1,10 @@
+## [0.19.10](https://github.com/autokitteh/vscode-extension/compare/v0.19.9...v0.19.10) (2024-07-08)
+
+
+### Bug Fixes
+
+* add the host url to the machine scoped settings as well ([#351](https://github.com/autokitteh/vscode-extension/issues/351)) ([05b573c](https://github.com/autokitteh/vscode-extension/commit/05b573cfb1bf17bd95e0589a908176b86e2f0a8e))
+
 ## [0.19.9](https://github.com/autokitteh/vscode-extension/compare/v0.19.8...v0.19.9) (2024-07-08)
 
 
