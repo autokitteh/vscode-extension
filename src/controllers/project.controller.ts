@@ -659,11 +659,7 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, successMessage);
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
-		const vscodeProjectsPaths = JSON.parse(await commands.executeCommand(vsCommands.getContext, "projectsPaths"));
-		vscodeProjectsPaths[this.projectId] = savePath;
-
-		await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
-
+		this.setResourcesPathToTheContext(savePath);
 		this.notifyViewResourcesPathChanged();
 	}
 
@@ -747,10 +743,7 @@ export class ProjectController {
 		}
 		await this.downloadResources(resourcePath);
 
-		const vscodeProjectsPaths = JSON.parse(await commands.executeCommand(vsCommands.getContext, "projectsPaths"));
-		vscodeProjectsPaths[this.projectId] = resourcePath;
-
-		await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
+		this.setResourcesPathToTheContext(resourcePath);
 
 		this.notifyViewResourcesPathChanged();
 		return;
@@ -876,6 +869,13 @@ export class ProjectController {
 			type: MessageType.setResourcesDir,
 			payload: "",
 		});
+	}
+
+	async setResourcesPathToTheContext(resourcePath: string) {
+		const vscodeProjectsPaths = JSON.parse(await commands.executeCommand(vsCommands.getContext, "projectsPaths"));
+		vscodeProjectsPaths[this.projectId] = resourcePath;
+
+		await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
 	}
 
 	async getResourcesPathFromContext() {
@@ -1029,10 +1029,7 @@ export class ProjectController {
 		const savePath = newLocalResourcesPath[0].fsPath;
 
 		if (currentProjectDirectory && (currentProjectDirectory as { path: string })?.path !== savePath) {
-			const vscodeProjectsPaths = JSON.parse(await commands.executeCommand(vsCommands.getContext, "projectsPaths"));
-			vscodeProjectsPaths[this.projectId] = savePath;
-
-			await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
+			this.setResourcesPathToTheContext(savePath);
 		}
 
 		const successMessage = translate().t("projects.setResourcesDirectorySuccess", {
