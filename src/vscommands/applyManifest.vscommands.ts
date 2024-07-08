@@ -25,7 +25,15 @@ export const applyManifest = async () => {
 
 	const { logs, projectIds } = manifestResponse!;
 	if (projectIds.length > 0) {
-		await commands.executeCommand(vsCommands.setContext, projectIds[0], { path: manifestDirectory });
+		const currentProjectPaths = (await commands.executeCommand(
+			vsCommands.getContext,
+			"projectsPaths"
+		)) as unknown as string;
+
+		const vscodeProjectsPaths = JSON.parse(currentProjectPaths);
+		vscodeProjectsPaths[projectIds[0]] = manifestDirectory;
+
+		await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
 	}
 
 	(logs || []).forEach((log) => LoggerService.info(namespaces.applyManifest, `${log}`));

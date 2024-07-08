@@ -1,10 +1,11 @@
+import * as fs from "fs";
 import isEqual from "lodash.isequal";
 import { commands, window, Disposable } from "vscode";
 
 import { ISidebarView } from "interfaces";
 
 import { Code, ConnectError } from "@connectrpc/connect";
-import { INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL, namespaces, vsCommands } from "@constants";
+import { BASE_URL, INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL, namespaces, vsCommands } from "@constants";
 import { getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import { translate } from "@i18n";
@@ -17,6 +18,7 @@ export class SidebarController {
 	private retryScheduler: RetryScheduler;
 	private disposables: Disposable[] = [];
 	private projectsRetryStarted: boolean = false;
+	private strippedBaseURL = BASE_URL.replace(/^https?\:\/\/|\/$/g, "");
 
 	constructor(sidebarView: ISidebarView) {
 		this.view = sidebarView;
@@ -61,7 +63,12 @@ export class SidebarController {
 
 				return;
 			} else {
-				return [{ label: translate().t("general.internalError"), key: undefined }];
+				return [
+					{
+						label: `🔴 ${translate().t("general.internalError")} on ${this.strippedBaseURL}`,
+						key: undefined,
+					},
+				];
 			}
 		}
 
@@ -76,7 +83,13 @@ export class SidebarController {
 				key: project.projectId,
 			}));
 		}
-		return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
+
+		return [
+			{
+				label: `${translate().t("projects.noProjectsFound")} on ${this.strippedBaseURL}`,
+				key: undefined,
+			},
+		];
 	};
 
 	public async refreshProjects(resetCountdown: boolean = true) {
@@ -92,14 +105,16 @@ export class SidebarController {
 	private updateViewWithCountdown(countdown: string) {
 		this.view.refresh([
 			{
-				label: countdown,
+				label: `🔴 ${countdown} on ${this.strippedBaseURL}`,
 				key: undefined,
 			},
 		]);
 	}
 
 	async buildProject(projectId: string) {
-		const { data: mappedResources, error: resourcesError } = await getLocalResources(projectId);
+		const projectPath = await this.getResourcesPathFromContext(projectId);
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(projectPath, projectId);
+
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
@@ -121,8 +136,23 @@ export class SidebarController {
 		LoggerService.info(namespaces.projectController, successMessage);
 	}
 
+	async getResourcesPathFromContext(projectId: string) {
+		const projectFromContext: string = await commands.executeCommand(vsCommands.getContext, "projectsPaths");
+		if (!projectFromContext) {
+			return;
+		}
+		const vscodeProjectsPaths = JSON.parse(projectFromContext);
+		const projectPath = vscodeProjectsPaths[projectId];
+		if (!projectPath || !fs.existsSync(projectPath)) {
+			return;
+		}
+		return projectPath;
+	}
+
 	async runProject(projectId: string) {
-		const { data: mappedResources, error: resourcesError } = await getLocalResources(projectId);
+		const projectPath = await this.getResourcesPathFromContext(projectId);
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(projectPath, projectId);
+
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);

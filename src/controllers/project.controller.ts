@@ -659,8 +659,7 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, successMessage);
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
-		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: savePath });
-
+		this.setResourcesPathToTheContext(savePath);
 		this.notifyViewResourcesPathChanged();
 	}
 
@@ -683,7 +682,8 @@ export class ProjectController {
 	}
 
 	async build() {
-		const { data: mappedResources, error: resourcesError } = await getLocalResources(this.projectId);
+		const projectPath = await this.getResourcesPathFromContext();
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(projectPath, this.projectId);
 
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
@@ -744,14 +744,15 @@ export class ProjectController {
 		}
 		await this.downloadResources(resourcePath);
 
-		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: resourcePath });
+		this.setResourcesPathToTheContext(resourcePath);
 
 		this.notifyViewResourcesPathChanged();
 		return;
 	}
 
 	async run() {
-		const { data: mappedResources, error: resourcesError } = await getLocalResources(this.projectId);
+		const projectPath = await this.getResourcesPathFromContext();
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(projectPath, this.projectId);
 
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
@@ -872,12 +873,24 @@ export class ProjectController {
 		});
 	}
 
+	async setResourcesPathToTheContext(resourcePath: string) {
+		const vscodeProjectsPaths = JSON.parse(await commands.executeCommand(vsCommands.getContext, "projectsPaths"));
+		vscodeProjectsPaths[this.projectId] = resourcePath;
+
+		await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
+	}
+
 	async getResourcesPathFromContext() {
-		const projectFromContext: { path?: string } = await commands.executeCommand(vsCommands.getContext, this.projectId);
-		if (!projectFromContext || !projectFromContext.path || !fs.existsSync(projectFromContext.path)) {
+		const projectFromContext: string = await commands.executeCommand(vsCommands.getContext, "projectsPaths");
+		if (!projectFromContext) {
 			return;
 		}
-		return projectFromContext.path;
+		const vscodeProjectsPaths = JSON.parse(projectFromContext);
+		const projectPath = vscodeProjectsPaths[this.projectId];
+		if (!projectPath || !fs.existsSync(projectPath)) {
+			return;
+		}
+		return projectPath;
 	}
 
 	async stopSession(sessionId: string) {
@@ -1013,12 +1026,12 @@ export class ProjectController {
 			return;
 		}
 
-		const currentProjectDirectory = await commands.executeCommand(vsCommands.getContext, this.projectId);
+		const currentProjectDirectory = await this.getResourcesPathFromContext();
 
 		const savePath = newLocalResourcesPath[0].fsPath;
 
-		if (currentProjectDirectory && (currentProjectDirectory as { path: string })?.path !== savePath) {
-			await commands.executeCommand(vsCommands.setContext, this.projectId, { path: savePath });
+		if (currentProjectDirectory && currentProjectDirectory !== savePath) {
+			this.setResourcesPathToTheContext(savePath);
 		}
 
 		const successMessage = translate().t("projects.setResourcesDirectorySuccess", {

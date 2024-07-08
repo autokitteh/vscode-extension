@@ -4,6 +4,6 @@
 	"reload": "Reload",
 	"dismiss": "Dismiss",
 	"baseURLInvalid": "Base URL you entered is invalid, please enter a valid URL",
-	"reconnecting": "Reconnecting in {{countdown}} - Retry Now",
+	"reconnecting": "Reconnecting in {{countdown}}",
 	"internalError": "Internal error"
 }
