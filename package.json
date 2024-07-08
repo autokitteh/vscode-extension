@@ -86,7 +86,7 @@
 				"autokitteh.projectsPaths": {
 					"default": "{}",
 					"description": "Projects directories",
-					"type": "string",
+					"type": "hidden",
 					"scope": "machine"
 				},
 				"autokitteh.notificationsLevel": {
@@ -107,19 +107,19 @@
 				"autokitteh.serviceEnabled": {
 					"default": false,
 					"description": "Is extension ON",
-					"type": "boolean"
+					"type": "hidden"
 				},
 				"autokitteh.starlarkLSPPath": {
 					"default": "",
-					"description": "The path to the starlark LSP Server",
-					"title": "Starlark LSP executable or socket url path",
+					"description": "Starlark LSP executable or socket url path",
+					"title": "The path to the starlark LSP Server",
 					"type": "string"
 				},
 				"autokitteh.starlarkVersion": {
 					"default": "",
 					"description": "The version of the starlark LSP Server",
 					"title": "Starlark LSP executable version",
-					"type": "string",
+					"type": "hidden",
 					"scope": "machine"
 				}
 			},
