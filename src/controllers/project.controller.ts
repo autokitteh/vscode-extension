@@ -1024,11 +1024,11 @@ export class ProjectController {
 			return;
 		}
 
-		const currentProjectDirectory = await commands.executeCommand(vsCommands.getContext, this.projectId);
+		const currentProjectDirectory = await this.getResourcesPathFromContext();
 
 		const savePath = newLocalResourcesPath[0].fsPath;
 
-		if (currentProjectDirectory && (currentProjectDirectory as { path: string })?.path !== savePath) {
+		if (currentProjectDirectory && currentProjectDirectory !== savePath) {
 			this.setResourcesPathToTheContext(savePath);
 		}
 

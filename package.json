@@ -112,8 +112,7 @@
 					"default": "",
 					"description": "The path to the starlark LSP Server",
 					"title": "Starlark LSP executable or socket url path",
-					"type": "string",
-					"scope": "machine"
+					"type": "string"
 				},
 				"autokitteh.starlarkVersion": {
 					"default": "",

@@ -56,20 +56,15 @@ export async function activate(context: ExtensionContext) {
 		commands.registerCommand(vsCommands.runProject, (focusedItem) => runProject(focusedItem, sidebarController))
 	);
 	context.subscriptions.push(
-		commands.registerCommand(vsCommands.setContext, async (key: string, value: any) => {
-			await workspace.getConfiguration().update(`autokitteh.${key}`, value, ConfigurationTarget.Global);
+		commands.registerCommand(vsCommands.setContext, (key: string, value: any) => {
+			workspace.getConfiguration().update(`autokitteh.${key}`, value, ConfigurationTarget.Global);
 		})
 	);
 	context.subscriptions.push(
-		commands.registerCommand(vsCommands.getContext, async (key: string, defaultValue?: any) => {
-			const fromContext =
-				workspace.getConfiguration().get(`autokitteh.${key}`, ConfigurationTarget.Global) || defaultValue;
-			return fromContext;
+		commands.registerCommand(vsCommands.getContext, (key: string) => {
+			return workspace.getConfiguration().get(`autokitteh.${key}`);
 		})
 	);
-
-	await commands.executeCommand(vsCommands.setContext, "starlarkLSPPath", undefined);
-	await commands.executeCommand(vsCommands.setContext, "starlarkLSPVersion", undefined);
 
 	const sidebarView = new SidebarView();
 
@@ -124,15 +119,10 @@ export async function activate(context: ExtensionContext) {
 	}
 
 	const initStarlarkLSP = async () => {
-		const starlarkLSPPathFromConfig = (await commands.executeCommand(
-			vsCommands.getContext,
-			"starlarkLSPPath"
-		)) as unknown as string;
-
-		const starlarkLSPVersionFromContext = (await commands.executeCommand(
-			vsCommands.getContext,
-			"starlarkVersion"
-		)) as unknown as string;
+		const starlarkLSPPathFromConfig =
+			WorkspaceConfig.getFromWorkspace<string | undefined>("starlarkLSPPath", undefined) ||
+			context.workspaceState.get<string>("autokitteh.starlarkLSPPath", "");
+		const starlarkLSPVersionFromContext = context.workspaceState.get<string>("autokitteh.starlarkVersion", "");
 
 		if (isStalarkLSPSocketMode(starlarkLSPPathFromConfig)) {
 			let serverURL = new URL(starlarkLSPPathFromConfig);
@@ -187,15 +177,11 @@ export async function activate(context: ExtensionContext) {
 				);
 			}
 
-			const starlarkLSPPathForServer = (await commands.executeCommand(
-				vsCommands.getContext,
-				"starlarkLSPPath"
-			)) as unknown as string;
+			const starlarkLSPPathForServer =
+				WorkspaceConfig.getFromWorkspace<string | undefined>("starlarkLSPPath", undefined) ||
+				context.workspaceState.get<string>("autokitteh.starlarkLSPPath", "");
 
-			const starlarkLSPVersionForServer = (await commands.executeCommand(
-				vsCommands.getContext,
-				"starlarkLSPVersion"
-			)) as unknown as string;
+			const starlarkLSPVersionForServer = context.workspaceState.get<string>("autokitteh.starlarkVersion", "");
 
 			if (starlarkLSPPathForServer === "") {
 				LoggerService.error(namespaces.startlarkLSPServer, translate().t("starlark.LSPPathNotSetError"));
