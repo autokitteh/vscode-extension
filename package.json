@@ -81,7 +81,8 @@
 				"autokitteh.baseURL": {
 					"default": "http://localhost:9980",
 					"description": "Server URL",
-					"type": "string"
+					"type": "string",
+					"scope": "machine"
 				},
 				"autokitteh.projectsPaths": {
 					"default": "{}",
