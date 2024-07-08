@@ -1,20 +1,13 @@
 import * as fs from "fs";
 import * as path from "path";
-import { commands } from "vscode";
 
-import { vsCommands } from "@constants";
 import { translate } from "@i18n";
 import { mapFilesToContentInBytes, readDirectoryRecursive } from "@utilities";
 
-const getResourcesPath = async (projectId: string) => {
-	const { path }: { path: string } = await commands.executeCommand(vsCommands.getContext, projectId);
-	return path;
-};
-
 export const getLocalResources = async (
+	resourcesPath: string,
 	projectId: string
 ): Promise<{ data?: Record<string, Uint8Array>; error?: Error }> => {
-	const resourcesPath = await getResourcesPath(projectId);
 	if (!resourcesPath) {
 		const errorMsg = translate().t("projects.resourcesDirectoryMissing");
 		return { error: new Error(errorMsg) };

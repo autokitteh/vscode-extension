@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import isEqual from "lodash.isequal";
 import { commands, window, Disposable } from "vscode";
 
@@ -111,7 +112,9 @@ export class SidebarController {
 	}
 
 	async buildProject(projectId: string) {
-		const { data: mappedResources, error: resourcesError } = await getLocalResources(projectId);
+		const projectPath = await this.getResourcesPathFromContext(projectId);
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(projectPath, projectId);
+
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);
@@ -133,8 +136,23 @@ export class SidebarController {
 		LoggerService.info(namespaces.projectController, successMessage);
 	}
 
+	async getResourcesPathFromContext(projectId: string) {
+		const projectFromContext: string = await commands.executeCommand(vsCommands.getContext, "projectsPaths");
+		if (!projectFromContext) {
+			return;
+		}
+		const vscodeProjectsPaths = JSON.parse(projectFromContext);
+		const projectPath = vscodeProjectsPaths[projectId];
+		if (!projectPath || !fs.existsSync(projectPath)) {
+			return;
+		}
+		return projectPath;
+	}
+
 	async runProject(projectId: string) {
-		const { data: mappedResources, error: resourcesError } = await getLocalResources(projectId);
+		const projectPath = await this.getResourcesPathFromContext(projectId);
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(projectPath, projectId);
+
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
 			LoggerService.error(namespaces.projectController, (resourcesError as Error).message);

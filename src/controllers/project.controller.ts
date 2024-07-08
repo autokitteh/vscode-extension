@@ -682,7 +682,8 @@ export class ProjectController {
 	}
 
 	async build() {
-		const { data: mappedResources, error: resourcesError } = await getLocalResources(this.projectId);
+		const projectPath = await this.getResourcesPathFromContext();
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(projectPath, this.projectId);
 
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
@@ -750,7 +751,8 @@ export class ProjectController {
 	}
 
 	async run() {
-		const { data: mappedResources, error: resourcesError } = await getLocalResources(this.projectId);
+		const projectPath = await this.getResourcesPathFromContext();
+		const { data: mappedResources, error: resourcesError } = await getLocalResources(projectPath, this.projectId);
 
 		if (resourcesError) {
 			commands.executeCommand(vsCommands.showErrorMessage, (resourcesError as Error).message);
