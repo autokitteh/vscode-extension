@@ -75,7 +75,8 @@
 				"autokitteh.authToken": {
 					"default": "",
 					"description": "Authentication token",
-					"type": "string"
+					"type": "string",
+					"scope": "machine"
 				},
 				"autokitteh.baseURL": {
 					"default": "http://localhost:9980",
