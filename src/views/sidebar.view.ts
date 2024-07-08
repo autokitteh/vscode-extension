@@ -1,6 +1,6 @@
 import { EventEmitter, TreeDataProvider, TreeItem, Event, TreeItemCollapsibleState } from "vscode";
 
-import { vsCommands } from "@constants";
+import { BASE_URL, vsCommands } from "@constants";
 import { translate } from "@i18n";
 import { SidebarTreeItem } from "@type/views";
 
@@ -12,6 +12,7 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 
 	private rootNode?: TreeItem;
 	private childNodeMap?: Map<TreeItem, TreeItem[]>;
+	private strippedBaseURL = BASE_URL.replace(/^https?\:\/\//i, "");
 
 	constructor() {}
 
@@ -22,7 +23,10 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 			this.rootNode = undefined;
 			return;
 		}
-		this.rootNode = new TreeItem(translate().t("projects.projects"), TreeItemCollapsibleState.Expanded);
+		this.rootNode = new TreeItem(
+			`${translate().t("projects.projects")} - ${this.strippedBaseURL}`,
+			TreeItemCollapsibleState.Expanded
+		);
 		this.childNodeMap = new Map();
 
 		childItems = children.map((child: SidebarTreeItem) => {

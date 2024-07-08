@@ -17,6 +17,7 @@ export class SidebarController {
 	private retryScheduler: RetryScheduler;
 	private disposables: Disposable[] = [];
 	private projectsRetryStarted: boolean = false;
+	private strippedBaseURL = BASE_URL.replace(/^https?\:\/\//i, "");
 
 	constructor(sidebarView: ISidebarView) {
 		this.view = sidebarView;
@@ -62,9 +63,8 @@ export class SidebarController {
 				return;
 			} else {
 				return [
-					{ label: translate().t("general.internalError"), key: undefined },
 					{
-						label: translate().t("projects.connectingTo", { baseURL: BASE_URL }),
+						label: `${translate().t("general.internalError")} - ${this.strippedBaseURL}`,
 						key: undefined,
 					},
 				];
@@ -77,22 +77,15 @@ export class SidebarController {
 		}
 
 		if (projects!.length) {
-			return [
-				...projects!.map((project) => ({
-					label: project.name,
-					key: project.projectId,
-				})),
-				{
-					label: translate().t("projects.connectedTo", { baseURL: BASE_URL }),
-					key: undefined,
-				},
-			];
+			return projects!.map((project) => ({
+				label: project.name,
+				key: project.projectId,
+			}));
 		}
 
 		return [
-			{ label: translate().t("projects.noProjectsFound"), key: undefined },
 			{
-				label: translate().t("projects.connectedTo", { baseURL: BASE_URL }),
+				label: `${translate().t("projects.noProjectsFound")} - ${this.strippedBaseURL}`,
 				key: undefined,
 			},
 		];
@@ -111,11 +104,7 @@ export class SidebarController {
 	private updateViewWithCountdown(countdown: string) {
 		this.view.refresh([
 			{
-				label: countdown,
-				key: undefined,
-			},
-			{
-				label: translate().t("projects.connectingTo", { baseURL: BASE_URL }),
+				label: `${countdown} - ${this.strippedBaseURL}`,
 				key: undefined,
 			},
 		]);
