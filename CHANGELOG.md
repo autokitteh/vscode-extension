@@ -1,3 +1,15 @@
+## [0.19.9](https://github.com/autokitteh/vscode-extension/compare/v0.19.8...v0.19.9) (2024-07-08)
+
+
+### Bug Fixes
+
+* make the connections modal close on button click ([#349](https://github.com/autokitteh/vscode-extension/issues/349)) ([d595920](https://github.com/autokitteh/vscode-extension/commit/d595920f4c6b3324befe1089c2d2f27c3ce409c5))
+
+
+### Features
+
+* change settings to machine level (e.g: starlark info, project directories, etc...) and display host url ([#350](https://github.com/autokitteh/vscode-extension/issues/350)) ([c3944ee](https://github.com/autokitteh/vscode-extension/commit/c3944ee8f8c6972006aa748bab3d89b5a1962e32))
+
 ## [0.19.8](https://github.com/autokitteh/vscode-extension/compare/v0.19.7...v0.19.8) (2024-07-03)
 
 
