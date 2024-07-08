@@ -16,6 +16,8 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 	constructor() {}
 
 	load(children: SidebarTreeItem[]) {
+		let childItems: TreeItem[] = [];
+
 		if (!children.length) {
 			this.rootNode = undefined;
 			return;
@@ -23,17 +25,18 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 		this.rootNode = new TreeItem(translate().t("projects.projects"), TreeItemCollapsibleState.Expanded);
 		this.childNodeMap = new Map();
 
-		if (children.length === 1 && children[0].key === undefined) {
-			this.rootNode = new TreeItem(children[0].label, TreeItemCollapsibleState.None);
-			this.childNodeMap.set(this.rootNode, []);
-			return;
-		}
-
-		const childItems = children.map((child: SidebarTreeItem) => {
+		childItems = children.map((child: SidebarTreeItem) => {
 			const treeItem = new TreeItem(child.label);
 			treeItem.contextValue = child.key;
 			return treeItem;
 		});
+
+		const isInvalidState = children.some((child) => child.key === undefined);
+
+		if (isInvalidState) {
+			this.rootNode = new TreeItem(children[0].label, TreeItemCollapsibleState.Expanded);
+			childItems = childItems.slice(1);
+		}
 
 		this.childNodeMap.set(this.rootNode, childItems);
 	}

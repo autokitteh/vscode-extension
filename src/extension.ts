@@ -1,7 +1,7 @@
 /* eslint-disable import/first */
 require("module-alias/register");
 
-import { commands, ExtensionContext, window, workspace } from "vscode";
+import { commands, ExtensionContext, window, workspace, ConfigurationTarget } from "vscode";
 
 import { namespaces, starlarkLocalLSPDefaultArgs, vsCommands } from "@constants";
 import { SidebarController, TabsManagerController } from "@controllers";
@@ -57,14 +57,19 @@ export async function activate(context: ExtensionContext) {
 	);
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.setContext, async (key: string, value: any) => {
-			context.workspaceState.update(key, value);
+			await workspace.getConfiguration().update(`autokitteh.${key}`, value, ConfigurationTarget.Global);
 		})
 	);
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.getContext, async (key: string, defaultValue?: any) => {
-			return context.workspaceState.get(key, defaultValue);
+			const fromContext =
+				workspace.getConfiguration().get(`autokitteh.${key}`, ConfigurationTarget.Global) || defaultValue;
+			return fromContext;
 		})
 	);
+
+	await commands.executeCommand(vsCommands.setContext, "starlarkLSPPath", undefined);
+	await commands.executeCommand(vsCommands.setContext, "starlarkLSPVersion", undefined);
 
 	const sidebarView = new SidebarView();
 
@@ -119,10 +124,15 @@ export async function activate(context: ExtensionContext) {
 	}
 
 	const initStarlarkLSP = async () => {
-		const starlarkLSPPathFromConfig =
-			WorkspaceConfig.getFromWorkspace<string | undefined>("starlarkLSPPath", undefined) ||
-			context.workspaceState.get<string>("autokitteh.starlarkLSPPath", "");
-		const starlarkLSPVersionFromContext = context.workspaceState.get<string>("autokitteh.starlarkVersion", "");
+		const starlarkLSPPathFromConfig = (await commands.executeCommand(
+			vsCommands.getContext,
+			"starlarkLSPPath"
+		)) as unknown as string;
+
+		const starlarkLSPVersionFromContext = (await commands.executeCommand(
+			vsCommands.getContext,
+			"starlarkVersion"
+		)) as unknown as string;
 
 		if (isStalarkLSPSocketMode(starlarkLSPPathFromConfig)) {
 			let serverURL = new URL(starlarkLSPPathFromConfig);
@@ -164,8 +174,8 @@ export async function activate(context: ExtensionContext) {
 			}
 
 			if (didUpdate) {
-				await context.workspaceState.update("autokitteh.starlarkLSPPath", starlarkewPathAfterVersionUpdate);
-				await context.workspaceState.update("autokitteh.starlarkVersion", starlarkNewVersionAfterVersionUpdate);
+				await commands.executeCommand(vsCommands.setContext, "starlarkLSPPath", starlarkewPathAfterVersionUpdate);
+				await commands.executeCommand(vsCommands.setContext, "starlarkVersion", starlarkNewVersionAfterVersionUpdate);
 
 				LoggerService.info(
 					namespaces.startlarkLSPServer,
@@ -177,8 +187,15 @@ export async function activate(context: ExtensionContext) {
 				);
 			}
 
-			const starlarkLSPPathForServer = context.workspaceState.get<string>("autokitteh.starlarkLSPPath", "");
-			const starlarkLSPVersionForServer = context.workspaceState.get<string>("autokitteh.starlarkVersion", "");
+			const starlarkLSPPathForServer = (await commands.executeCommand(
+				vsCommands.getContext,
+				"starlarkLSPPath"
+			)) as unknown as string;
+
+			const starlarkLSPVersionForServer = (await commands.executeCommand(
+				vsCommands.getContext,
+				"starlarkLSPVersion"
+			)) as unknown as string;
 
 			if (starlarkLSPPathForServer === "") {
 				LoggerService.error(namespaces.startlarkLSPServer, translate().t("starlark.LSPPathNotSetError"));
@@ -191,7 +208,7 @@ export async function activate(context: ExtensionContext) {
 				args: starlarkLocalLSPDefaultArgs,
 			};
 
-			StarlarkLSPService.connectLSPServerLocally(serverOptions, starlarkLSPPathForServer, starlarkLSPVersionForServer);
+			StarlarkLSPService.connectLSPServerLocally(serverOptions, starlarkLSPVersionForServer, starlarkLSPPathForServer);
 		}
 	};
 	initStarlarkLSP();

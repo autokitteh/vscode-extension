@@ -659,7 +659,10 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, successMessage);
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
-		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: savePath });
+		const vscodeProjectsPaths = JSON.parse(await commands.executeCommand(vsCommands.getContext, "projectsPaths"));
+		vscodeProjectsPaths[this.projectId] = savePath;
+
+		await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
 
 		this.notifyViewResourcesPathChanged();
 	}
@@ -744,7 +747,10 @@ export class ProjectController {
 		}
 		await this.downloadResources(resourcePath);
 
-		await commands.executeCommand(vsCommands.setContext, this.projectId, { path: resourcePath });
+		const vscodeProjectsPaths = JSON.parse(await commands.executeCommand(vsCommands.getContext, "projectsPaths"));
+		vscodeProjectsPaths[this.projectId] = resourcePath;
+
+		await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
 
 		this.notifyViewResourcesPathChanged();
 		return;
@@ -873,11 +879,16 @@ export class ProjectController {
 	}
 
 	async getResourcesPathFromContext() {
-		const projectFromContext: { path?: string } = await commands.executeCommand(vsCommands.getContext, this.projectId);
-		if (!projectFromContext || !projectFromContext.path || !fs.existsSync(projectFromContext.path)) {
+		const projectFromContext: string = await commands.executeCommand(vsCommands.getContext, "projectsPaths");
+		if (!projectFromContext) {
 			return;
 		}
-		return projectFromContext.path;
+		const vscodeProjectsPaths = JSON.parse(projectFromContext);
+		const projectPath = vscodeProjectsPaths[this.projectId];
+		if (!projectPath || !fs.existsSync(projectPath)) {
+			return;
+		}
+		return projectPath;
 	}
 
 	async stopSession(sessionId: string) {
@@ -1018,7 +1029,10 @@ export class ProjectController {
 		const savePath = newLocalResourcesPath[0].fsPath;
 
 		if (currentProjectDirectory && (currentProjectDirectory as { path: string })?.path !== savePath) {
-			await commands.executeCommand(vsCommands.setContext, this.projectId, { path: savePath });
+			const vscodeProjectsPaths = JSON.parse(await commands.executeCommand(vsCommands.getContext, "projectsPaths"));
+			vscodeProjectsPaths[this.projectId] = savePath;
+
+			await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
 		}
 
 		const successMessage = translate().t("projects.setResourcesDirectorySuccess", {

@@ -4,7 +4,7 @@ import { commands, window, Disposable } from "vscode";
 import { ISidebarView } from "interfaces";
 
 import { Code, ConnectError } from "@connectrpc/connect";
-import { INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL, namespaces, vsCommands } from "@constants";
+import { BASE_URL, INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL, namespaces, vsCommands } from "@constants";
 import { getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import { translate } from "@i18n";
@@ -61,7 +61,13 @@ export class SidebarController {
 
 				return;
 			} else {
-				return [{ label: translate().t("general.internalError"), key: undefined }];
+				return [
+					{ label: translate().t("general.internalError"), key: undefined },
+					{
+						label: translate().t("projects.connectingTo", { baseURL: BASE_URL }),
+						key: undefined,
+					},
+				];
 			}
 		}
 
@@ -71,12 +77,25 @@ export class SidebarController {
 		}
 
 		if (projects!.length) {
-			return projects!.map((project) => ({
-				label: project.name,
-				key: project.projectId,
-			}));
+			return [
+				...projects!.map((project) => ({
+					label: project.name,
+					key: project.projectId,
+				})),
+				{
+					label: translate().t("projects.connectedTo", { baseURL: BASE_URL }),
+					key: undefined,
+				},
+			];
 		}
-		return [{ label: translate().t("projects.noProjectsFound"), key: undefined }];
+
+		return [
+			{ label: translate().t("projects.noProjectsFound"), key: undefined },
+			{
+				label: translate().t("projects.connectedTo", { baseURL: BASE_URL }),
+				key: undefined,
+			},
+		];
 	};
 
 	public async refreshProjects(resetCountdown: boolean = true) {
@@ -93,6 +112,10 @@ export class SidebarController {
 		this.view.refresh([
 			{
 				label: countdown,
+				key: undefined,
+			},
+			{
+				label: translate().t("projects.connectingTo", { baseURL: BASE_URL }),
 				key: undefined,
 			},
 		]);

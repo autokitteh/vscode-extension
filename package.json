@@ -82,6 +82,12 @@
 					"description": "Server URL",
 					"type": "string"
 				},
+				"autokitteh.projectsPaths": {
+					"default": "{}",
+					"description": "Projects directories",
+					"type": "string",
+					"scope": "machine"
+				},
 				"autokitteh.notificationsLevel": {
 					"default": "All",
 					"description": "Adjust notification visibility in the extension, ranging from all notifications to errors only, or none",
@@ -106,7 +112,15 @@
 					"default": "",
 					"description": "The path to the starlark LSP Server",
 					"title": "Starlark LSP executable or socket url path",
-					"type": "string"
+					"type": "string",
+					"scope": "machine"
+				},
+				"autokitteh.starlarkVersion": {
+					"default": "",
+					"description": "The version of the starlark LSP Server",
+					"title": "Starlark LSP executable version",
+					"type": "string",
+					"scope": "machine"
 				}
 			},
 			"title": "autokitteh"
