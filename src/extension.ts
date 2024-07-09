@@ -49,20 +49,20 @@ export async function activate(context: ExtensionContext) {
 				const { data: project, error } = await ProjectsService.getByName(projectNameWithoutPreffix);
 				const log = translate().t("errors.projectNotFoundByName", { name: activeTab.label });
 				if (error) {
-					if (error) {
-						LoggerService.error(namespaces.projectController, (error as Error).message);
-						commands.executeCommand(vsCommands.showErrorMessage, log);
-						return;
-					}
+					LoggerService.error(namespaces.projectController, (error as Error).message);
+					commands.executeCommand(vsCommands.showErrorMessage, log);
 					return;
 				}
 				if (!project) {
+					commands.executeCommand(vsCommands.showErrorMessage, log);
 					LoggerService.error(namespaces.projectController, log);
 					return;
 				}
 				tabsManager.setProjectDirectory(project.projectId);
 			} else {
-				console.log(`No active tab`);
+				const log = translate().t("errors.noProjectFoundInTheActiveTab");
+				LoggerService.error(namespaces.projectController, log);
+				commands.executeCommand(vsCommands.showErrorMessage, log);
 			}
 		})
 	);
