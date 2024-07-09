@@ -15,7 +15,9 @@
 		"@views": "dist/src/views",
 		"@vscommands": "dist/src/vscommands"
 	},
-	"activationEvents": [],
+	"activationEvents": [
+		"onCommand:autokitteh.setProjectDirectory"
+	],
 	"contributes": {
 		"breakpoints": [
 			{
@@ -23,6 +25,10 @@
 			}
 		],
 		"commands": [
+			{
+				"command": "autokitteh.setProjectDirectory",
+				"title": "autokitteh: Set project directory"
+			},
 			{
 				"command": "autokitteh.applyManifest",
 				"title": "autokitteh: Apply Manifest"

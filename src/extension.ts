@@ -9,6 +9,7 @@ import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import { translate } from "@i18n";
 import {
 	LoggerService,
+	ProjectsService,
 	StarlarkLSPService,
 	StarlarkSocketStreamingService,
 	StarlarkVersionManagerService,
@@ -39,6 +40,32 @@ export async function activate(context: ExtensionContext) {
 			commands.executeCommand("workbench.action.reloadWindow");
 		}
 	});
+
+	context.subscriptions.push(
+		commands.registerCommand("autokitteh.setProjectDirectory", async () => {
+			const activeTab = window.tabGroups.activeTabGroup.activeTab;
+			if (activeTab) {
+				const projectNameWithoutPreffix = activeTab.label.replace(/autokitteh: /g, "");
+				const { data: project, error } = await ProjectsService.getByName(projectNameWithoutPreffix);
+				const log = translate().t("errors.projectNotFoundByName", { name: activeTab.label });
+				if (error) {
+					if (error) {
+						LoggerService.error(namespaces.projectController, (error as Error).message);
+						commands.executeCommand(vsCommands.showErrorMessage, log);
+						return;
+					}
+					return;
+				}
+				if (!project) {
+					LoggerService.error(namespaces.projectController, log);
+					return;
+				}
+				tabsManager.setProjectDirectory(project.projectId);
+			} else {
+				console.log(`No active tab`);
+			}
+		})
+	);
 
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
 	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));

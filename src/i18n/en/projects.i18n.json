@@ -11,7 +11,7 @@
 	"fetchProjectsFailedError": "Projects fetch failed - error: {{error}}",
 	"resourcesDirectoryMissing": "Resources directory missing",
 	"downloadResourcesDirectoryNoResources": "There are no resources to download from the server",
-	"downloadResourcesSelectDirectory": "Select folder",
+	"downloadResourcesSelectDirectory": "Select directory",
 	"downloadResourcesDirectoryErrorForProject": "Error downloading project resources for project: {{projectName}}",
 	"downloadResourcesDirectoryError": "Error downloading project resources: {{error}} for project: {{projectName}}",
 	"downloadResourcesDirectoryErrorProjectId": "Error downloading project resources for project: {{projectName}}, file name: {{fileName}}",

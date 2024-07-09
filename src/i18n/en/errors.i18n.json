@@ -1,6 +1,7 @@
 {
 	"projectNotFound": "Couldn't fetch the project details",
 	"projectNotFoundWithID": "Couldn't fetch the project details, project ID: {{id}}",
+	"projectNotFoundByName": "Couldn't fetch the project details, project name: {{name}}",
 	"showProjectDetails": "Click on a project to show its details",
 	"environmentsNotDefinedForProject": "Environments not defined for this project",
 	"deploymentsNotDefinedForProject": "Deployments not defined for this project",

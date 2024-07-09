@@ -874,7 +874,8 @@ export class ProjectController {
 	}
 
 	async setResourcesPathToTheContext(resourcePath: string) {
-		const vscodeProjectsPaths = JSON.parse(await commands.executeCommand(vsCommands.getContext, "projectsPaths"));
+		const projectPaths = (await commands.executeCommand(vsCommands.getContext, "projectsPaths")) as unknown as string;
+		const vscodeProjectsPaths = JSON.parse(projectPaths);
 		vscodeProjectsPaths[this.projectId] = resourcePath;
 
 		await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
@@ -1186,5 +1187,25 @@ export class ProjectController {
 
 	refreshUI() {
 		this.loadAndDisplayDeployments();
+	}
+
+	async setProjectDirectory() {
+		const newLocalResourcesPath = await window.showOpenDialog({
+			canSelectFolders: true,
+			openLabel: translate().t("projects.downloadResourcesSelectDirectory"),
+		});
+
+		if (!newLocalResourcesPath || !newLocalResourcesPath.length) {
+			return;
+		}
+
+		const newPath = newLocalResourcesPath[0].fsPath;
+
+		await this.setResourcesPathToTheContext(newPath);
+
+		this.view.update({
+			type: MessageType.setResourcesDir,
+			payload: newPath,
+		});
 	}
 }
