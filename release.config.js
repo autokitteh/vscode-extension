@@ -87,5 +87,11 @@ module.exports = {
 				],
 			},
 		],
+		[
+			"@semantic-release/exec",
+			{
+				analyzeCommitsCmd: "echo patch",
+			},
+		],
 	],
 };
