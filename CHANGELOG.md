@@ -1,3 +1,10 @@
+## [0.19.15](https://github.com/autokitteh/vscode-extension/compare/v0.19.14...v0.19.15) (2024-07-11)
+
+
+### Bug Fixes
+
+* reload after starlark installed ([#356](https://github.com/autokitteh/vscode-extension/issues/356)) ([ed8dbc5](https://github.com/autokitteh/vscode-extension/commit/ed8dbc5efb0b30b93345b5fbffe119aed9a6fcac))
+
 ## [0.19.14](https://github.com/autokitteh/vscode-extension/compare/v0.19.13...v0.19.14) (2024-07-11)
 
 
