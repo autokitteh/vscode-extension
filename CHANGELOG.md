@@ -1,3 +1,10 @@
+## [0.19.14](https://github.com/autokitteh/vscode-extension/compare/v0.19.13...v0.19.14) (2024-07-11)
+
+
+### Bug Fixes
+
+* not saved starlark lsp path ([#355](https://github.com/autokitteh/vscode-extension/issues/355)) ([e317227](https://github.com/autokitteh/vscode-extension/commit/e317227225fa89215b57f752ecebdfcd2b8ec961))
+
 ## [0.19.13](https://github.com/autokitteh/vscode-extension/compare/v0.19.12...v0.19.13) (2024-07-10)
 
 ## [0.19.12](https://github.com/autokitteh/vscode-extension/compare/v0.19.11...v0.19.12) (2024-07-10)
