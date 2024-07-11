@@ -177,11 +177,15 @@ export async function activate(context: ExtensionContext) {
 				);
 			}
 
-			const starlarkLSPPathForServer =
-				WorkspaceConfig.getFromWorkspace<string | undefined>("starlarkLSPPath", undefined) ||
-				context.workspaceState.get<string>("autokitteh.starlarkLSPPath", "");
+			const starlarkLSPPathForServer = (await commands.executeCommand(
+				vsCommands.getContext,
+				"starlarkLSPPath"
+			)) as unknown as string;
 
-			const starlarkLSPVersionForServer = context.workspaceState.get<string>("autokitteh.starlarkVersion", "");
+			const starlarkLSPVersionForServer = (await commands.executeCommand(
+				vsCommands.getContext,
+				"starlarkVersion"
+			)) as unknown as string;
 
 			if (starlarkLSPPathForServer === "") {
 				LoggerService.error(namespaces.startlarkLSPServer, translate().t("starlark.LSPPathNotSetError"));
