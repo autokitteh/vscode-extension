@@ -119,10 +119,15 @@ export async function activate(context: ExtensionContext) {
 	}
 
 	const initStarlarkLSP = async () => {
-		const starlarkLSPPathFromConfig =
-			WorkspaceConfig.getFromWorkspace<string | undefined>("starlarkLSPPath", undefined) ||
-			context.workspaceState.get<string>("autokitteh.starlarkLSPPath", "");
-		const starlarkLSPVersionFromContext = context.workspaceState.get<string>("autokitteh.starlarkVersion", "");
+		const starlarkLSPPathFromConfig = (await commands.executeCommand(
+			vsCommands.getContext,
+			"starlarkLSPPath"
+		)) as unknown as string;
+
+		const starlarkLSPVersionFromContext = (await commands.executeCommand(
+			vsCommands.getContext,
+			"starlarkVersion"
+		)) as unknown as string;
 
 		if (isStalarkLSPSocketMode(starlarkLSPPathFromConfig)) {
 			let serverURL = new URL(starlarkLSPPathFromConfig);
