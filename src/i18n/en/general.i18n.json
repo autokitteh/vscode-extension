@@ -1,6 +1,7 @@
 {
 	"companyName": "autokitteh",
 	"baseURLChanged": "Base URL changed, to apply changes please reload your workspace",
+	"starlarkLatestInstalled": "Latest Starlark version installed, please reload your workspace",
 	"reload": "Reload",
 	"dismiss": "Dismiss",
 	"baseURLInvalid": "Base URL you entered is invalid, please enter a valid URL",

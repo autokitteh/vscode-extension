@@ -172,6 +172,16 @@ export async function activate(context: ExtensionContext) {
 				await commands.executeCommand(vsCommands.setContext, "starlarkLSPPath", starlarkewPathAfterVersionUpdate);
 				await commands.executeCommand(vsCommands.setContext, "starlarkVersion", starlarkNewVersionAfterVersionUpdate);
 
+				const userResponseOnWindowReload = await window.showInformationMessage(
+					translate().t("general.starlarkLatestInstalled"),
+					translate().t("general.reload"),
+					translate().t("general.dismiss")
+				);
+				if (userResponseOnWindowReload === translate().t("general.dismiss")) {
+					return;
+				}
+				commands.executeCommand("workbench.action.reloadWindow");
+
 				LoggerService.info(
 					namespaces.startlarkLSPServer,
 					translate().t("starlark.executableDownloadedSuccessfully", { version: starlarkNewVersionAfterVersionUpdate })
