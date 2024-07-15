@@ -8,14 +8,40 @@ export const convertBuildRuntimesToViewTriggers = (
 	const resultTriggers: Record<string, SessionEntrypoint[]> = {};
 
 	try {
-		for (const runtime of runtimes) {
-			// TODO: If we add support for other languages, we should add a switch here
-			if (runtime.info.name === "starlark") {
-				const filesNames = Object.keys(runtime.artifact.compiled_data);
+		const isPython = runtimes.some((runtime) => runtime.info.name === "python");
+
+		if (isPython) {
+			const pythonRuntime = runtimes.find((runtime) => runtime.info.name === "python");
+			if (!pythonRuntime) {
+				return {};
+			}
+
+			const filesNames = Object.keys(pythonRuntime.artifact.compiled_data);
+			for (let i = 0; i < filesNames.length; i++) {
+				resultTriggers[filesNames[i]] = resultTriggers[filesNames[i]] || [];
+
+				const sessionEntrypoints = pythonRuntime.artifact.exports
+					.filter((entrypoint: EntrypointTrigger) => entrypoint.location.path === filesNames[i])
+					.map((entrypoint: EntrypointTrigger) => ({
+						...entrypoint.location,
+						name: entrypoint.symbol,
+					}));
+
+				resultTriggers[filesNames[i]].push(...sessionEntrypoints);
+			}
+		} else {
+			const isStarlark = runtimes.some((runtime) => runtime.info.name === "starlark");
+
+			if (isStarlark) {
+				const stalarkRuntime = runtimes.find((runtime) => runtime.info.name === "starlark");
+				if (!stalarkRuntime) {
+					return {};
+				}
+				const filesNames = Object.keys(stalarkRuntime.artifact.compiled_data);
 				for (let i = 0; i < filesNames.length; i++) {
 					resultTriggers[filesNames[i]] = resultTriggers[filesNames[i]] || [];
 
-					const sessionEntrypoints = runtime.artifact.exports
+					const sessionEntrypoints = stalarkRuntime.artifact.exports
 						.filter((entrypoint: EntrypointTrigger) => entrypoint.location.path === filesNames[i])
 						.map((entrypoint: EntrypointTrigger) => ({
 							...entrypoint.location,
