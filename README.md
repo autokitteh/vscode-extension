@@ -17,6 +17,12 @@
 - **Work and Marketing Automation**: Facilitate tasks using systems like Gmail, Docs, Slack, Calendar, etc.
 - **Corporate Operations Automation**: Enhance enterprise-specific procedures for HR, sales, etc.
 
+## Tools We Used 🛠️
+
+In this project we used:
+ - [FontAwesome](https://fontawesome.com) and [vscode-codicons](https://github.com/microsoft/vscode-codicons) for our webview icons.
+ - [LottieFiles](https://lottiefiles.com/) for animations in our webview. 
+
 ## Contact 📬
 
 For inquiries, contact: meow@autokitteh.com
