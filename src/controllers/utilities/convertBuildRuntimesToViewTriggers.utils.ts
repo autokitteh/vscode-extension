@@ -2,61 +2,41 @@ import { namespaces } from "@constants";
 import { LoggerService } from "@services";
 import { BuildInfoRuntimes, EntrypointTrigger, SessionEntrypoint } from "@type/models";
 
+const processRuntime = (runtime: BuildInfoRuntimes): Record<string, SessionEntrypoint[]> => {
+	const result: Record<string, SessionEntrypoint[]> = {};
+	const filesNames = Object.keys(runtime.artifact.compiled_data);
+
+	filesNames.forEach((fileName) => {
+		result[fileName] = (result[fileName] || []).concat(
+			runtime.artifact.exports
+				.filter((entrypoint: EntrypointTrigger) => entrypoint.location.path === fileName)
+				.map((entrypoint: EntrypointTrigger) => ({
+					...entrypoint.location,
+					name: entrypoint.symbol,
+				}))
+		);
+	});
+
+	return result;
+};
+
 export const convertBuildRuntimesToViewTriggers = (
 	runtimes: BuildInfoRuntimes[]
 ): Record<string, SessionEntrypoint[]> => {
-	const resultTriggers: Record<string, SessionEntrypoint[]> = {};
-
 	try {
-		const isPython = runtimes.some((runtime) => runtime.info.name === "python");
+		const pythonRuntime = runtimes.find((runtime) => runtime.info.name === "python");
+		if (pythonRuntime) {
+			return processRuntime(pythonRuntime);
+		}
 
-		if (isPython) {
-			const pythonRuntime = runtimes.find((runtime) => runtime.info.name === "python");
-			if (!pythonRuntime) {
-				return {};
-			}
-
-			const filesNames = Object.keys(pythonRuntime.artifact.compiled_data);
-			for (let i = 0; i < filesNames.length; i++) {
-				resultTriggers[filesNames[i]] = resultTriggers[filesNames[i]] || [];
-
-				const sessionEntrypoints = pythonRuntime.artifact.exports
-					.filter((entrypoint: EntrypointTrigger) => entrypoint.location.path === filesNames[i])
-					.map((entrypoint: EntrypointTrigger) => ({
-						...entrypoint.location,
-						name: entrypoint.symbol,
-					}));
-
-				resultTriggers[filesNames[i]].push(...sessionEntrypoints);
-			}
-		} else {
-			const isStarlark = runtimes.some((runtime) => runtime.info.name === "starlark");
-
-			if (isStarlark) {
-				const stalarkRuntime = runtimes.find((runtime) => runtime.info.name === "starlark");
-				if (!stalarkRuntime) {
-					return {};
-				}
-				const filesNames = Object.keys(stalarkRuntime.artifact.compiled_data);
-				for (let i = 0; i < filesNames.length; i++) {
-					resultTriggers[filesNames[i]] = resultTriggers[filesNames[i]] || [];
-
-					const sessionEntrypoints = stalarkRuntime.artifact.exports
-						.filter((entrypoint: EntrypointTrigger) => entrypoint.location.path === filesNames[i])
-						.map((entrypoint: EntrypointTrigger) => ({
-							...entrypoint.location,
-							name: entrypoint.symbol,
-						}));
-
-					resultTriggers[filesNames[i]].push(...sessionEntrypoints);
-				}
-			}
+		const starlarkRuntime = runtimes.find((runtime) => runtime.info.name === "starlark");
+		if (starlarkRuntime) {
+			return processRuntime(starlarkRuntime);
 		}
 	} catch (error) {
 		LoggerService.error(namespaces.buildRuntimeEntrypoints, (error as Error).message);
-
 		return {};
 	}
 
-	return resultTriggers;
+	return {};
 };
