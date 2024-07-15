@@ -41,14 +41,6 @@
 				"title": "autokitteh: Enable"
 			},
 			{
-				"command": "autokitteh.addConnections",
-				"icon": {
-					"dark": "resources/sidebar/icons/dark/cloud-upload.svg",
-					"light": "resources/sidebar/icons/light/cloud-upload.svg"
-				},
-				"title": "autokitteh: Add connection"
-			},
-			{
 				"command": "autokitteh.disable",
 				"icon": "resources/sidebar/top-panel-disconnect.svg",
 				"title": "autokitteh: Disable"
@@ -152,10 +144,6 @@
 					"when": "false"
 				},
 				{
-					"command": "autokitteh.addConnections",
-					"when": "false"
-				},
-				{
 					"command": "autokitteh.buildProject",
 					"when": "false"
 				},
@@ -187,11 +175,6 @@
 					"command": "autokitteh.enable",
 					"group": "navigation",
 					"when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
-				},
-				{
-					"command": "autokitteh.addConnections",
-					"group": "navigation",
-					"when": "view == autokittehSidebarTree"
 				},
 				{
 					"command": "autokitteh.disable",
