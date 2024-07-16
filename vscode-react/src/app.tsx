@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import LottieLoader from "react-lottie-loader";
 import SplitPane from "split-pane-react";
 
-import retryLoader from "@assets/animations/retry-loader.json";
 import { MessageType } from "@enums";
+import retryLoader from "@react-assets/animations/retry-loader.json";
 import { Overlay } from "@react-components/atoms";
 import { DeploymentsSection } from "@react-components/deployments/pages";
 import { Header } from "@react-components/organisms";

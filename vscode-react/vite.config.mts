@@ -27,7 +27,6 @@ export default defineConfig({
 			"@react-sections": path.resolve(__dirname, "./src/sections"),
 			"@react-interfaces": path.resolve(__dirname, "./src/interfaces"),
 			"@react-types": path.resolve(__dirname, "./src/types"),
-			"@assets": path.resolve(__dirname, "./assets"),
 			"@ak-proto-ts": path.resolve(__dirname, "../src/autokitteh/proto/gen/ts/autokitteh"),
 			"@i18n": path.resolve(__dirname, "../src/i18n"),
 		},

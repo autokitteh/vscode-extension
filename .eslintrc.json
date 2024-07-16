@@ -21,7 +21,6 @@
 			"alias": {
 				"map": [
 					["@ak-proto-ts/*", "./src/autokitteh/proto/gen/ts/autokitteh/*"],
-					["@assets/*", "assets/*"],
 					["@api/*", "./src/api/*"],
 					["@api", "./src/api/index"],
 					["@constants", "./src/constants/index"],
