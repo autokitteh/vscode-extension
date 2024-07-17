@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import isEqual from "lodash.isequal";
-import { commands, window, Disposable } from "vscode";
+import { commands, window } from "vscode";
 
 import { ISidebarView } from "interfaces";
 
@@ -16,7 +16,6 @@ export class SidebarController {
 	private view: ISidebarView;
 	private projects?: SidebarTreeItem[];
 	private retryScheduler: RetryScheduler;
-	private disposables: Disposable[] = [];
 	private projectsRetryStarted: boolean = false;
 	private strippedBaseURL = BASE_URL.replace(/^https?\:\/\/|\/$/g, "");
 
@@ -33,7 +32,6 @@ export class SidebarController {
 					})
 				)
 		);
-		this.retryScheduler.startFetchInterval();
 	}
 
 	public reconnect = () => {
@@ -188,6 +186,6 @@ export class SidebarController {
 	};
 
 	public dispose() {
-		this.disposables.forEach((disposable) => disposable.dispose());
+		this.retryScheduler.stopTimers();
 	}
 }

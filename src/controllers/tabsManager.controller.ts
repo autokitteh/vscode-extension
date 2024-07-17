@@ -56,4 +56,13 @@ export class TabsManagerController {
 	private onProjectDispose(controllerId: string) {
 		delete this.openWebviews[controllerId];
 	}
+
+	public dispose() {
+		for (const key in this.openWebviews) {
+			if (this.openWebviews[key] && this.openWebviews[key].view && this.openWebviews[key].view.panel) {
+				this.openWebviews[key].view.panel.dispose();
+			}
+			delete this.openWebviews[key];
+		}
+	}
 }
