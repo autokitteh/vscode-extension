@@ -21,6 +21,20 @@ export class ProjectsService {
 			return { data: undefined, error };
 		}
 	}
+	static async getByName(projectName: string): Promise<ServiceResponse<Project>> {
+		try {
+			const { project } = await projectsClient.get({ name: projectName });
+			if (!project) {
+				LoggerService.error(namespaces.projectService, translate().t("errors.projectNotFound"));
+
+				return { data: undefined, error: translate().t("errors.projectNotFound") };
+			}
+			return { data: project, error: undefined };
+		} catch (error) {
+			LoggerService.error(namespaces.projectService, (error as Error).message);
+			return { data: undefined, error };
+		}
+	}
 	static async delete(projectId: string): Promise<ServiceResponse<undefined>> {
 		try {
 			await projectsClient.delete({ projectId });

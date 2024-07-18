@@ -56,4 +56,8 @@ export class TabsManagerController {
 	private onProjectDispose(controllerId: string) {
 		delete this.openWebviews[controllerId];
 	}
+
+	public setProjectDirectory(projectId: string) {
+		this.openWebviews[projectId].setProjectDirectory();
+	}
 }
