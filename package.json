@@ -365,7 +365,7 @@
 		"test:run": "vitest run",
 		"test:watch": "vitest"
 	},
-	"version": "0.19.15",
+	"version": "0.19.16",
 	"workspaces": [
 		"vscode-react"
 	]

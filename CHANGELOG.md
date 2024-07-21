@@ -1,3 +1,16 @@
+## [0.19.16](https://github.com/autokitteh/vscode-extension/compare/v0.19.15...v0.19.16) (2024-07-21)
+
+
+### Bug Fixes
+
+* clean running processes when we close the extension ([#362](https://github.com/autokitteh/vscode-extension/issues/362)) ([a7c1cbf](https://github.com/autokitteh/vscode-extension/commit/a7c1cbfbb3f31b1d9cc0b7105200e74026fcb961))
+* fix the link of the initiation of the url for a connection ([#363](https://github.com/autokitteh/vscode-extension/issues/363)) ([7944591](https://github.com/autokitteh/vscode-extension/commit/7944591b2a5013b257b9eb54455f4794f6cb0f8b))
+
+
+### Performance Improvements
+
+* update braces dependency in package-lock to improve security ([#361](https://github.com/autokitteh/vscode-extension/issues/361)) ([f491cca](https://github.com/autokitteh/vscode-extension/commit/f491cca6f41cbd4fbf9e559251c6acb3a5e6cfb2))
+
 ## [0.19.15](https://github.com/autokitteh/vscode-extension/compare/v0.19.14...v0.19.15) (2024-07-11)
 
 
