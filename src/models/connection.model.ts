@@ -24,7 +24,9 @@ export const convertConnectionProtoToModel = (protoConnection: ProtoConnection):
 		connectionId: protoConnection.connectionId,
 		integrationId: protoConnection.integrationId,
 		name: protoConnection.name,
-		initURL: ValidateURL(`${BASE_URL}${protoConnection.links?.init_url}`) ? protoConnection.links.init_url : "",
+		initURL: ValidateURL(`${BASE_URL}${protoConnection.links?.init_url}`)
+			? `${protoConnection.links.init_url}/vscode`
+			: "",
 		status: mapProtoStatusToConnectionStatus(protoConnection.status),
 		statusInfoMessage: protoConnection.status?.message || "",
 	};
