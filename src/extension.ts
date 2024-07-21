@@ -17,7 +17,6 @@ import { SidebarTreeItem } from "@type/views";
 import { isStalarkLSPSocketMode, ValidateURL, WorkspaceConfig } from "@utilities";
 import { MessageHandler, SidebarView } from "@views";
 import { applyManifest, buildOnRightClick, buildProject, runProject, setToken } from "@vscommands";
-import { openAddConnectionsPage } from "@vscommands/sideBarActions";
 import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough";
 
 export async function activate(context: ExtensionContext) {
@@ -46,7 +45,6 @@ export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(vsCommands.showErrorMessage, MessageHandler.errorMessage));
 	context.subscriptions.push(commands.registerCommand(vsCommands.openBaseURLInputDialog, openBaseURLInputDialog));
 	context.subscriptions.push(commands.registerCommand(vsCommands.openConfigSetupWalkthrough, openWalkthrough));
-	context.subscriptions.push(commands.registerCommand(vsCommands.addConnections, openAddConnectionsPage));
 	context.subscriptions.push(commands.registerCommand(vsCommands.setAuthToken, setToken));
 
 	context.subscriptions.push(
