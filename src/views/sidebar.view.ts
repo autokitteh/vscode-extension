@@ -72,4 +72,8 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 		this.load(children);
 		this._onDidChangeTreeData.fire();
 	}
+
+	public dispose() {
+		this._onDidChangeTreeData.dispose();
+	}
 }
