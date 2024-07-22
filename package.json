@@ -25,7 +25,8 @@
 		"commands": [
 			{
 				"command": "autokitteh.applyManifest",
-				"title": "autokitteh: Apply Manifest"
+				"title": "autokitteh: Apply Manifest",
+				"when": "resourceExtname == .yaml || resourceExtname == .yml"
 			},
 			{
 				"command": "autokitteh.setAuthToken",

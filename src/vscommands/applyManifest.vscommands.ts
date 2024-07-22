@@ -11,13 +11,18 @@ export const applyManifest = async () => {
 	}
 
 	let { document } = window.activeTextEditor;
+	const fileExtension = document.uri.fsPath.split(".").pop();
+	if (fileExtension !== "yaml" && fileExtension !== "yml") {
+		commands.executeCommand(vsCommands.showErrorMessage, translate().t("manifest.onlyYamlFiles"));
+		return;
+	}
+
 	const mainfestYaml = document.getText();
 	const filePath = document.uri.fsPath;
 
 	const { data: manifestResponse, error } = await ManifestService.applyManifest(mainfestYaml, filePath);
 	if (error) {
 		commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (error as Error).message);
-
 		return;
 	}
 
