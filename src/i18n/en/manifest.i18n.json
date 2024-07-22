@@ -1,3 +1,4 @@
 {
-	"appliedSuccessfully": "Manifest applied successfully"
+	"appliedSuccessfully": "Manifest applied successfully",
+	"onlyYamlFiles": "This command can only be run on YAML files"
 }
