@@ -3,6 +3,7 @@
 		"@ak-proto-ts": "dist/src/autokitteh/proto/gen/ts/autokitteh",
 		"@api": "dist/src/api",
 		"@constants": "dist/src/constants",
+		"@eventEmitter": "dist/src/eventEmitter",
 		"@controllers": "dist/src/controllers",
 		"@enums": "dist/src/enums",
 		"@i18n": "dist/src/i18n",
@@ -184,6 +185,11 @@
 				}
 			]
 		},
+		"uriHandlers": [
+			{
+				"uri": "autokitteh.autokitteh"
+			}
+		],
 		"views": {
 			"autokittehSidebarTree": [
 				{

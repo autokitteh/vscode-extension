@@ -26,7 +26,7 @@ export class ConnectionsService {
 			if (!integration) {
 				LoggerService.error(
 					namespaces.deploymentsService,
-					translate().t("errors.integrationsMatchIntegrationNameFailed", { projectId })
+					translate().t("errors.integrationsMatchIntegrationNameFailedEnriched", { projectId })
 				);
 				return;
 			}
@@ -34,5 +34,36 @@ export class ConnectionsService {
 		});
 
 		return { data: connections, error: undefined };
+	}
+	static async get(connectionId: string): Promise<ServiceResponse<Connection>> {
+		let connectionResponse;
+		try {
+			const { connection } = await connectionsClient.get({ connectionId });
+			if (!connection || Object.keys(connection).length === 0) {
+				const errorMessage = translate().t("errors.connectionFetchFailed", { id: connectionId });
+				LoggerService.error(namespaces.deploymentsService, errorMessage);
+				return { data: undefined, error: errorMessage };
+			}
+
+			connectionResponse = convertConnectionProtoToModel(connection);
+		} catch (error) {
+			const errorMessage = translate().t("errors.connectionFetchFailed", { id: connectionId });
+			LoggerService.error(namespaces.deploymentsService, errorMessage);
+			return { data: undefined, error: errorMessage };
+		}
+		const { data: integrations } = await IntegrationsService.list();
+
+		const integration = integrations?.find(
+			(integration) => integration.integrationId === connectionResponse.integrationId
+		);
+		if (!integration) {
+			const errorMessage = translate().t("errors.integrationsMatchIntegrationNameFailed");
+			LoggerService.error(namespaces.deploymentsService, errorMessage);
+			return { data: undefined, error: errorMessage };
+		}
+
+		connectionResponse.integrationName = integration.name;
+
+		return { data: connectionResponse, error: undefined };
 	}
 }

@@ -8,6 +8,7 @@
 		"outDir": "dist",
 		"paths": {
 			"@ak-proto-ts/*": ["autokitteh/proto/gen/ts/autokitteh/*"],
+			"@eventEmitter": ["eventEmitter"],
 			"@api": ["api/index"],
 			"@api/*": ["api/*"],
 			"@constants": ["constants/index"],
