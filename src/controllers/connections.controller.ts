@@ -13,7 +13,6 @@ export class ConnectionsController {
 	private view: any;
 	private loaderFuncs: { startLoader: () => void; stopLoader: () => void };
 	private integrations?: Integration[];
-	private connectionsIdsPendingInitCallback: string[] = [];
 
 	constructor(projectId: string, view: any, loaderFuncs: { startLoader: () => void; stopLoader: () => void }) {
 		this.projectId = projectId;
@@ -69,17 +68,12 @@ export class ConnectionsController {
 			LoggerService.error(namespaces.connectionsController, log);
 		}
 
-		this.connectionsIdsPendingInitCallback.push(connectionInit.connectionId);
-
 		eventEmitter.on(`connection.${connectionInit.connectionId}.updated`, () => {
 			this.updateConnectionStatus(connectionInit.connectionId);
 			eventEmitter.removeListener(`connection.${connectionInit.connectionId}.updated`);
 			LoggerService.debug(
 				namespaces.connectionsController,
 				translate().t("connections.connectionInitStarted", { connectionId: connectionInit.connectionId })
-			);
-			this.connectionsIdsPendingInitCallback = this.connectionsIdsPendingInitCallback.filter(
-				(connectionId) => connectionId !== connectionInit.connectionId
 			);
 		});
 	}
@@ -126,7 +120,7 @@ export class ConnectionsController {
 	}
 
 	dispose() {
-		this.connectionsIdsPendingInitCallback.forEach((connectionId) => {
+		this.connections?.forEach(({ connectionId }) => {
 			eventEmitter.removeListener(`connection.${connectionId}.updated`);
 		});
 	}
