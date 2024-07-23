@@ -1,3 +1,4 @@
+import connections from "@i18n/en/connections.i18n.json";
 import deployments from "@i18n/en/deployments.i18n.json";
 import errors from "@i18n/en/errors.i18n.json";
 import general from "@i18n/en/general.i18n.json";
@@ -16,6 +17,7 @@ import token from "@i18n/en/token.i18n.json";
 import walkthrough from "@i18n/en/walkthrough.i18n.json";
 
 export const english = {
+	connections,
 	errors,
 	projects,
 	messages,

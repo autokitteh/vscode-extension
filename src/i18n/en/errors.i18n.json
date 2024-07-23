@@ -39,8 +39,10 @@
 	"buildInformationForSingleshotNotParsed": "Couldn't parse build information for singleshot",
 	"buildInfoFetchFailedForBuild": "Couldn't fetch build info for build {{buildId}}, error: {{error}}",
 	"connectionsListFetchFailed": "Couldn't fetch connections list for project {{projectId}}",
+	"connectionFetchFailed": "Couldn't fetch connection with {{id}}",
 	"integrationsListFetchFailed": "Couldn't fetch integrations list",
-	"integrationsMatchIntegrationNameFailed": "Couldn't match integration name during fetch for project {{projectId}}",
+	"integrationsMatchIntegrationNameFailedEnriched": "Couldn't match integration name during fetch for project {{projectId}}",
+	"integrationsMatchIntegrationNameFailed": "Couldn't match integration name during fetch",
 	"buildProjectError": "Couldn't build project {{projectId}}, error: {{error}}",
 	"creatingDirectory": "Project directory setup failed - project {{projectName}}",
 	"creatingDirectoryExtended": "Project directory setup failed - project {{projectName}}, error: {{error}}",
@@ -60,5 +62,8 @@
 	"failedOpenConnectionInit": "Failed to open connection initialization for {{connectionName}} in {{projectName}}",
 	"failedOpenConnectionInitEnriched": "Failed to open connection initialization for {{connectionName}} in {{projectName}}, URL: {{connectionURL}}",
 	"connectionInitURLInvalid": "Connection initialization failed - invalid URL - for URL: {{url}} in {{projectName}}",
-	"fetchingConnectionsFailed": "Fetching connections failed for project ID: {{projectId}}"
+	"fetchingConnectionsFailed": "Fetching connections failed for project ID: {{projectId}}",
+	"connectionFetchFailedEnriched": "Connection fetch failed for connection ID: {{id}}",
+	"connectionNotInProject": "Connection not found in the project, connection ID: {{id}}",
+	"connectionNotFound": "Connection not found, connection ID: {{id}}"
 }

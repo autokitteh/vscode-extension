@@ -18,4 +18,5 @@ export const vsCommands = {
 	setAuthToken: "autokitteh.setAuthToken",
 	reconnectSidebar: "autokitteh.reconnectSidebar",
 	refreshSidebar: "autokitteh.refreshSidebar",
+	updateConnection: "autokitteh.updateConnection",
 };

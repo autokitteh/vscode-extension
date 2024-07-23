@@ -6,6 +6,7 @@ import { commands, ExtensionContext, window, workspace, ConfigurationTarget } fr
 import { namespaces, starlarkLocalLSPDefaultArgs, vsCommands } from "@constants";
 import { SidebarController, TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
+import eventEmitter from "@eventEmitter";
 import { translate } from "@i18n";
 import {
 	LoggerService,
@@ -58,6 +59,32 @@ export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(vsCommands.setAuthToken, setToken));
 
 	if (sidebarController && tabsManager) {
+		window.registerUriHandler({
+			async handleUri(uri) {
+				const params = new URLSearchParams(uri.query);
+				const connectionId = params.get("cid");
+				const error = params.get("error");
+
+				if (error) {
+					LoggerService.error(namespaces.connectionsController, error);
+					commands.executeCommand(vsCommands.showErrorMessage, error);
+
+					return;
+				}
+
+				if (!connectionId) {
+					return;
+				}
+
+				eventEmitter.emit(`connection.${connectionId}.updated`, () =>
+					LoggerService.debug(
+						namespaces.connectionsController,
+						translate().t("connections.connectionInitInProgress", { connectionId })
+					)
+				);
+			},
+		});
+
 		context.subscriptions.push(
 			commands.registerCommand(vsCommands.buildProject, (focusedItem) => buildProject(focusedItem, sidebarController!))
 		);

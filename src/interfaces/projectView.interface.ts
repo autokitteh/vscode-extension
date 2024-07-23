@@ -33,9 +33,11 @@ export interface ConnectionsViewDelegate {
 	openConnectionInitURL?: Callback<{
 		connectionName: string;
 		initURL: string;
+		connectionId: string;
 	}>;
 	openConnectionsModal?: Callback;
 	fetchConnections?: Callback;
+	dispose?: () => void;
 }
 
 export interface IProjectView {

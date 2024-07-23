@@ -1,0 +1,5 @@
+{
+	"connectionInitStarted": "Connection {{connectionId}} started inititation",
+	"connectionInitInProgress": "Connection {{connectionId}} inititation in progress",
+	"connectionInitCompleted": "Connection {{connectionId}} inititation completed"
+}

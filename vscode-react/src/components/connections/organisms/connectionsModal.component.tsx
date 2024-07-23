@@ -21,8 +21,8 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 		setConnections,
 	});
 
-	const handleConnectionInitClick = (connectionName: string, connectionInitURL: string) => {
-		sendMessage(MessageType.openConnectionInitURL, { connectionName, initURL: connectionInitURL });
+	const handleConnectionInitClick = (connectionName: string, connectionInitURL: string, connectionId: string) => {
+		sendMessage(MessageType.openConnectionInitURL, { connectionName, initURL: connectionInitURL, connectionId });
 	};
 
 	const handleRefreshClick = () => {
@@ -66,18 +66,18 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 									<HeaderCell>{translate().t("reactApp.connections.tableColumns.information")}</HeaderCell>
 									<HeaderCell>{translate().t("reactApp.connections.tableColumns.actions")}</HeaderCell>
 								</TableHeader>
-								{connections.map((connection) => (
-									<Row key={connection.connectionId}>
-										<Cell classes={["text-vscode-foreground"]}>{connection.name}</Cell>
-										<Cell classes={["text-vscode-foreground"]}>{connection.integrationName}</Cell>
+								{connections.map(({ connectionId, name, integrationName, status, statusInfoMessage, initURL }) => (
+									<Row key={connectionId}>
+										<Cell classes={["text-vscode-foreground"]}>{name}</Cell>
+										<Cell classes={["text-vscode-foreground"]}>{integrationName}</Cell>
 										<Cell classes={["text-vscode-foreground"]}>
-											<ConnectionStateLabel connectionStatus={connection.status} />
+											<ConnectionStateLabel connectionStatus={status} />
 										</Cell>
-										<Cell classes={["text-vscode-foreground"]}>{connection.statusInfoMessage}</Cell>
+										<Cell classes={["text-vscode-foreground"]}>{statusInfoMessage}</Cell>
 										<Cell classes={["flex justify-center align-center"]}>
-											{connection.initURL && (
+											{initURL && (
 												<div
-													onClick={() => handleConnectionInitClick(connection.name, connection.initURL)}
+													onClick={() => handleConnectionInitClick(name, initURL, connectionId)}
 													className="w-3 codicon codicon-gear text-white cursor-pointer"
 													title={translate().t("reactApp.connections.init")}
 												/>
