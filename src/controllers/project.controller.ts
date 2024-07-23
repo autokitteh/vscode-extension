@@ -400,6 +400,9 @@ export class ProjectController {
 			await this.fetchSessions();
 			return;
 		}
+
+		this.sessions = this.activeDeploymentSessions;
+
 		const sessionsViewObject: SessionSectionViewModel = {
 			sessions: this.activeDeploymentSessions,
 			showLiveTail: this.isDeploymentLiveTailPossible!,
