@@ -37,6 +37,7 @@ export interface ConnectionsViewDelegate {
 	}>;
 	openConnectionsModal?: Callback;
 	fetchConnections?: Callback;
+	dispose?: () => void;
 }
 
 export interface IProjectView {

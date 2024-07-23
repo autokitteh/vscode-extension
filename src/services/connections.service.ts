@@ -2,12 +2,12 @@ import { connectionsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { translate } from "@i18n";
 import { convertConnectionProtoToModel } from "@models";
-import { IntegrationsService, LoggerService } from "@services";
+import { LoggerService } from "@services";
 import { ServiceResponse } from "@type";
-import { Connection } from "@type/models";
+import { Connection, Integration } from "@type/models";
 
 export class ConnectionsService {
-	static async list(projectId: string): Promise<ServiceResponse<Connection[]>> {
+	static async list(projectId: string, integrations?: Integration[]): Promise<ServiceResponse<Connection[]>> {
 		let connections;
 		try {
 			const connectionsList = await connectionsClient.list({ projectId });
@@ -19,7 +19,6 @@ export class ConnectionsService {
 			);
 			return { data: undefined, error };
 		}
-		const { data: integrations } = await IntegrationsService.list();
 
 		connections.forEach((connection) => {
 			const integration = integrations?.find((integration) => integration.integrationId === connection.integrationId);
@@ -35,7 +34,7 @@ export class ConnectionsService {
 
 		return { data: connections, error: undefined };
 	}
-	static async get(connectionId: string): Promise<ServiceResponse<Connection>> {
+	static async get(connectionId: string, integrations?: Integration[]): Promise<ServiceResponse<Connection>> {
 		let connectionResponse;
 		try {
 			const { connection } = await connectionsClient.get({ connectionId });
@@ -51,7 +50,6 @@ export class ConnectionsService {
 			LoggerService.error(namespaces.deploymentsService, errorMessage);
 			return { data: undefined, error: errorMessage };
 		}
-		const { data: integrations } = await IntegrationsService.list();
 
 		const integration = integrations?.find(
 			(integration) => integration.integrationId === connectionResponse.integrationId

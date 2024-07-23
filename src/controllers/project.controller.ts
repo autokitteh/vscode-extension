@@ -682,6 +682,7 @@ export class ProjectController {
 		if (this.selectedDeploymentId) {
 			this.deploymentsWithLiveTail.set(this.selectedDeploymentId, false);
 		}
+		this.connections?.dispose?.();
 	}
 
 	async build() {

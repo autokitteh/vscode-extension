@@ -76,7 +76,12 @@ export async function activate(context: ExtensionContext) {
 					return;
 				}
 
-				eventEmitter.emit(`connection.${connectionId}.updated`);
+				eventEmitter.emit(`connection.${connectionId}.updated`, () =>
+					LoggerService.info(
+						namespaces.connectionsController,
+						translate().t("connections.connectionInitInProgress", { connectionId })
+					)
+				);
 			},
 		});
 
