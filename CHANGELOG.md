@@ -1,3 +1,16 @@
+# [0.20.0](https://github.com/autokitteh/vscode-extension/compare/v0.19.16...v0.20.0) (2024-07-23)
+
+
+### Bug Fixes
+
+* session disappear on click ([#366](https://github.com/autokitteh/vscode-extension/issues/366)) ([afaf699](https://github.com/autokitteh/vscode-extension/commit/afaf699ba6b6f72fed40296f5dcd94ea6a7c5259))
+
+
+### Features
+
+* block apply-manifest on non-yaml files ([#365](https://github.com/autokitteh/vscode-extension/issues/365)) ([64e3508](https://github.com/autokitteh/vscode-extension/commit/64e350862d86e7c484cbe721317ffec0e4adb9ad))
+* handle incoming vscode:// urls into vscode ([#347](https://github.com/autokitteh/vscode-extension/issues/347)) ([9a8efd8](https://github.com/autokitteh/vscode-extension/commit/9a8efd8c3a1eeedb451b807b6d6dfdddb571062c))
+
 ## [0.19.16](https://github.com/autokitteh/vscode-extension/compare/v0.19.15...v0.19.16) (2024-07-21)
 
 
