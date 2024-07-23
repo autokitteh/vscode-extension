@@ -77,7 +77,7 @@ export async function activate(context: ExtensionContext) {
 				}
 
 				eventEmitter.emit(`connection.${connectionId}.updated`, () =>
-					LoggerService.info(
+					LoggerService.debug(
 						namespaces.connectionsController,
 						translate().t("connections.connectionInitInProgress", { connectionId })
 					)

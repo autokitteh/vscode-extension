@@ -74,7 +74,7 @@ export class ConnectionsController {
 		eventEmitter.on(`connection.${connectionInit.connectionId}.updated`, () => {
 			this.updateConnectionStatus(connectionInit.connectionId);
 			eventEmitter.removeListener(`connection.${connectionInit.connectionId}.updated`);
-			LoggerService.info(
+			LoggerService.debug(
 				namespaces.connectionsController,
 				translate().t("connections.connectionInitStarted", { connectionId: connectionInit.connectionId })
 			);
@@ -119,7 +119,7 @@ export class ConnectionsController {
 			payload: this.connections,
 		});
 
-		LoggerService.info(
+		LoggerService.debug(
 			namespaces.connectionsController,
 			translate().t("connections.connectionInitCompleted", { connectionId })
 		);
