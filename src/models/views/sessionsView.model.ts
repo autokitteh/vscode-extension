@@ -1,3 +1,4 @@
+import { SessionLogRecord } from "@models/sessionLogRecord.model";
 import { Deployment, Session } from "@type/models";
 
 export type SessionSectionViewModel = {
@@ -5,4 +6,8 @@ export type SessionSectionViewModel = {
 	showLiveTail: boolean;
 	lastDeployment?: Deployment;
 	isLiveStateOn?: boolean;
+};
+
+export type SessionLogsSectionViewModel = {
+	logs?: SessionLogRecord[];
 };

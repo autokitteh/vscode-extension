@@ -7,6 +7,7 @@ export {
 	EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER,
 	INITIAL_SESSION_LOG_RETRY_SCHEDULE_INTERVAL,
 	INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL,
+	DEFAULT_SESSION_LOG_PAGE_SIZE,
 } from "@constants/extensionConfiguration.constants";
 export { BASE_URL } from "@constants/api.constants";
 export { vsCommands } from "@constants/vsCommands.constants";

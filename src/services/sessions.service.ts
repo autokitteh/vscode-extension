@@ -4,7 +4,7 @@ import {
 } from "@ak-proto-ts/sessions/v1/session_pb";
 import { StartRequest } from "@ak-proto-ts/sessions/v1/svc_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
-import { DEFAULT_SESSIONS_VISIBLE_PAGE_SIZE, namespaces } from "@constants";
+import { DEFAULT_SESSIONS_VISIBLE_PAGE_SIZE, namespaces, DEFAULT_SESSION_LOG_PAGE_SIZE } from "@constants";
 import { translate } from "@i18n";
 import { SessionLogRecord, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
@@ -54,11 +54,20 @@ export class SessionsService {
 		}
 	}
 
-	static async getLogRecordsBySessionId(sessionId: string): Promise<ServiceResponse<Array<SessionLogRecord>>> {
+	static async getLogRecordsBySessionId(
+		sessionId: string,
+		pageToken: string = ""
+	): Promise<ServiceResponse<{ sessionHistory?: SessionLogRecord[]; nextPageToken: string }>> {
 		try {
-			const response = await sessionsClient.getLog({ sessionId });
-			const sessionHistory = response.log?.records.map((state: ProtoSessionLogRecord) => new SessionLogRecord(state));
-			return { data: sessionHistory, error: undefined };
+			const { nextPageToken, log } = await sessionsClient.getLog({
+				sessionId,
+				pageSize: DEFAULT_SESSION_LOG_PAGE_SIZE,
+				pageToken,
+			});
+
+			const sessionHistory = log?.records.map((state: ProtoSessionLogRecord) => new SessionLogRecord(state));
+
+			return { data: { sessionHistory, nextPageToken }, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { MessageType, Theme } from "@enums";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
+import { SessionLogsSectionViewModel } from "@models/views/sessionsView.model";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
 import { Connection, SessionEntrypoint } from "@type/models";
@@ -32,6 +33,9 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 					break;
 				case MessageType.setSessionsSection:
 					handlers.setSessionsSection?.(payload as SessionSectionViewModel);
+					break;
+				case MessageType.setSessionLogsSection:
+					handlers.setSessionLogsSection?.(payload as SessionLogsSectionViewModel);
 					break;
 				case MessageType.selectSession:
 					handlers.setSelectedSession?.(payload as string);

@@ -19,6 +19,7 @@ import { translate } from "@i18n";
 import { ConnectionsViewDelegate, IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
 import { reverseSessionStateConverter } from "@models/utils";
+import { SessionLogsSectionViewModel } from "@models/views/sessionsView.model";
 import { BuildsService, DeploymentsService, LoggerService, ProjectsService, SessionsService } from "@services";
 import { StartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
@@ -43,6 +44,7 @@ export class ProjectController {
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
 	private loadingRequestsCounter: number = 0;
 	private sessionsNextPageToken?: string;
+	private sessionLogNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
 	public connections: ConnectionsViewDelegate;
 	private deploymentsRetryScheduler?: RetryScheduler;
@@ -105,8 +107,7 @@ export class ProjectController {
 
 	async getSessionHistory(sessionId: string) {
 		this.startLoader();
-		const { data: sessionHistoryStates, error: sessionsError } =
-			await SessionsService.getLogRecordsBySessionId(sessionId);
+		const { data, error: sessionsError } = await SessionsService.getLogRecordsBySessionId(sessionId);
 		this.stopLoader();
 
 		if (sessionsError) {
@@ -125,10 +126,14 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, logErrorMessage);
 			return;
 		}
-		if (!sessionHistoryStates?.length || !sessionHistoryStates) {
+
+		if (!data?.sessionHistory || !data.sessionHistory?.length) {
 			LoggerService.sessionLog(translate().t("sessions.emptyHistory"));
 			return;
 		}
+		const sessionHistoryStates = data.sessionHistory;
+		this.sessionLogNextPageToken = data.nextPageToken;
+
 		return sessionHistoryStates;
 	}
 
@@ -454,6 +459,16 @@ export class ProjectController {
 			return;
 		}
 		this.sessionHistoryStates = sessionHistoryStates;
+
+		const sessionsLogsViewObject: SessionLogsSectionViewModel = {
+			logs: sessionHistoryStates,
+		};
+		setTimeout(() => {
+			this.view.update({
+				type: MessageType.setSessionLogsSection,
+				payload: sessionsLogsViewObject,
+			});
+		}, 6000);
 
 		this.outputSessionLogs(sessionHistoryStates);
 

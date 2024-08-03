@@ -7,6 +7,7 @@ export enum MessageType {
 	onClickSetResourcesDirectory = "ON_CLICK_SET_RESOURCES_DIRECTORY",
 	buildProject = "BUILD_PROJECT",
 	setSessionsSection = "SET_SESSIONS_SECTION",
+	setSessionLogsSection = "SET_SESSION_LOGS_SECTION",
 	selectDeployment = "SELECT_DEPLOYMENT",
 	selectSession = "SELECT_SESSION",
 	displaySessionLogsAndStop = "DISPLAY_SESSION_LOGS_AND_STOP",
