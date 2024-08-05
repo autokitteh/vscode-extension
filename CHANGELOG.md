@@ -1,3 +1,11 @@
+## [0.20.2](https://github.com/autokitteh/vscode-extension/compare/v0.20.1...v0.20.2) (2024-08-05)
+
+
+### Bug Fixes
+
+* display running session logs on active deployment focus ([#367](https://github.com/autokitteh/vscode-extension/issues/367)) ([43e20e8](https://github.com/autokitteh/vscode-extension/commit/43e20e8063bda24b100c7c3a5734c03468da51cb))
+* reset sessions view after removing deployment ([#369](https://github.com/autokitteh/vscode-extension/issues/369)) ([236d26d](https://github.com/autokitteh/vscode-extension/commit/236d26dbb3ff4b23d74d9693aba059837611d7f4))
+
 ## [0.20.1](https://github.com/autokitteh/vscode-extension/compare/v0.20.0...v0.20.1) (2024-07-23)
 
 # [0.20.0](https://github.com/autokitteh/vscode-extension/compare/v0.19.16...v0.20.0) (2024-07-23)
