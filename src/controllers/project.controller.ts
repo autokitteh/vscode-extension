@@ -917,6 +917,15 @@ export class ProjectController {
 		await this.fetchSessions();
 	}
 
+	async resetView() {
+		this.sessions = undefined;
+		this.view.update({
+			type: MessageType.setSessionsSection,
+			payload: [],
+		});
+		await this.loadAndDisplayDeployments();
+	}
+
 	async deleteDeployment(deploymentId: string) {
 		this.startLoader();
 		const { error } = await DeploymentsService.delete(deploymentId);
@@ -932,7 +941,7 @@ export class ProjectController {
 		this.selectedDeploymentId = undefined;
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
-		await this.loadAndDisplayDeployments();
+		this.resetView();
 
 		const log = translate().t("deployments.deleteSucceedIdProject", {
 			deploymentId,
