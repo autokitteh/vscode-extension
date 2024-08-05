@@ -424,6 +424,7 @@ export class ProjectController {
 			type: MessageType.selectSession,
 			payload: selectedSessionId,
 		});
+		this.displaySessionLogs(selectedSessionId);
 	}
 
 	printFinishedSessionLogs(lastState: SessionLogRecord) {
