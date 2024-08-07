@@ -4,5 +4,7 @@
 	"git.enableCommitSigning": true,
 	"javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
 	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
-	"i18n-ally.localesPaths": ["src/i18n"]
+	"i18n-ally.localesPaths": [
+		"src/i18n"
+	]
 }
