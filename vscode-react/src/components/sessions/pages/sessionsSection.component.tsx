@@ -1,6 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-
-import Toggle from "react-toggle";
+import { useEffect, useRef, useState } from "react";
 
 import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
@@ -14,25 +12,12 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [stateFilter, setStateFilter] = useState<string>();
-	const [liveTailState, setLiveTailState] = useState<boolean>(true);
-	const { sessions, showLiveTail, lastDeployment, isLiveStateOn } = sessionsSection || {};
-	const [isLiveTailButtonDisplayed, setIsLiveTailButtonDisplayed] = useState<boolean>(false);
+	const { sessions, lastDeployment } = sessionsSection || {};
 
 	useIncomingMessageHandler({
 		setSessionsSection,
 		setSelectedSession,
-		displayLiveTailButtonInView: setIsLiveTailButtonDisplayed,
 	});
-
-	useEffect(() => {
-		if (isLiveStateOn !== undefined) {
-			setLiveTailState(isLiveStateOn);
-		}
-	}, [isLiveStateOn]);
-
-	useEffect(() => {
-		setIsLiveTailButtonDisplayed(!!showLiveTail);
-	}, [showLiveTail]);
 
 	useForceRerender();
 
@@ -59,19 +44,6 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 		setDivWidth(ref?.current?.clientWidth || 0);
 	});
 
-	const disableLiveTail = useCallback(() => {
-		setLiveTailState(false);
-		sendMessage(MessageType.toggleSessionsLiveTail, false);
-	}, []);
-
-	const toggleLiveTail = useCallback(() => {
-		setLiveTailState((prevState) => {
-			const newState = !prevState;
-			sendMessage(MessageType.toggleSessionsLiveTail, newState);
-			return newState;
-		});
-	}, []);
-
 	return (
 		<div style={{ height: `${parseInt(height as string, 10) * 0.85}px` }} ref={ref}>
 			<div
@@ -83,30 +55,6 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 				<div className="flex">{`${translate().t("reactApp.sessions.tableTitle")}`}</div>
 				<div className="flex-grow" />
 				<div className="flex w-1/3 text-xs justify-end items-center">
-					{isLiveTailButtonDisplayed ? (
-						<div className="flex justify-center items-center h-2">
-							<label htmlFor="live-tail-status">
-								<div className="text-md mr-2">{translate().t("reactApp.sessions.liveTailToggleText")}</div>
-							</label>
-							<Toggle
-								id="live-tail-status"
-								defaultChecked={liveTailState}
-								onChange={toggleLiveTail}
-								checked={liveTailState}
-								aria-label={
-									liveTailState
-										? translate().t("reactApp.sessions.pauseLiveTail")
-										: translate().t("reactApp.sessions.resumeLiveTail")
-								}
-								title={
-									liveTailState
-										? translate().t("reactApp.sessions.pauseLiveTail")
-										: translate().t("reactApp.sessions.resumeLiveTail")
-								}
-							/>
-							<div className="text-bold text-lg mx-3">|</div>
-						</div>
-					) : null}
 					<div className="codicon codicon-filter h-6 mt-2 mr-2" />
 					<select
 						className="text-white bg-black rounded h-6 mr-2"
@@ -133,8 +81,6 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 					setSelectedSession={setSelectedSession}
 					heightProp={divHeight}
 					widthProp={divWidth}
-					disableLiveTail={disableLiveTail}
-					liveTailState={liveTailState}
 					lastDeployment={lastDeployment}
 				/>
 			)}

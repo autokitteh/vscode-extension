@@ -28,12 +28,10 @@ export enum MessageType {
 	startLoader = "START_LOADER",
 	stopLoader = "STOP_LOADER",
 	loadMoreSessions = "LOAD_MORE_SESSIONS",
-	toggleSessionsLiveTail = "TOGGLE_SESSIONS_LIVE_TAIL",
 	setRetryCountdown = "SET_RETRY_COUNTDOWN",
 	tryToReconnect = "TRY_TO_RECONNECT",
 	setConnections = "SET_CONNECTIONS",
 	openConnectionInitURL = "OPEN_CONNECTION_INIT_URL",
 	fetchConnections = "FETCH_CONNECTIONS",
-	displayLiveTailButtonInView = "DISPLAY_LIVE_TAIL_BUTTON_IN_VIEW",
 	refreshUI = "REFRESH_UI",
 }
