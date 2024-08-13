@@ -49,6 +49,7 @@ export class ProjectController {
 	private sessionLogRetryScheduler?: RetryScheduler;
 	private deploymentsRetryStarted: boolean = false;
 	private activeDeploymentSessions?: Session[] = [];
+	private lastDeploymentId?: string;
 
 	constructor(projectView: IProjectView, projectId: string) {
 		this.view = projectView;
@@ -246,15 +247,17 @@ export class ProjectController {
 	}
 
 	async loadSingleshotArgs() {
-		const lastDeployment = this.deployments ? this.deployments[this.deployments?.length - 1] : null;
+		const lastDeployment =
+			this.deployments && this.deployments?.length ? this.deployments[this.deployments.length - 1] : null;
 
-		if (!lastDeployment) {
+		if (this.lastDeploymentId === lastDeployment?.deploymentId) {
 			return;
 		}
+		this.lastDeploymentId = lastDeployment?.deploymentId;
 
 		this.startLoader();
 		const { data: buildDescription, error: buildDescriptionError } = await BuildsService.getBuildDescription(
-			lastDeployment.buildId
+			lastDeployment!.buildId
 		);
 		this.stopLoader();
 
