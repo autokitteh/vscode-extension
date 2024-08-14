@@ -247,18 +247,21 @@ export class ProjectController {
 	}
 
 	async loadSingleshotArgs() {
-		const lastDeployment =
-			this.deployments && this.deployments?.length ? this.deployments[this.deployments.length - 1] : null;
+		if (!this.deployments || !this.deployments.length) {
+			return;
+		}
+		const lastDeployment = this.deployments[this.deployments.length - 1];
 
 		if (this.lastDeploymentId === lastDeployment?.deploymentId) {
 			return;
 		}
-		this.lastDeploymentId = lastDeployment?.deploymentId;
+		this.lastDeploymentId = lastDeployment.deploymentId;
 
 		this.startLoader();
 		const { data: buildDescription, error: buildDescriptionError } = await BuildsService.getBuildDescription(
-			lastDeployment!.buildId
+			lastDeployment.buildId
 		);
+
 		this.stopLoader();
 
 		if (buildDescriptionError) {
