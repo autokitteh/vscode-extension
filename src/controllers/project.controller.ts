@@ -1095,6 +1095,7 @@ export class ProjectController {
 			(countdown) => this.updateViewWithCountdown(countdown)
 		);
 		this.serverHealthMonitorScheduler.startFetchInterval();
+		this.loadAndDisplayDeployments();
 
 		const isResourcesPathExist = await this.getResourcesPathFromContext();
 		if (isResourcesPathExist) {

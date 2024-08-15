@@ -55,7 +55,7 @@ export const DeploymentsSection = ({ height }: { height: string | number }) => {
 				<DeploymentTableHeader />
 				<DeploymentsTableBody deployments={deployments} />
 			</Table>
-			{(isLoading || !deployments) && <TableMessage>{translate().t("reactApp.general.loading")}</TableMessage>}
+			{isLoading && <TableMessage>{translate().t("reactApp.general.loading")}</TableMessage>}
 			{deployments?.length === 0 && <TableMessage>{translate().t("reactApp.deployments.noDeployments")}</TableMessage>}
 		</div>
 	);
