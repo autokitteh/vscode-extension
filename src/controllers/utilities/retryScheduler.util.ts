@@ -10,12 +10,12 @@ export class RetryScheduler {
 	private initialDuration: number;
 	private startTime: Date;
 	private hourlyRetryStarted: boolean = false;
-	private fetchFunction: () => Promise<void>;
+	private fetchFunction: () => Promise<void | boolean>;
 	private updateViewFunction: (countdown: string) => void;
 
 	constructor(
 		initialDuration: number,
-		fetchFunction: () => Promise<void>,
+		fetchFunction: () => Promise<void | boolean>,
 		updateViewFunction: (countdown: string) => void
 	) {
 		this.currentCountdownDuration = initialDuration;

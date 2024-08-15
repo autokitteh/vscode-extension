@@ -45,7 +45,6 @@ export class ProjectController {
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
 	public connections: ConnectionsViewDelegate;
 	private serverHealthMonitorScheduler?: RetryScheduler;
-	private serverHealthCheckFailed: boolean = false;
 	private sessionLogRetryScheduler?: RetryScheduler;
 	private lastDeploymentId?: string;
 
@@ -141,9 +140,8 @@ export class ProjectController {
 	};
 
 	public reconnect = async () => {
-		await this.checkServerHealth(true);
-
-		if (!this.serverHealthCheckFailed) {
+		const isServerHealthy = await this.checkServerHealth(true);
+		if (isServerHealthy) {
 			this.deployments = undefined;
 			this.loadAndDisplayDeployments();
 		}
@@ -158,7 +156,6 @@ export class ProjectController {
 	};
 
 	public tryToReenable = async () => {
-		console.log("recconect");
 		this.reconnect();
 		commands.executeCommand(vsCommands.reconnectSidebar);
 	};
@@ -1084,12 +1081,11 @@ export class ProjectController {
 		}
 	}
 
-	async checkServerHealth(isResetCounters: boolean = false): Promise<void> {
+	async checkServerHealth(isResetCounters: boolean = false): Promise<boolean> {
 		const { error } = await ProjectsService.get(this.projectId);
 		if (error) {
 			this.serverHealthMonitorScheduler?.startCountdown();
-			this.serverHealthCheckFailed = true;
-			return;
+			return false;
 		}
 
 		if (isResetCounters) {
@@ -1099,7 +1095,7 @@ export class ProjectController {
 				payload: "",
 			});
 		}
-		this.serverHealthCheckFailed = false;
+		return true;
 	}
 
 	async loadInitialDataOnceViewReady() {
