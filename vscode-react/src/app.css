@@ -63,3 +63,11 @@ main {
 		transform: rotate(359deg);
 	}
 }
+
+.animation-paused {
+	animation-play-state: paused;
+}
+
+.animation-running {
+	animation-play-state: running;
+}

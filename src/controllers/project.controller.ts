@@ -1114,7 +1114,11 @@ export class ProjectController {
 		}
 	}
 
-	refreshUI() {
-		this.loadAndDisplayDeployments();
+	async refreshUI() {
+		try {
+			await this.loadAndDisplayDeployments();
+			commands.executeCommand(vsCommands.showInfoMessage, translate().t("sessions.sessionsRefreshed"));
+		} finally {
+		}
 	}
 }

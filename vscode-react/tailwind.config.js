@@ -7,6 +7,9 @@ export default {
 			colors: {
 				"black-semi-transparent": "rgba(0, 0, 0, 0.5)",
 			},
+			animation: {
+				"spin-medium": "spin 4s linear infinite",
+			},
 		},
 	},
 	plugins: [require("@githubocto/tailwind-vscode")],

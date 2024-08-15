@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
@@ -7,14 +7,16 @@ import { Button, Logo, Overlay } from "@react-components/atoms";
 import { ConnectionsModal } from "@react-components/connections";
 import { Popper } from "@react-components/molecules";
 import { ProjectSettingsPopper } from "@react-components/project/organisms";
-import { useAppDispatch } from "@react-context/appState.context";
+import { useAppDispatch, useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
-import { sendMessage } from "@react-utilities";
+import { sendMessage, cn } from "@react-utilities";
 import "split-pane-react/esm/themes/default.css";
 
 export const Header = () => {
+	const [{ delayedLoading }] = useAppState();
 	const [projectName, setProjectName] = useState<string>();
 	const [resourcesDir, setResourcesDir] = useState<string>("");
+	const [isRefreshing, setIsRefreshing] = useState(false);
 	const [settingsPopperVisible, setSettingsPopperVisible] = useState<boolean>(false);
 	const pathPopperElementRef = useRef<HTMLDivElement | null>(null);
 	const { stopLoader, startLoader } = useAppDispatch();
@@ -35,8 +37,20 @@ export const Header = () => {
 	};
 
 	const refreshUI = () => {
+		if (!isRefreshing) {
+			setIsRefreshing(true);
+		}
 		sendMessage(MessageType.refreshUI);
 	};
+
+	const rotateIconClass = useMemo(
+		() =>
+			cn("codicon codicon-sync text-vscode-background animate-spin-medium transition animation-paused", {
+				// eslint-disable-next-line @typescript-eslint/naming-convention
+				"animation-running": delayedLoading && isRefreshing,
+			}),
+		[delayedLoading]
+	);
 
 	return (
 		<div className="flex items-center w-full">
@@ -62,11 +76,12 @@ export const Header = () => {
 			<div className="flex-grow"></div>
 			<div className="flex flex-row">
 				<Button
+					disabled={delayedLoading}
 					onClick={refreshUI}
 					classes="flex relative z-30 mr-2"
 					title={translate().t("reactApp.settings.refresh")}
 				>
-					<div className="codicon codicon-sync text-vscode-background" />
+					<div className={rotateIconClass} />
 				</Button>
 				<Button
 					onClick={() => openConnectionsModal()}
