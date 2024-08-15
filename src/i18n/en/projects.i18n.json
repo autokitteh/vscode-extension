@@ -7,6 +7,8 @@
 	"projectBuildFailed": "Project build failed - id: {{id}}",
 	"projectDeploySucceed": "Project deploy succeed - id: {{id}}",
 	"projectDeployFailed": "Project deploy failed - id: {{id}}",
+	"projectReloadSucceed": "Project data reloaded successfully",
+	"projectReloadSucceedExtended": "Project data reloaded successfully - id: {{id}}",
 	"fetchProjectsFailed": "Projects fetch failed",
 	"fetchProjectsFailedError": "Projects fetch failed - error: {{error}}",
 	"resourcesDirectoryMissing": "Resources directory missing",
