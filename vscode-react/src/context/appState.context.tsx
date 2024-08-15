@@ -41,18 +41,11 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
 	const [delayedLoading, setDelayedLoading] = useState(false);
 
 	useEffect(() => {
-		let timeoutId: NodeJS.Timeout | undefined;
-		if (state.loading) {
-			timeoutId = setTimeout(() => setDelayedLoading(true), 2000);
-		} else {
-			clearTimeout(timeoutId);
+		setDelayedLoading(true);
+
+		setTimeout(() => {
 			setDelayedLoading(false);
-		}
-		return () => {
-			if (timeoutId) {
-				clearTimeout(timeoutId);
-			}
-		};
+		}, 600);
 	}, [state.loading]);
 
 	const value: [State, React.Dispatch<Action>] = [{ ...state, delayedLoading }, dispatch];

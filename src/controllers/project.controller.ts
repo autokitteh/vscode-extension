@@ -1116,10 +1116,5 @@ export class ProjectController {
 
 	async refreshUI() {
 		await this.loadAndDisplayDeployments();
-		commands.executeCommand(vsCommands.showInfoMessage, translate().t("projects.projectReloadSucceed"));
-		LoggerService.info(
-			namespaces.projectController,
-			translate().t("projects.projectReloadSucceedExtended", { id: this.projectId })
-		);
 	}
 }
