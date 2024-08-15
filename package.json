@@ -359,6 +359,7 @@
 		"build:vscode-react": "npm run build --workspace=vscode-react",
 		"build:webview": "cd vscode-react && npm run build",
 		"check-format:staged": "prettier . --check",
+		"fix-format:staged": "prettier . --write",
 		"check-types": "tsc --pretty --noEmit",
 		"compile": "tsc -p ./",
 		"compile:all": "npm run compile --workspace=vscode-react && npm run compile",

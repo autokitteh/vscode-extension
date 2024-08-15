@@ -151,7 +151,7 @@ export class ProjectController {
 
 	public disable = async () => {
 		this.sessionLogRetryScheduler?.stopTimers();
-		this.deploymentsRetryScheduler?.stopTimers();
+		// this.deploymentsRetryScheduler?.stopTimers();
 		this.deployments = undefined;
 		this.sessions = undefined;
 		this.hasDisplayedError = new Map();
@@ -177,7 +177,7 @@ export class ProjectController {
 			const log = `${translate().t("errors.deploymentsFetchFailed")} - ${(error as Error).message}`;
 			LoggerService.error(namespaces.projectController, log);
 			if (isResetCounters) {
-				this.deploymentsRetryScheduler?.startCountdown();
+				// this.deploymentsRetryScheduler?.startCountdown();
 				this.deploymentsRetryStarted = true;
 			}
 			return;
@@ -190,7 +190,7 @@ export class ProjectController {
 
 		if (this.deploymentsRetryStarted) {
 			this.deploymentsRetryStarted = false;
-			this.deploymentsRetryScheduler?.resetCountdown();
+			// this.deploymentsRetryScheduler?.resetCountdown();
 		}
 
 		if (isEqual(this.deployments, deployments)) {
@@ -215,10 +215,10 @@ export class ProjectController {
 			return;
 		}
 
-		const isLiveStateOn = this.deploymentsWithLiveTail.get(this.selectedDeploymentId);
-		if (!isLiveStateOn) {
-			return;
-		}
+		// const isLiveStateOn = this.deploymentsWithLiveTail.get(this.selectedDeploymentId);
+		// if (!isLiveStateOn) {
+		// 	return;
+		// }
 		await this.selectDeployment(this.selectedDeploymentId);
 	}
 
@@ -385,10 +385,8 @@ export class ProjectController {
 
 		const existingLiveTailState = this.deploymentsWithLiveTail.has(deploymentId);
 		const isFirstTime = !existingLiveTailState;
-		let isLiveStateOn = this.deploymentsWithLiveTail.get(deploymentId);
 
 		if (isFirstTime && this.isDeploymentLiveTailPossible) {
-			isLiveStateOn = true;
 			this.deploymentsWithLiveTail.set(deploymentId, true);
 		}
 
@@ -402,35 +400,33 @@ export class ProjectController {
 			payload: this.isDeploymentLiveTailPossible,
 		});
 
-		if (isFirstTime || isLiveStateOn || (!isLiveStateOn && !this.isDeploymentLiveTailPossible)) {
-			await this.fetchSessions();
-			return;
-		}
+		await this.fetchSessions();
+		return;
 
-		this.sessions = this.activeDeploymentSessions;
+		// this.sessions = this.activeDeploymentSessions;
 
-		const sessionsViewObject: SessionSectionViewModel = {
-			sessions: this.activeDeploymentSessions,
-			showLiveTail: this.isDeploymentLiveTailPossible!,
-			isLiveStateOn,
-			lastDeployment: this.deployments ? this.deployments[0] : undefined,
-		};
+		// const sessionsViewObject: SessionSectionViewModel = {
+		// 	sessions: this.activeDeploymentSessions,
+		// 	showLiveTail: this.isDeploymentLiveTailPossible!,
+		// 	isLiveStateOn,
+		// 	lastDeployment: this.deployments ? this.deployments[0] : undefined,
+		// };
 
-		this.view.update({
-			type: MessageType.setSessionsSection,
-			payload: sessionsViewObject,
-		});
+		// this.view.update({
+		// 	type: MessageType.setSessionsSection,
+		// 	payload: sessionsViewObject,
+		// });
 
-		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
+		// const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
 
-		if (!selectedSessionId) {
-			return;
-		}
-		this.view.update({
-			type: MessageType.selectSession,
-			payload: selectedSessionId,
-		});
-		this.displaySessionLogs(selectedSessionId);
+		// if (!selectedSessionId) {
+		// 	return;
+		// }
+		// this.view.update({
+		// 	type: MessageType.selectSession,
+		// 	payload: selectedSessionId,
+		// });
+		// this.displaySessionLogs(selectedSessionId);
 	}
 
 	printFinishedSessionLogs(lastState: SessionLogRecord) {
@@ -683,7 +679,7 @@ export class ProjectController {
 
 	onClose() {
 		this.sessionLogRetryScheduler?.stopTimers();
-		this.deploymentsRetryScheduler?.stopTimers();
+		// this.deploymentsRetryScheduler?.stopTimers();
 		this.onProjectDisposeCB?.(this.projectId);
 		this.hasDisplayedError = new Map();
 		if (this.selectedDeploymentId) {
@@ -1178,7 +1174,7 @@ export class ProjectController {
 			() => this.loadAndDisplayDeployments(),
 			(countdown) => this.updateViewWithCountdown(countdown)
 		);
-		this.deploymentsRetryScheduler.startFetchInterval();
+		// this.deploymentsRetryScheduler.startFetchInterval();
 
 		const isResourcesPathExist = await this.getResourcesPathFromContext();
 		if (isResourcesPathExist) {
