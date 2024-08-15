@@ -24,7 +24,6 @@ export interface ProjectViewDelegate {
 	setSessionsStateFilter?: Callback<string>;
 	loadInitialDataOnceViewReady: Callback;
 	loadMoreSessions?: Callback;
-	toggleSessionsLiveTail?: Callback<Boolean>;
 	tryToReenable?: Callback;
 	refreshUI?: Callback;
 	connections: ConnectionsViewDelegate;

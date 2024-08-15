@@ -86,9 +86,6 @@ export class ProjectView implements IProjectView {
 					case MessageType.loadMoreSessions:
 						this.delegate?.loadMoreSessions?.();
 						break;
-					case MessageType.toggleSessionsLiveTail:
-						this.delegate?.toggleSessionsLiveTail?.(message.payload as boolean);
-						break;
 					case MessageType.tryToReconnect:
 						this.delegate?.tryToReenable?.();
 						break;

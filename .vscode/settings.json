@@ -3,8 +3,5 @@
 	"typescript.preferences.importModuleSpecifier": "non-relative",
 	"git.enableCommitSigning": true,
 	"javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
-	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
-	"i18n-ally.localesPaths": [
-		"src/i18n"
-	]
+	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false
 }
