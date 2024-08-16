@@ -12,14 +12,15 @@ type LogoProperties = {
 export const Logo = ({ className }: LogoProperties): ReactNode => {
 	const [{ delayedLoading, themeType }] = useAppState();
 	const [shouldRotate, setShouldRotate] = useState(false);
+	const [hasRotatedOnce, setHasRotatedOnce] = useState(false);
 
 	useEffect(() => {
-		if (delayedLoading) {
+		if (delayedLoading && !hasRotatedOnce) {
 			setShouldRotate(true);
-			return;
+			setHasRotatedOnce(true);
+			setTimeout(() => setShouldRotate(false), 2000);
 		}
-		setTimeout(() => setShouldRotate(false), 2000);
-	}, [delayedLoading]);
+	}, [delayedLoading, hasRotatedOnce]);
 
 	const logoClass = cn(className, { loading: shouldRotate });
 
