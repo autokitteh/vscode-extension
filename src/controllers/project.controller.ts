@@ -4,13 +4,7 @@ import isEqual from "lodash.isequal";
 import * as path from "path";
 import { commands, env, OpenDialogOptions, Uri, window } from "vscode";
 
-import {
-	channels,
-	INITIAL_SERVER_HEALTH_SCHEDULE_INTERVAL,
-	INITIAL_SESSION_LOG_RETRY_SCHEDULE_INTERVAL,
-	namespaces,
-	vsCommands,
-} from "@constants";
+import { channels, INITIAL_SESSION_LOG_RETRY_SCHEDULE_INTERVAL, namespaces, vsCommands } from "@constants";
 import { ConnectionsController } from "@controllers";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
@@ -44,7 +38,6 @@ export class ProjectController {
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
 	public connections: ConnectionsViewDelegate;
-	private serverHealthMonitorScheduler?: RetryScheduler;
 	private sessionLogRetryScheduler?: RetryScheduler;
 	private lastDeploymentId?: string;
 
@@ -58,7 +51,7 @@ export class ProjectController {
 		});
 	}
 
-	private updateViewWithCountdown(countdown: string) {
+	private updateViewWithCountdown(countdown: string | number) {
 		this.view.update({
 			type: MessageType.setRetryCountdown,
 			payload: countdown,
@@ -140,7 +133,7 @@ export class ProjectController {
 	};
 
 	public reconnect = async () => {
-		const isServerHealthy = await this.checkServerHealth(true);
+		const isServerHealthy = await this.checkServerHealth();
 		if (isServerHealthy) {
 			this.deployments = undefined;
 			this.loadAndDisplayDeployments();
@@ -149,7 +142,6 @@ export class ProjectController {
 
 	public disable = async () => {
 		this.sessionLogRetryScheduler?.stopTimers();
-		this.serverHealthMonitorScheduler?.stopTimers();
 		this.deployments = undefined;
 		this.sessions = undefined;
 		this.hasDisplayedError = new Map();
@@ -597,7 +589,6 @@ export class ProjectController {
 
 	onClose() {
 		this.sessionLogRetryScheduler?.stopTimers();
-		this.serverHealthMonitorScheduler?.stopTimers();
 		this.onProjectDisposeCB?.(this.projectId);
 		this.hasDisplayedError = new Map();
 		if (this.selectedDeploymentId) {
@@ -1081,32 +1072,18 @@ export class ProjectController {
 		}
 	}
 
-	async checkServerHealth(isResetCounters: boolean = false): Promise<boolean> {
+	async checkServerHealth(): Promise<boolean> {
 		const { error } = await ProjectsService.get(this.projectId);
-		if (error && !isResetCounters) {
-			this.serverHealthMonitorScheduler?.startCountdown();
-			return false;
+		if (!error) {
+			this.view.update({
+				type: MessageType.setRetryCountdown,
+				payload: "",
+			});
 		}
-
-		if (error && isResetCounters) {
-			return false;
-		}
-
-		this.serverHealthMonitorScheduler?.resetCountdown();
-		this.view.update({
-			type: MessageType.setRetryCountdown,
-			payload: "",
-		});
-		return true;
+		return !!!error;
 	}
 
 	async loadInitialDataOnceViewReady() {
-		this.serverHealthMonitorScheduler = new RetryScheduler(
-			INITIAL_SERVER_HEALTH_SCHEDULE_INTERVAL,
-			() => this.checkServerHealth(),
-			(countdown) => this.updateViewWithCountdown(countdown)
-		);
-		this.serverHealthMonitorScheduler.startFetchInterval();
 		this.loadAndDisplayDeployments();
 
 		const isResourcesPathExist = await this.getResourcesPathFromContext();

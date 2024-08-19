@@ -120,6 +120,12 @@ export async function activate(context: ExtensionContext) {
 		);
 
 		context.subscriptions.push(
+			commands.registerCommand(vsCommands.displayProjectCountdown, (countdown) => {
+				tabsManager?.displayProjectCountdown(countdown);
+			})
+		);
+
+		context.subscriptions.push(
 			commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {
 				if (project) {
 					if (project.label.indexOf("Reconnecting") !== -1 && project.key === undefined) {
