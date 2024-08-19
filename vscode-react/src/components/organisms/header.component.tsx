@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
@@ -37,19 +37,28 @@ export const Header = () => {
 	};
 
 	const refreshUI = () => {
-		if (!isRefreshing) {
-			setIsRefreshing(true);
-		}
+		setIsRefreshing(true);
 		sendMessage(MessageType.refreshUI);
 	};
 
+	useEffect(() => {
+		if (!isRefreshing || delayedLoading) {
+			return;
+		}
+
+		const timeout = setTimeout(() => {
+			setIsRefreshing(false);
+		}, 600);
+		return () => clearTimeout(timeout);
+	}, [delayedLoading]);
+
 	const rotateIconClass = useMemo(
 		() =>
-			cn("codicon codicon-sync text-vscode-background animate-spin-medium transition animation-paused", {
+			cn("codicon codicon-sync text-vscode-background animate-spin transition animation-paused", {
 				// eslint-disable-next-line @typescript-eslint/naming-convention
-				"animation-running": delayedLoading && isRefreshing,
+				"animation-running": isRefreshing,
 			}),
-		[delayedLoading]
+		[isRefreshing]
 	);
 
 	return (
@@ -76,7 +85,7 @@ export const Header = () => {
 			<div className="flex-grow"></div>
 			<div className="flex flex-row">
 				<Button
-					disabled={delayedLoading}
+					disabled={isRefreshing}
 					onClick={refreshUI}
 					classes="flex relative z-30 mr-2"
 					title={translate().t("reactApp.settings.refresh")}

@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode } from "react";
 
 import LogoBlack from "@react-assets/images/logo/ak-logo-black.svg?react";
 import LogoWhite from "@react-assets/images/logo/ak-logo-white.svg?react";
@@ -11,18 +11,8 @@ type LogoProperties = {
 
 export const Logo = ({ className }: LogoProperties): ReactNode => {
 	const [{ delayedLoading, themeType }] = useAppState();
-	const [shouldRotate, setShouldRotate] = useState(false);
-	const [hasRotatedOnce, setHasRotatedOnce] = useState(false);
 
-	useEffect(() => {
-		if (delayedLoading && !hasRotatedOnce) {
-			setShouldRotate(true);
-			setHasRotatedOnce(true);
-			setTimeout(() => setShouldRotate(false), 2000);
-		}
-	}, [delayedLoading, hasRotatedOnce]);
-
-	const logoClass = cn(className, { loading: shouldRotate });
+	const logoClass = cn(className, { loading: delayedLoading });
 
 	return themeType === 2 || themeType === 3 ? (
 		<LogoWhite className={logoClass} fill="white" />
