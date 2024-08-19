@@ -13,7 +13,7 @@ import { sendMessage, cn } from "@react-utilities";
 import "split-pane-react/esm/themes/default.css";
 
 export const Header = () => {
-	const [{ delayedLoading }] = useAppState();
+	const [{ loading }] = useAppState();
 	const [projectName, setProjectName] = useState<string>();
 	const [resourcesDir, setResourcesDir] = useState<string>("");
 	const [isRefreshing, setIsRefreshing] = useState(false);
@@ -42,7 +42,7 @@ export const Header = () => {
 	};
 
 	useEffect(() => {
-		if (!isRefreshing || delayedLoading) {
+		if (!isRefreshing || loading) {
 			return;
 		}
 
@@ -50,7 +50,7 @@ export const Header = () => {
 			setIsRefreshing(false);
 		}, 600);
 		return () => clearTimeout(timeout);
-	}, [delayedLoading]);
+	}, [loading]);
 
 	const rotateIconClass = useMemo(
 		() =>

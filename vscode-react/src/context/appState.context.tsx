@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useEffect, useReducer, useState } from "react";
+import React, { createContext, ReactNode, useContext, useReducer } from "react";
 
 import { Theme } from "@enums";
 import { Action } from "@react-types";
@@ -7,7 +7,6 @@ type State = {
 	modalName: string;
 	loading: boolean;
 	themeType: Theme;
-	delayedLoading: boolean;
 	selectedDeploymentId?: string;
 };
 
@@ -33,18 +32,12 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
 		modalName: "",
 		loading: false,
 		selectedDeploymentId: undefined,
-		delayedLoading: false,
 		themeType: Theme.DARK,
 	};
 
 	const [state, dispatch] = useReducer(appStateReducer, initialState);
-	const [delayedLoading, setDelayedLoading] = useState(false);
 
-	useEffect(() => {
-		setDelayedLoading(state.loading);
-	}, [state.loading]);
-
-	const value: [State, React.Dispatch<Action>] = [{ ...state, delayedLoading }, dispatch];
+	const value: [State, React.Dispatch<Action>] = [{ ...state }, dispatch];
 
 	return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
 };
