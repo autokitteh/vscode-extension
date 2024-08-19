@@ -1083,18 +1083,20 @@ export class ProjectController {
 
 	async checkServerHealth(isResetCounters: boolean = false): Promise<boolean> {
 		const { error } = await ProjectsService.get(this.projectId);
-		if (error) {
+		if (error && !isResetCounters) {
 			this.serverHealthMonitorScheduler?.startCountdown();
 			return false;
 		}
 
-		if (isResetCounters) {
-			this.serverHealthMonitorScheduler?.resetCountdown();
-			this.view.update({
-				type: MessageType.setRetryCountdown,
-				payload: "",
-			});
+		if (error && isResetCounters) {
+			return false;
 		}
+
+		this.serverHealthMonitorScheduler?.resetCountdown();
+		this.view.update({
+			type: MessageType.setRetryCountdown,
+			payload: "",
+		});
 		return true;
 	}
 
