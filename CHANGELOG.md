@@ -1,3 +1,17 @@
+## [0.20.3](https://github.com/autokitteh/vscode-extension/compare/v0.20.2...v0.20.3) (2024-08-20)
+
+
+### Bug Fixes
+
+* add prebuild task, which deletes and re-compiles the distribution files in debug run in VSCode ([#371](https://github.com/autokitteh/vscode-extension/issues/371)) ([a8a704c](https://github.com/autokitteh/vscode-extension/commit/a8a704cde163c4db3b4d7bbe951afd1daed9d39b))
+* Avoid fetching build-info on each project load ([#373](https://github.com/autokitteh/vscode-extension/issues/373)) ([ad55249](https://github.com/autokitteh/vscode-extension/commit/ad55249040d279d73c7eb0f93eb565f21b0231e4))
+* python singleshot crashes project window ([#348](https://github.com/autokitteh/vscode-extension/issues/348)) ([edacf93](https://github.com/autokitteh/vscode-extension/commit/edacf93b58e60ddb6c8cf30de68566b606e0a398))
+
+
+### Features
+
+* live tail removal ([#372](https://github.com/autokitteh/vscode-extension/issues/372)) ([0af4089](https://github.com/autokitteh/vscode-extension/commit/0af408940dcb705ceb6df817d5943884f417a235))
+
 ## [0.20.2](https://github.com/autokitteh/vscode-extension/compare/v0.20.1...v0.20.2) (2024-08-05)
 
 
