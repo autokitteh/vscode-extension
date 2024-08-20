@@ -10,8 +10,9 @@ type LogoProperties = {
 };
 
 export const Logo = ({ className }: LogoProperties): ReactNode => {
-	const [{ delayedLoading, themeType }] = useAppState();
-	const logoClass = cn(className, { loading: delayedLoading });
+	const [{ loading, themeType }] = useAppState();
+
+	const logoClass = cn(className, { loading });
 
 	return themeType === 2 || themeType === 3 ? (
 		<LogoWhite className={logoClass} fill="white" />

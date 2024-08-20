@@ -14,7 +14,6 @@ import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import "./app.css";
 import "split-pane-react/esm/themes/default.css";
-import "react-toggle/style.css";
 
 function App() {
 	const [sizes, setSizes] = useState<(number | string)[]>([]);

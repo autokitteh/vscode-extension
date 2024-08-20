@@ -43,6 +43,12 @@ export class TabsManagerController {
 		}
 	}
 
+	public displayProjectCountdown(countdown: number) {
+		for (const key in this.openWebviews) {
+			this.openWebviews[key].updateViewWithCountdown(countdown);
+		}
+	}
+
 	public onProjectDelete(controllerId: string) {
 		this.openWebviews[controllerId].view.panel.dispose();
 	}

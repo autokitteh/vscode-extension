@@ -19,4 +19,5 @@ export const vsCommands = {
 	reconnectSidebar: "autokitteh.reconnectSidebar",
 	refreshSidebar: "autokitteh.refreshSidebar",
 	updateConnection: "autokitteh.updateConnection",
+	displayProjectCountdown: "autokitteh.displayProjectCountdown",
 };

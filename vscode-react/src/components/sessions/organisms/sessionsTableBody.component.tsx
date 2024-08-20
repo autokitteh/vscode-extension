@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { createPortal } from "react-dom";
-import { FixedSizeList as List, ListOnItemsRenderedProps, ListOnScrollProps } from "react-window";
+import { FixedSizeList as List, ListOnItemsRenderedProps } from "react-window";
 
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
@@ -22,8 +22,6 @@ export const SessionsTableBody = ({
 	setSelectedSession,
 	heightProp,
 	widthProp,
-	disableLiveTail,
-	liveTailState,
 	lastDeployment,
 }: {
 	sessions?: Session[];
@@ -31,8 +29,6 @@ export const SessionsTableBody = ({
 	setSelectedSession: (sessionId: string) => void;
 	heightProp: string | number;
 	widthProp: string | number;
-	disableLiveTail: () => void;
-	liveTailState: boolean;
 	lastDeployment?: Deployment;
 }) => {
 	// State Section
@@ -65,7 +61,6 @@ export const SessionsTableBody = ({
 
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogsAndStop, sessionId);
-		disableLiveTail();
 		setSelectedSession(sessionId);
 	};
 
@@ -98,24 +93,12 @@ export const SessionsTableBody = ({
 		hidePopper();
 	}, []);
 
-	useEffect(() => {
-		if (listRef.current && liveTailState) {
-			listRef.current.scrollTo(0); // Scroll to the top
-		}
-	}, [liveTailState]);
-
 	const handleItemsRendered = ({ visibleStopIndex }: ListOnItemsRenderedProps) => {
 		if (visibleStopIndex >= (sessions?.length || 0) - 1) {
 			sendMessage(MessageType.loadMoreSessions);
 			return;
 		}
 	};
-
-	const handleScroll = useCallback(({ scrollOffset }: ListOnScrollProps) => {
-		if (scrollOffset !== 0) {
-			disableLiveTail();
-		}
-	}, []);
 
 	const sessionActions = {
 		displayInputsModal,
@@ -160,7 +143,6 @@ export const SessionsTableBody = ({
 					itemSize={30}
 					itemData={itemData as SessionsTableRowProps}
 					onItemsRendered={handleItemsRendered}
-					onScroll={handleScroll}
 					itemKey={(index) => sessions?.[index]?.sessionId || 0}
 					ref={listRef}
 				>

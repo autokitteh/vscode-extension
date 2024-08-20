@@ -107,6 +107,7 @@ export class SidebarController {
 				key: undefined,
 			},
 		]);
+		commands.executeCommand(vsCommands.displayProjectCountdown, countdown);
 	}
 
 	async buildProject(projectId: string) {
