@@ -1080,7 +1080,7 @@ export class ProjectController {
 				payload: "",
 			});
 		}
-		return !!!error;
+		return !error;
 	}
 
 	async loadInitialDataOnceViewReady() {
