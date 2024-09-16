@@ -58,18 +58,24 @@ export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 			</div>
 			<div className="mb-3 text-left">
 				<strong>{translate().t("reactApp.deployments.executeEntrypoint")}</strong>
-				<VSCodeDropdown
-					value={selectedFunction}
-					onChange={onEntrypointClick}
-					disabled={!functions.length}
-					className="flex"
-				>
-					{functions.map((func) => (
-						<option key={func.name} value={JSON.stringify(func)}>
-							{func.name}
-						</option>
-					))}
-				</VSCodeDropdown>
+				{functions ? (
+					<VSCodeDropdown
+						value={selectedFunction}
+						onChange={onEntrypointClick}
+						disabled={!functions.length}
+						className="flex"
+					>
+						{functions.map((func) => (
+							<option key={func.name} value={JSON.stringify(func)}>
+								{func.name}
+							</option>
+						))}
+					</VSCodeDropdown>
+				) : (
+					<VSCodeDropdown disabled className="flex">
+						<option>{translate().t("reactApp.deployments.executionFunctionsNotFound")}</option>
+					</VSCodeDropdown>
+				)}
 				{displayedErrors["selectedFunction"] && <div className="text-red-500">Please choose a function</div>}
 			</div>
 			<div className="flex">
