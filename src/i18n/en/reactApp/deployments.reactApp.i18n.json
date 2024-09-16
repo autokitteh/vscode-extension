@@ -15,6 +15,7 @@
 	},
 	"noDeployments": "No deployments found",
 	"executeEntrypoint": "Entrypoint",
+	"executionFunctionsNotFound": "No functions found",
 	"executeFile": "File",
 	"activate": "Activate",
 	"deactivate": "Deactivate",
