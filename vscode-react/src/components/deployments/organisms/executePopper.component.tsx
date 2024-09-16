@@ -61,7 +61,7 @@ export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 				<VSCodeDropdown
 					value={selectedFunction}
 					onChange={onEntrypointClick}
-					disabled={functions.length <= 1}
+					disabled={!functions.length}
 					className="flex"
 				>
 					{functions.map((func) => (

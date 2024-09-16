@@ -4,15 +4,13 @@ import { BuildInfoRuntimes, SessionEntrypoint } from "@type/models";
 
 const processRuntime = (runtime: BuildInfoRuntimes): Record<string, SessionEntrypoint[]> => {
 	const result: Record<string, SessionEntrypoint[]> = {};
-	const fileNames = Object.keys(runtime.artifact.compiled_data);
+	const fileNames = Object.keys(runtime.artifact.compiled_data).filter((fileName) => fileName !== "archive");
 
 	fileNames.forEach((fileName) => {
 		const seen = new Set();
 
 		result[fileName] = runtime.artifact.exports
-			.filter(
-				({ location: { path }, symbol: name }) => path === fileName && !name.startsWith("_") && name !== "archive"
-			)
+			.filter(({ location: { path }, symbol: name }) => path === fileName && !name.startsWith("_"))
 			.map(({ location, symbol: name }) => ({
 				...location,
 				name,
