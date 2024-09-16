@@ -1,3 +1,10 @@
+## [0.20.4](https://github.com/autokitteh/vscode-extension/compare/v0.20.3...v0.20.4) (2024-09-16)
+
+
+### Bug Fixes
+
+* refactor processRuntime function and fix singleshot dropdown crash ([#374](https://github.com/autokitteh/vscode-extension/issues/374)) ([734cd95](https://github.com/autokitteh/vscode-extension/commit/734cd9509f21a6108b12d26fbf88c6cfe44be6f5))
+
 ## [0.20.3](https://github.com/autokitteh/vscode-extension/compare/v0.20.2...v0.20.3) (2024-08-20)
 
 
