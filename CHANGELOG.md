@@ -1,3 +1,15 @@
+## [0.20.5](https://github.com/autokitteh/vscode-extension/compare/v0.20.4...v0.20.5) (2024-09-18)
+
+
+### Bug Fixes
+
+* activate build and deploy buttons when resources downloaded ([#376](https://github.com/autokitteh/vscode-extension/issues/376)) ([30159da](https://github.com/autokitteh/vscode-extension/commit/30159daba41919a8cd78b75ee03cda64e7a6c59f))
+
+
+### Features
+
+* remove starlark lsp ([#375](https://github.com/autokitteh/vscode-extension/issues/375)) ([1d43051](https://github.com/autokitteh/vscode-extension/commit/1d430518612c1bce39049734914d52eb5947dad3))
+
 ## [0.20.4](https://github.com/autokitteh/vscode-extension/compare/v0.20.3...v0.20.4) (2024-09-16)
 
 
