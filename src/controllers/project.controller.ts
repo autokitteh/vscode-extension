@@ -1095,5 +1095,13 @@ export class ProjectController {
 
 	async refreshUI() {
 		await this.loadAndDisplayDeployments();
+		if (!this.selectedDeploymentId) {
+			return;
+		}
+		const selectedSessionId = this.selectedSessionPerDeployment.get(this.selectedDeploymentId);
+		if (!selectedSessionId) {
+			return;
+		}
+		this.displaySessionLogs(selectedSessionId);
 	}
 }
