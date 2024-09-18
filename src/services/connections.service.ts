@@ -35,7 +35,7 @@ export class ConnectionsService {
 		return { data: connections, error: undefined };
 	}
 	static async get(connectionId: string, integrations?: Integration[]): Promise<ServiceResponse<Connection>> {
-		let connectionResponse;
+		let connectionResponse: Connection;
 		try {
 			const { connection } = await connectionsClient.get({ connectionId });
 			if (!connection || Object.keys(connection).length === 0) {

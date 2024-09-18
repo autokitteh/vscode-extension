@@ -27,8 +27,6 @@
 			"@providers/*": ["providers/*"],
 			"@services": ["services/index"],
 			"@services/*": ["services/*"],
-			"@starlark": ["starlark/index"],
-			"@starlark/*": ["starlark/*"],
 			"@type": ["types/index"],
 			"@type/*": ["types/*"],
 			"@tests": ["../tests/index"],
