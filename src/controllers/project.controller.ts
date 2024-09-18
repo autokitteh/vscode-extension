@@ -576,7 +576,7 @@ export class ProjectController {
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
 		this.setResourcesPathToTheContext(savePath);
-		this.notifyViewResourcesPathChanged(savePath);
+		this.notifyViewResourcesPathChanged();
 	}
 
 	onBlur() {
@@ -662,7 +662,7 @@ export class ProjectController {
 
 		this.setResourcesPathToTheContext(resourcePath);
 
-		this.notifyViewResourcesPathChanged(resourcePath);
+		this.notifyViewResourcesPathChanged();
 		return;
 	}
 
@@ -772,8 +772,8 @@ export class ProjectController {
 		);
 	}
 
-	async notifyViewResourcesPathChanged(newLocalResourcesPath?: string) {
-		const resourcesPath = (await this.getResourcesPathFromContext()) || newLocalResourcesPath;
+	async notifyViewResourcesPathChanged() {
+		const resourcesPath = await this.getResourcesPathFromContext();
 
 		if (resourcesPath) {
 			this.view.update({
@@ -965,7 +965,7 @@ export class ProjectController {
 		LoggerService.info(namespaces.projectController, successMessage);
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 
-		await this.notifyViewResourcesPathChanged(currentProjectDirectory);
+		await this.notifyViewResourcesPathChanged();
 	}
 
 	async deleteSession(sessionId: string) {
