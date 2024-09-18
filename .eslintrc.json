@@ -61,8 +61,6 @@
 					["@utilities/*", "./src/utilities/*"],
 					["@services", "./src/services/index"],
 					["@services/*", "./src/services/*"],
-					["@starlark", "./src/starlark/index"],
-					["@starlark/*", "./src/starlark/*"],
 					["@utils", "./src/utilities/index"],
 					["@utils/*", "./src/utilities/*"]
 				],

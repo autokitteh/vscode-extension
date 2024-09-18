@@ -32,6 +32,3 @@ dist
 # IDE
 .idea
 src/.vscode/
-
-autokitteh-starlark-lsp*
-autokitteh-lsp/*
