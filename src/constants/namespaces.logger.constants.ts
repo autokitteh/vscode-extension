@@ -13,8 +13,6 @@ export const namespaces = {
 	sessionsHistory: "Sessions History",
 	appStateHandler: "Application State",
 	sessionLogs: "Session Logs",
-	startlarkLSPServer: "Starlark LSP",
-	starlarkLSPExecutable: "Starlkar LSP Executable Download",
 	buildRuntimeEntrypoints: "Convert runtime to entrypoints",
 	connectionsController: "Connections Controller",
 };

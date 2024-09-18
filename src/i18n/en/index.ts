@@ -12,7 +12,6 @@ import reactAppSessions from "@i18n/en/reactApp/sessions.reactApp.i18n.json";
 import reactAppSettings from "@i18n/en/reactApp/settings.reactApp.i18n.json";
 import resources from "@i18n/en/resources.i18n.json";
 import sessions from "@i18n/en/sessions.i18n.json";
-import starlark from "@i18n/en/starlark.i18n.json";
 import token from "@i18n/en/token.i18n.json";
 import walkthrough from "@i18n/en/walkthrough.i18n.json";
 
@@ -25,7 +24,6 @@ export const english = {
 	walkthrough,
 	manifest,
 	sessions,
-	starlark,
 	deployments,
 	token,
 	resources,
