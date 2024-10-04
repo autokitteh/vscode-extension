@@ -21,7 +21,7 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [selectedFile, setSelectedFile] = useState<string>("");
 	const [selectedFunction, setSelectedFunction] = useState<string>("");
-	const [files, setFiles] = useState<string[]>();
+	const [files, setFiles] = useState<string[]>([]);
 	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string>();
@@ -77,8 +77,7 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	const isActive = (deploymentState: DeploymentState) => deploymentState === DeploymentState.ACTIVE_DEPLOYMENT;
 	const isLastDeployment = (deploymentId: string) => deploymentId === deployments?.[0]?.deploymentId;
 
-	const startSession = (event?: MouseEvent<HTMLElement>) => {
-		event?.stopPropagation();
+	const startSession = (inputParameters: { key: string; value: string }[]) => {
 		const lastDeployment = deployments![0];
 
 		setDisplayedErrors({});
@@ -98,6 +97,7 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 			deploymentId: lastDeployment.deploymentId,
 			functionName: selectedFunction,
 			fileName: selectedFile,
+			inputs: inputParameters,
 		};
 
 		sendMessage(MessageType.startSession, startSessionArgs);
@@ -206,9 +206,13 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 									translations={deleteDeploymentPopperTranslations}
 								/>
 							</Popper>
-							<Popper visible={modalName === "deploymentExecute"} referenceRef={executePopperElementRef}>
+							<Popper
+								visible={modalName === "deploymentExecute"}
+								referenceRef={executePopperElementRef}
+								className="w-1/2"
+							>
 								<ExecutePopper
-									files={files!}
+									files={files}
 									selectedFile={selectedFile}
 									onFileChange={setSelectedFile}
 									functionName={selectedFunction}
