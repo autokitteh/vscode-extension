@@ -223,7 +223,7 @@ export class ProjectController {
 		if (!this.deployments || !this.deployments.length) {
 			return;
 		}
-		const lastDeployment = this.deployments[this.deployments.length - 1];
+		const lastDeployment = this.deployments[0];
 
 		if (this.lastDeploymentId === lastDeployment?.deploymentId) {
 			return;
@@ -724,10 +724,6 @@ export class ProjectController {
 	}
 
 	async startSession(startSessionArgs: UIStartSessionArgsType) {
-		const sessionInputs = this.sessions?.find(
-			(session: Session) => session.sessionId === startSessionArgs.sessionId
-		)?.inputs;
-
 		const sessionArguments = {
 			deploymentId: startSessionArgs.deploymentId,
 			buildId: startSessionArgs.buildId,
@@ -737,15 +733,11 @@ export class ProjectController {
 				name: startSessionArgs.functionName,
 				path: startSessionArgs.fileName,
 			},
-		};
-
-		const enrichedSessionArgs = {
-			...sessionArguments,
-			inputs: sessionInputs,
+			jsonInputs: startSessionArgs.inputParameters,
 		};
 
 		this.startLoader();
-		const { data: sessionId, error } = await SessionsService.startSession(enrichedSessionArgs, this.projectId);
+		const { data: sessionId, error } = await SessionsService.startSession(sessionArguments, this.projectId);
 		this.stopLoader();
 
 		if (error) {

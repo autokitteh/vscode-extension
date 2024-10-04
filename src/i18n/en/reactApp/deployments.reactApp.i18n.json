@@ -14,13 +14,25 @@
 		"error": "Error - please reload"
 	},
 	"noDeployments": "No deployments found",
-	"executeEntrypoint": "Entrypoint",
+	"executeFunctionName": "Entrypoint function",
 	"executionFunctionsNotFound": "No functions found",
 	"executeFile": "File",
+	"errors": {
+		"missingFile": "Please choose a file",
+		"missingFunction": "Please choose a function"
+	},
+	"inputParameters": {
+		"title": "Parameters",
+		"add": "Add Parameter",
+		"remove": "Remove",
+		"errors": {
+			"missingKey": "Please enter a key",
+			"missingValue": "Please enter a value"
+		}
+	},
 	"activate": "Activate",
 	"deactivate": "Deactivate",
 	"executeMissingParams": "Set session execution params",
-	"saveAndRun": "Save",
 	"closeModalButton": "Close",
 	"dismiss": "Dismiss",
 	"errorDeletingDeploymentLine1": "Error: cannot delete",

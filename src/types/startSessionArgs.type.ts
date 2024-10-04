@@ -6,6 +6,7 @@ export type UIStartSessionArgsType = {
 	buildId: string;
 	fileName: string;
 	functionName: string;
+	inputParameters: { key: string; value: string }[];
 };
 
 export type StartSessionArgsType = {
@@ -13,4 +14,5 @@ export type StartSessionArgsType = {
 	deploymentId: string;
 	buildId: string;
 	entrypoint: SessionEntrypoint;
+	jsonInputs: { key: string; value: string }[];
 };
