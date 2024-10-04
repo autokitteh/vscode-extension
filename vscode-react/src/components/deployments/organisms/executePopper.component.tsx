@@ -2,14 +2,12 @@ import React, { MouseEvent } from "react";
 
 import { translate } from "@i18n";
 import { Button } from "@react-components/atoms/button.component";
-import { SessionEntrypoint } from "@type/models";
-import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
+import { VSCodeDropdown, VSCodeTextField } from "@vscode/webview-ui-toolkit/react";
 
 interface ExecutePopperProps {
-	files: Record<string, SessionEntrypoint[]>;
-	functions: SessionEntrypoint[];
+	files: string[];
+	functionName: string;
 	selectedFile: string;
-	selectedFunction: string;
 	onFileChange: (file: string) => void;
 	onFunctionChange: (func: string) => void;
 	onStartSession: (event?: MouseEvent<HTMLElement>) => void;
@@ -17,17 +15,16 @@ interface ExecutePopperProps {
 	displayedErrors: Record<string, boolean>;
 }
 
-export const ExecutePopper: React.FC<ExecutePopperProps> = ({
+export const ExecutePopper = ({
 	files,
-	functions,
+	functionName,
 	selectedFile,
-	selectedFunction,
 	onFileChange,
 	onFunctionChange,
 	onStartSession,
 	onClose,
 	displayedErrors,
-}) => {
+}: ExecutePopperProps) => {
 	const onStartClick = (event: MouseEvent<HTMLElement> | undefined) => {
 		event?.stopPropagation();
 		onStartSession();
@@ -38,7 +35,7 @@ export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 		onFileChange(event.target.value);
 	};
 
-	const onEntrypointClick = (event: any): void => {
+	const onFunctionNameChange = (event: any): void => {
 		event.stopPropagation();
 		onFunctionChange(event.target.value);
 	};
@@ -48,7 +45,7 @@ export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 			<div className="mb-3 text-left">
 				<strong>{translate().t("reactApp.deployments.executeFile")}</strong>
 				<VSCodeDropdown value={selectedFile} onChange={onFileChangeClick} className="flex">
-					{Object.keys(files).map((file) => (
+					{files.map((file) => (
 						<option key={file} value={file}>
 							{file}
 						</option>
@@ -58,24 +55,7 @@ export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 			</div>
 			<div className="mb-3 text-left">
 				<strong>{translate().t("reactApp.deployments.executeEntrypoint")}</strong>
-				{functions ? (
-					<VSCodeDropdown
-						value={selectedFunction}
-						onChange={onEntrypointClick}
-						disabled={!functions.length}
-						className="flex"
-					>
-						{functions.map((func) => (
-							<option key={func.name} value={JSON.stringify(func)}>
-								{func.name}
-							</option>
-						))}
-					</VSCodeDropdown>
-				) : (
-					<VSCodeDropdown disabled className="flex">
-						<option>{translate().t("reactApp.deployments.executionFunctionsNotFound")}</option>
-					</VSCodeDropdown>
-				)}
+				<VSCodeTextField value={functionName} onChange={onFunctionNameChange} className="flex"></VSCodeTextField>
 				{displayedErrors["selectedFunction"] && <div className="text-red-500">Please choose a function</div>}
 			</div>
 			<div className="flex">

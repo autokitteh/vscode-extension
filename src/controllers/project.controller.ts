@@ -14,7 +14,7 @@ import { ConnectionsViewDelegate, IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
 import { reverseSessionStateConverter } from "@models/utils";
 import { BuildsService, DeploymentsService, LoggerService, ProjectsService, SessionsService } from "@services";
-import { StartSessionArgsType } from "@type";
+import { UIStartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 import { Deployment, Project, Session } from "@type/models";
 import { createDirectory, openFileExplorer } from "@utilities";
@@ -248,9 +248,12 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, translate().t("errors.buildInformationForSingleshotNotParsed"));
 			return;
 		}
+
+		const triggerFilenames = convertBuildRuntimesToViewTriggers(buildInfo.runtimes);
+
 		this.view.update({
 			type: MessageType.setEntrypoints,
-			payload: convertBuildRuntimesToViewTriggers(buildInfo.runtimes),
+			payload: triggerFilenames,
 		});
 	}
 
@@ -720,17 +723,27 @@ export class ProjectController {
 		);
 	}
 
-	async startSession(startSessionArgs: StartSessionArgsType) {
+	async startSession(startSessionArgs: UIStartSessionArgsType) {
 		const sessionInputs = this.sessions?.find(
 			(session: Session) => session.sessionId === startSessionArgs.sessionId
 		)?.inputs;
 
+		const sessionArguments = {
+			deploymentId: startSessionArgs.deploymentId,
+			buildId: startSessionArgs.buildId,
+			entrypoint: {
+				col: 0,
+				row: 0,
+				name: startSessionArgs.functionName,
+				path: startSessionArgs.fileName,
+			},
+		};
+
 		const enrichedSessionArgs = {
-			...startSessionArgs,
+			...sessionArguments,
 			inputs: sessionInputs,
 		};
 
-		delete enrichedSessionArgs.sessionId;
 		this.startLoader();
 		const { data: sessionId, error } = await SessionsService.startSession(enrichedSessionArgs, this.projectId);
 		this.stopLoader();
