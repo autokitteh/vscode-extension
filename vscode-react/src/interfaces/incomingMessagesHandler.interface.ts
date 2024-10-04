@@ -1,12 +1,12 @@
 import { Theme } from "@enums";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
-import { Connection, SessionEntrypoint } from "@type/models";
+import { Connection } from "@type/models";
 
 export interface IIncomingMessagesHandler {
 	setTheme?(theme: Theme | undefined): void;
 	setProjectName?(projectName: string | undefined): void;
 	setResourcesDir?(projectFolder: string): void;
-	setEntrypoints?: (value: Record<string, SessionEntrypoint[]> | undefined) => void;
+	setEntrypoints?: (value: string[] | undefined) => void;
 	startLoader?: () => void;
 	stopLoader?: () => void;
 	setDeploymentsSection?: (value: DeploymentSectionViewModel | undefined) => void;
