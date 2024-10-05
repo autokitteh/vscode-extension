@@ -5,7 +5,7 @@ import { Button } from "@react-components/atoms/button.component";
 import { VSCodeDropdown, VSCodeTextField } from "@vscode/webview-ui-toolkit/react";
 
 interface ExecutePopperProps {
-	files: string[];
+	files?: string[];
 	functionName: string;
 	selectedFile: string;
 	onFileChange: (file: string) => void;
@@ -124,7 +124,7 @@ export const ExecutePopper = ({
 			<div className="mb-3 text-left">
 				<strong>{translate().t("reactApp.deployments.executeFile")}</strong>
 				<VSCodeDropdown value={selectedFile} onChange={onFileChangeClick} className="flex">
-					{files.map((file) => (
+					{files?.map((file) => (
 						<option key={file} value={file}>
 							{file}
 						</option>
