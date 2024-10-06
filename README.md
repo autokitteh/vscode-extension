@@ -17,6 +17,31 @@
 - **Work and Marketing Automation**: Facilitate tasks using systems like Gmail, Docs, Slack, Calendar, etc.
 - **Corporate Operations Automation**: Enhance enterprise-specific procedures for HR, sales, etc.
 
+
+## How to Install and Run 🛠️
+
+### Prerequisites 📋
+
+Ensure you have the following installed on your system:
+
+-   **Node.js** (version 16.x or later)
+-   **npm** (version 7.x or later)
+-   **Git** (for version control and repository management)
+ 
+### Installation Steps 🚀
+
+1.  **Clone the Repository**:
+
+    `git clone https://github.com/autokitteh/web-platform && cd autokitteh`
+
+2.  **Get AutoKitteh Submodule**: Use git to install the AutoKitteh submodule:
+
+    `git submodule update --init`
+
+3.  **Install Dependencies**: Use npm to install all the required dependencies:
+
+    `npm install`
+
 ### Running the Project 🏃
 
 1.  **Development Mode**: Start the webiew development server with hot reloading.
@@ -46,30 +71,6 @@ The [autokitteh](https://autokitteh.com) license identifier for this project is 
 To contribute to autokitteh, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 We appreciate contributions from everyone!
-
-## How to Install and Run 🛠️
-
-### Prerequisites 📋
-
-Ensure you have the following installed on your system:
-
--   **Node.js** (version 16.x or later)
--   **npm** (version 7.x or later)
--   **Git** (for version control and repository management)
- 
-### Installation Steps 🚀
-
-1.  **Clone the Repository**:
-
-    `git clone https://github.com/autokitteh/web-platform && cd autokitteh`
-
-2.  **Get AutoKitteh Submodule**: Use git to install the AutoKitteh submodule:
-
-    `git submodule update --init`
-
-3.  **Install Dependencies**: Use npm to install all the required dependencies:
-
-    `npm install`
 
 ### How it built 🛠
 
