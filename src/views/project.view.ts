@@ -4,7 +4,7 @@ import { Uri, window } from "vscode";
 import { MessageType, Theme } from "@enums";
 import { translate } from "@i18n/translation.i18n";
 import { IProjectView, ProjectViewDelegate } from "@interfaces";
-import { StartSessionArgsType, Message } from "@type";
+import { UIStartSessionArgsType, Message } from "@type";
 import { getNonce } from "@utilities";
 import { getUri } from "@utilities/getUri.utils";
 
@@ -51,7 +51,7 @@ export class ProjectView implements IProjectView {
 						this.delegate?.onClickSetResourcesDirectory?.();
 						break;
 					case MessageType.startSession:
-						this.delegate?.startSession?.(message.payload as StartSessionArgsType);
+						this.delegate?.startSession?.(message.payload as UIStartSessionArgsType);
 						break;
 					case MessageType.deleteDeployment:
 						this.delegate?.deleteDeployment?.(message.payload as string);
