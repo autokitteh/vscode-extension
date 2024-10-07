@@ -1,22 +1,14 @@
-# 🐾 autokitteh
+# 🐾 AutoKitteh - VSCode Extension
 
 ## Overview 🌟
 
-[autokitteh](https://www.autokitteh.com) is an open-source, developer-first framework aimed at simplifying the automation of distributed systems. It supports various deployment models including on-prem, cloud, and hybrid systems.
+[AutoKitteh](https://www.autokitteh.com) is an open-source, developer-first framework aimed at simplifying the automation of distributed systems. It supports various deployment models including on-prem, cloud, and hybrid systems.
 
-## Key Features 🔑
+This repository contains the VSCode Extension to work with the AutoKitteh backend. The extension integrates AutoKitteh functionality directly into your VSCode environment, allowing developers to create and manage AutoKitteh projects without leaving their preferred IDE. It provides features to create projects from templates or start blank projects, manage project entities (such as code files, connections, triggers, and variables), build and deploy projects, and monitor deployments and sessions. This extension facilitates the AutoKitteh workflow, enabling developers to efficiently create, develop, and deploy automation projects within the familiar VSCode interface.
 
-- **Automation as Code**: Focus on writing automation scripts.
-- **Versatile Deployment**: Compatible with on-prem, cloud, and hybrid environments.
-- **Integrated Tools**: Includes API connectivity, debugging, monitoring, and error handling features.
+// ADD IMAGE
 
-## Use Cases 🚀
-
-- **DevOps Automation**: Automate workflows with tools like GitHub, Slack, Jira, etc.
-- **Cybersecurity - SOAR**: Develop Security Orchestration, Automation, and Response tools.
-- **Work and Marketing Automation**: Facilitate tasks using systems like Gmail, Docs, Slack, Calendar, etc.
-- **Corporate Operations Automation**: Enhance enterprise-specific procedures for HR, sales, etc.
-
+This overview explains that it's a VSCode extension, outlines its main features, and emphasizes how it integrates AutoKitteh functionality into the VSCode environment. It maintains the core ideas from the web UI version but adapts them to the context of a VSCode extension.
 
 ## How to Install and Run 🛠️
 
