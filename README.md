@@ -6,7 +6,7 @@
 
 This repository contains the VSCode Extension to work with the AutoKitteh backend. The extension integrates AutoKitteh functionality directly into your VSCode environment, allowing developers to create and manage AutoKitteh projects without leaving their preferred IDE. It provides features to create projects from templates or start blank projects, manage project entities (such as code files, connections, triggers, and variables), build and deploy projects, and monitor deployments and sessions. This extension facilitates the AutoKitteh workflow, enabling developers to efficiently create, develop, and deploy automation projects within the familiar VSCode interface.
 
-// ADD IMAGE
+![image](https://github.com/user-attachments/assets/9e616d38-209a-43f2-ab1b-c0998af54616)
 
 This overview explains that it's a VSCode extension, outlines its main features, and emphasizes how it integrates AutoKitteh functionality into the VSCode environment. It maintains the core ideas from the web UI version but adapts them to the context of a VSCode extension.
 
