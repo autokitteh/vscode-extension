@@ -1,4 +1,4 @@
-# 🐾 AutoKitteh - VSCode Extension
+# 🐾 AutoKitteh - Visual Studio Code Extension
 
 ## Overview 🌟
 
@@ -64,7 +64,7 @@ To contribute to autokitteh, please refer to the [CONTRIBUTING.md](CONTRIBUTING.
 
 We appreciate contributions from everyone!
 
-### How it built 🛠
+### How it's built 🛠
 
 1.  [Extension Commands](docs/extension-commands.md)
 2.  [Extension Structure](docs/extension-structure.md)
