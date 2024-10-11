@@ -21,8 +21,8 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 		setConnections,
 	});
 
-	const handleConnectionInitClick = (connectionName: string, connectionInitURL: string, connectionId: string) => {
-		sendMessage(MessageType.openConnectionInitURL, { connectionName, initURL: connectionInitURL, connectionId });
+	const handleConnectionInitClick = (connectionName: string, connectionId: string) => {
+		sendMessage(MessageType.openConnectionInitURL, { connectionName, connectionId });
 	};
 
 	const handleRefreshClick = () => {
@@ -66,7 +66,7 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 									<HeaderCell>{translate().t("reactApp.connections.tableColumns.information")}</HeaderCell>
 									<HeaderCell>{translate().t("reactApp.connections.tableColumns.actions")}</HeaderCell>
 								</TableHeader>
-								{connections.map(({ connectionId, name, integrationName, status, statusInfoMessage, initURL }) => (
+								{connections.map(({ connectionId, name, integrationName, status, statusInfoMessage }) => (
 									<Row key={connectionId}>
 										<Cell classes={["text-vscode-foreground"]}>{name}</Cell>
 										<Cell classes={["text-vscode-foreground"]}>{integrationName}</Cell>
@@ -75,9 +75,9 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 										</Cell>
 										<Cell classes={["text-vscode-foreground"]}>{statusInfoMessage}</Cell>
 										<Cell classes={["flex justify-center align-center"]}>
-											{initURL && (
+											{connectionId && (
 												<div
-													onClick={() => handleConnectionInitClick(name, initURL, connectionId)}
+													onClick={() => handleConnectionInitClick(name, connectionId)}
 													className="w-3 codicon codicon-gear text-white cursor-pointer"
 													title={translate().t("reactApp.connections.init")}
 												/>

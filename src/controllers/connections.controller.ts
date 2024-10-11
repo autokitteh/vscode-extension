@@ -1,6 +1,6 @@
 import { commands, env, Uri } from "vscode";
 
-import { BASE_URL, namespaces, vsCommands } from "@constants";
+import { namespaces, vsCommands, WEB_UI_URL } from "@constants";
 import { MessageType } from "@enums";
 import eventEmitter from "@eventEmitter";
 import { translate } from "@i18n";
@@ -47,8 +47,10 @@ export class ConnectionsController {
 		});
 	}
 
-	async openConnectionInitURL(connectionInit: { connectionName: string; initURL: string; connectionId: string }) {
-		const connectionInitURL = Uri.parse(`${BASE_URL}${connectionInit.initURL}`);
+	async openConnectionInitURL(connectionInit: { connectionName: string; connectionId: string }) {
+		const connectionInitURL = Uri.parse(
+			`${WEB_UI_URL}/projects/${this.projectId}/connections/${connectionInit.connectionId}/edit`
+		);
 
 		const initLinkOpenInBrowser = await env.openExternal(connectionInitURL);
 
