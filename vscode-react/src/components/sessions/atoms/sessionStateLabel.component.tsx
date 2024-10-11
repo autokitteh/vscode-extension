@@ -1,7 +1,6 @@
-import React, { ReactNode } from "react";
-
 import { translate } from "@i18n";
 import { SessionState } from "@react-enums";
+import React, { ReactNode } from "react";
 
 export const SessionStateLabel = ({ sessionState }: { sessionState: SessionState }): ReactNode => {
 	switch (sessionState) {

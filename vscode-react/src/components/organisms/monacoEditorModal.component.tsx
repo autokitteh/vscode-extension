@@ -1,24 +1,23 @@
-import React from "react";
-
 import { Editor } from "@monaco-editor/react";
 import CloseIcon from "@react-assets/icons/close.svg?react";
 import { Modal } from "@react-components/molecules";
+import React from "react";
 
-export const MonacoEditorModal = ({ onClose, content }: { onClose: () => void; content?: string }) => (
-	<Modal wrapperClasses={["!bg-transparent z-50"]} classes={["bg-black-semi-transparent", "rounded-none"]}>
-		<div className="flex justify-end text-white font-extrabold pt-8 text-xl">
+export const MonacoEditorModal = ({ content, onClose }: { content?: string; onClose: () => void }) => (
+	<Modal classes={["bg-black-semi-transparent", "rounded-none"]} wrapperClasses={["!bg-transparent z-50"]}>
+		<div className="flex justify-end pt-8 text-xl font-extrabold text-white">
 			<div className="flex justify-end pt-4">
-				<CloseIcon fill="white" onClick={() => onClose()} className="w-4 p-0 cursor-pointer" />
+				<CloseIcon className="w-4 cursor-pointer p-0" fill="white" onClick={() => onClose()} />
 			</div>
 		</div>
 		<div className="m-auto">
-			<div className="flex w-full justify-end mt-2">
+			<div className="mt-2 flex w-full justify-end">
 				<Editor
-					height="80vh"
 					defaultLanguage="json"
 					defaultValue={content}
-					theme="vs-dark"
+					height="80vh"
 					options={{ readOnly: true }}
+					theme="vs-dark"
 				/>
 			</div>
 		</div>

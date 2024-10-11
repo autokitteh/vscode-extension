@@ -1,14 +1,13 @@
-import React, { MouseEvent } from "react";
-
 import { translate } from "@i18n";
 import { Button } from "@react-components/atoms/button.component";
+import React, { MouseEvent } from "react";
 
 interface DeletePopperProps {
 	onConfirm: () => void;
 	onDismiss: () => void;
 	translations: {
-		title: string;
 		subtitle: string;
+		title: string;
 	};
 }
 
@@ -36,7 +35,7 @@ export const DeletePopper: React.FC<DeletePopperProps> = ({ onConfirm, onDismiss
 				>
 					{translate().t("reactApp.general.dismiss")}
 				</Button>
-				<div className="flex-grow" />
+				<div className="grow" />
 				<Button onClick={onConfirmClick} title={translate().t("reactApp.general.yes")}>
 					{translate().t("reactApp.general.yes")}
 				</Button>

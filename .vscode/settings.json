@@ -3,5 +3,7 @@
 	"typescript.preferences.importModuleSpecifier": "non-relative",
 	"git.enableCommitSigning": true,
 	"javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
-	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false
+	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
+	"eslint.validate": ["typescript", "typescriptreact"],
+	"files.autoSave": "onFocusChange"
 }

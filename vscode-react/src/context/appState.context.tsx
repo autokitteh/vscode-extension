@@ -1,13 +1,12 @@
-import React, { createContext, ReactNode, useContext, useReducer } from "react";
-
 import { Theme } from "@enums";
 import { Action } from "@react-types";
+import React, { ReactNode, createContext, useContext, useReducer } from "react";
 
 type State = {
-	modalName: string;
 	loading: boolean;
-	themeType: Theme;
+	modalName: string;
 	selectedDeploymentId?: string;
+	themeType: Theme;
 };
 
 const AppStateContext = createContext<[State, React.Dispatch<Action>] | undefined>(undefined);
@@ -29,8 +28,8 @@ export const appStateReducer = (state: State, action: Action): State => {
 
 export const AppStateProvider = ({ children }: { children: ReactNode }) => {
 	const initialState: State = {
-		modalName: "",
 		loading: false,
+		modalName: "",
 		selectedDeploymentId: undefined,
 		themeType: Theme.DARK,
 	};
@@ -47,28 +46,29 @@ export const useAppState = () => {
 	if (context === undefined) {
 		throw new Error("useAppState must be used within an AppStateProvider");
 	}
+
 	return context;
 };
 
 export const useAppDispatch = () => {
 	const [, dispatch] = useAppState();
 	const stopLoader = () => {
-		dispatch({ type: "SET_LOADER", payload: false });
+		dispatch({ payload: false, type: "SET_LOADER" });
 	};
 	const startLoader = () => {
-		dispatch({ type: "SET_LOADER", payload: true });
+		dispatch({ payload: true, type: "SET_LOADER" });
 	};
 	const setModalName = (modalName: string) => {
-		dispatch({ type: "SET_MODAL_NAME", payload: modalName });
+		dispatch({ payload: modalName, type: "SET_MODAL_NAME" });
 	};
 	const setTheme = (themeType: Theme) => {
-		dispatch({ type: "SET_THEME", payload: themeType });
+		dispatch({ payload: themeType, type: "SET_THEME" });
 	};
 
 	return {
-		stopLoader,
-		startLoader,
 		setModalName,
 		setTheme,
+		startLoader,
+		stopLoader,
 	};
 };

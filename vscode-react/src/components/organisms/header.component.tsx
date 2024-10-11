@@ -1,5 +1,3 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { DownloadIcon } from "@react-assets/icons/download.icon";
@@ -9,7 +7,9 @@ import { Popper } from "@react-components/molecules";
 import { ProjectSettingsPopper } from "@react-components/project/organisms";
 import { useAppDispatch, useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
-import { sendMessage, cn } from "@react-utilities";
+import { cn, sendMessage } from "@react-utilities";
+import { useEffect, useMemo, useRef, useState } from "react";
+
 import "split-pane-react/esm/themes/default.css";
 
 export const Header = () => {
@@ -19,16 +19,16 @@ export const Header = () => {
 	const [isRefreshing, setIsRefreshing] = useState(false);
 	const [settingsPopperVisible, setSettingsPopperVisible] = useState<boolean>(false);
 	const pathPopperElementRef = useRef<HTMLDivElement | null>(null);
-	const { stopLoader, startLoader } = useAppDispatch();
+	const { startLoader, stopLoader } = useAppDispatch();
 	const { setTheme } = useAppDispatch();
 
 	const [connectionsModalVisible, setConnectionsModalVisible] = useState<boolean>(false);
 	useIncomingMessageHandler({
-		stopLoader,
-		startLoader,
 		setProjectName,
 		setResourcesDir,
 		setTheme,
+		startLoader,
+		stopLoader,
 	});
 
 	const openConnectionsModal = () => {
@@ -49,7 +49,9 @@ export const Header = () => {
 		const timeout = setTimeout(() => {
 			setIsRefreshing(false);
 		}, 600);
+
 		return () => clearTimeout(timeout);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loading]);
 
 	const rotateIconClass = useMemo(
@@ -62,39 +64,40 @@ export const Header = () => {
 	);
 
 	return (
-		<div className="flex items-center w-full">
-			<Logo className="w-9 h-9 m-2" />
-			<div className="text-vscode-input-foreground font-bold text-lg">{projectName}</div>
+		<div className="flex w-full items-center">
+			<Logo className="m-2 size-9" />
+			{/* eslint-disable tailwindcss/classnames-order */}
+			<div className="text-vscode-input-foreground text-lg font-bold">{projectName}</div>
 			<Button
 				classes="mx-4"
-				onClick={() => sendMessage(MessageType.buildProject)}
 				disabled={!resourcesDir}
+				onClick={() => sendMessage(MessageType.buildProject)}
 				title={translate().t("reactApp.general.build")}
 			>
 				<div className="codicon codicon-tools mr-2"></div>
 				{translate().t("reactApp.general.build")}
 			</Button>
 			<Button
-				onClick={() => sendMessage(MessageType.runProject)}
 				disabled={!resourcesDir}
+				onClick={() => sendMessage(MessageType.runProject)}
 				title={translate().t("reactApp.general.deploy")}
 			>
 				<div className="codicon codicon-rocket mr-2"></div>
 				{translate().t("reactApp.general.deploy")}
 			</Button>
-			<div className="flex-grow"></div>
+			<div className="grow"></div>
 			<div className="flex flex-row">
 				<Button
+					classes="flex relative z-30 mr-2"
 					disabled={isRefreshing}
 					onClick={refreshUI}
-					classes="flex relative z-30 mr-2"
 					title={translate().t("reactApp.settings.refresh")}
 				>
 					<div className={rotateIconClass} />
 				</Button>
 				<Button
-					onClick={() => openConnectionsModal()}
 					classes="flex relative z-30 mr-2"
+					onClick={() => openConnectionsModal()}
 					title={translate().t("reactApp.settings.openConnectionsSettingsScreen")}
 				>
 					<div className="codicon codicon-link text-vscode-background mr-1" />{" "}
@@ -102,8 +105,8 @@ export const Header = () => {
 				</Button>
 				{!resourcesDir ? (
 					<Button
-						onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
 						classes="flex relative z-30"
+						onClick={() => sendMessage(MessageType.onClickSetResourcesDirectory)}
 						title={translate().t("reactApp.settings.pickDirectoryOfExecutables")}
 					>
 						<DownloadIcon className="fill-text-vscode-foreground" />
@@ -118,8 +121,8 @@ export const Header = () => {
 				)}
 				<Overlay isVisibile={settingsPopperVisible} onOverlayClick={() => setSettingsPopperVisible(false)} />
 
-				<Popper visible={settingsPopperVisible} referenceRef={pathPopperElementRef}>
-					<ProjectSettingsPopper resourcesDir={resourcesDir} closePopper={() => setSettingsPopperVisible(false)} />
+				<Popper referenceRef={pathPopperElementRef} visible={settingsPopperVisible}>
+					<ProjectSettingsPopper closePopper={() => setSettingsPopperVisible(false)} resourcesDir={resourcesDir} />
 				</Popper>
 			</div>
 			{connectionsModalVisible && <ConnectionsModal onClose={() => setConnectionsModalVisible(false)} />}

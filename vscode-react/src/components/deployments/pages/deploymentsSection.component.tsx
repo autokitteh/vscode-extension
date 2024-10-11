@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { DeploymentSectionViewModel } from "@models";
@@ -12,6 +10,7 @@ import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import { Deployment } from "@type/models";
+import { useEffect, useState } from "react";
 
 export const DeploymentsSection = ({ height }: { height: string | number }) => {
 	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel>();
@@ -32,6 +31,7 @@ export const DeploymentsSection = ({ height }: { height: string | number }) => {
 		if (deployments && isLoading) {
 			setIsLoading(false);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [deployments]);
 
 	useEffect(() => {
@@ -39,16 +39,17 @@ export const DeploymentsSection = ({ height }: { height: string | number }) => {
 			setTotalDeployments(deploymentsSection.totalDeployments);
 			setDeployments(deploymentsSection?.deployments);
 			if (deploymentsSection?.selectedDeploymentId) {
-				dispatch({ type: "SET_SELECTED_DEPLOYMENT", payload: deploymentsSection.selectedDeploymentId });
+				dispatch({ payload: deploymentsSection.selectedDeploymentId, type: "SET_SELECTED_DEPLOYMENT" });
 			}
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [deploymentsSection]);
 
 	return (
 		<div style={{ height }}>
 			<Table>
 				<TableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-30">
-					<HeaderCell className="text-lg font-extralight pt-5" colSpan={8}>
+					<HeaderCell className="pt-5 text-lg font-extralight" colSpan={8}>
 						{`${translate().t("reactApp.deployments.tableTitle")} (${totalDeployments})`}
 					</HeaderCell>
 				</TableHeader>
