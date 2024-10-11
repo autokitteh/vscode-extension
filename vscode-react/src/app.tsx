@@ -1,8 +1,3 @@
-import { useEffect, useRef, useState } from "react";
-
-import LottieLoader from "react-lottie-loader";
-import SplitPane from "split-pane-react";
-
 import { MessageType } from "@enums";
 import retryLoader from "@react-assets/animations/retry-loader.json";
 import { Overlay } from "@react-components/atoms";
@@ -12,7 +7,12 @@ import { SessionsSection } from "@react-components/sessions/pages";
 import { AppStateProvider } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
+import { useEffect, useRef, useState } from "react";
+import LottieLoader from "react-lottie-loader";
+import SplitPane from "split-pane-react";
+
 import "./app.css";
+
 import "split-pane-react/esm/themes/default.css";
 
 function App() {
@@ -42,7 +42,7 @@ function App() {
 			<main ref={ref}>
 				{retryCountdown ? (
 					<div className="absolute" onClick={() => reconnect()}>
-						<Overlay isVisibile className="z-40 opacity-65" />
+						<Overlay className="z-40 opacity-65" isVisibile />
 						<div className={overlayClass}>
 							<div className="flex">
 								<LottieLoader animationData={retryLoader} className="size-48" />
@@ -58,10 +58,10 @@ function App() {
 					<div className="h-[calc(100vh-6vh)]">
 						{/* eslint-disable tailwindcss/classnames-order */}
 						<SplitPane
-							split="horizontal"
-							sizes={sizes}
 							onChange={setSizes}
 							sashRender={() => <hr className="bg-vscode-editor-background h-3" />}
+							sizes={sizes}
+							split="horizontal"
 						>
 							<div>
 								<DeploymentsSection height={sizes[0]} />

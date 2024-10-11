@@ -1,6 +1,5 @@
-import React, { ReactNode } from "react";
-
 import clsx from "clsx";
+import React, { ReactNode } from "react";
 
 interface TableProps {
 	children: ReactNode;

@@ -1,14 +1,13 @@
-import React, { MouseEvent } from "react";
-
 import { translate } from "@i18n";
 import { Button } from "@react-components/atoms/button.component";
+import React, { MouseEvent } from "react";
 
 interface DeletePopperProps {
 	onConfirm: () => void;
 	onDismiss: () => void;
 	translations: {
-		title: string;
 		subtitle: string;
+		title: string;
 	};
 }
 

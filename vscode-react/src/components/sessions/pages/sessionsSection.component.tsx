@@ -1,22 +1,21 @@
-import { useEffect, useRef, useState } from "react";
-
 import { MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
 import { TableMessage } from "@react-components/atoms/table";
 import { SessionsTableBody } from "@react-components/sessions/organisms";
-import { useIncomingMessageHandler, useForceRerender } from "@react-hooks";
+import { useForceRerender, useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
+import { useEffect, useRef, useState } from "react";
 
 export const SessionsSection = ({ height }: { height: string | number }) => {
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
 	const [selectedSession, setSelectedSession] = useState<string | undefined>("");
 	const [stateFilter, setStateFilter] = useState<string>();
-	const { sessions, lastDeployment } = sessionsSection || {};
+	const { lastDeployment, sessions } = sessionsSection || {};
 
 	useIncomingMessageHandler({
-		setSessionsSection,
 		setSelectedSession,
+		setSessionsSection,
 	});
 
 	useForceRerender();
@@ -30,6 +29,7 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 
 		if (value === "all") {
 			sendMessage(MessageType.setSessionsStateFilter, undefined);
+
 			return;
 		}
 		sendMessage(MessageType.setSessionsStateFilter, value);
@@ -39,13 +39,14 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 	const [divWidth, setDivWidth] = useState(0);
 	const ref = useRef<HTMLDivElement>(null);
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => {
 		setDivHeight(ref?.current?.clientHeight || 0);
 		setDivWidth(ref?.current?.clientWidth || 0);
 	});
 
 	return (
-		<div style={{ height: `${parseInt(height as string, 10) * 0.85}px` }} ref={ref}>
+		<div ref={ref} style={{ height: `${parseInt(height as string, 10) * 0.85}px` }}>
 			<div
 				className={
 					"flex flex-row w-full h-12 bg-vscode-editor-background sticky top-0 " +
@@ -71,17 +72,17 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 				</div>
 			</div>
 			{!sessions && <TableMessage>{translate().t("reactApp.sessions.pickDeploymentToShowSessions")}</TableMessage>}
-			{sessions && sessions.length === 0 && (
+			{sessions && !sessions.length && (
 				<TableMessage>{translate().t("reactApp.sessions.noSessionsFound")}</TableMessage>
 			)}
 			{!!sessions?.length && (
 				<SessionsTableBody
-					sessions={sessions}
-					selectedSession={selectedSession}
-					setSelectedSession={setSelectedSession}
 					heightProp={divHeight}
-					widthProp={divWidth}
 					lastDeployment={lastDeployment}
+					selectedSession={selectedSession}
+					sessions={sessions}
+					setSelectedSession={setSelectedSession}
+					widthProp={divWidth}
 				/>
 			)}
 		</div>

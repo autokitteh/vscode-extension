@@ -1,12 +1,12 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { appStateReducer } from "../../src/context/appState.context";
 import { Action } from "../../src/types/contextAction.type";
 
 describe("appStateReducer", () => {
-	it("should handle SET_MODAL_NAME", () => {
-		const initialState = { modalName: "", lastDeployment: null, loading: false };
-		const action = { type: "SET_MODAL_NAME", payload: "Modal1" };
+	it("handle SET_MODAL_NAME", () => {
+		const initialState = { lastDeployment: null, loading: false, modalName: "", themeType: "light" }; // Assuming "light" is a valid Theme value
+		const action = { payload: "Modal1", type: "SET_MODAL_NAME" };
 		const state = appStateReducer(initialState, action as Action);
 		expect(state.modalName).toBe("Modal1");
 	});

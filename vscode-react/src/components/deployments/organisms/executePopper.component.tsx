@@ -1,32 +1,31 @@
-import React, { MouseEvent } from "react";
-
 import { translate } from "@i18n";
 import { Button } from "@react-components/atoms/button.component";
 import { SessionEntrypoint } from "@type/models";
 import { VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
+import React, { MouseEvent } from "react";
 
 interface ExecutePopperProps {
+	displayedErrors: Record<string, boolean>;
 	files: Record<string, SessionEntrypoint[]>;
 	functions: SessionEntrypoint[];
-	selectedFile: string;
-	selectedFunction: string;
+	onClose: () => void;
 	onFileChange: (file: string) => void;
 	onFunctionChange: (func: string) => void;
 	onStartSession: (event?: MouseEvent<HTMLElement>) => void;
-	onClose: () => void;
-	displayedErrors: Record<string, boolean>;
+	selectedFile: string;
+	selectedFunction: string;
 }
 
 export const ExecutePopper: React.FC<ExecutePopperProps> = ({
+	displayedErrors,
 	files,
 	functions,
-	selectedFile,
-	selectedFunction,
+	onClose,
 	onFileChange,
 	onFunctionChange,
 	onStartSession,
-	onClose,
-	displayedErrors,
+	selectedFile,
+	selectedFunction,
 }) => {
 	const onStartClick = (event: MouseEvent<HTMLElement> | undefined) => {
 		event?.stopPropagation();
@@ -47,7 +46,7 @@ export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 		<div className="p-4shadow-lg relative" onClick={(event) => event.stopPropagation()}>
 			<div className="mb-3 text-left">
 				<strong>{translate().t("reactApp.deployments.executeFile")}</strong>
-				<VSCodeDropdown value={selectedFile} onChange={onFileChangeClick} className="flex">
+				<VSCodeDropdown className="flex" onChange={onFileChangeClick} value={selectedFile}>
 					{Object.keys(files).map((file) => (
 						<option key={file} value={file}>
 							{file}
@@ -60,10 +59,10 @@ export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 				<strong>{translate().t("reactApp.deployments.executeEntrypoint")}</strong>
 				{functions ? (
 					<VSCodeDropdown
-						value={selectedFunction}
-						onChange={onEntrypointClick}
-						disabled={!functions.length}
 						className="flex"
+						disabled={!functions.length}
+						onChange={onEntrypointClick}
+						value={selectedFunction}
 					>
 						{functions.map((func) => (
 							<option key={func.name} value={JSON.stringify(func)}>
@@ -72,7 +71,7 @@ export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 						))}
 					</VSCodeDropdown>
 				) : (
-					<VSCodeDropdown disabled className="flex">
+					<VSCodeDropdown className="flex" disabled>
 						<option>{translate().t("reactApp.deployments.executionFunctionsNotFound")}</option>
 					</VSCodeDropdown>
 				)}

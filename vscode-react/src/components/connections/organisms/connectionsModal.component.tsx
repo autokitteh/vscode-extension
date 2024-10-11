@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import CloseIcon from "@react-assets/icons/close.svg?react";
@@ -12,6 +10,7 @@ import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import { Connection } from "@type/models";
+import { useState } from "react";
 
 export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 	const [{ themeType }] = useAppState();
@@ -32,15 +31,17 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 	const refreshIconColor = isDarkTheme ? "white" : "black";
 
 	return (
-		<Modal wrapperClasses={["!bg-transparent z-50"]} classes={["bg-black-semi-transparent", "rounded-none"]}>
-			<div className="mt-4 h-[calc(100vh-6vh)] bg-vscode-editor-background">
+		<Modal classes={["bg-black-semi-transparent", "rounded-none"]} wrapperClasses={["!bg-transparent z-50"]}>
+			{/* eslint-disable tailwindcss/classnames-order */}
+			<div className="bg-vscode-editor-background mt-4 h-[calc(100vh-6vh)]">
 				<div className="mr-6 flex justify-end pt-4">
-					<CloseIcon fill="white" onClick={() => onClose()} className="w-4 cursor-pointer p-0" />
+					<CloseIcon className="w-4 cursor-pointer p-0" fill="white" onClick={() => onClose()} />
 				</div>
 				<div className="m-auto">
 					<div className="flex items-center justify-between">
 						<div className="flex flex-1" />
-						<div className="mb-6 flex flex-1 justify-center text-center text-4xl text-vscode-foreground">
+						{/* eslint-disable tailwindcss/classnames-order */}
+						<div className="text-vscode-foreground mb-6 flex flex-1 justify-center text-center text-4xl">
 							{translate().t("reactApp.connections.modalTitle")}
 						</div>
 						<div className="flex flex-1 justify-end">

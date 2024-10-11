@@ -1,18 +1,17 @@
-import React, { ReactNode, MouseEvent } from "react";
-
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
+import React, { MouseEvent, ReactNode } from "react";
 
 type ButtonProps = {
 	children: ReactNode;
 	classes?: string;
+	disabled?: boolean;
 	onClick: (event?: MouseEvent<HTMLElement>) => void;
 	title?: string;
-	disabled?: boolean;
 };
 
-export const Button = ({ children, classes, onClick, title, disabled }: ButtonProps) => {
+export const Button = ({ children, classes, disabled, onClick, title }: ButtonProps) => {
 	return (
-		<VSCodeButton className={classes} onClick={onClick} title={title} disabled={disabled}>
+		<VSCodeButton className={classes} disabled={disabled} onClick={onClick} title={title}>
 			{children}
 		</VSCodeButton>
 	);

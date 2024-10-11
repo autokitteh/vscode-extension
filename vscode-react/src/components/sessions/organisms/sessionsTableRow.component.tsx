@@ -1,8 +1,3 @@
-import React, { memo, CSSProperties } from "react";
-
-import { createPortal } from "react-dom";
-import { areEqual } from "react-window";
-
 import { Overlay } from "@react-components/atoms";
 import { Cell } from "@react-components/atoms/table";
 import { DeletePopper, Popper, Row } from "@react-components/molecules";
@@ -10,23 +5,27 @@ import { SessionStateLabel } from "@react-components/sessions/atoms";
 import { SessionActions } from "@react-components/sessions/molecules";
 import { SessionsTableRowProps } from "@react-types";
 import { getTimePassed } from "@react-utilities";
+import React, { CSSProperties, memo } from "react";
+import { createPortal } from "react-dom";
+import { areEqual } from "react-window";
 
 export const SessionsTableRow = memo(
 	({ data, index, style }: { data: SessionsTableRowProps; index: number; style: CSSProperties }) => {
 		const {
-			sessions,
-			selectedSessionId,
-			displaySessionLogs,
-			sessionActions,
-			modalName,
-			hidePopper,
+			deletePopperElementRef,
 			deleteSessionConfirmed,
 			deleteSessionDismissed,
 			deleteSessionPopperTranslations,
-			deletePopperElementRef,
+			displaySessionLogs,
+			hidePopper,
+			modalName,
+			selectedSessionId,
+			sessionActions,
+			sessions,
 		} = data;
 		const session = sessions[index];
 		const isSelectedRow = selectedSessionId === session?.sessionId;
+
 		return (
 			session && (
 				<Row className="flex justify-around" isSelected={isSelectedRow} style={style}>
@@ -45,7 +44,7 @@ export const SessionsTableRow = memo(
 									onOverlayClick={() => hidePopper()}
 								/>
 
-								<Popper visible={modalName === "sessionDelete"} referenceRef={deletePopperElementRef}>
+								<Popper referenceRef={deletePopperElementRef} visible={modalName === "sessionDelete"}>
 									<DeletePopper
 										onConfirm={() => deleteSessionConfirmed()}
 										onDismiss={() => deleteSessionDismissed()}

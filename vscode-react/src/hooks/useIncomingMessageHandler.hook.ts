@@ -1,15 +1,18 @@
-import { useEffect } from "react";
-
 import { MessageType, Theme } from "@enums";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
+<<<<<<< HEAD
 import { Connection } from "@type/models";
+=======
+import { Connection, SessionEntrypoint } from "@type/models";
+import { useEffect } from "react";
+>>>>>>> e2d1b815 (feat: add liferay and perfectionist plugin to eslint of react app)
 
 export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) => {
 	useEffect(() => {
 		const handleMessagesFromExtension = (event: MessageEvent<Message>) => {
-			const { type, payload } = event.data;
+			const { payload, type } = event.data;
 
 			switch (type) {
 				case MessageType.setTheme:
@@ -48,10 +51,12 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 				case MessageType.setRetryCountdown:
 					handlers.setRetryCountdown?.(payload as string);
 					break;
+				default:
 			}
 		};
 
 		window.addEventListener("message", handleMessagesFromExtension);
+
 		return () => {
 			window.removeEventListener("message", handleMessagesFromExtension);
 		};

@@ -4,7 +4,7 @@
 		"ecmaVersion": 6,
 		"sourceType": "module"
 	},
-	"plugins": ["@typescript-eslint", "import", "unicorn", "prettier"],
+	"plugins": ["@typescript-eslint", "unicorn", "perfectionist", "prettier", "@liferay"],
 	"root": true,
 	"settings": {
 		"react": {
@@ -26,6 +26,17 @@
 	},
 	"rules": {
 		"prettier/prettier": "error",
+
+		"perfectionist/sort-object-types": [
+			"error",
+			{
+				"type": "alphabetical",
+				"order": "asc"
+			}
+		],
+		"@liferay/no-anonymous-exports": "off",
+		"@liferay/sort-class-names": "off",
+		"@liferay/empty-line-between-elements": "off",
 		"tailwindcss/no-custom-classname": "off",
 		"@typescript-eslint/no-unused-vars": "error",
 		"@typescript-eslint/naming-convention": [
@@ -61,36 +72,6 @@
 		],
 		"curly": "warn",
 		"eqeqeq": "warn",
-		"import/order": [
-			"error",
-			{
-				"groups": [
-					["builtin", "external"],
-					["internal", "parent", "sibling", "index"]
-				],
-				"pathGroups": [
-					{
-						"pattern": "react",
-						"group": "external",
-						"position": "before"
-					},
-					{
-						"pattern": "@{*,**/**}",
-						"group": "internal",
-						"position": "after"
-					}
-				],
-				"pathGroupsExcludedImportTypes": ["react"],
-				"newlines-between": "always",
-				"alphabetize": {
-					"order": "asc",
-					"caseInsensitive": true
-				}
-			}
-		],
-		"import/first": "error",
-		"import/no-duplicates": "error",
-		"import/newline-after-import": "error",
 		"no-throw-literal": "warn",
 		"unicorn/filename-case": [
 			"error",
@@ -99,5 +80,5 @@
 			}
 		]
 	},
-	"extends": ["prettier", "plugin:prettier/recommended", "plugin:tailwindcss/recommended"]
+	"extends": ["plugin:@liferay/react", "prettier", "plugin:prettier/recommended", "plugin:tailwindcss/recommended"]
 }
