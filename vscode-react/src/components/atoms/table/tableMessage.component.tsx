@@ -5,5 +5,5 @@ interface TableMessageProps {
 }
 
 export const TableMessage = ({ children }: TableMessageProps) => {
-	return <div className="w-full text-center m-4">{children}</div>;
+	return <div className="m-4 w-full text-center">{children}</div>;
 };

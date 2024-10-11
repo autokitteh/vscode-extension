@@ -44,7 +44,7 @@ export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 	};
 
 	return (
-		<div className="relative p-4shadow-lg" onClick={(event) => event.stopPropagation()}>
+		<div className="p-4shadow-lg relative" onClick={(event) => event.stopPropagation()}>
 			<div className="mb-3 text-left">
 				<strong>{translate().t("reactApp.deployments.executeFile")}</strong>
 				<VSCodeDropdown value={selectedFile} onChange={onFileChangeClick} className="flex">
@@ -82,7 +82,7 @@ export const ExecutePopper: React.FC<ExecutePopperProps> = ({
 				<Button classes="bg-vscode-editor-background text-vscode-foreground" onClick={onClose}>
 					{translate().t("reactApp.deployments.dismiss")}
 				</Button>
-				<div className="flex-grow" />
+				<div className="grow" />
 				<Button onClick={onStartClick}>{translate().t("reactApp.deployments.saveAndRun")}</Button>
 			</div>
 		</div>

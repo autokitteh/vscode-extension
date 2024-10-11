@@ -9,7 +9,11 @@
 		"preview": "vite preview",
 		"watch": "vite build --watch",
 		"test:run": "vitest run",
-		"test:watch": "vitest"
+		"test:watch": "vitest",
+		"format": "prettier --write \"src/**/*.{ts,tsx}\"",
+		"format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
+		"lint": "eslint src --ext .ts,.tsx .",
+		"lint:fix": "eslint src --ext .ts,.tsx . --fix"
 	},
 	"dependencies": {
 		"@monaco-editor/react": "^4.6.0",
@@ -36,6 +40,8 @@
 		"@vitejs/plugin-react": "^4.2.0",
 		"autoprefixer": "^10.4.16",
 		"esbuild": "0.19.8",
+		"eslint-plugin-prettier": "^5.2.1",
+		"eslint-plugin-tailwindcss": "^3.17.5",
 		"i": "^0.3.7",
 		"npm": "^10.7.0",
 		"postcss": "^8.4.32",

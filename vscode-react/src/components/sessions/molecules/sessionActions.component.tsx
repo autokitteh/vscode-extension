@@ -54,7 +54,7 @@ export const SessionActions = ({
 				></div>
 			)}
 			<div
-				className={`codicon codicon-trash mr-2 z-20 ${
+				className={`codicon codicon-trash z-20 mr-2 ${
 					isRunning(session.state) || isStopped(session.state) ? "cursor-not-allowed" : "cursor-pointer"
 				}`}
 				title={

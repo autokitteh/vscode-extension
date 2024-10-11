@@ -131,10 +131,10 @@ export const SessionsTableBody = ({
 				)}
 			<Table>
 				<TableHeader classes="flex justify-around pr-4">
-					<HeaderCell className="flex justify-center w-64">{translate().t("reactApp.sessions.time")}</HeaderCell>
-					<HeaderCell className="flex justify-center w-32">{translate().t("reactApp.sessions.status")}</HeaderCell>
-					<HeaderCell className="flex justify-center w-64">{translate().t("reactApp.sessions.sessionId")}</HeaderCell>
-					<HeaderCell className="flex justify-center w-32">{translate().t("reactApp.sessions.actions")}</HeaderCell>
+					<HeaderCell className="flex w-64 justify-center">{translate().t("reactApp.sessions.time")}</HeaderCell>
+					<HeaderCell className="flex w-32 justify-center">{translate().t("reactApp.sessions.status")}</HeaderCell>
+					<HeaderCell className="flex w-64 justify-center">{translate().t("reactApp.sessions.sessionId")}</HeaderCell>
+					<HeaderCell className="flex w-32 justify-center">{translate().t("reactApp.sessions.actions")}</HeaderCell>
 				</TableHeader>
 				<List
 					height={heightProp}

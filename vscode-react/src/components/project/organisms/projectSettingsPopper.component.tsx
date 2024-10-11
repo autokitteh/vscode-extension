@@ -35,7 +35,7 @@ export const ProjectSettingsPopper = ({
 			<div className="mb-4" title={resourcesDir}>
 				<strong>{formatPath(resourcesDir)}</strong>
 			</div>
-			<div className="flex justify-between w-full">
+			<div className="flex w-full justify-between">
 				<Button
 					onClick={() => postMessage(MessageType.copyProjectPath, resourcesDir)}
 					classes="w-1/5"
