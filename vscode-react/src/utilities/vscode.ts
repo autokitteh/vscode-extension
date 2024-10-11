@@ -29,11 +29,10 @@ class VSCodeAPIWrapper {
 	 * @param message Abitrary data (must be JSON serializable) to send to the extension context.
 	 */
 	public postMessage(message: unknown) {
-		if (this.vsCodeApi) {
-			this.vsCodeApi.postMessage(message);
-		} else {
-			console.log(message);
+		if (!this.vsCodeApi) {
+			return;
 		}
+		this.vsCodeApi.postMessage(message);
 	}
 
 	/**
@@ -49,6 +48,7 @@ class VSCodeAPIWrapper {
 			return this.vsCodeApi.getState();
 		} else {
 			const state = localStorage.getItem("vscodeState");
+
 			return state ? JSON.parse(state) : undefined;
 		}
 	}
@@ -69,6 +69,7 @@ class VSCodeAPIWrapper {
 			return this.vsCodeApi.setState(newState);
 		} else {
 			localStorage.setItem("vscodeState", JSON.stringify(newState));
+
 			return newState;
 		}
 	}

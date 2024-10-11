@@ -1,18 +1,16 @@
-import React, { useRef, useEffect, useState } from "react";
-
+import React, { useEffect, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 
 interface PopperProps {
-	visible: boolean;
 	children: React.ReactNode;
 	referenceRef: React.RefObject<HTMLDivElement>;
+	visible: boolean;
 }
 
-export const Popper: React.FC<PopperProps> = ({ visible, children, referenceRef }) => {
+export const Popper: React.FC<PopperProps> = ({ children, referenceRef, visible }) => {
 	const popperRef = useRef<HTMLDivElement | null>(null);
 	const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-	const { styles, attributes, update } = usePopper(referenceRef.current, popperElement, {
-		placement: "bottom",
+	const { attributes, styles, update } = usePopper(referenceRef.current, popperElement, {
 		modifiers: [
 			{
 				name: "offset",
@@ -21,6 +19,7 @@ export const Popper: React.FC<PopperProps> = ({ visible, children, referenceRef 
 				},
 			},
 		],
+		placement: "bottom",
 	});
 
 	useEffect(() => {

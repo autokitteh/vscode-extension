@@ -33,6 +33,7 @@
 		"vite-plugin-svgr": "^4.2.0"
 	},
 	"devDependencies": {
+		"@liferay/eslint-plugin": "^1.5.0",
 		"@types/react": "^18.2.39",
 		"@types/react-dom": "^18.2.17",
 		"@types/react-window": "^1.8.8",
@@ -40,7 +41,11 @@
 		"@vitejs/plugin-react": "^4.2.0",
 		"autoprefixer": "^10.4.16",
 		"esbuild": "0.19.8",
+		"eslint-plugin-perfectionist": "^3.8.0",
 		"eslint-plugin-prettier": "^5.2.1",
+		"eslint-plugin-promise": "^7.1.0",
+		"eslint-plugin-react": "^7.37.1",
+		"eslint-plugin-react-hooks": "^4.6.2",
 		"eslint-plugin-tailwindcss": "^3.17.5",
 		"i": "^0.3.7",
 		"npm": "^10.7.0",

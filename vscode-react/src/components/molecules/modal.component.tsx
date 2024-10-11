@@ -1,13 +1,12 @@
-import React, { ReactNode } from "react";
-
 import clsx from "clsx";
+import React, { ReactNode } from "react";
 
 type ModalProps = {
 	children: ReactNode;
-	wrapperClasses?: Array<string>;
 	classes?: Array<string>;
+	wrapperClasses?: Array<string>;
 };
-export const Modal = ({ children, wrapperClasses, classes }: ModalProps) => {
+export const Modal = ({ children, classes, wrapperClasses }: ModalProps) => {
 	const wrapperClass = clsx(
 		"absolute right-0 top-0 z-40 size-full bg-vscode-editor-background opacity-100",
 		wrapperClasses
