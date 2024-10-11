@@ -48,7 +48,7 @@ export const DeploymentsSection = ({ height }: { height: string | number }) => {
 		<div style={{ height }}>
 			<Table>
 				<TableHeader classes="bg-vscode-editor-background sticky top-0 h-8 text-left z-30">
-					<HeaderCell className="text-lg font-extralight pt-5" colSpan={8}>
+					<HeaderCell className="pt-5 text-lg font-extralight" colSpan={8}>
 						{`${translate().t("reactApp.deployments.tableTitle")} (${totalDeployments})`}
 					</HeaderCell>
 				</TableHeader>

@@ -34,29 +34,29 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 	return (
 		<Modal wrapperClasses={["!bg-transparent z-50"]} classes={["bg-black-semi-transparent", "rounded-none"]}>
 			<div className="mt-4 h-[calc(100vh-6vh)] bg-vscode-editor-background">
-				<div className="flex justify-end pt-4 mr-6">
-					<CloseIcon fill="white" onClick={() => onClose()} className="w-4 p-0 cursor-pointer" />
+				<div className="mr-6 flex justify-end pt-4">
+					<CloseIcon fill="white" onClick={() => onClose()} className="w-4 cursor-pointer p-0" />
 				</div>
 				<div className="m-auto">
-					<div className="flex justify-between items-center">
+					<div className="flex items-center justify-between">
 						<div className="flex flex-1" />
-						<div className="flex flex-1 text-4xl text-vscode-foreground text-center mb-6 justify-center">
+						<div className="mb-6 flex flex-1 justify-center text-center text-4xl text-vscode-foreground">
 							{translate().t("reactApp.connections.modalTitle")}
 						</div>
 						<div className="flex flex-1 justify-end">
 							<div
-								className="flex flex-row items-center justify-center cursor-pointer mr-11"
+								className="mr-11 flex cursor-pointer flex-row items-center justify-center"
 								onClick={() => handleRefreshClick()}
 								title={translate().t("reactApp.connections.refreshConnections")}
 							>
-								<div className="w-3 mr-1">
+								<div className="mr-1 w-3">
 									<RotateIcon fill={refreshIconColor} />
 								</div>
 								<span>{translate().t("reactApp.connections.refresh")}</span>
 							</div>
 						</div>
 					</div>
-					<div className="flex w-full justify-end mt-2">
+					<div className="mt-2 flex w-full justify-end">
 						{connections?.length ? (
 							<Table>
 								<TableHeader>

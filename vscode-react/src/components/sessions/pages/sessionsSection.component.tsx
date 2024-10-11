@@ -53,11 +53,11 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 				}
 			>
 				<div className="flex">{`${translate().t("reactApp.sessions.tableTitle")}`}</div>
-				<div className="flex-grow" />
-				<div className="flex w-1/3 text-xs justify-end items-center">
-					<div className="codicon codicon-filter h-6 mt-2 mr-2" />
+				<div className="grow" />
+				<div className="flex w-1/3 items-center justify-end text-xs">
+					<div className="codicon codicon-filter mr-2 mt-2 h-6" />
 					<select
-						className="text-white bg-black rounded h-6 mr-2"
+						className="mr-2 h-6 rounded bg-black text-white"
 						onChange={(value) => filterSessions(value.target.value)}
 						value={stateFilter}
 					>

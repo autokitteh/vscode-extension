@@ -182,9 +182,9 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 							></div>
 						)}
 						<div
-							className={`relative codicon codicon-trash ${
+							className={`codicon codicon-trash relative ${
 								isActive(deployment.state) ? "cursor-not-allowed" : "cursor-pointer"
-							} ml-2 z-20`}
+							} z-20 ml-2`}
 							title={
 								isActive(deployment.state)
 									? translate().t("reactApp.deployments.deleteDisabled")

@@ -62,9 +62,9 @@ export const Header = () => {
 	);
 
 	return (
-		<div className="flex items-center w-full">
-			<Logo className="w-9 h-9 m-2" />
-			<div className="text-vscode-input-foreground font-bold text-lg">{projectName}</div>
+		<div className="flex w-full items-center">
+			<Logo className="m-2 size-9" />
+			<div className="text-lg font-bold text-vscode-input-foreground">{projectName}</div>
 			<Button
 				classes="mx-4"
 				onClick={() => sendMessage(MessageType.buildProject)}
@@ -82,7 +82,7 @@ export const Header = () => {
 				<div className="codicon codicon-rocket mr-2"></div>
 				{translate().t("reactApp.general.deploy")}
 			</Button>
-			<div className="flex-grow"></div>
+			<div className="grow"></div>
 			<div className="flex flex-row">
 				<Button
 					disabled={isRefreshing}
