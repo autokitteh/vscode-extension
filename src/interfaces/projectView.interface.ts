@@ -1,4 +1,4 @@
-import { StartSessionArgsType } from "@type";
+import { UIStartSessionArgsType } from "@type";
 import { Callback } from "@type/interfaces";
 
 export interface ProjectViewDelegate {
@@ -12,7 +12,7 @@ export interface ProjectViewDelegate {
 	displaySessionLogsAndStop?: Callback<string>;
 	activateDeployment?: Callback<string>;
 	deactivateDeployment?: Callback<string>;
-	startSession?: Callback<StartSessionArgsType>;
+	startSession?: Callback<UIStartSessionArgsType>;
 	deleteDeployment?: Callback<string>;
 	deleteSession?: Callback<string>;
 	displayErrorWithoutActionButton?: Callback<string>;
