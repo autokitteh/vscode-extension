@@ -10,7 +10,7 @@ interface ExecutePopperProps {
 	selectedFile: string;
 	onFileChange: (file: string) => void;
 	onFunctionChange: (func: string) => void;
-	onStartSession: (params: { key: string; value: string }[]) => void;
+	onStartSession: (params: Record<string, string>) => void;
 	onClose: () => void;
 	displayedErrors: Record<string, boolean>;
 }
@@ -56,7 +56,14 @@ export const ManualRunPopper = ({
 	const onStartClick = (event: MouseEvent<HTMLElement> | undefined) => {
 		event?.stopPropagation();
 		if (validateParameters()) {
-			onStartSession(inputParameters.map(({ key, value }) => ({ key, value })));
+			const paramsObject = inputParameters.reduce(
+				(acc, { key, value }) => {
+					acc[key] = value;
+					return acc;
+				},
+				{} as Record<string, string>
+			);
+			onStartSession(paramsObject);
 		}
 	};
 

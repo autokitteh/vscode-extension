@@ -1,3 +1,5 @@
+import { omit } from "lodash";
+
 import {
 	SessionLogRecord as ProtoSessionLogRecord,
 	Session as ProtoSession,
@@ -84,8 +86,13 @@ export class SessionsService {
 
 			const environment = environments[0];
 
+			const sessionToStart = { ...omit(startSessionArgs, "jsonInputs"), envId: environment.envId };
+
 			const sessionAsStartRequest = {
-				session: { ...startSessionArgs, envId: environment.envId },
+				session: sessionToStart,
+				jsonInputs: Object.fromEntries(
+					Object.entries(startSessionArgs?.jsonInputs || {}).map(([key, value]) => [key, `"${value}"`])
+				),
 			} as unknown as StartRequest;
 			const { sessionId } = await sessionsClient.start(sessionAsStartRequest);
 			return { data: sessionId, error: undefined };

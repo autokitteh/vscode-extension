@@ -6,7 +6,7 @@ export type UIStartSessionArgsType = {
 	buildId: string;
 	fileName: string;
 	functionName: string;
-	inputParameters: { key: string; value: string }[];
+	inputs: { key: string; value: string }[];
 };
 
 export type StartSessionArgsType = {

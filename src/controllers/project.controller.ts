@@ -733,7 +733,7 @@ export class ProjectController {
 				name: startSessionArgs.functionName,
 				path: startSessionArgs.fileName,
 			},
-			jsonInputs: startSessionArgs.inputParameters,
+			jsonInputs: startSessionArgs.inputs,
 		};
 
 		this.startLoader();
