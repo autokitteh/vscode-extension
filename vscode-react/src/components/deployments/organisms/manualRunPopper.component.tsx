@@ -35,8 +35,8 @@ export const ManualRunPopper = ({
 	const [inputParameters, setInputParameters] = useState<ExecuteInputParameter[]>([]);
 	const hasValidationErrors = inputParameters.some((param) => param.keyError || param.valueError);
 
-	const validateParameters = () => {
-		const updatedParams = inputParameters.map((param) => ({
+	const validateParameters = useCallback(() => {
+		setInputParameters(prevParams => prevParams.map((param) => ({
 			...param,
 			keyError:
 				param.key.length === 0 ? translate().t("reactApp.deployments.inputParameters.errors.missingKey") : undefined,
@@ -44,12 +44,11 @@ export const ManualRunPopper = ({
 				param.value.length === 0
 					? translate().t("reactApp.deployments.inputParameters.errors.missingValue")
 					: undefined,
-		}));
-		setInputParameters(updatedParams);
-		return updatedParams.every((param) => !param.keyError && !param.valueError);
-	};
+		})));
+		return inputParameters.every((param) => !param.keyError && !param.valueError);
+	}, [inputParameters]);
 
-	const onStartClick = (event?: MouseEvent<HTMLElement>) => {
+	const onStartClick = useCallback((event?: MouseEvent<HTMLElement>) => {
 		event?.stopPropagation();
 		if (validateParameters()) {
 			const paramsObject = inputParameters.reduce(
@@ -61,31 +60,30 @@ export const ManualRunPopper = ({
 			);
 			onStartSession(paramsObject);
 		}
-	};
+	}, [inputParameters, validateParameters, onStartSession]);
 
-	const onFileChangeClick = (event: any): void => {
+	const onFileChangeClick = useCallback((event: React.ChangeEvent<HTMLSelectElement>): void => {
 		event.stopPropagation();
 		onFileChange(event.target.value);
-	};
+	}, [onFileChange]);
 
-	const onFunctionNameChange = (event: any): void => {
+	const onFunctionNameChange = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
 		event.stopPropagation();
 		onFunctionChange(event.target.value);
-	};
+	}, [onFunctionChange]);
 
 	const addParameter = useCallback(() => {
 		if (validateParameters()) {
 			setInputParameters((prevParams) => [...prevParams, { key: "", value: "" }]);
 		}
-	}, []);
+	}, [validateParameters]);
 
 	const removeParameter = useCallback((index: number) => {
-		// eslint-disable-next-line @typescript-eslint/naming-convention
 		setInputParameters((prevParams) => prevParams.filter((_, i) => i !== index));
 	}, []);
 
 	const updateParameter = useCallback((index: number, field: "key" | "value", value: string) => {
-		const updatedParams = inputParameters.map((param, i) => {
+		setInputParameters(prevParams => prevParams.map((param, i) => {
 			if (i === index) {
 				const updatedParam = { ...param, [field]: value };
 				if (field === "key") {
@@ -98,8 +96,7 @@ export const ManualRunPopper = ({
 				return updatedParam;
 			}
 			return param;
-		});
-		setInputParameters(updatedParams);
+		}));
 	}, []);
 
 	const fullWidthStyle = {
@@ -158,18 +155,18 @@ export const ManualRunPopper = ({
 				<strong>{translate().t("reactApp.deployments.inputParameters.title")}</strong>
 				<div>
 					{inputParameters.map((param, index) => (
-						<div key={index} className="flex flex-col mb-2">
+						<div key={`param-${index}`} className="flex flex-col mb-2">
 							<div className="flex items-center">
 								<VSCodeTextField
 									value={param.key}
-									onChange={(e: any) => updateParameter(index, "key", e.target.value)}
+									onChange={(event: React.ChangeEvent<HTMLInputElement>) => updateParameter(index, "key", event.target.value)}
 									placeholder="Key"
 									className="mr-2"
 									style={{ width: "calc(50% - 0.5rem)" }}
 								/>
 								<VSCodeTextField
 									value={param.value}
-									onChange={(e: any) => updateParameter(index, "value", e.target.value)}
+									onChange={(event: React.ChangeEvent<HTMLInputElement>) => updateParameter(index, "value", event.target.value)}
 									placeholder="Value"
 									className="mr-2"
 									style={{ width: "calc(50% - 0.5rem)" }}

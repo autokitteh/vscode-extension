@@ -77,7 +77,7 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	const isActive = (deploymentState: DeploymentState) => deploymentState === DeploymentState.ACTIVE_DEPLOYMENT;
 	const isLastDeployment = (deploymentId: string) => deploymentId === deployments?.[0]?.deploymentId;
 
-	const startSession = (inputParameters: { key: string; value: string }[]) => {
+	const startSession = (params: Record<string, string>) => {
 		const lastDeployment = deployments![0];
 
 		setDisplayedErrors({});
@@ -97,7 +97,7 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 			deploymentId: lastDeployment.deploymentId,
 			functionName: selectedFunction,
 			fileName: selectedFile,
-			inputs: inputParameters,
+			inputs: params,
 		};
 
 		sendMessage(MessageType.startSession, startSessionArgs);
