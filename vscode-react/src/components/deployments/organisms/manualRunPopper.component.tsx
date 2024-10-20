@@ -36,41 +36,68 @@ export const ManualRunPopper = ({
 	const hasValidationErrors = inputParameters.some((param) => param.keyError || param.valueError);
 
 	const validateParameters = useCallback(() => {
-		setInputParameters(prevParams => prevParams.map((param) => ({
-			...param,
-			keyError:
-				param.key.length === 0 ? translate().t("reactApp.deployments.inputParameters.errors.missingKey") : undefined,
-			valueError:
-				param.value.length === 0
-					? translate().t("reactApp.deployments.inputParameters.errors.missingValue")
-					: undefined,
-		})));
+		setInputParameters((prevParams) =>
+			prevParams.map((param) => ({
+				...param,
+				keyError:
+					param.key.length === 0 ? translate().t("reactApp.deployments.inputParameters.errors.missingKey") : undefined,
+				valueError:
+					param.value.length === 0
+						? translate().t("reactApp.deployments.inputParameters.errors.missingValue")
+						: undefined,
+			}))
+		);
 		return inputParameters.every((param) => !param.keyError && !param.valueError);
 	}, [inputParameters]);
 
-	const onStartClick = useCallback((event?: MouseEvent<HTMLElement>) => {
-		event?.stopPropagation();
-		if (validateParameters()) {
-			const paramsObject = inputParameters.reduce(
-				(acc, { key, value }) => {
-					acc[key] = value;
-					return acc;
-				},
-				{} as Record<string, string>
-			);
-			onStartSession(paramsObject);
-		}
-	}, [inputParameters, validateParameters, onStartSession]);
+	const onStartClick = useCallback(
+		(event?: MouseEvent<HTMLElement>) => {
+			event?.stopPropagation();
+			if (validateParameters()) {
+				const paramsObject = inputParameters.reduce(
+					(acc, { key, value }) => {
+						acc[key] = value;
+						return acc;
+					},
+					{} as Record<string, string>
+				);
+				onStartSession(paramsObject);
+			}
+		},
+		[inputParameters, validateParameters, onStartSession]
+	);
 
-	const onFileChangeClick = useCallback((event: React.ChangeEvent<HTMLSelectElement>): void => {
-		event.stopPropagation();
-		onFileChange(event.target.value);
-	}, [onFileChange]);
+	const onFileChangeClick = useCallback(
+		(event: Event | React.FormEvent<HTMLElement>): void => {
+			event.stopPropagation();
+			let target: HTMLSelectElement;
 
-	const onFunctionNameChange = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
-		event.stopPropagation();
-		onFunctionChange(event.target.value);
-	}, [onFunctionChange]);
+			if (event instanceof Event) {
+				target = event.target as HTMLSelectElement;
+			} else {
+				target = event.currentTarget as HTMLSelectElement;
+			}
+
+			onFileChange(target.value);
+		},
+		[onFileChange]
+	);
+
+	const onFunctionNameChange = useCallback(
+		(event: Event | React.FormEvent<HTMLElement>): void => {
+			event.stopPropagation();
+			let target: HTMLInputElement;
+
+			if (event instanceof Event) {
+				target = event.target as HTMLInputElement;
+			} else {
+				target = event.currentTarget as HTMLInputElement;
+			}
+
+			onFunctionChange(target.value);
+		},
+		[onFunctionChange]
+	);
 
 	const addParameter = useCallback(() => {
 		if (validateParameters()) {
@@ -79,25 +106,45 @@ export const ManualRunPopper = ({
 	}, [validateParameters]);
 
 	const removeParameter = useCallback((index: number) => {
+		// eslint-disable-next-line @typescript-eslint/naming-convention
 		setInputParameters((prevParams) => prevParams.filter((_, i) => i !== index));
 	}, []);
 
-	const updateParameter = useCallback((index: number, field: "key" | "value", value: string) => {
-		setInputParameters(prevParams => prevParams.map((param, i) => {
-			if (i === index) {
-				const updatedParam = { ...param, [field]: value };
-				if (field === "key") {
-					updatedParam.keyError =
-						value.length === 0 ? translate().t("reactApp.deployments.inputParameters.errors.missingKey") : undefined;
-				} else {
-					updatedParam.valueError =
-						value.length === 0 ? translate().t("reactApp.deployments.inputParameters.errors.missingValue") : undefined;
-				}
-				return updatedParam;
-			}
-			return param;
-		}));
-	}, []);
+	const updateParameter = useCallback(
+		(index: number, field: "key" | "value", eventOrValue: Event | React.FormEvent<HTMLElement> | string) => {
+			setInputParameters((prevParams) =>
+				prevParams.map((param, i) => {
+					if (i === index) {
+						let value: string;
+						if (typeof eventOrValue === "string") {
+							value = eventOrValue;
+						} else {
+							const target = (
+								eventOrValue instanceof Event ? eventOrValue.target : eventOrValue.currentTarget
+							) as HTMLInputElement;
+							value = target.value;
+						}
+
+						const updatedParam = { ...param, [field]: value };
+						if (field === "key") {
+							updatedParam.keyError =
+								value.length === 0
+									? translate().t("reactApp.deployments.inputParameters.errors.missingKey")
+									: undefined;
+						} else {
+							updatedParam.valueError =
+								value.length === 0
+									? translate().t("reactApp.deployments.inputParameters.errors.missingValue")
+									: undefined;
+						}
+						return updatedParam;
+					}
+					return param;
+				})
+			);
+		},
+		[]
+	);
 
 	const fullWidthStyle = {
 		// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -159,14 +206,14 @@ export const ManualRunPopper = ({
 							<div className="flex items-center">
 								<VSCodeTextField
 									value={param.key}
-									onChange={(event: React.ChangeEvent<HTMLInputElement>) => updateParameter(index, "key", event.target.value)}
+									onChange={(event) => updateParameter(index, "key", event)}
 									placeholder="Key"
 									className="mr-2"
 									style={{ width: "calc(50% - 0.5rem)" }}
 								/>
 								<VSCodeTextField
 									value={param.value}
-									onChange={(event: React.ChangeEvent<HTMLInputElement>) => updateParameter(index, "value", event.target.value)}
+									onChange={(event) => updateParameter(index, "value", event)}
 									placeholder="Value"
 									className="mr-2"
 									style={{ width: "calc(50% - 0.5rem)" }}
