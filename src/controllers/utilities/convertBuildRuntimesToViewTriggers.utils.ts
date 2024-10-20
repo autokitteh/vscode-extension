@@ -1,22 +1,20 @@
-import { namespaces } from "@constants";
+import { SUPPORTED_MANUAL_RUN_PROGRAMMING_LANGUAGES, SUPPORTED_MANUAL_RUN_RUNTIMES, namespaces } from "@constants";
 import { LoggerService } from "@services";
 import { BuildInfoRuntimes } from "@type/models";
 
 const processRuntime = (runtime: BuildInfoRuntimes): string[] => {
-	const allowedExtensions = [".py", ".star"];
-
-	const fileNames = Object.keys(runtime.artifact.compiled_data)?.filter((fileName) =>
-		allowedExtensions.some((ext) => fileName.endsWith(ext))
+	if (!runtime?.artifact?.compiled_data) {
+		return [];
+	}
+	const fileNames = Object.keys(runtime.artifact.compiled_data).filter((fileName) =>
+		SUPPORTED_MANUAL_RUN_PROGRAMMING_LANGUAGES.some((ext: string) => fileName.endsWith(ext))
 	);
-
 	return fileNames;
 };
 
 export const convertBuildRuntimesToViewTriggers = (runtimes: BuildInfoRuntimes[]): string[] => {
 	try {
-		const supportedRuntimes = ["python", "starlark"];
-
-		const runtime = runtimes.find((runtime) => supportedRuntimes.includes(runtime.info.name));
+		const runtime = runtimes.find((runtime) => SUPPORTED_MANUAL_RUN_RUNTIMES.includes(runtime?.info?.name || ""));
 
 		if (runtime) {
 			return processRuntime(runtime);
