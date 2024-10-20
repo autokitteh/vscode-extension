@@ -1,4 +1,4 @@
-import React, { MouseEvent, useState, useEffect } from "react";
+import React, { MouseEvent, useState, useEffect, useCallback } from "react";
 
 import { translate } from "@i18n";
 import { Button } from "@react-components/atoms/button.component";
@@ -33,7 +33,7 @@ export const ManualRunPopper = ({
 	displayedErrors,
 }: ExecutePopperProps) => {
 	const [inputParameters, setInputParameters] = useState<ExecuteInputParameter[]>([]);
-	const [hasValidationErrors, setHasValidationErrors] = useState(false);
+	const hasValidationErrors = inputParameters.some((param) => param.keyError || param.valueError);
 
 	const validateParameters = () => {
 		const updatedParams = inputParameters.map((param) => ({
@@ -49,11 +49,7 @@ export const ManualRunPopper = ({
 		return updatedParams.every((param) => !param.keyError && !param.valueError);
 	};
 
-	useEffect(() => {
-		setHasValidationErrors(inputParameters.some((param) => param.keyError || param.valueError));
-	}, [inputParameters]);
-
-	const onStartClick = (event: MouseEvent<HTMLElement> | undefined) => {
+	const onStartClick = (event?: MouseEvent<HTMLElement>) => {
 		event?.stopPropagation();
 		if (validateParameters()) {
 			const paramsObject = inputParameters.reduce(
@@ -77,17 +73,18 @@ export const ManualRunPopper = ({
 		onFunctionChange(event.target.value);
 	};
 
-	const addParameter = () => {
-		setInputParameters([...inputParameters, { key: "", value: "" }]);
-	};
+	const addParameter = useCallback(() => {
+		if (validateParameters()) {
+			setInputParameters((prevParams) => [...prevParams, { key: "", value: "" }]);
+		}
+	}, []);
 
-	const removeParameter = (index: number) => {
+	const removeParameter = useCallback((index: number) => {
 		// eslint-disable-next-line @typescript-eslint/naming-convention
-		const updatedParams = inputParameters.filter((_, i) => i !== index);
-		setInputParameters(updatedParams);
-	};
+		setInputParameters((prevParams) => prevParams.filter((_, i) => i !== index));
+	}, []);
 
-	const updateParameter = (index: number, field: "key" | "value", value: string) => {
+	const updateParameter = useCallback((index: number, field: "key" | "value", value: string) => {
 		const updatedParams = inputParameters.map((param, i) => {
 			if (i === index) {
 				const updatedParam = { ...param, [field]: value };
@@ -103,7 +100,7 @@ export const ManualRunPopper = ({
 			return param;
 		});
 		setInputParameters(updatedParams);
-	};
+	}, []);
 
 	const fullWidthStyle = {
 		// eslint-disable-next-line @typescript-eslint/naming-convention

@@ -18,8 +18,8 @@
 	"executionFunctionsNotFound": "No functions found",
 	"executeFile": "File",
 	"errors": {
-		"missingFile": "Please choose a file",
-		"missingFunction": "Please choose a function"
+		"missingFile": "Please choose a file name",
+		"missingFunction": "Please type a function name"
 	},
 	"inputParameters": {
 		"title": "Parameters",
