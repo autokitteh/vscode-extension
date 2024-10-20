@@ -6,7 +6,7 @@ import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { Overlay } from "@react-components/atoms";
 import { Cell } from "@react-components/atoms/table";
-import { DeploymentStateLabel, ExecutePopper } from "@react-components/deployments";
+import { DeploymentStateLabel, ManualRunPopper } from "@react-components/deployments";
 import { DeletePopper, Popper } from "@react-components/molecules";
 import { Row } from "@react-components/molecules/table";
 import { useAppState } from "@react-context/appState.context";
@@ -211,7 +211,7 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 								referenceRef={executePopperElementRef}
 								className="w-1/2"
 							>
-								<ExecutePopper
+								<ManualRunPopper
 									files={files}
 									selectedFile={selectedFile}
 									onFileChange={setSelectedFile}

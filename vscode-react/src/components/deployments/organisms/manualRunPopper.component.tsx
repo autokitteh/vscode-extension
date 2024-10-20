@@ -15,14 +15,14 @@ interface ExecutePopperProps {
 	displayedErrors: Record<string, boolean>;
 }
 
-interface InputParameter {
+interface ExecuteInputParameter {
 	key: string;
 	value: string;
 	keyError?: string;
 	valueError?: string;
 }
 
-export const ExecutePopper = ({
+export const ManualRunPopper = ({
 	files,
 	functionName,
 	selectedFile,
@@ -32,14 +32,18 @@ export const ExecutePopper = ({
 	onClose,
 	displayedErrors,
 }: ExecutePopperProps) => {
-	const [inputParameters, setInputParameters] = useState<InputParameter[]>([]);
+	const [inputParameters, setInputParameters] = useState<ExecuteInputParameter[]>([]);
 	const [hasValidationErrors, setHasValidationErrors] = useState(false);
 
 	const validateParameters = () => {
 		const updatedParams = inputParameters.map((param) => ({
 			...param,
-			keyError: param.key.length === 0 ? "Key must not be empty" : undefined,
-			valueError: param.value.length === 0 ? "Value must not be empty" : undefined,
+			keyError:
+				param.key.length === 0 ? translate().t("reactApp.deployments.inputParameters.errors.missingKey") : undefined,
+			valueError:
+				param.value.length === 0
+					? translate().t("reactApp.deployments.inputParameters.errors.missingValue")
+					: undefined,
 		}));
 		setInputParameters(updatedParams);
 		return updatedParams.every((param) => !param.keyError && !param.valueError);
