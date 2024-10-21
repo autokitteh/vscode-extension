@@ -1,3 +1,10 @@
+## [0.20.7](https://github.com/autokitteh/vscode-extension/compare/v0.20.6...v0.20.7) (2024-10-21)
+
+
+### Bug Fixes
+
+* complete missing omit function from lodash ([#388](https://github.com/autokitteh/vscode-extension/issues/388)) ([c5566b1](https://github.com/autokitteh/vscode-extension/commit/c5566b1d830944313780d60292c9675ad412b44d))
+
 ## [0.20.6](https://github.com/autokitteh/vscode-extension/compare/v0.20.5...v0.20.6) (2024-10-21)
 
 
