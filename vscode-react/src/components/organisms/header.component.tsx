@@ -98,8 +98,8 @@ export const Header = () => {
 				</Button>
 
 				<Button
-					onClick={() => sendMessage(MessageType.openTriggersWebUI)}
 					classes="flex relative z-30 mr-2"
+					onClick={() => sendMessage(MessageType.openTriggersWebUI)}
 					title={translate().t("reactApp.settings.openTriggersSettingsScreen")}
 				>
 					<TriggersIcon className="fill-text-vscode-foreground mr-1 -ml-1" />

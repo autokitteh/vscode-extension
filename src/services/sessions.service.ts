@@ -1,5 +1,3 @@
-import { omit } from "lodash";
-
 import {
 	SessionLogRecord as ProtoSessionLogRecord,
 	Session as ProtoSession,
@@ -12,6 +10,7 @@ import { SessionLogRecord, convertSessionProtoToModel } from "@models";
 import { EnvironmentsService, LoggerService } from "@services";
 import { ServiceResponse, StartSessionArgsType } from "@type";
 import { Session, SessionFilter } from "@type/models";
+import { omit } from "@utilities/omit.utils";
 
 export class SessionsService {
 	static async listByEnvironmentId(environmentId: string): Promise<ServiceResponse<Session[]>> {
@@ -86,7 +85,7 @@ export class SessionsService {
 
 			const environment = environments[0];
 
-			const sessionToStart = { ...omit(startSessionArgs, "jsonInputs"), envId: environment.envId };
+			const sessionToStart = { ...omit(startSessionArgs, ["jsonInputs"]), envId: environment.envId };
 
 			const sessionAsStartRequest = {
 				session: sessionToStart,
