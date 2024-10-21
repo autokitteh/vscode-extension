@@ -1,21 +1,18 @@
-import React, { useRef, useEffect, useState } from "react";
-
+import { cn } from "@react-utilities";
+import React, { useEffect, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 
-import { cn } from "@react-utilities";
-
 interface PopperProps {
-	visible: boolean;
-	className?: string;
 	children: React.ReactNode;
+	className?: string;
 	referenceRef: React.RefObject<HTMLDivElement>;
+	visible: boolean;
 }
 
-export const Popper = ({ visible, children, referenceRef, className }: PopperProps) => {
+export const Popper = ({ children, className, referenceRef, visible }: PopperProps) => {
 	const popperRef = useRef<HTMLDivElement | null>(null);
 	const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-	const { styles, attributes, update } = usePopper(referenceRef.current, popperElement, {
-		placement: "bottom",
+	const { attributes, styles, update } = usePopper(referenceRef.current, popperElement, {
 		modifiers: [
 			{
 				name: "offset",
@@ -24,6 +21,7 @@ export const Popper = ({ visible, children, referenceRef, className }: PopperPro
 				},
 			},
 		],
+		placement: "bottom",
 	});
 
 	useEffect(() => {

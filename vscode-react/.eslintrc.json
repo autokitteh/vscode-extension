@@ -1,0 +1,84 @@
+{
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": 6,
+		"sourceType": "module"
+	},
+	"plugins": ["@typescript-eslint", "unicorn", "perfectionist", "prettier", "@liferay"],
+	"root": true,
+	"settings": {
+		"react": {
+			"version": "detect"
+		},
+		"import/parsers": {
+			"@typescript-eslint/parser": [".ts", ".tsx"]
+		},
+		"import/resolver": {
+			"typescript": {
+				"alwaysTryTypes": true,
+				"project": ["../tsconfig.json"]
+			},
+			"node": {
+				"paths": ["src"],
+				"extensions": [".js", ".jsx", ".ts", ".tsx"]
+			}
+		}
+	},
+	"rules": {
+		"prettier/prettier": "error",
+
+		"perfectionist/sort-object-types": [
+			"error",
+			{
+				"type": "alphabetical",
+				"order": "asc"
+			}
+		],
+		"@liferay/no-anonymous-exports": "off",
+		"@liferay/sort-class-names": "off",
+		"@liferay/empty-line-between-elements": "off",
+		"tailwindcss/no-custom-classname": "off",
+		"@typescript-eslint/no-unused-vars": "error",
+		"@typescript-eslint/naming-convention": [
+			"error",
+			{
+				"format": ["camelCase", "PascalCase"],
+				"selector": "default"
+			},
+			{
+				"format": ["camelCase", "PascalCase", "UPPER_CASE"],
+				"leadingUnderscore": "allow",
+				"selector": "variable"
+			},
+			{
+				"format": ["PascalCase"],
+				"leadingUnderscore": "allow",
+				"selector": "typeLike"
+			},
+			{
+				"format": ["camelCase"],
+				"leadingUnderscore": "allow",
+				"selector": "classProperty"
+			},
+			{
+				"format": ["camelCase", "UPPER_CASE"],
+				"selector": "enumMember"
+			},
+			{
+				"format": ["camelCase", "PascalCase"],
+				"leadingUnderscore": "allow",
+				"selector": "classMethod"
+			}
+		],
+		"curly": "warn",
+		"eqeqeq": "warn",
+		"no-throw-literal": "warn",
+		"unicorn/filename-case": [
+			"error",
+			{
+				"case": "camelCase"
+			}
+		]
+	},
+	"extends": ["plugin:@liferay/react", "prettier", "plugin:prettier/recommended", "plugin:tailwindcss/recommended"]
+}

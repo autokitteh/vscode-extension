@@ -1,1 +1,2 @@
-/// <reference types="vite/client" />
+/* eslint-disable unicorn/filename-case */
+// / <reference types="vite/client" />

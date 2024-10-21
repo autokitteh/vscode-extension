@@ -1,8 +1,3 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-
-import { createPortal } from "react-dom";
-import { FixedSizeList as List, ListOnItemsRenderedProps } from "react-window";
-
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { HeaderCell } from "@react-components/atoms/table";
@@ -13,23 +8,26 @@ import { useAppDispatch, useAppState } from "@react-context";
 import { SessionState } from "@react-enums";
 import { useCloseOnEscape } from "@react-hooks";
 import { SessionsTableRowProps } from "@react-types";
-import { sendMessage, getSessionActions } from "@react-utilities";
+import { getSessionActions, sendMessage } from "@react-utilities";
 import { Deployment, Session } from "@type/models";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { FixedSizeList as List, ListOnItemsRenderedProps } from "react-window";
 
 export const SessionsTableBody = ({
-	sessions,
-	selectedSession,
-	setSelectedSession,
 	heightProp,
-	widthProp,
 	lastDeployment,
+	selectedSession,
+	sessions,
+	setSelectedSession,
+	widthProp,
 }: {
-	sessions?: Session[];
-	selectedSession?: string;
-	setSelectedSession: (sessionId: string) => void;
 	heightProp: string | number;
-	widthProp: string | number;
 	lastDeployment?: Deployment;
+	selectedSession?: string;
+	sessions?: Session[];
+	setSelectedSession: (sessionId: string) => void;
+	widthProp: string | number;
 }) => {
 	// State Section
 	const [{ modalName }] = useAppState();
@@ -45,8 +43,8 @@ export const SessionsTableBody = ({
 
 	// Local variable
 	const deleteSessionPopperTranslations = {
-		title: translate().t("reactApp.sessions.deletionApprovalQuestion"),
 		subtitle: translate().t("reactApp.sessions.deletionApprovalQuestionSubtitle"),
+		title: translate().t("reactApp.sessions.deletionApprovalQuestion"),
 	};
 
 	// Functions Section
@@ -80,6 +78,7 @@ export const SessionsTableBody = ({
 				MessageType.displayErrorWithoutActionButton,
 				translate().t("reactApp.sessions.deleteSessionDisabled")
 			);
+
 			return;
 		}
 		const refElement = event.currentTarget;
@@ -91,11 +90,13 @@ export const SessionsTableBody = ({
 	// useEffects Section
 	useEffect(() => {
 		hidePopper();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleItemsRendered = ({ visibleStopIndex }: ListOnItemsRenderedProps) => {
 		if (visibleStopIndex >= (sessions?.length || 0) - 1) {
 			sendMessage(MessageType.loadMoreSessions);
+
 			return;
 		}
 	};
@@ -108,17 +109,18 @@ export const SessionsTableBody = ({
 
 	const itemData = useMemo(
 		() => ({
-			sessions,
-			sessionActions,
-			selectedSessionId: selectedSession,
-			displaySessionLogs,
-			modalName,
-			hidePopper,
+			deletePopperElementRef,
 			deleteSessionConfirmed,
 			deleteSessionDismissed,
 			deleteSessionPopperTranslations,
-			deletePopperElementRef,
+			displaySessionLogs,
+			hidePopper,
+			modalName,
+			selectedSessionId: selectedSession,
+			sessionActions,
+			sessions,
 		}),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[sessions, selectedSession, lastDeployment, modalName]
 	);
 
@@ -131,20 +133,20 @@ export const SessionsTableBody = ({
 				)}
 			<Table>
 				<TableHeader classes="flex justify-around pr-4">
-					<HeaderCell className="flex justify-center w-64">{translate().t("reactApp.sessions.time")}</HeaderCell>
-					<HeaderCell className="flex justify-center w-32">{translate().t("reactApp.sessions.status")}</HeaderCell>
-					<HeaderCell className="flex justify-center w-64">{translate().t("reactApp.sessions.sessionId")}</HeaderCell>
-					<HeaderCell className="flex justify-center w-32">{translate().t("reactApp.sessions.actions")}</HeaderCell>
+					<HeaderCell className="flex w-64 justify-center">{translate().t("reactApp.sessions.time")}</HeaderCell>
+					<HeaderCell className="flex w-32 justify-center">{translate().t("reactApp.sessions.status")}</HeaderCell>
+					<HeaderCell className="flex w-64 justify-center">{translate().t("reactApp.sessions.sessionId")}</HeaderCell>
+					<HeaderCell className="flex w-32 justify-center">{translate().t("reactApp.sessions.actions")}</HeaderCell>
 				</TableHeader>
 				<List
 					height={heightProp}
-					width={widthProp}
 					itemCount={sessions?.length || 0}
-					itemSize={30}
 					itemData={itemData as SessionsTableRowProps}
-					onItemsRendered={handleItemsRendered}
 					itemKey={(index) => sessions?.[index]?.sessionId || 0}
+					itemSize={30}
+					onItemsRendered={handleItemsRendered}
 					ref={listRef}
+					width={widthProp}
 				>
 					{SessionsTableRow}
 				</List>

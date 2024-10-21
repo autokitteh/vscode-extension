@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import CloseIcon from "@react-assets/icons/close.svg?react";
@@ -12,6 +10,7 @@ import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import { Connection } from "@type/models";
+import { useState } from "react";
 
 export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 	const [{ themeType }] = useAppState();
@@ -22,7 +21,7 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 	});
 
 	const handleConnectionInitClick = (connectionName: string, connectionId: string) => {
-		sendMessage(MessageType.openConnectionInitURL, { connectionName, connectionId });
+		sendMessage(MessageType.openConnectionInitURL, { connectionId, connectionName });
 	};
 
 	const handleRefreshClick = () => {
@@ -32,31 +31,33 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 	const refreshIconColor = isDarkTheme ? "white" : "black";
 
 	return (
-		<Modal wrapperClasses={["!bg-transparent z-50"]} classes={["bg-black-semi-transparent", "rounded-none"]}>
-			<div className="mt-4 h-[calc(100vh-6vh)] bg-vscode-editor-background">
-				<div className="flex justify-end pt-4 mr-6">
-					<CloseIcon fill="white" onClick={() => onClose()} className="w-4 p-0 cursor-pointer" />
+		<Modal classes={["bg-black-semi-transparent", "rounded-none"]} wrapperClasses={["!bg-transparent z-50"]}>
+			{/* eslint-disable tailwindcss/classnames-order */}
+			<div className="bg-vscode-editor-background mt-4 h-[calc(100vh-6vh)]">
+				<div className="mr-6 flex justify-end pt-4">
+					<CloseIcon className="w-4 cursor-pointer p-0" fill="white" onClick={() => onClose()} />
 				</div>
 				<div className="m-auto">
-					<div className="flex justify-between items-center">
+					<div className="flex items-center justify-between">
 						<div className="flex flex-1" />
-						<div className="flex flex-1 text-4xl text-vscode-foreground text-center mb-6 justify-center">
+						{/* eslint-disable tailwindcss/classnames-order */}
+						<div className="text-vscode-foreground mb-6 flex flex-1 justify-center text-center text-4xl">
 							{translate().t("reactApp.connections.modalTitle")}
 						</div>
 						<div className="flex flex-1 justify-end">
 							<div
-								className="flex flex-row items-center justify-center cursor-pointer mr-11"
+								className="mr-11 flex cursor-pointer flex-row items-center justify-center"
 								onClick={() => handleRefreshClick()}
 								title={translate().t("reactApp.connections.refreshConnections")}
 							>
-								<div className="w-3 mr-1">
+								<div className="mr-1 w-3">
 									<RotateIcon fill={refreshIconColor} />
 								</div>
 								<span>{translate().t("reactApp.connections.refresh")}</span>
 							</div>
 						</div>
 					</div>
-					<div className="flex w-full justify-end mt-2">
+					<div className="mt-2 flex w-full justify-end">
 						{connections?.length ? (
 							<Table>
 								<TableHeader>
@@ -66,7 +67,7 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 									<HeaderCell>{translate().t("reactApp.connections.tableColumns.information")}</HeaderCell>
 									<HeaderCell>{translate().t("reactApp.connections.tableColumns.actions")}</HeaderCell>
 								</TableHeader>
-								{connections.map(({ connectionId, name, integrationName, status, statusInfoMessage }) => (
+								{connections.map(({ connectionId, integrationName, name, status, statusInfoMessage }) => (
 									<Row key={connectionId}>
 										<Cell classes={["text-vscode-foreground"]}>{name}</Cell>
 										<Cell classes={["text-vscode-foreground"]}>{integrationName}</Cell>
@@ -77,8 +78,8 @@ export const ConnectionsModal = ({ onClose }: { onClose: () => void }) => {
 										<Cell classes={["flex justify-center align-center"]}>
 											{connectionId && (
 												<div
-													onClick={() => handleConnectionInitClick(name, connectionId)}
 													className="w-3 codicon codicon-gear text-white cursor-pointer"
+													onClick={() => handleConnectionInitClick(name, connectionId)}
 													title={translate().t("reactApp.connections.init")}
 												/>
 											)}

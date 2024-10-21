@@ -1,15 +1,14 @@
-import { useEffect } from "react";
-
 import { MessageType, Theme } from "@enums";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
 import { Connection } from "@type/models";
+import { useEffect } from "react";
 
 export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) => {
 	useEffect(() => {
 		const handleMessagesFromExtension = (event: MessageEvent<Message>) => {
-			const { type, payload } = event.data;
+			const { payload, type } = event.data;
 
 			switch (type) {
 				case MessageType.setTheme:
@@ -48,10 +47,12 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 				case MessageType.setRetryCountdown:
 					handlers.setRetryCountdown?.(payload as string);
 					break;
+				default:
 			}
 		};
 
 		window.addEventListener("message", handleMessagesFromExtension);
+
 		return () => {
 			window.removeEventListener("message", handleMessagesFromExtension);
 		};

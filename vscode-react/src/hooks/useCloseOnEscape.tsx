@@ -9,6 +9,7 @@ export const useCloseOnEscape = (closeEvent: () => void) => {
 		};
 
 		window.addEventListener("keydown", handleKeyDown);
+
 		return () => window.removeEventListener("keydown", handleKeyDown);
 	}, [closeEvent]);
 };

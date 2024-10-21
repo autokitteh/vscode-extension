@@ -1,7 +1,3 @@
-import React, { useEffect, useRef, useState, MouseEvent } from "react";
-
-import { createPortal } from "react-dom";
-
 import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { Overlay } from "@react-components/atoms";
@@ -13,6 +9,8 @@ import { useAppState } from "@react-context/appState.context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment } from "@type/models";
+import React, { MouseEvent, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
 	// State Hooks Section
@@ -29,23 +27,24 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 
 	// Local variable
 	const deleteDeploymentPopperTranslations = {
-		title: translate().t("reactApp.deployments.deletionApprovalQuestion"),
 		subtitle: translate().t("reactApp.deployments.deletionApprovalQuestionSubtitle"),
+		title: translate().t("reactApp.deployments.deletionApprovalQuestion"),
 	};
 
 	useEffect(() => {
 		if (selectedDeploymentId) {
-			dispatch({ type: "SET_SELECTED_DEPLOYMENT", payload: selectedDeploymentId });
+			dispatch({ payload: selectedDeploymentId, type: "SET_SELECTED_DEPLOYMENT" });
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedDeploymentId]);
 
-	useIncomingMessageHandler({ setSelectedDeploymentId, setEntrypoints });
+	useIncomingMessageHandler({ setEntrypoints, setSelectedDeploymentId });
 
 	const showPopper = (event: MouseEvent<HTMLElement>, popperId: string) => {
 		event.stopPropagation();
-		dispatch({ type: "SET_MODAL_NAME", payload: popperId });
+		dispatch({ payload: popperId, type: "SET_MODAL_NAME" });
 	};
-	const hidePopper = () => dispatch({ type: "SET_MODAL_NAME", payload: "" });
+	const hidePopper = () => dispatch({ payload: "", type: "SET_MODAL_NAME" });
 
 	const isDeploymentStateStartable = (deploymentState: number) =>
 		deploymentState === DeploymentState.INACTIVE_DEPLOYMENT || deploymentState === DeploymentState.DRAINING_DEPLOYMENT;
@@ -55,6 +54,7 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 			return translate().t("reactApp.general.unknown");
 		}
 		const session = deployment.sessionStats.find((s) => s.state === state);
+
 		return session ? session.count : 0;
 	};
 
@@ -89,14 +89,15 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 			if (!selectedFunction) {
 				setDisplayedErrors({ ...displayedErrors, selectedFunction: true });
 			}
+
 			return;
 		}
 
 		const startSessionArgs = {
 			buildId: lastDeployment.buildId,
 			deploymentId: lastDeployment.deploymentId,
-			functionName: selectedFunction,
 			fileName: selectedFile,
+			functionName: selectedFunction,
 			inputs: params,
 		};
 
@@ -131,6 +132,7 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	// useEffects Section
 	useEffect(() => {
 		hidePopper();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
@@ -144,8 +146,8 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 		deployments &&
 		deployments.map((deployment: Deployment, index: number) => (
 			<Row
-				key={deployment.deploymentId}
 				isSelected={selectedDeploymentId === deployment.deploymentId}
+				key={deployment.deploymentId}
 				onClick={() => getSessionsByDeploymentId(deployment.deploymentId)}
 			>
 				<Cell classes={["cursor-pointer"]}>{getTimePassed(deployment.createdAt)}</Cell>
@@ -164,33 +166,33 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 						<div
 							className={`codicon codicon-debug-rerun mr-2 cursor-pointer 
 							${isLastDeployment(deployment.deploymentId) ? "" : "invisible"}`}
+							onClick={(event) => showPopper(event, "deploymentExecute")}
 							ref={isLastDeployment(deployment.deploymentId) ? executePopperElementRef : null}
 							title={translate().t("reactApp.deployments.execute")}
-							onClick={(event) => showPopper(event, "deploymentExecute")}
 						></div>
 						{isDeploymentStateStartable(deployment.state) ? (
 							<div
 								className="codicon codicon-debug-start cursor-pointer text-green-500"
-								title={translate().t("reactApp.deployments.activate")}
 								onClick={() => activateBuild(deployment.deploymentId)}
+								title={translate().t("reactApp.deployments.activate")}
 							></div>
 						) : (
 							<div
 								className="codicon codicon-debug-stop cursor-pointer text-red-500"
-								title={translate().t("reactApp.deployments.deactivate")}
 								onClick={() => deactivateBuild(deployment.deploymentId)}
+								title={translate().t("reactApp.deployments.deactivate")}
 							></div>
 						)}
 						<div
-							className={`relative codicon codicon-trash ${
+							className={`codicon codicon-trash relative ${
 								isActive(deployment.state) ? "cursor-not-allowed" : "cursor-pointer"
-							} ml-2 z-20`}
+							} z-20 ml-2`}
+							onClick={(event) => showDeleteDeploymentPopper(event, deployment)}
 							title={
 								isActive(deployment.state)
 									? translate().t("reactApp.deployments.deleteDisabled")
 									: translate().t("reactApp.deployments.delete")
 							}
-							onClick={(event) => showDeleteDeploymentPopper(event, deployment)}
 						></div>
 					</div>
 					{createPortal(
@@ -199,7 +201,7 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 								isVisibile={index === 0 && (modalName === "deploymentDelete" || modalName === "deploymentExecute")}
 								onOverlayClick={() => hidePopper()}
 							/>
-							<Popper visible={modalName === "deploymentDelete"} referenceRef={deletePopperElementRef}>
+							<Popper referenceRef={deletePopperElementRef} visible={modalName === "deploymentDelete"}>
 								<DeletePopper
 									onConfirm={() => deleteDeploymentConfirmed()}
 									onDismiss={() => deleteDeploymentDismissed()}
@@ -207,19 +209,19 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 								/>
 							</Popper>
 							<Popper
-								visible={modalName === "deploymentExecute"}
-								referenceRef={executePopperElementRef}
 								className="w-1/2"
+								referenceRef={executePopperElementRef}
+								visible={modalName === "deploymentExecute"}
 							>
 								<ManualRunPopper
+									displayedErrors={displayedErrors}
 									files={files}
-									selectedFile={selectedFile}
-									onFileChange={setSelectedFile}
 									functionName={selectedFunction}
+									onClose={() => hidePopper()}
+									onFileChange={setSelectedFile}
 									onFunctionChange={handleFunctionChange}
 									onStartSession={startSession}
-									onClose={() => hidePopper()}
-									displayedErrors={displayedErrors}
+									selectedFile={selectedFile}
 								/>
 							</Popper>
 						</div>,

@@ -1,36 +1,35 @@
-import React, { MouseEvent, useState, useEffect, useCallback } from "react";
-
 import { translate } from "@i18n";
 import { Button } from "@react-components/atoms/button.component";
 import { VSCodeDropdown, VSCodeTextField } from "@vscode/webview-ui-toolkit/react";
+import React, { MouseEvent, useCallback, useEffect, useState } from "react";
 
 interface ExecutePopperProps {
+	displayedErrors: Record<string, boolean>;
 	files?: string[];
 	functionName: string;
-	selectedFile: string;
+	onClose: () => void;
 	onFileChange: (file: string) => void;
 	onFunctionChange: (func: string) => void;
 	onStartSession: (params: Record<string, string>) => void;
-	onClose: () => void;
-	displayedErrors: Record<string, boolean>;
+	selectedFile: string;
 }
 
 interface ExecuteInputParameter {
 	key: string;
-	value: string;
 	keyError?: string;
+	value: string;
 	valueError?: string;
 }
 
 export const ManualRunPopper = ({
+	displayedErrors,
 	files,
 	functionName,
-	selectedFile,
+	onClose,
 	onFileChange,
 	onFunctionChange,
 	onStartSession,
-	onClose,
-	displayedErrors,
+	selectedFile,
 }: ExecutePopperProps) => {
 	const [inputParameters, setInputParameters] = useState<ExecuteInputParameter[]>([]);
 	const hasValidationErrors = inputParameters.some((param) => param.keyError || param.valueError);
@@ -39,14 +38,15 @@ export const ManualRunPopper = ({
 		setInputParameters((prevParams) =>
 			prevParams.map((param) => ({
 				...param,
-				keyError:
-					param.key.length === 0 ? translate().t("reactApp.deployments.inputParameters.errors.missingKey") : undefined,
-				valueError:
-					param.value.length === 0
-						? translate().t("reactApp.deployments.inputParameters.errors.missingValue")
-						: undefined,
+				keyError: !param.key.length
+					? translate().t("reactApp.deployments.inputParameters.errors.missingKey")
+					: undefined,
+				valueError: !param.value.length
+					? translate().t("reactApp.deployments.inputParameters.errors.missingValue")
+					: undefined,
 			}))
 		);
+
 		return inputParameters.every((param) => !param.keyError && !param.valueError);
 	}, [inputParameters]);
 
@@ -57,6 +57,7 @@ export const ManualRunPopper = ({
 				const paramsObject = inputParameters.reduce(
 					(acc, { key, value }) => {
 						acc[key] = value;
+
 						return acc;
 					},
 					{} as Record<string, string>
@@ -127,18 +128,18 @@ export const ManualRunPopper = ({
 
 						const updatedParam = { ...param, [field]: value };
 						if (field === "key") {
-							updatedParam.keyError =
-								value.length === 0
-									? translate().t("reactApp.deployments.inputParameters.errors.missingKey")
-									: undefined;
+							updatedParam.keyError = !value.length
+								? translate().t("reactApp.deployments.inputParameters.errors.missingKey")
+								: undefined;
 						} else {
-							updatedParam.valueError =
-								value.length === 0
-									? translate().t("reactApp.deployments.inputParameters.errors.missingValue")
-									: undefined;
+							updatedParam.valueError = !value.length
+								? translate().t("reactApp.deployments.inputParameters.errors.missingValue")
+								: undefined;
 						}
+
 						return updatedParam;
 					}
+
 					return param;
 				})
 			);
@@ -175,7 +176,7 @@ export const ManualRunPopper = ({
 		<div className="relative p-4 shadow-lg" onClick={(event) => event.stopPropagation()}>
 			<div className="mb-3 text-left">
 				<strong>{translate().t("reactApp.deployments.executeFile")}</strong>
-				<VSCodeDropdown value={selectedFile} onChange={onFileChangeClick} className="flex">
+				<VSCodeDropdown className="flex" onChange={onFileChangeClick} value={selectedFile}>
 					{files?.map((file) => (
 						<option key={file} value={file}>
 							{file}
@@ -186,44 +187,44 @@ export const ManualRunPopper = ({
 					<div className="text-red-500">{translate().t("reactApp.deployments.errors.missingFile")}</div>
 				)}
 			</div>
-			<div className="mb-3 text-left w-full">
+			<div className="mb-3 w-full text-left">
 				<strong>{translate().t("reactApp.deployments.executeFunctionName")}</strong>
 				<VSCodeTextField
-					value={functionName}
-					onChange={onFunctionNameChange}
 					className="flex"
+					onChange={onFunctionNameChange}
 					style={fullWidthStyle}
+					value={functionName}
 				></VSCodeTextField>
 				{displayedErrors["selectedFunction"] && (
 					<div className="text-red-500">{translate().t("reactApp.deployments.errors.missingFunction")}</div>
 				)}
 			</div>
-			<div className="mb-3 text-left w-full">
+			<div className="mb-3 w-full text-left">
 				<strong>{translate().t("reactApp.deployments.inputParameters.title")}</strong>
 				<div>
 					{inputParameters.map((param, index) => (
-						<div key={`param-${index}`} className="flex flex-col mb-2">
+						<div className="mb-2 flex flex-col" key={`param-${index}`}>
 							<div className="flex items-center">
 								<VSCodeTextField
-									value={param.key}
+									className="mr-2"
 									onChange={(event) => updateParameter(index, "key", event)}
 									placeholder="Key"
-									className="mr-2"
 									style={{ width: "calc(50% - 0.5rem)" }}
+									value={param.key}
 								/>
 								<VSCodeTextField
-									value={param.value}
+									className="mr-2"
 									onChange={(event) => updateParameter(index, "value", event)}
 									placeholder="Value"
-									className="mr-2"
 									style={{ width: "calc(50% - 0.5rem)" }}
+									value={param.value}
 								/>
 								<Button onClick={() => removeParameter(index)}>
 									{translate().t("reactApp.deployments.inputParameters.remove")}
 								</Button>
 							</div>
 							{(param.keyError || param.valueError) && (
-								<div className="text-red-500 mt-1">
+								<div className="mt-1 text-red-500">
 									{param.keyError && <div>{param.keyError}</div>}
 									{param.valueError && <div>{param.valueError}</div>}
 								</div>
@@ -238,13 +239,13 @@ export const ManualRunPopper = ({
 					<Button classes="bg-vscode-editor-background text-vscode-foreground" onClick={onClose}>
 						{translate().t("reactApp.deployments.dismiss")}
 					</Button>
-					<div className="flex-grow" />
-					<Button onClick={onStartClick} disabled={hasValidationErrors}>
+					<div className="grow" />
+					<Button disabled={hasValidationErrors} onClick={onStartClick}>
 						{translate().t("reactApp.deployments.execute")}
 					</Button>
 				</div>
 				{hasValidationErrors && (
-					<div className="text-red-500 mt-2">Please fix the errors in the input parameters before executing.</div>
+					<div className="mt-2 text-red-500">Please fix the errors in the input parameters before executing.</div>
 				)}
 			</div>
 		</div>
