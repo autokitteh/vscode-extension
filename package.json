@@ -72,12 +72,6 @@
 					"type": "string",
 					"scope": "machine"
 				},
-				"autokitteh.webInterfaceURL": {
-					"default": "http://localhost:9982",
-					"description": "URL of the web interface",
-					"type": "string",
-					"scope": "machine"
-				},
 				"autokitteh.projectsPaths": {
 					"default": "{}",
 					"description": "Projects directories",
