@@ -124,7 +124,9 @@ export class ProjectController {
 
 	public enable = async () => {
 		this.setProjectNameInView();
-		this.notifyViewResourcesPathChanged();
+		await this.notifyViewResourcesPathChanged();
+		await this.loadAndDisplayDeployments();
+		await this.loadSingleshotArgs(true);
 
 		this.sessionLogRetryScheduler?.stopTimers();
 		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
@@ -219,15 +221,16 @@ export class ProjectController {
 		});
 	}
 
-	async loadSingleshotArgs() {
+	async loadSingleshotArgs(force?: boolean) {
 		if (!this.deployments || !this.deployments.length) {
 			return;
 		}
 		const lastDeployment = this.deployments[0];
 
-		if (this.lastDeploymentId === lastDeployment?.deploymentId) {
+		if (!force && this.lastDeploymentId === lastDeployment?.deploymentId) {
 			return;
 		}
+
 		this.lastDeploymentId = lastDeployment.deploymentId;
 
 		this.startLoader();

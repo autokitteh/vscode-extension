@@ -138,7 +138,7 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	useEffect(() => {
 		if (entrypoints && Object.keys(entrypoints).length) {
 			setFiles(entrypoints);
-			setSelectedFile(Object.keys(entrypoints)[0]);
+			setSelectedFile(entrypoints[0]);
 		}
 	}, [entrypoints]);
 
