@@ -27,6 +27,7 @@ export interface ProjectViewDelegate {
 	tryToReenable?: Callback;
 	refreshUI?: Callback;
 	connections: ConnectionsViewDelegate;
+	openTriggersWebUI?: Callback;
 }
 export interface ConnectionsViewDelegate {
 	openConnectionInitURL?: Callback<{

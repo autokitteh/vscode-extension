@@ -34,4 +34,5 @@ export enum MessageType {
 	openConnectionInitURL = "OPEN_CONNECTION_INIT_URL",
 	fetchConnections = "FETCH_CONNECTIONS",
 	refreshUI = "REFRESH_UI",
+	openTriggersWebUI = "OPEN_TRIGGERS_WEB_UI",
 }

@@ -47,7 +47,7 @@ Ensure you have the following installed on your system:
 ## Tools We Used 🛠️
 
 In this project we used:
- - [FontAwesome](https://fontawesome.com) and [vscode-codicons](https://github.com/microsoft/vscode-codicons) for our webview icons.
+ - [FontAwesome](https://fontawesome.com), [vscode-codicons](https://github.com/microsoft/vscode-codicons) and [tabler-icons](https://github.com/tabler/tabler-icons)  for our webview icons.
  - [LottieFiles](https://lottiefiles.com/) for animations in our webview. 
 
 ## Contact 📬
