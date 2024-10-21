@@ -72,12 +72,6 @@
 					"type": "string",
 					"scope": "machine"
 				},
-				"autokitteh.webInterfaceURL": {
-					"default": "",
-					"description": "URL of the web interface",
-					"type": "string",
-					"scope": "machine"
-				},
 				"autokitteh.projectsPaths": {
 					"default": "{}",
 					"description": "Projects directories",
