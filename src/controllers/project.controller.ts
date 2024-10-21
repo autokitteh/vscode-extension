@@ -1114,6 +1114,7 @@ export class ProjectController {
 
 			const log = translate().t("errors.failedOpenTriggersEnriched", {
 				projectName: this.project?.name,
+				linkURL: triggersWebUiURL,
 			});
 
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
