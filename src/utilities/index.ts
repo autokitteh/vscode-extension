@@ -17,3 +17,4 @@ export {
 	directoryExists,
 	openFileExplorer,
 } from "@utilities/fileSystem.utils";
+export { omit } from "@utilities/omit.utils";
