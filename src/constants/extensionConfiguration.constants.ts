@@ -8,3 +8,5 @@ export const EXPONENTIAL_RETRY_COUNTDOWN_MULTIPLIER = 2;
 export const DEFAULT_SESSIONS_VISIBLE_PAGE_SIZE = 20;
 export const DEFAULT_CONNECTION_TEST_SLOW_INTERVAL = 300000;
 export const AK_FRONTEND_URL = "http://localhost:9980/i/";
+export const SUPPORTED_MANUAL_RUN_PROGRAMMING_LANGUAGES = [".py", ".star"];
+export const SUPPORTED_MANUAL_RUN_RUNTIMES = ["python", "starlark"];

@@ -2,13 +2,16 @@ import React, { useRef, useEffect, useState } from "react";
 
 import { usePopper } from "react-popper";
 
+import { cn } from "@react-utilities";
+
 interface PopperProps {
 	visible: boolean;
+	className?: string;
 	children: React.ReactNode;
 	referenceRef: React.RefObject<HTMLDivElement>;
 }
 
-export const Popper: React.FC<PopperProps> = ({ visible, children, referenceRef }) => {
+export const Popper = ({ visible, children, referenceRef, className }: PopperProps) => {
 	const popperRef = useRef<HTMLDivElement | null>(null);
 	const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 	const { styles, attributes, update } = usePopper(referenceRef.current, popperElement, {
@@ -17,7 +20,7 @@ export const Popper: React.FC<PopperProps> = ({ visible, children, referenceRef 
 			{
 				name: "offset",
 				options: {
-					offset: [0, 8],
+					offset: [-200, 8],
 				},
 			},
 		],
@@ -35,8 +38,10 @@ export const Popper: React.FC<PopperProps> = ({ visible, children, referenceRef 
 		}
 	}, [visible]);
 
-	const popperClasses =
-		"flex-col z-50 bg-vscode-editor-background text-vscode-foreground border border-gray-300 p-4 rounded-lg shadow-lg";
+	const popperClasses = cn(
+		"flex-col z-50 bg-vscode-editor-background text-vscode-foreground border border-gray-300 p-4 rounded-lg shadow-lg",
+		className
+	);
 
 	return (
 		<>

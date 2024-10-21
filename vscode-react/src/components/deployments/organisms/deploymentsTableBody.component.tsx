@@ -6,13 +6,13 @@ import { DeploymentState, MessageType, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { Overlay } from "@react-components/atoms";
 import { Cell } from "@react-components/atoms/table";
-import { DeploymentStateLabel, ExecutePopper } from "@react-components/deployments";
+import { DeploymentStateLabel, ManualRunPopper } from "@react-components/deployments";
 import { DeletePopper, Popper } from "@react-components/molecules";
 import { Row } from "@react-components/molecules/table";
 import { useAppState } from "@react-context/appState.context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
-import { Deployment, SessionEntrypoint } from "@type/models";
+import { Deployment } from "@type/models";
 
 export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
 	// State Hooks Section
@@ -21,13 +21,11 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	const deletePopperElementRef = useRef<HTMLDivElement | null>(null);
 	const [selectedFile, setSelectedFile] = useState<string>("");
 	const [selectedFunction, setSelectedFunction] = useState<string>("");
-	const [selectedEntrypoint, setSelectedEntrypoint] = useState<SessionEntrypoint>();
-	const [files, setFiles] = useState<Record<string, SessionEntrypoint[]>>();
-	const [functions, setFunctions] = useState<SessionEntrypoint[]>();
+	const [files, setFiles] = useState<string[]>([]);
 	const [deleteDeploymentId, setDeleteDeploymentId] = useState<string | null>(null);
 	const [displayedErrors, setDisplayedErrors] = useState<Record<string, boolean>>({});
 	const [selectedDeploymentId, setSelectedDeploymentId] = useState<string>();
-	const [entrypoints, setEntrypoints] = useState<Record<string, SessionEntrypoint[]>>();
+	const [entrypoints, setEntrypoints] = useState<string[]>();
 
 	// Local variable
 	const deleteDeploymentPopperTranslations = {
@@ -43,7 +41,6 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 
 	useIncomingMessageHandler({ setSelectedDeploymentId, setEntrypoints });
 
-	// Functions Section
 	const showPopper = (event: MouseEvent<HTMLElement>, popperId: string) => {
 		event.stopPropagation();
 		dispatch({ type: "SET_MODAL_NAME", payload: popperId });
@@ -62,13 +59,6 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	};
 
 	const handleFunctionChange = (event: string) => {
-		let entrypointForFunction;
-		try {
-			entrypointForFunction = JSON.parse(event);
-		} catch (error) {
-			console.error(error);
-		}
-		setSelectedEntrypoint(entrypointForFunction);
 		setSelectedFunction(event);
 	};
 
@@ -87,8 +77,7 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	const isActive = (deploymentState: DeploymentState) => deploymentState === DeploymentState.ACTIVE_DEPLOYMENT;
 	const isLastDeployment = (deploymentId: string) => deploymentId === deployments?.[0]?.deploymentId;
 
-	const startSession = (event?: MouseEvent<HTMLElement>) => {
-		event?.stopPropagation();
+	const startSession = (params: Record<string, string>) => {
 		const lastDeployment = deployments![0];
 
 		setDisplayedErrors({});
@@ -106,7 +95,9 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 		const startSessionArgs = {
 			buildId: lastDeployment.buildId,
 			deploymentId: lastDeployment.deploymentId,
-			entrypoint: selectedEntrypoint,
+			functionName: selectedFunction,
+			fileName: selectedFile,
+			inputs: params,
 		};
 
 		sendMessage(MessageType.startSession, startSessionArgs);
@@ -143,20 +134,9 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	}, []);
 
 	useEffect(() => {
-		if (files && selectedFile) {
-			setFunctions(files[selectedFile]);
-			setSelectedFunction(JSON.stringify(files[selectedFile][0]));
-			setSelectedEntrypoint(files[selectedFile][0]);
-		}
-	}, [selectedFile]);
-
-	useEffect(() => {
 		if (entrypoints && Object.keys(entrypoints).length) {
 			setFiles(entrypoints);
 			setSelectedFile(Object.keys(entrypoints)[0]);
-			setFunctions(entrypoints[Object.keys(entrypoints)[0]]);
-			setSelectedFunction(JSON.stringify(entrypoints[Object.keys(entrypoints)[0]][0]));
-			setSelectedEntrypoint(entrypoints[Object.keys(entrypoints)[0]][0]);
 		}
 	}, [entrypoints]);
 
@@ -226,13 +206,16 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 									translations={deleteDeploymentPopperTranslations}
 								/>
 							</Popper>
-							<Popper visible={modalName === "deploymentExecute"} referenceRef={executePopperElementRef}>
-								<ExecutePopper
-									files={files!}
-									functions={functions!}
+							<Popper
+								visible={modalName === "deploymentExecute"}
+								referenceRef={executePopperElementRef}
+								className="w-1/2"
+							>
+								<ManualRunPopper
+									files={files}
 									selectedFile={selectedFile}
-									selectedFunction={selectedFunction}
 									onFileChange={setSelectedFile}
+									functionName={selectedFunction}
 									onFunctionChange={handleFunctionChange}
 									onStartSession={startSession}
 									onClose={() => hidePopper()}
