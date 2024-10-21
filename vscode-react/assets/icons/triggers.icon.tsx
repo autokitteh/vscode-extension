@@ -2,7 +2,8 @@
 import React from "react";
 
 import { cn } from "../../src/utilities/cnClasses.utils";
-/* <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--> */
+
+//Taken from here: https://github.com/tabler/tabler-icons/blob/main/icons/outline/bolt.svg under MIT License
 export const TriggersIcon = ({ className }: React.SVGProps<SVGSVGElement>) => {
 	const classes = cn("icon icon-tabler icons-tabler-outline icon-tabler-bolt", className);
 	return (
