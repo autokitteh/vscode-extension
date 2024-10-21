@@ -4,10 +4,11 @@ export const baseURLFromVSCode: string = WorkspaceConfig.getFromWorkspace<string
 export const webUIURLFromVSCode: string = WorkspaceConfig.getFromWorkspace<string>("webInterfaceURL", "");
 
 export const BASE_URL = ValidateURL(baseURLFromVSCode) ? baseURLFromVSCode : "";
+export const FALLBACK_WEB_UI_URL = "http://localhost:9982";
 
 function determineWebUIURL(baseURL: string, configuredWebUIURL: string): string {
 	if (!ValidateURL(baseURL)) {
-		return "http://localhost:9982";
+		return FALLBACK_WEB_UI_URL;
 	}
 
 	const url = new URL(baseURL);
@@ -25,7 +26,7 @@ function determineWebUIURL(baseURL: string, configuredWebUIURL: string): string 
 		return configuredWebUIURL;
 	}
 
-	return "http://localhost:9982";
+	return FALLBACK_WEB_UI_URL;
 }
 
 export const WEB_UI_URL = determineWebUIURL(BASE_URL, webUIURLFromVSCode);
