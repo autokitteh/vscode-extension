@@ -2,12 +2,8 @@ import { MessageType, Theme } from "@enums";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
-<<<<<<< HEAD
 import { Connection } from "@type/models";
-=======
-import { Connection, SessionEntrypoint } from "@type/models";
 import { useEffect } from "react";
->>>>>>> e2d1b815 (feat: add liferay and perfectionist plugin to eslint of react app)
 
 export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) => {
 	useEffect(() => {

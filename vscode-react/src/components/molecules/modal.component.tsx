@@ -8,7 +8,7 @@ type ModalProps = {
 };
 export const Modal = ({ children, classes, wrapperClasses }: ModalProps) => {
 	const wrapperClass = clsx(
-		"absolute right-0 top-0 z-40 size-full bg-vscode-editor-background opacity-100",
+		"bg-vscode-editor-background absolute right-0 top-0 z-40 size-full opacity-100",
 		wrapperClasses
 	);
 

@@ -8,13 +8,9 @@ import { Row } from "@react-components/molecules/table";
 import { useAppState } from "@react-context/appState.context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
-<<<<<<< HEAD
 import { Deployment } from "@type/models";
-=======
-import { Deployment, SessionEntrypoint } from "@type/models";
 import React, { MouseEvent, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
->>>>>>> e2d1b815 (feat: add liferay and perfectionist plugin to eslint of react app)
 
 export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
 	// State Hooks Section
@@ -100,8 +96,8 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 		const startSessionArgs = {
 			buildId: lastDeployment.buildId,
 			deploymentId: lastDeployment.deploymentId,
-			functionName: selectedFunction,
 			fileName: selectedFile,
+			functionName: selectedFunction,
 			inputs: params,
 		};
 
@@ -140,18 +136,6 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 	}, []);
 
 	useEffect(() => {
-<<<<<<< HEAD
-=======
-		if (files && selectedFile) {
-			setFunctions(files[selectedFile]);
-			setSelectedFunction(JSON.stringify(files[selectedFile][0]));
-			setSelectedEntrypoint(files[selectedFile][0]);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedFile]);
-
-	useEffect(() => {
->>>>>>> e2d1b815 (feat: add liferay and perfectionist plugin to eslint of react app)
 		if (entrypoints && Object.keys(entrypoints).length) {
 			setFiles(entrypoints);
 			setSelectedFile(Object.keys(entrypoints)[0]);
@@ -224,29 +208,20 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 									translations={deleteDeploymentPopperTranslations}
 								/>
 							</Popper>
-<<<<<<< HEAD
 							<Popper
-								visible={modalName === "deploymentExecute"}
-								referenceRef={executePopperElementRef}
 								className="w-1/2"
+								referenceRef={executePopperElementRef}
+								visible={modalName === "deploymentExecute"}
 							>
 								<ManualRunPopper
-									files={files}
-									selectedFile={selectedFile}
-=======
-							<Popper referenceRef={executePopperElementRef} visible={modalName === "deploymentExecute"}>
-								<ExecutePopper
 									displayedErrors={displayedErrors}
-									files={files!}
-									functions={functions!}
-									onClose={() => hidePopper()}
->>>>>>> e2d1b815 (feat: add liferay and perfectionist plugin to eslint of react app)
-									onFileChange={setSelectedFile}
+									files={files}
 									functionName={selectedFunction}
+									onClose={() => hidePopper()}
+									onFileChange={setSelectedFile}
 									onFunctionChange={handleFunctionChange}
 									onStartSession={startSession}
 									selectedFile={selectedFile}
-									selectedFunction={selectedFunction}
 								/>
 							</Popper>
 						</div>,

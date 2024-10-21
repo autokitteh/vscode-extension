@@ -1,24 +1,15 @@
+import { cn } from "@react-utilities";
 import React, { useEffect, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 
-import { cn } from "@react-utilities";
-
 interface PopperProps {
-<<<<<<< HEAD
-	visible: boolean;
-	className?: string;
-=======
->>>>>>> e2d1b815 (feat: add liferay and perfectionist plugin to eslint of react app)
 	children: React.ReactNode;
+	className?: string;
 	referenceRef: React.RefObject<HTMLDivElement>;
 	visible: boolean;
 }
 
-<<<<<<< HEAD
-export const Popper = ({ visible, children, referenceRef, className }: PopperProps) => {
-=======
-export const Popper: React.FC<PopperProps> = ({ children, referenceRef, visible }) => {
->>>>>>> e2d1b815 (feat: add liferay and perfectionist plugin to eslint of react app)
+export const Popper = ({ children, className, referenceRef, visible }: PopperProps) => {
 	const popperRef = useRef<HTMLDivElement | null>(null);
 	const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 	const { attributes, styles, update } = usePopper(referenceRef.current, popperElement, {
