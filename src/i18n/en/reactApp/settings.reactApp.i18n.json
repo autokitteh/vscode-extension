@@ -5,6 +5,7 @@
 	"headerConnectionsButton": "Connections",
 	"headerTriggersButton": "Triggers",
 	"openConnectionsSettingsScreen": "Connections Settings",
+	"openTriggersSettingsScreen": "Triggers Settings",
 	"openProjectResourcesDirectory": "Open resources folder in file browser",
 	"pickDirectoryOfExecutables": "Pick directory of project files",
 	"refresh": "Refresh Project's Data",

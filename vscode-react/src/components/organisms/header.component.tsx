@@ -100,9 +100,9 @@ export const Header = () => {
 				<Button
 					onClick={() => sendMessage(MessageType.openTriggersWebUI)}
 					classes="flex relative z-30 mr-2"
-					title={translate().t("reactApp.settings.openConnectionsSettingsScreen")}
+					title={translate().t("reactApp.settings.openTriggersSettingsScreen")}
 				>
-					<TriggersIcon className="fill-text-vscode-foreground" />
+					<TriggersIcon className="fill-text-vscode-foreground mr-1 -ml-1" />
 					{translate().t("reactApp.settings.headerTriggersButton")}
 				</Button>
 
@@ -111,7 +111,7 @@ export const Header = () => {
 					onClick={() => openConnectionsModal()}
 					title={translate().t("reactApp.settings.openConnectionsSettingsScreen")}
 				>
-					<div className="codicon codicon-link text-vscode-background mr-1" />{" "}
+					<div className="codicon codicon-link text-vscode-background mr-1 -ml-1" />{" "}
 					{translate().t("reactApp.settings.headerConnectionsButton")}
 				</Button>
 				{!resourcesDir ? (
