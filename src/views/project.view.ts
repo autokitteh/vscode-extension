@@ -100,6 +100,9 @@ export class ProjectView implements IProjectView {
 					case MessageType.refreshUI:
 						this.delegate?.refreshUI?.();
 						break;
+					case MessageType.openTriggersWebUI:
+						this.delegate?.openTriggersWebUI?.();
+						break;
 					default:
 				}
 			},

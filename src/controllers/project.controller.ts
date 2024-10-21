@@ -4,7 +4,7 @@ import isEqual from "lodash.isequal";
 import * as path from "path";
 import { commands, env, OpenDialogOptions, Uri, window } from "vscode";
 
-import { channels, INITIAL_SESSION_LOG_RETRY_SCHEDULE_INTERVAL, namespaces, vsCommands } from "@constants";
+import { channels, INITIAL_SESSION_LOG_RETRY_SCHEDULE_INTERVAL, namespaces, vsCommands, WEB_UI_URL } from "@constants";
 import { ConnectionsController } from "@controllers";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
@@ -1100,5 +1100,25 @@ export class ProjectController {
 
 	async refreshUI() {
 		await this.loadAndDisplayDeployments();
+	}
+
+	async openTriggersWebUI() {
+		const triggersWebUiURL = Uri.parse(`${WEB_UI_URL}/projects/${this.projectId}/triggers`);
+
+		const initLinkOpenInBrowser = await env.openExternal(triggersWebUiURL);
+
+		if (!initLinkOpenInBrowser) {
+			const notification = translate().t("errors.failedOpenTriggers", {
+				projectName: this.project?.name,
+			});
+
+			const log = translate().t("errors.failedOpenTriggersEnriched", {
+				projectName: this.project?.name,
+				linkURL: triggersWebUiURL,
+			});
+
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.connectionsController, log);
+		}
 	}
 }

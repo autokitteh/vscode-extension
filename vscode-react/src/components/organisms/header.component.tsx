@@ -1,6 +1,7 @@
 import { MessageType } from "@enums";
 import { translate } from "@i18n";
 import { DownloadIcon } from "@react-assets/icons/download.icon";
+import { TriggersIcon } from "@react-assets/icons/triggers.icon";
 import { Button, Logo, Overlay } from "@react-components/atoms";
 import { ConnectionsModal } from "@react-components/connections";
 import { Popper } from "@react-components/molecules";
@@ -95,12 +96,22 @@ export const Header = () => {
 				>
 					<div className={rotateIconClass} />
 				</Button>
+
+				<Button
+					onClick={() => sendMessage(MessageType.openTriggersWebUI)}
+					classes="flex relative z-30 mr-2"
+					title={translate().t("reactApp.settings.openTriggersSettingsScreen")}
+				>
+					<TriggersIcon className="fill-text-vscode-foreground mr-1 -ml-1" />
+					{translate().t("reactApp.settings.headerTriggersButton")}
+				</Button>
+
 				<Button
 					classes="flex relative z-30 mr-2"
 					onClick={() => openConnectionsModal()}
 					title={translate().t("reactApp.settings.openConnectionsSettingsScreen")}
 				>
-					<div className="codicon codicon-link text-vscode-background mr-1" />{" "}
+					<div className="codicon codicon-link text-vscode-background mr-1 -ml-1" />{" "}
 					{translate().t("reactApp.settings.headerConnectionsButton")}
 				</Button>
 				{!resourcesDir ? (
