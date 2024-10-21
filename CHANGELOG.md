@@ -1,3 +1,17 @@
+## [0.20.6](https://github.com/autokitteh/vscode-extension/compare/v0.20.5...v0.20.6) (2024-10-21)
+
+
+### Bug Fixes
+
+* manual execution ([#378](https://github.com/autokitteh/vscode-extension/issues/378)) ([a3787d2](https://github.com/autokitteh/vscode-extension/commit/a3787d2ef200d1f7d7de4594b86df9aa7b14aae0))
+
+
+### Features
+
+* add connections web-ui url getter ([#386](https://github.com/autokitteh/vscode-extension/issues/386)) ([81d2d98](https://github.com/autokitteh/vscode-extension/commit/81d2d98695ded116bb394f67968cebf030100e8a))
+* add triggers link to web ui in the project's header ([#387](https://github.com/autokitteh/vscode-extension/issues/387)) ([ccc0b3d](https://github.com/autokitteh/vscode-extension/commit/ccc0b3d04a117afe255cd0cc3defcab03b59d586))
+* move the connections init to local web-ui ([#384](https://github.com/autokitteh/vscode-extension/issues/384)) ([3ae1aa3](https://github.com/autokitteh/vscode-extension/commit/3ae1aa38262e5789fdd61165e709d8edb87f568d))
+
 ## [0.20.5](https://github.com/autokitteh/vscode-extension/compare/v0.20.4...v0.20.5) (2024-09-18)
 
 
