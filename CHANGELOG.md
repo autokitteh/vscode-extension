@@ -1,3 +1,10 @@
+## [0.20.8](https://github.com/autokitteh/vscode-extension/compare/v0.20.7...v0.20.8) (2024-10-22)
+
+
+### Bug Fixes
+
+* re-fetch files for manual run on project enable (focus or re-open) ([#389](https://github.com/autokitteh/vscode-extension/issues/389)) ([33d7a1e](https://github.com/autokitteh/vscode-extension/commit/33d7a1eee90cbccf3a7a878a33c07ac053ef1291))
+
 ## [0.20.7](https://github.com/autokitteh/vscode-extension/compare/v0.20.6...v0.20.7) (2024-10-21)
 
 
