@@ -1,6 +1,5 @@
 export const DEFAULT_SERVER_URL = "http://localhost:9980";
 export const EXT_PUBLISHER = "undefined_publisher";
-export const DEFAULT_ENVIRONMENT = "default";
 export const INITIAL_SERVER_HEALTH_SCHEDULE_INTERVAL = 10;
 export const INITIAL_SESSION_LOG_RETRY_SCHEDULE_INTERVAL = 10;
 export const INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL = 10;
