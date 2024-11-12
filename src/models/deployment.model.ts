@@ -11,7 +11,6 @@ import { convertTimestampToDate } from "@utilities";
  */
 export const convertDeploymentProtoToModel = (protoDeployment: ProtoDeployment): Deployment => ({
 	deploymentId: protoDeployment.deploymentId,
-	envId: protoDeployment.envId,
 	buildId: protoDeployment.buildId,
 	createdAt: convertTimestampToDate(protoDeployment.createdAt!),
 	state: protoDeployment.state,

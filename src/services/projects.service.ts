@@ -2,7 +2,7 @@ import { projectsClient } from "@api/grpc/clients.grpc.api";
 import { namespaces } from "@constants";
 import { translate } from "@i18n";
 import { convertErrorProtoToModel, convertProjectProtoToModel } from "@models";
-import { DeploymentsService, EnvironmentsService, LoggerService } from "@services";
+import { DeploymentsService, LoggerService } from "@services";
 import { ServiceResponse } from "@type";
 import { Project } from "@type/models";
 
@@ -75,22 +75,9 @@ export class ProjectsService {
 	}
 
 	static async deploy(projectId: string, buildId: string): Promise<ServiceResponse<string>> {
-		const { data: environments, error: envError } = await EnvironmentsService.listByProjectId(projectId);
-		if (envError) {
-			return { data: undefined, error: envError };
-		}
-
-		if (!environments?.length) {
-			const errorMessage = translate().t("errors.defaultEnvironmentNotFound");
-			LoggerService.error(namespaces.projectService, errorMessage);
-			return { data: undefined, error: new Error(errorMessage) };
-		}
-
-		const environment = environments[0];
-
 		const { data: deploymentId, error } = await DeploymentsService.create({
 			buildId: buildId!,
-			envId: environment.envId,
+			projectId,
 		});
 
 		if (error) {

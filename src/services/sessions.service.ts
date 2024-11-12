@@ -7,23 +7,12 @@ import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { DEFAULT_SESSIONS_VISIBLE_PAGE_SIZE, namespaces } from "@constants";
 import { translate } from "@i18n";
 import { SessionLogRecord, convertSessionProtoToModel } from "@models";
-import { EnvironmentsService, LoggerService } from "@services";
+import { LoggerService } from "@services";
 import { ServiceResponse, StartSessionArgsType } from "@type";
 import { Session, SessionFilter } from "@type/models";
 import { omit } from "@utilities/omit.utils";
 
 export class SessionsService {
-	static async listByEnvironmentId(environmentId: string): Promise<ServiceResponse<Session[]>> {
-		try {
-			const { sessions: sessionsResponse } = await sessionsClient.list({ envId: environmentId });
-			const sessions = sessionsResponse.map(convertSessionProtoToModel);
-			return { data: sessions, error: undefined };
-		} catch (error) {
-			LoggerService.error(namespaces.sessionsService, (error as Error).message);
-			return { data: undefined, error };
-		}
-	}
-
 	static async listByDeploymentId(
 		deploymentId: string,
 		filter: SessionFilter,
@@ -72,20 +61,7 @@ export class SessionsService {
 		projectId: string
 	): Promise<ServiceResponse<string>> {
 		try {
-			const { data: environments, error: envError } = await EnvironmentsService.listByProjectId(projectId);
-			if (envError) {
-				return { data: undefined, error: envError };
-			}
-
-			if (!environments?.length) {
-				const errorMessage = translate().t("errors.defaultEnvironmentNotFound");
-				LoggerService.error(namespaces.projectService, errorMessage);
-				return { data: undefined, error: new Error(errorMessage) };
-			}
-
-			const environment = environments[0];
-
-			const sessionToStart = { ...omit(startSessionArgs, ["jsonInputs"]), envId: environment.envId };
+			const sessionToStart = { ...omit(startSessionArgs, ["jsonInputs"]), projectId };
 
 			const sessionAsStartRequest = {
 				session: sessionToStart,
