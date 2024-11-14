@@ -1,3 +1,10 @@
+## [0.20.9](https://github.com/autokitteh/vscode-extension/compare/v0.20.8...v0.20.9) (2024-11-14)
+
+
+### Features
+
+* get rid of environments ([#391](https://github.com/autokitteh/vscode-extension/issues/391)) ([768e6bc](https://github.com/autokitteh/vscode-extension/commit/768e6bcbd43aa0f700ddf6640b740f345e3b7fb2))
+
 ## [0.20.8](https://github.com/autokitteh/vscode-extension/compare/v0.20.7...v0.20.8) (2024-10-22)
 
 
