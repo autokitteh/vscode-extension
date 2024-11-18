@@ -31,8 +31,7 @@ export enum MessageType {
 	setRetryCountdown = "SET_RETRY_COUNTDOWN",
 	tryToReconnect = "TRY_TO_RECONNECT",
 	setConnections = "SET_CONNECTIONS",
-	openConnectionInitURL = "OPEN_CONNECTION_INIT_URL",
-	fetchConnections = "FETCH_CONNECTIONS",
 	refreshUI = "REFRESH_UI",
 	openTriggersWebUI = "OPEN_TRIGGERS_WEB_UI",
+	openConnectionsWebUI = "OPEN_CONNECTIONS_WEB_UI",
 }

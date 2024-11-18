@@ -3,7 +3,6 @@ import { translate } from "@i18n";
 import { DownloadIcon } from "@react-assets/icons/download.icon";
 import { TriggersIcon } from "@react-assets/icons/triggers.icon";
 import { Button, Logo, Overlay } from "@react-components/atoms";
-import { ConnectionsModal } from "@react-components/connections";
 import { Popper } from "@react-components/molecules";
 import { ProjectSettingsPopper } from "@react-components/project/organisms";
 import { useAppDispatch, useAppState } from "@react-context";
@@ -23,7 +22,6 @@ export const Header = () => {
 	const { startLoader, stopLoader } = useAppDispatch();
 	const { setTheme } = useAppDispatch();
 
-	const [connectionsModalVisible, setConnectionsModalVisible] = useState<boolean>(false);
 	useIncomingMessageHandler({
 		setProjectName,
 		setResourcesDir,
@@ -31,11 +29,6 @@ export const Header = () => {
 		startLoader,
 		stopLoader,
 	});
-
-	const openConnectionsModal = () => {
-		setConnectionsModalVisible(true);
-		sendMessage(MessageType.fetchConnections);
-	};
 
 	const refreshUI = () => {
 		setIsRefreshing(true);
@@ -108,7 +101,7 @@ export const Header = () => {
 
 				<Button
 					classes="flex relative z-30 mr-2"
-					onClick={() => openConnectionsModal()}
+					onClick={() => sendMessage(MessageType.openConnectionsWebUI)}
 					title={translate().t("reactApp.settings.openConnectionsSettingsScreen")}
 				>
 					<div className="codicon codicon-link text-vscode-background mr-1 -ml-1" />{" "}
@@ -136,7 +129,6 @@ export const Header = () => {
 					<ProjectSettingsPopper closePopper={() => setSettingsPopperVisible(false)} resourcesDir={resourcesDir} />
 				</Popper>
 			</div>
-			{connectionsModalVisible && <ConnectionsModal onClose={() => setConnectionsModalVisible(false)} />}
 		</div>
 	);
 };

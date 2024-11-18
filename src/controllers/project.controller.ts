@@ -5,12 +5,11 @@ import * as path from "path";
 import { commands, env, OpenDialogOptions, Uri, window } from "vscode";
 
 import { channels, INITIAL_SESSION_LOG_RETRY_SCHEDULE_INTERVAL, namespaces, vsCommands, WEB_UI_URL } from "@constants";
-import { ConnectionsController } from "@controllers";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import { MessageType, ProjectRecurringErrorMessages, SessionStateType } from "@enums";
 import { translate } from "@i18n";
-import { ConnectionsViewDelegate, IProjectView } from "@interfaces";
+import { IProjectView } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
 import { reverseSessionStateConverter } from "@models/utils";
 import { BuildsService, DeploymentsService, LoggerService, ProjectsService, SessionsService } from "@services";
@@ -37,7 +36,6 @@ export class ProjectController {
 	private loadingRequestsCounter: number = 0;
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
-	public connections: ConnectionsViewDelegate;
 	private sessionLogRetryScheduler?: RetryScheduler;
 	private lastDeploymentId?: string;
 
@@ -45,10 +43,6 @@ export class ProjectController {
 		this.view = projectView;
 		this.projectId = projectId;
 		this.view.delegate = this;
-		this.connections = new ConnectionsController(projectId, projectView, {
-			startLoader: () => this.startLoader,
-			stopLoader: () => this.stopLoader,
-		});
 	}
 
 	private updateViewWithCountdown(countdown: string | number) {
@@ -600,7 +594,6 @@ export class ProjectController {
 		if (this.selectedDeploymentId) {
 			this.deploymentsWithLiveTail.set(this.selectedDeploymentId, false);
 		}
-		this.connections?.dispose?.();
 	}
 
 	async build() {
@@ -1118,6 +1111,26 @@ export class ProjectController {
 			const log = translate().t("errors.failedOpenTriggersEnriched", {
 				projectName: this.project?.name,
 				linkURL: triggersWebUiURL,
+			});
+
+			commands.executeCommand(vsCommands.showErrorMessage, notification);
+			LoggerService.error(namespaces.connectionsController, log);
+		}
+	}
+
+	async openConnectionsWebUI() {
+		const connectionsWebUiURL = Uri.parse(`${WEB_UI_URL}/projects/${this.projectId}/connections`);
+
+		const initLinkOpenInBrowser = await env.openExternal(connectionsWebUiURL);
+
+		if (!initLinkOpenInBrowser) {
+			const notification = translate().t("errors.failedOpenConnections", {
+				projectName: this.project?.name,
+			});
+
+			const log = translate().t("errors.failedOpenConnectionsEnriched", {
+				projectName: this.project?.name,
+				linkURL: connectionsWebUiURL,
 			});
 
 			commands.executeCommand(vsCommands.showErrorMessage, notification);
