@@ -26,8 +26,8 @@ export interface ProjectViewDelegate {
 	loadMoreSessions?: Callback;
 	tryToReenable?: Callback;
 	refreshUI?: Callback;
-	connections: ConnectionsViewDelegate;
 	openTriggersWebUI?: Callback;
+	openConnectionsWebUI?: Callback;
 }
 export interface ConnectionsViewDelegate {
 	openConnectionInitURL?: Callback<{
@@ -35,7 +35,6 @@ export interface ConnectionsViewDelegate {
 		connectionId: string;
 	}>;
 	openConnectionsModal?: Callback;
-	fetchConnections?: Callback;
 	dispose?: () => void;
 }
 

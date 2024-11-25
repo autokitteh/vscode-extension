@@ -89,19 +89,14 @@ export class ProjectView implements IProjectView {
 					case MessageType.tryToReconnect:
 						this.delegate?.tryToReenable?.();
 						break;
-					case MessageType.openConnectionInitURL:
-						this.delegate?.connections.openConnectionInitURL?.(
-							message.payload as { connectionName: string; connectionId: string }
-						);
-						break;
-					case MessageType.fetchConnections:
-						this.delegate?.connections.fetchConnections?.();
-						break;
 					case MessageType.refreshUI:
 						this.delegate?.refreshUI?.();
 						break;
 					case MessageType.openTriggersWebUI:
 						this.delegate?.openTriggersWebUI?.();
+						break;
+					case MessageType.openConnectionsWebUI:
+						this.delegate?.openConnectionsWebUI?.();
 						break;
 					default:
 				}
