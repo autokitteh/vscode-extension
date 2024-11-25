@@ -1,3 +1,10 @@
+## [0.20.11](https://github.com/autokitteh/vscode-extension/compare/v0.20.10...v0.20.11) (2024-11-25)
+
+
+### Features
+
+* **UI-966:** change connections button functionality ([#392](https://github.com/autokitteh/vscode-extension/issues/392)) ([ba6f871](https://github.com/autokitteh/vscode-extension/commit/ba6f8713eebf197840de745800fa0c356b3fc59c))
+
 ## [0.20.10](https://github.com/autokitteh/vscode-extension/compare/v0.20.9...v0.20.10) (2024-11-18)
 
 ## [0.20.9](https://github.com/autokitteh/vscode-extension/compare/v0.20.8...v0.20.9) (2024-11-14)
