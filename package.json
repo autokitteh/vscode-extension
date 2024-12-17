@@ -60,15 +60,21 @@
 		],
 		"configuration": {
 			"properties": {
-				"autokitteh.authToken": {
-					"default": "",
-					"description": "Authentication token",
-					"type": "string",
-					"scope": "machine"
-				},
 				"autokitteh.baseURL": {
 					"default": "http://localhost:9980",
 					"description": "Server URL",
+					"type": "string",
+					"scope": "machine"
+				},
+				"autokitteh.organization": {
+					"default": "",
+					"description": "Organization",
+					"type": "string",
+					"scope": "machine"
+				},
+				"autokitteh.authToken": {
+					"default": "",
+					"description": "Authentication token",
 					"type": "string",
 					"scope": "machine"
 				},
