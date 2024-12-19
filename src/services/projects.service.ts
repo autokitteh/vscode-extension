@@ -32,7 +32,7 @@ export class ProjectsService {
 
 	static async list(): Promise<ServiceResponse<Project[]>> {
 		try {
-			const projects = (await projectsClient.listForOwner({ ownerId: "" })).projects.map(convertProjectProtoToModel);
+			const projects = (await projectsClient.list({})).projects.map(convertProjectProtoToModel);
 			return { data: projects, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.projectService, (error as Error).message);
