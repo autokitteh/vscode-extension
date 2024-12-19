@@ -1,3 +1,10 @@
+## [0.20.12](https://github.com/autokitteh/vscode-extension/compare/v0.20.11...v0.20.12) (2024-12-19)
+
+
+### Bug Fixes
+
+* **UI-1097:** switch projects list request ([#395](https://github.com/autokitteh/vscode-extension/issues/395)) ([c607776](https://github.com/autokitteh/vscode-extension/commit/c607776968d4d11d45d4ff0e0273ff76e88d5033))
+
 ## [0.20.11](https://github.com/autokitteh/vscode-extension/compare/v0.20.10...v0.20.11) (2024-11-25)
 
 
