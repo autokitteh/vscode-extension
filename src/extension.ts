@@ -142,18 +142,18 @@ export async function activate(context: ExtensionContext) {
 			return { userAuthenticated: true };
 		}
 
-		context.subscriptions.push(
-			commands.registerCommand(vsCommands.openOrganization, async (organization: SidebarTreeItem) => {
-				if (organization) {
-					await commands.executeCommand(vsCommands.setContext, "organizationId", organization.key);
-					sidebarController?.setIsOrganizations(false);
-					sidebarController?.refreshProjects(true, organization.key, organization.label, true);
-				}
-			})
-		);
-
 		return { userAuthenticated: true, organizations };
 	};
+
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.openOrganization, async (organization: SidebarTreeItem) => {
+			if (organization) {
+				await commands.executeCommand(vsCommands.setContext, "organizationId", organization.key);
+				sidebarController?.setIsOrganizations(false);
+				sidebarController?.refreshProjects(true, organization.key, organization.label, true);
+			}
+		})
+	);
 
 	let sidebarView = new SidebarView();
 
@@ -174,6 +174,7 @@ export async function activate(context: ExtensionContext) {
 	}
 
 	sidebarController = new SidebarController(sidebarView, organizationId, organizationName, organizations);
+	sidebarController?.fetchData();
 
 	tabsManager = new TabsManagerController(context);
 
@@ -187,6 +188,18 @@ export async function activate(context: ExtensionContext) {
 			const { organizations } = await userAuthorizedWithOrganization(false);
 			if (!organizations?.length) {
 				return;
+			}
+
+			const organizationPick = await window.showQuickPick(
+				organizations.map((organization) => ({ label: organization.name, description: organization.organizationId })),
+				{ placeHolder: translate().t("organizations.pickOrganization") }
+			);
+
+			if (organizationPick) {
+				await commands.executeCommand(vsCommands.setContext, "organizationId", organizationPick.description);
+				await commands.executeCommand(vsCommands.setContext, "organizationName", organizationPick.label);
+				sidebarController?.setIsOrganizations(false);
+				sidebarController?.refreshProjects(true, organizationPick.description, organizationPick.label, true);
 			}
 		})
 	);

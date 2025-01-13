@@ -109,10 +109,12 @@ export class SidebarController {
 		}
 
 		if (projects!.length) {
-			return projects!.map((project) => ({
-				label: project.name,
-				key: project.projectId,
-			}));
+			return projects!
+				.sort((a, b) => a.name.localeCompare(b.name))
+				.map((project) => ({
+					label: project.name,
+					key: project.projectId,
+				}));
 		}
 
 		return [
@@ -156,7 +158,6 @@ export class SidebarController {
 		}
 
 		this.view.refresh(sidebarOrganizationsItems);
-		return;
 	};
 
 	private updateViewWithCountdown(countdown: string, organizationId?: string, organizationName?: string) {
