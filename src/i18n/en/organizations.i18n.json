@@ -1,5 +1,5 @@
 {
-	"organizations": "organizations",
+	"organizations": "Organizations",
 	"fetchOrganizationsFailedError": "Organizations fetch failed - error: {{error}}",
 	"noOrganizationsFound": "No organizations found",
 	"noOrganizationsChosen": "No organizations chosen, you must pick organization, reload your workspace and pick organization",
@@ -9,5 +9,7 @@
 	"tokenNotFound": "API token not found",
 	"missingOrganizationId": "Missing organization ID",
 	"organizationNotFound": "Organization not found",
-	"organizationNotFoundExtended": "Organization not found, organization ID: {{id}}"
+	"organizationNotFoundExtended": "Organization not found, organization ID: {{id}}",
+	"pickOrganization": "Pick organization on {{hostUrl}}",
+	"openOrganizationName": "Open organization: {{name}}"
 }

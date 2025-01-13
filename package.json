@@ -32,6 +32,10 @@
 				"title": "Build autokitteh"
 			},
 			{
+				"command": "autokitteh.changeOrganization",
+				"title": "autokitteh: Change organization"
+			},
+			{
 				"command": "autokitteh.enable",
 				"icon": "resources/sidebar/top-panel-connect.svg",
 				"title": "autokitteh: Enable"
@@ -48,6 +52,14 @@
 					"dark": "resources/sidebar/top-panel-reload-dark.svg"
 				},
 				"title": "autokitteh: Reload Projects"
+			},
+			{
+				"command": "autokitteh.changeOrganization",
+				"icon": {
+					"light": "resources/sidebar/icons/light/organizations.svg",
+					"dark": "resources/sidebar/icons/dark/organizations.svg"
+				},
+				"title": "autokitteh: Change Organization"
 			},
 			{
 				"command": "autokitteh.buildProject",
@@ -134,6 +146,9 @@
 					"when": "false"
 				},
 				{
+					"command": "autokitteh.changeOrganization"
+				},
+				{
 					"command": "autokitteh.buildProject",
 					"when": "false"
 				},
@@ -166,6 +181,11 @@
 					"group": "navigation"
 				},
 				{
+					"command": "autokitteh.changeOrganization",
+					"group": "navigation",
+					"when": "view == autokittehSidebarTree && config.autokitteh.authToken"
+				},
+				{
 					"command": "autokitteh.enable",
 					"group": "navigation",
 					"when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
@@ -186,7 +206,8 @@
 			"autokittehSidebarTree": [
 				{
 					"id": "autokittehSidebarTree",
-					"name": "AK Server"
+					"name": "AK Server",
+					"when": "config.autokitteh.baseURL && config.autokitteh.serviceEnabled"
 				}
 			]
 		},

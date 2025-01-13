@@ -88,10 +88,6 @@ export async function activate(context: ExtensionContext) {
 	const organizationName =
 		((await commands.executeCommand(vsCommands.getContext, "organizationName")) as string) || undefined;
 
-	const sidebarView = new SidebarView();
-
-	sidebarController = new SidebarController(sidebarView, organizationId, organizationName);
-
 	const authenticationToken = await commands.executeCommand(vsCommands.getContext, "authToken");
 	const userId = await commands.executeCommand(vsCommands.getContext, "userId");
 
@@ -134,31 +130,21 @@ export async function activate(context: ExtensionContext) {
 
 			return false;
 		}
-		const quickPick = window.createQuickPick();
-		quickPick.items = organizations.map((organization) => ({
-			label: organization.name,
-			description: organization.organizationId,
-		}));
 
-		quickPick.onDidChangeSelection(async (selection) => {
-			const chosenOrganization = selection[0];
-			await commands.executeCommand(vsCommands.setContext, "organizationId", chosenOrganization.description);
-			await commands.executeCommand(vsCommands.setContext, "organizationName", chosenOrganization.label);
-			commands.executeCommand(vsCommands.reloadProjects, chosenOrganization.description, chosenOrganization.label);
+		context.subscriptions.push(
+			commands.registerCommand(vsCommands.openOrganization, async (organization: SidebarTreeItem) => {
+				if (organization) {
+					await commands.executeCommand(vsCommands.setContext, "organizationId", organization.key);
+					sidebarController?.setIsOrganizations(false);
+					sidebarController?.refreshProjects(true, organization.key, organization.label, true);
+				}
+			})
+		);
 
-			quickPick.dispose();
-		});
+		const sidebarView = new SidebarView(true);
 
-		quickPick.onDidHide(async () => {
-			if (!quickPick.selectedItems.length) {
-				const log = translate().t("organizations.noOrganizationsChosen");
-				await commands.executeCommand(vsCommands.showErrorMessage, log);
-				LoggerService.error(namespaces.authentication, log);
-			}
-			quickPick.dispose();
-		});
+		sidebarController = new SidebarController(sidebarView, "", "", organizations);
 
-		quickPick.show();
 		return false;
 	};
 
@@ -166,6 +152,11 @@ export async function activate(context: ExtensionContext) {
 	if (!isUserAuthenticatedOrAuthenticationDisabled) {
 		return;
 	}
+
+	const sidebarView = new SidebarView();
+
+	sidebarController = new SidebarController(sidebarView, organizationId, organizationName);
+
 	tabsManager = new TabsManagerController(context);
 
 	context.subscriptions.push(sidebarView);

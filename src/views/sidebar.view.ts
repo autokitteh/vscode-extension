@@ -13,24 +13,37 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 	private rootNode?: TreeItem;
 	private childNodeMap?: Map<TreeItem, TreeItem[]>;
 	private strippedBaseURL = BASE_URL.replace(/^https?\:\/\/|\/$/g, "");
-	private organizationId?: string;
-	constructor() {}
+	private isOrganizations: boolean = false;
+	constructor(isOrganizations?: boolean) {
+		this.isOrganizations = !!isOrganizations;
+	}
 
-	async load(children: SidebarTreeItem[], organizationId?: string, organizationName?: string) {
+	public setIsOrganizations(isOrganizations: boolean) {
+		this.isOrganizations = isOrganizations;
+	}
+
+	async load(children: SidebarTreeItem[], organizationName?: string) {
 		let childItems: TreeItem[] = [];
-		this.organizationId = organizationId;
 
 		if (!children.length) {
 			this.rootNode = undefined;
 			return;
 		}
 
-		const organizationNameToDisplay = organizationName ? `on ${organizationName}` : "";
+		const organizationNameToDisplay = organizationName ? `on ${organizationName} ` : "";
 
 		this.rootNode = new TreeItem(
-			`${translate().t("projects.projects")} ${organizationNameToDisplay} at ${this.strippedBaseURL}`,
+			`${translate().t("projects.projects")} ${organizationNameToDisplay}at ${this.strippedBaseURL}`,
 			TreeItemCollapsibleState.Expanded
 		);
+
+		if (this.isOrganizations) {
+			this.rootNode = new TreeItem(
+				translate().t("organizations.pickOrganization", { hostUrl: this.strippedBaseURL }),
+				TreeItemCollapsibleState.Expanded
+			);
+		}
+
 		this.childNodeMap = new Map();
 
 		childItems = children.map((child: SidebarTreeItem) => {
@@ -51,9 +64,13 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 
 	getTreeItem(element: TreeItem): TreeItem {
 		if (element !== this.rootNode || element.contextValue === undefined) {
+			const title = this.isOrganizations
+				? translate().t("organizations.openOrganizationName", { name: element.label })
+				: translate().t("projects.openProject", { name: element.label });
+			const command = this.isOrganizations ? vsCommands.openOrganization : vsCommands.openWebview;
 			element.command = {
-				command: vsCommands.openWebview,
-				title: translate().t("projects.openProject"),
+				command,
+				title,
 				arguments: [{ label: element.label, key: element.contextValue }],
 			};
 		}
@@ -72,8 +89,8 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 		}
 	}
 
-	refresh(children: SidebarTreeItem[], organizationId?: string, organizationName?: string) {
-		this.load(children, organizationId, organizationName);
+	refresh(children: SidebarTreeItem[], organizationName?: string) {
+		this.load(children, organizationName);
 		this._onDidChangeTreeData.fire();
 	}
 

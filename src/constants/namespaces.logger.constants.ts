@@ -11,6 +11,7 @@ export const namespaces = {
 	resourcesService: "Resources Service",
 	projectController: "Project Controller",
 	projectSidebarController: "Project Sidebar Controller",
+	organizationsSidebarController: "Organizations Sidebar Controller",
 	sessionsService: "Sessions Service",
 	sessionsHistory: "Sessions History",
 	appStateHandler: "Application State",
