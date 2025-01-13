@@ -1,10 +1,13 @@
 export const namespaces = {
 	applyManifest: "Manifest Application",
+	authService: "Auth Service",
+	authentication: "Authentication",
 	connection: "Connection",
 	serverRequests: "Server Requests",
 	deploymentsService: "Deployments Service",
 	manifestService: "Manifest Service",
 	projectService: "Project Service",
+	organizationsService: "Organization Service",
 	resourcesService: "Resources Service",
 	projectController: "Project Controller",
 	projectSidebarController: "Project Sidebar Controller",

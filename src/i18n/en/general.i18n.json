@@ -1,5 +1,7 @@
 {
 	"baseURLChanged": "Base URL changed, to apply changes please reload your workspace",
+	"tokenChanged": "Token changed, to apply changes please reload your workspace",
+	"organizationChanged": "Organization changed, to apply changes please reload your workspace",
 	"baseURLInvalid": "Base URL you entered is invalid, please enter a valid URL",
 	"companyName": "autokitteh",
 	"dismiss": "Dismiss",

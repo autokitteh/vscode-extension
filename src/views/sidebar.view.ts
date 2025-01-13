@@ -13,18 +13,22 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 	private rootNode?: TreeItem;
 	private childNodeMap?: Map<TreeItem, TreeItem[]>;
 	private strippedBaseURL = BASE_URL.replace(/^https?\:\/\/|\/$/g, "");
-
+	private organizationId?: string;
 	constructor() {}
 
-	load(children: SidebarTreeItem[]) {
+	async load(children: SidebarTreeItem[], organizationId?: string, organizationName?: string) {
 		let childItems: TreeItem[] = [];
+		this.organizationId = organizationId;
 
 		if (!children.length) {
 			this.rootNode = undefined;
 			return;
 		}
+
+		const organizationNameToDisplay = organizationName ? `on ${organizationName}` : "";
+
 		this.rootNode = new TreeItem(
-			`${translate().t("projects.projects")} on ${this.strippedBaseURL}`,
+			`${translate().t("projects.projects")} ${organizationNameToDisplay} at ${this.strippedBaseURL}`,
 			TreeItemCollapsibleState.Expanded
 		);
 		this.childNodeMap = new Map();
@@ -68,8 +72,8 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 		}
 	}
 
-	refresh(children: SidebarTreeItem[]) {
-		this.load(children);
+	refresh(children: SidebarTreeItem[], organizationId?: string, organizationName?: string) {
+		this.load(children, organizationId, organizationName);
 		this._onDidChangeTreeData.fire();
 	}
 

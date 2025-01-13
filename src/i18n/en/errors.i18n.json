@@ -41,6 +41,7 @@
 	"pathExist": "Path exists but is not a directory",
 	"projectNotFound": "Couldn't fetch the project details",
 	"projectNotFoundWithID": "Couldn't fetch the project details, project ID: {{id}}",
+	"projectOrganizationNotFound": "Couldn't fetch the project organization, project ID: {{id}}",
 	"projectPathCopiedError": "Error copying project path to clipboard for project: {{projectName}}",
 	"projectPathCopiedErrorEnriched": "Error copying project path to clipboard - project: {{projectName}}, error: {{error}}",
 	"serverNotRespond": "No connection found, re-connecting. Please check host configuration and manifest existance",

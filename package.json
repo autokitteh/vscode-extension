@@ -42,6 +42,14 @@
 				"title": "autokitteh: Disable"
 			},
 			{
+				"command": "autokitteh.reloadProjects",
+				"icon": {
+					"light": "resources/sidebar/top-panel-reload-light.svg",
+					"dark": "resources/sidebar/top-panel-reload-dark.svg"
+				},
+				"title": "autokitteh: Reload Projects"
+			},
+			{
 				"command": "autokitteh.buildProject",
 				"icon": {
 					"dark": "resources/sidebar/icons/dark/tools.svg",
@@ -60,16 +68,34 @@
 		],
 		"configuration": {
 			"properties": {
+				"autokitteh.baseURL": {
+					"default": "http://localhost:9980",
+					"description": "Server URL",
+					"type": "string",
+					"scope": "machine"
+				},
 				"autokitteh.authToken": {
 					"default": "",
 					"description": "Authentication token",
 					"type": "string",
 					"scope": "machine"
 				},
-				"autokitteh.baseURL": {
-					"default": "http://localhost:9980",
-					"description": "Server URL",
-					"type": "string",
+				"autokitteh.userId": {
+					"default": "",
+					"description": "User ID",
+					"type": "hidden",
+					"scope": "machine"
+				},
+				"autokitteh.organizationId": {
+					"default": "",
+					"description": "Organization ID",
+					"type": "hidden",
+					"scope": "machine"
+				},
+				"autokitteh.organizationName": {
+					"default": "",
+					"description": "Organization Name",
+					"type": "hidden",
 					"scope": "machine"
 				},
 				"autokitteh.projectsPaths": {
@@ -135,6 +161,10 @@
 				}
 			],
 			"view/title": [
+				{
+					"command": "autokitteh.reloadProjects",
+					"group": "navigation"
+				},
 				{
 					"command": "autokitteh.enable",
 					"group": "navigation",

@@ -18,18 +18,24 @@ export class SidebarController {
 	private retryScheduler: RetryScheduler;
 	private projectsRetryStarted: boolean = false;
 	private strippedBaseURL = BASE_URL.replace(/^https?\:\/\/|\/$/g, "");
+	private organizationName?: string = "";
+	private organizationId?: string = "";
 
-	constructor(sidebarView: ISidebarView) {
+	constructor(sidebarView: ISidebarView, organizationId?: string, organizationName?: string) {
 		this.view = sidebarView;
+		this.organizationName = organizationName;
+		this.organizationId = organizationId;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
 		this.retryScheduler = new RetryScheduler(
 			INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL,
-			() => this.refreshProjects(),
+			() => this.refreshProjects(true, "", "", true),
 			(countdown) =>
 				this.updateViewWithCountdown(
 					translate().t("general.reconnecting", {
 						countdown,
-					})
+					}),
+					organizationId,
+					organizationName
 				)
 		);
 	}
@@ -42,8 +48,13 @@ export class SidebarController {
 		this.retryScheduler.startFetchInterval();
 	};
 
-	private fetchProjects = async (resetCountdown: boolean = true): Promise<SidebarTreeItem[] | undefined> => {
-		const { data: projects, error } = await ProjectsService.list();
+	private fetchProjects = async (
+		resetCountdown: boolean = true,
+		organizationId?: string,
+		organizationName?: string
+	): Promise<SidebarTreeItem[] | undefined> => {
+		const { data: projects, error } = await ProjectsService.list(organizationId);
+		let organizationNameToDisplay = organizationName ? `on ${organizationName}` : "";
 
 		if (error) {
 			this.projects = undefined;
@@ -63,7 +74,7 @@ export class SidebarController {
 			} else {
 				return [
 					{
-						label: `🔴 ${translate().t("general.internalError")} on ${this.strippedBaseURL}`,
+						label: `🔴 ${translate().t("general.internalError")} ${organizationNameToDisplay} at ${this.strippedBaseURL}`,
 						key: undefined,
 					},
 				];
@@ -84,29 +95,38 @@ export class SidebarController {
 
 		return [
 			{
-				label: `${translate().t("projects.noProjectsFound")} on ${this.strippedBaseURL}`,
+				label: `${translate().t("projects.noProjectsFound")} ${organizationNameToDisplay} at ${this.strippedBaseURL}`,
 				key: undefined,
 			},
 		];
 	};
 
-	public async refreshProjects(resetCountdown: boolean = true) {
-		const projects = await this.fetchProjects(resetCountdown);
-		if (projects) {
-			if (!isEqual(projects, this.projects)) {
-				this.projects = projects;
-				this.view.refresh(this.projects);
-			}
+	public async refreshProjects(
+		resetCountdown: boolean = true,
+		organizationId?: string,
+		organizationName?: string,
+		force?: boolean
+	) {
+		const refreshOrganizationName = organizationName || this.organizationName;
+		const refreshOrganizationId = organizationId || this.organizationId;
+		const projects = await this.fetchProjects(resetCountdown, refreshOrganizationId, refreshOrganizationName);
+		if (!isEqual(projects, this.projects) || force) {
+			this.projects = projects;
+			this.view.refresh(projects!, refreshOrganizationId, refreshOrganizationName);
 		}
 	}
 
-	private updateViewWithCountdown(countdown: string) {
-		this.view.refresh([
-			{
-				label: `🔴 ${countdown} on ${this.strippedBaseURL}`,
-				key: undefined,
-			},
-		]);
+	private updateViewWithCountdown(countdown: string, organizationId?: string, organizationName?: string) {
+		this.view.refresh(
+			[
+				{
+					label: `🔴 ${countdown} on ${this.strippedBaseURL} - ${organizationName}`,
+					key: undefined,
+				},
+			],
+			organizationId,
+			organizationName
+		);
 		commands.executeCommand(vsCommands.displayProjectCountdown, countdown);
 	}
 
@@ -179,7 +199,7 @@ export class SidebarController {
 
 	public resetSidebar = () => {
 		this.projects = [];
-		this.view.refresh([]);
+		this.view.refresh([], this.organizationId, this.organizationName);
 	};
 
 	public disable = () => {

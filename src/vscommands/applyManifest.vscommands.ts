@@ -20,7 +20,10 @@ export const applyManifest = async () => {
 	const mainfestYaml = document.getText();
 	const filePath = document.uri.fsPath;
 
-	const { data: manifestResponse, error } = await ManifestService.applyManifest(mainfestYaml, filePath);
+	const organizationId =
+		((await commands.executeCommand(vsCommands.getContext, "organizationId")) as string) || undefined;
+
+	const { data: manifestResponse, error } = await ManifestService.applyManifest(mainfestYaml, filePath, organizationId);
 	if (error) {
 		commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (error as Error).message);
 		return;
@@ -39,6 +42,10 @@ export const applyManifest = async () => {
 		vscodeProjectsPaths[projectIds[0]] = manifestDirectory;
 
 		await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
+
+		const organizationName =
+			((await commands.executeCommand(vsCommands.getContext, "organizationName")) as string) || undefined;
+		await commands.executeCommand(vsCommands.reloadProjects, organizationId, organizationName);
 	}
 
 	(logs || []).forEach((log) => LoggerService.info(namespaces.applyManifest, `${log}`));

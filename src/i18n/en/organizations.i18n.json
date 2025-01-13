@@ -1,0 +1,13 @@
+{
+	"organizations": "organizations",
+	"fetchOrganizationsFailedError": "Organizations fetch failed - error: {{error}}",
+	"noOrganizationsFound": "No organizations found",
+	"noOrganizationsChosen": "No organizations chosen, you must pick organization, reload your workspace and pick organization",
+	"noOrganizationsConfigured": "User organization not configured, please select your organization in the picker above",
+	"userNotFound": "Invalid token, user not found, validate your token and reload the workspace",
+	"userNotFoundExtended": "Invalid token, user not found, validate your token and reload the workspace, error: {{error}}",
+	"tokenNotFound": "API token not found",
+	"missingOrganizationId": "Missing organization ID",
+	"organizationNotFound": "Organization not found",
+	"organizationNotFoundExtended": "Organization not found, organization ID: {{id}}"
+}
