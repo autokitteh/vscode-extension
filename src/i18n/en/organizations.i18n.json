@@ -2,6 +2,7 @@
 	"organizations": "Organizations",
 	"fetchOrganizationsFailedError": "Organizations fetch failed - error: {{error}}",
 	"noOrganizationsFound": "No organizations found",
+	"noOrganizationsFoundExtended": "No organizations found, error: {{error}}",
 	"noOrganizationsChosen": "No organizations chosen, you must pick organization, reload your workspace and pick organization",
 	"noOrganizationsConfigured": "User organization not configured, please select your organization in the picker above",
 	"userNotFound": "Invalid token, user not found, validate your token and reload the workspace",

@@ -178,12 +178,13 @@
 			"view/title": [
 				{
 					"command": "autokitteh.reloadProjects",
-					"group": "navigation"
+					"group": "navigation",
+					"when": "view == autokittehSidebarTree && config.autokitteh.authToken && config.autokitteh.organizationId && config.autokitteh.serviceEnabled"
 				},
 				{
 					"command": "autokitteh.changeOrganization",
 					"group": "navigation",
-					"when": "view == autokittehSidebarTree && config.autokitteh.authToken"
+					"when": "view == autokittehSidebarTree && config.autokitteh.authToken && config.autokitteh.organizationId && config.autokitteh.serviceEnabled"
 				},
 				{
 					"command": "autokitteh.enable",
@@ -206,8 +207,7 @@
 			"autokittehSidebarTree": [
 				{
 					"id": "autokittehSidebarTree",
-					"name": "AK Server",
-					"when": "config.autokitteh.baseURL && config.autokitteh.serviceEnabled"
+					"name": "AK Server"
 				}
 			]
 		},
@@ -215,8 +215,7 @@
 			"activitybar": [
 				{
 					"icon": "resources/sidebar/ak-sidebar-icon.png",
-					"id": "autokittehSidebarTree",
-					"title": "autokitteh"
+					"id": "autokittehSidebarTree"
 				}
 			]
 		},

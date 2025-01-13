@@ -3,7 +3,7 @@ require("module-alias/register");
 
 import { commands, ExtensionContext, window, workspace, ConfigurationTarget } from "vscode";
 
-import { namespaces, vsCommands } from "@constants";
+import { BASE_URL, namespaces, vsCommands } from "@constants";
 import { SidebarController, TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import eventEmitter from "@eventEmitter";
@@ -44,6 +44,7 @@ export async function activate(context: ExtensionContext) {
 				organizationId || (await commands.executeCommand(vsCommands.getContext, "organizationId"));
 			const organizationNameForSideBar =
 				organizationName || (await commands.executeCommand(vsCommands.getContext, "organizationName"));
+
 			sidebarController?.refreshProjects(true, organizationIdForSideBar, organizationNameForSideBar, true);
 		})
 	);
@@ -86,9 +87,9 @@ export async function activate(context: ExtensionContext) {
 	});
 
 	context.subscriptions.push(commands.registerCommand(vsCommands.showErrorMessage, MessageHandler.errorMessage));
-	const organizationId =
+	let organizationId =
 		((await commands.executeCommand(vsCommands.getContext, "organizationId")) as string) || undefined;
-	const organizationName =
+	let organizationName =
 		((await commands.executeCommand(vsCommands.getContext, "organizationName")) as string) || undefined;
 
 	const authenticationToken = await commands.executeCommand(vsCommands.getContext, "authToken");
@@ -149,37 +150,10 @@ export async function activate(context: ExtensionContext) {
 		commands.registerCommand(vsCommands.openOrganization, async (organization: SidebarTreeItem) => {
 			if (organization) {
 				await commands.executeCommand(vsCommands.setContext, "organizationId", organization.key);
-				sidebarController?.setIsOrganizations(false);
-				sidebarController?.refreshProjects(true, organization.key, organization.label, true);
+				sidebarController?.fetchData(false, organization.key, organization.label);
 			}
 		})
 	);
-
-	let sidebarView = new SidebarView();
-
-	if (authenticationToken) {
-		const {
-			organizations: organizationsList,
-			selectedOrganizationId,
-			userAuthenticated,
-		} = await userAuthorizedWithOrganization();
-		if (!userAuthenticated) {
-			return;
-		}
-		if (!selectedOrganizationId) {
-			await resetOrganization();
-			organizations = organizationsList;
-			sidebarView.setIsOrganizations(true);
-		}
-	}
-
-	sidebarController = new SidebarController(sidebarView, organizationId, organizationName, organizations);
-	sidebarController?.fetchData();
-
-	tabsManager = new TabsManagerController(context);
-
-	context.subscriptions.push(sidebarView);
-	context.subscriptions.push(sidebarController);
 
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
 	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));
@@ -192,14 +166,13 @@ export async function activate(context: ExtensionContext) {
 
 			const organizationPick = await window.showQuickPick(
 				organizations.map((organization) => ({ label: organization.name, description: organization.organizationId })),
-				{ placeHolder: translate().t("organizations.pickOrganization") }
+				{ placeHolder: translate().t("organizations.pickOrganization", { hostUrl: BASE_URL }) }
 			);
 
 			if (organizationPick) {
 				await commands.executeCommand(vsCommands.setContext, "organizationId", organizationPick.description);
 				await commands.executeCommand(vsCommands.setContext, "organizationName", organizationPick.label);
-				sidebarController?.setIsOrganizations(false);
-				sidebarController?.refreshProjects(true, organizationPick.description, organizationPick.label, true);
+				sidebarController?.fetchData(false, organizationPick.description, organizationPick.label);
 			}
 		})
 	);
@@ -207,6 +180,93 @@ export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(vsCommands.openBaseURLInputDialog, openBaseURLInputDialog));
 	context.subscriptions.push(commands.registerCommand(vsCommands.openConfigSetupWalkthrough, openWalkthrough));
 	context.subscriptions.push(commands.registerCommand(vsCommands.setAuthToken, setToken));
+
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.buildProject, (focusedItem) => buildProject(focusedItem, sidebarController!))
+	);
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.runProject, (focusedItem) => runProject(focusedItem, sidebarController!))
+	);
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.enable, async () => {
+			sidebarController?.enable();
+			tabsManager?.enable();
+			await AppStateHandler.set(true);
+		})
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.refreshSidebar, async () => {
+			sidebarController?.enable();
+		})
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.disable, async () => {
+			sidebarController?.disable();
+			tabsManager?.disable();
+			await AppStateHandler.set(false);
+		})
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.reconnectSidebar, async () => {
+			sidebarController?.reconnect();
+		})
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.displayProjectCountdown, (countdown) => {
+			tabsManager?.displayProjectCountdown(countdown);
+		})
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {
+			if (project) {
+				if (project.label.indexOf("Reconnecting") !== -1 && project.key === undefined) {
+					sidebarController?.refreshProjects(false);
+					tabsManager?.reconnect();
+					return;
+				}
+				tabsManager?.openWebview(project);
+			}
+		})
+	);
+
+	let sidebarView = new SidebarView();
+	let isOrganizationsSidebar = false;
+
+	if (authenticationToken) {
+		const {
+			organizations: organizationsList,
+			selectedOrganizationId,
+			userAuthenticated,
+		} = await userAuthorizedWithOrganization();
+		if (!userAuthenticated) {
+			sidebarController = new SidebarController(sidebarView);
+			sidebarController?.displayError(translate().t("organizations.userNotFound"));
+			return;
+		}
+		if (!selectedOrganizationId) {
+			await resetOrganization();
+			organizations = organizationsList;
+			isOrganizationsSidebar = true;
+		}
+	} else {
+		await resetOrganization();
+		await resetUser();
+		organizationId = undefined;
+		organizationName = undefined;
+	}
+	sidebarView.setIsOrganizations(isOrganizationsSidebar);
+	sidebarController = new SidebarController(sidebarView, organizationId, organizationName, organizations);
+	sidebarController?.fetchData(isOrganizationsSidebar);
+
+	tabsManager = new TabsManagerController(context);
+
+	context.subscriptions.push(sidebarView);
+	context.subscriptions.push(sidebarController);
 
 	if (sidebarController && tabsManager) {
 		window.registerUriHandler({
@@ -234,59 +294,6 @@ export async function activate(context: ExtensionContext) {
 				);
 			},
 		});
-
-		context.subscriptions.push(
-			commands.registerCommand(vsCommands.buildProject, (focusedItem) => buildProject(focusedItem, sidebarController!))
-		);
-		context.subscriptions.push(
-			commands.registerCommand(vsCommands.runProject, (focusedItem) => runProject(focusedItem, sidebarController!))
-		);
-		context.subscriptions.push(
-			commands.registerCommand(vsCommands.enable, async () => {
-				sidebarController?.enable();
-				tabsManager?.enable();
-				await AppStateHandler.set(true);
-			})
-		);
-
-		context.subscriptions.push(
-			commands.registerCommand(vsCommands.refreshSidebar, async () => {
-				sidebarController?.enable();
-			})
-		);
-
-		context.subscriptions.push(
-			commands.registerCommand(vsCommands.disable, async () => {
-				sidebarController?.disable();
-				tabsManager?.disable();
-				await AppStateHandler.set(false);
-			})
-		);
-
-		context.subscriptions.push(
-			commands.registerCommand(vsCommands.reconnectSidebar, async () => {
-				sidebarController?.reconnect();
-			})
-		);
-
-		context.subscriptions.push(
-			commands.registerCommand(vsCommands.displayProjectCountdown, (countdown) => {
-				tabsManager?.displayProjectCountdown(countdown);
-			})
-		);
-
-		context.subscriptions.push(
-			commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {
-				if (project) {
-					if (project.label.indexOf("Reconnecting") !== -1 && project.key === undefined) {
-						sidebarController?.refreshProjects(false);
-						tabsManager?.reconnect();
-						return;
-					}
-					tabsManager?.openWebview(project);
-				}
-			})
-		);
 	}
 
 	const isAppOn = await AppStateHandler.get();

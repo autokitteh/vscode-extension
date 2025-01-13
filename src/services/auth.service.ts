@@ -23,8 +23,8 @@ export class AuthService {
 
 			return { data: convertedUser, error: undefined };
 		} catch (error) {
-			const errorMessage = i18n.t("accountFetchErrorExtended", {
-				ns: "services",
+			const errorMessage = i18n.t("userFetchErrorExtended", {
+				ns: "errors",
 				error: new Error(error as string).message,
 			});
 			LoggerService.error(namespaces.authService, errorMessage);

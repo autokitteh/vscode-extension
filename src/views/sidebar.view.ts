@@ -1,4 +1,4 @@
-import { EventEmitter, TreeDataProvider, TreeItem, Event, TreeItemCollapsibleState } from "vscode";
+import { EventEmitter, TreeDataProvider, TreeItem, Event, TreeItemCollapsibleState, ThemeIcon } from "vscode";
 
 import { BASE_URL, vsCommands } from "@constants";
 import { translate } from "@i18n";
@@ -91,6 +91,16 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 
 	refresh(children: SidebarTreeItem[], organizationName?: string) {
 		this.load(children, organizationName);
+		this._onDidChangeTreeData.fire();
+	}
+
+	displayError(error: string) {
+		const errorItem = new TreeItem(error, TreeItemCollapsibleState.None);
+		errorItem.contextValue = "error";
+		errorItem.iconPath = new ThemeIcon("error");
+
+		this.rootNode = errorItem;
+		this.childNodeMap = new Map();
 		this._onDidChangeTreeData.fire();
 	}
 
