@@ -15,13 +15,14 @@ import { SidebarTreeItem } from "@type/views";
 
 export class SidebarController {
 	private view: ISidebarView;
-	private projects?: SidebarTreeItem[];
-	private retryScheduler: RetryScheduler;
+	private projectsSidebarItems?: SidebarTreeItem[];
+	private retryScheduler?: RetryScheduler;
 	private projectsRetryStarted: boolean = false;
 	private strippedBaseURL = BASE_URL.replace(/^https?\:\/\/|\/$/g, "");
 	private organizationName?: string = "";
 	private organizationId?: string = "";
-	private organizations?: SidebarTreeItem[];
+	private organizations?: Organization[];
+	private isOrganizations: boolean = false;
 
 	constructor(
 		sidebarView: ISidebarView,
@@ -32,23 +33,30 @@ export class SidebarController {
 		this.view = sidebarView;
 		this.organizationName = organizationName;
 		this.organizationId = organizationId;
-		if (organizations) {
-			this.fetchOrganizations(organizations);
-		}
+		this.organizations = organizations;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
-		this.retryScheduler = new RetryScheduler(
-			INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL,
-			() => this.refreshProjects(true, "", "", true),
-			(countdown) =>
-				this.updateViewWithCountdown(
-					translate().t("general.reconnecting", {
-						countdown,
-					}),
-					organizationId,
-					organizationName
-				)
-		);
 	}
+
+	public fetchData = async () => {
+		if (this.isOrganizations) {
+			this.fetchOrganizations(this.organizations || []);
+		} else {
+			this.retryScheduler?.stopTimers();
+
+			this.retryScheduler = new RetryScheduler(
+				INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL,
+				() => this.refreshProjects(true, "", "", true),
+				(countdown) =>
+					this.updateViewWithCountdown(
+						translate().t("general.reconnecting", {
+							countdown,
+						}),
+						this.organizationId,
+						this.organizationName
+					)
+			);
+		}
+	};
 
 	public setIsOrganizations = (isOrganizations: boolean) => {
 		this.view.setIsOrganizations(isOrganizations);
@@ -59,7 +67,7 @@ export class SidebarController {
 	};
 
 	public enable = async () => {
-		this.retryScheduler.startFetchInterval();
+		this.retryScheduler?.startFetchInterval();
 	};
 
 	private fetchProjects = async (
@@ -71,7 +79,7 @@ export class SidebarController {
 		let organizationNameToDisplay = organizationName ? `on ${organizationName}` : "";
 
 		if (error) {
-			this.projects = undefined;
+			this.projectsSidebarItems = undefined;
 			LoggerService.error(
 				namespaces.projectSidebarController,
 				translate().t("projects.fetchProjectsFailedError", { error: (error as Error).message })
@@ -80,7 +88,7 @@ export class SidebarController {
 			if ((error as ConnectError).code === Code.Unavailable || (error as ConnectError).code === Code.Aborted) {
 				if (resetCountdown) {
 					this.projectsRetryStarted = true;
-					this.retryScheduler.startCountdown();
+					this.retryScheduler?.startCountdown();
 					return;
 				}
 
@@ -97,7 +105,7 @@ export class SidebarController {
 
 		if (this.projectsRetryStarted) {
 			this.projectsRetryStarted = false;
-			this.retryScheduler.resetCountdown();
+			this.retryScheduler?.resetCountdown();
 		}
 
 		if (projects!.length) {
@@ -124,8 +132,8 @@ export class SidebarController {
 		const refreshOrganizationName = organizationName || this.organizationName;
 		const refreshOrganizationId = organizationId || this.organizationId;
 		const projects = await this.fetchProjects(resetCountdown, refreshOrganizationId, refreshOrganizationName);
-		if (!isEqual(projects, this.projects) || force) {
-			this.projects = projects;
+		if (!isEqual(projects, this.projectsSidebarItems) || force) {
+			this.projectsSidebarItems = projects;
 			this.view.refresh(projects!, refreshOrganizationName);
 		}
 	}
@@ -232,7 +240,7 @@ export class SidebarController {
 	}
 
 	public resetSidebar = () => {
-		this.projects = [];
+		this.projectsSidebarItems = [];
 		this.view.refresh([], this.organizationName);
 	};
 
@@ -241,6 +249,6 @@ export class SidebarController {
 	};
 
 	public dispose() {
-		this.retryScheduler.stopTimers();
+		this.retryScheduler?.stopTimers();
 	}
 }

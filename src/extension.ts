@@ -9,6 +9,7 @@ import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import eventEmitter from "@eventEmitter";
 import { translate } from "@i18n";
 import { AuthService, LoggerService, OrganizationsService } from "@services";
+import { Organization } from "@type/models";
 import { SidebarTreeItem } from "@type/views";
 import { ValidateURL, WorkspaceConfig } from "@utilities";
 import { MessageHandler, SidebarView } from "@views";
@@ -17,6 +18,7 @@ import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough
 
 let sidebarController: SidebarController | null = null;
 let tabsManager: TabsManagerController | null = null;
+let organizations: Organization[] | undefined = undefined;
 
 export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(
@@ -30,8 +32,8 @@ export async function activate(context: ExtensionContext) {
 		})
 	);
 
-	const resetUserAndOrganizationSettings = async () => {
-		await commands.executeCommand(vsCommands.setContext, "userId", "");
+	const resetUser = async () => await commands.executeCommand(vsCommands.setContext, "userId", "");
+	const resetOrganization = async () => {
 		await commands.executeCommand(vsCommands.setContext, "organizationId", "");
 		await commands.executeCommand(vsCommands.setContext, "organizationName", "");
 	};
@@ -76,7 +78,8 @@ export async function activate(context: ExtensionContext) {
 			const authToken = await commands.executeCommand(vsCommands.getContext, "authToken");
 
 			if (!authToken) {
-				await resetUserAndOrganizationSettings();
+				await resetUser();
+				await resetOrganization();
 			}
 			commands.executeCommand("workbench.action.reloadWindow");
 		}
@@ -91,10 +94,14 @@ export async function activate(context: ExtensionContext) {
 	const authenticationToken = await commands.executeCommand(vsCommands.getContext, "authToken");
 	const userId = await commands.executeCommand(vsCommands.getContext, "userId");
 
-	const userAuthorizedWithSelectedOrganization = async (onInit: boolean = true): Promise<boolean> => {
-		if (!authenticationToken) {
-			return true;
-		}
+	const userAuthorizedWithOrganization = async (
+		onInit: boolean = true
+	): Promise<{
+		organizations?: Organization[];
+		userAuthenticated?: boolean;
+		organizationChosen?: boolean;
+		selectedOrganizationId?: string;
+	}> => {
 		let currentUserId = userId as string;
 		if (!userId) {
 			const { data: user, error } = await AuthService.whoAmI();
@@ -106,29 +113,33 @@ export async function activate(context: ExtensionContext) {
 						error: (error as Error).message || translate().t("organizations.userNotFound"),
 					})
 				);
-				return false;
+				await resetUser();
+				await resetOrganization();
+
+				return { userAuthenticated: false };
 			}
 			currentUserId = user!.userId;
 			await commands.executeCommand(vsCommands.setContext, "userId", user!.userId);
 		}
 		if (organizationId && onInit) {
-			return true;
+			const { error } = await OrganizationsService.get(organizationId);
+			if (error) {
+				await commands.executeCommand(vsCommands.showErrorMessage, error);
+				await resetOrganization();
+				return { userAuthenticated: true };
+			}
+
+			return { selectedOrganizationId: organizationId, organizationChosen: true, userAuthenticated: true };
 		}
 
-		if (!currentUserId) {
-			const log = translate().t("organizations.userNotFound");
-			await commands.executeCommand(vsCommands.showErrorMessage, log);
-			LoggerService.error(namespaces.authentication, log);
-			await resetUserAndOrganizationSettings();
-			return false;
-		}
 		const { data: organizations } = await OrganizationsService.list(currentUserId);
 		if (!organizations?.length) {
 			await commands.executeCommand(vsCommands.showErrorMessage, translate().t("organizations.noOrganizationsFound"));
 			LoggerService.error(namespaces.authentication, translate().t("organizations.noOrganizationsFoundExtended"));
-			await resetUserAndOrganizationSettings();
+			await resetUser();
+			await resetOrganization();
 
-			return false;
+			return { userAuthenticated: true };
 		}
 
 		context.subscriptions.push(
@@ -141,21 +152,28 @@ export async function activate(context: ExtensionContext) {
 			})
 		);
 
-		const sidebarView = new SidebarView(true);
-
-		sidebarController = new SidebarController(sidebarView, "", "", organizations);
-
-		return false;
+		return { userAuthenticated: true, organizations };
 	};
 
-	const isUserAuthenticatedOrAuthenticationDisabled = await userAuthorizedWithSelectedOrganization();
-	if (!isUserAuthenticatedOrAuthenticationDisabled) {
-		return;
+	let sidebarView = new SidebarView();
+
+	if (authenticationToken) {
+		const {
+			organizations: organizationsList,
+			selectedOrganizationId,
+			userAuthenticated,
+		} = await userAuthorizedWithOrganization();
+		if (!userAuthenticated) {
+			return;
+		}
+		if (!selectedOrganizationId) {
+			await resetOrganization();
+			organizations = organizationsList;
+			sidebarView.setIsOrganizations(true);
+		}
 	}
 
-	const sidebarView = new SidebarView();
-
-	sidebarController = new SidebarController(sidebarView, organizationId, organizationName);
+	sidebarController = new SidebarController(sidebarView, organizationId, organizationName, organizations);
 
 	tabsManager = new TabsManagerController(context);
 
@@ -165,7 +183,12 @@ export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(vsCommands.applyManifest, applyManifest));
 	context.subscriptions.push(commands.registerCommand(vsCommands.buildFolder, buildOnRightClick));
 	context.subscriptions.push(
-		commands.registerCommand(vsCommands.changeOrganization, () => userAuthorizedWithSelectedOrganization(false))
+		commands.registerCommand(vsCommands.changeOrganization, async () => {
+			const { organizations } = await userAuthorizedWithOrganization(false);
+			if (!organizations?.length) {
+				return;
+			}
+		})
 	);
 	context.subscriptions.push(commands.registerCommand(vsCommands.showInfoMessage, MessageHandler.infoMessage));
 	context.subscriptions.push(commands.registerCommand(vsCommands.openBaseURLInputDialog, openBaseURLInputDialog));
