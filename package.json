@@ -215,7 +215,8 @@
 			"activitybar": [
 				{
 					"icon": "resources/sidebar/ak-sidebar-icon.png",
-					"id": "autokittehSidebarTree"
+					"id": "autokittehSidebarTree",
+					"title": "autokitteh"
 				}
 			]
 		},

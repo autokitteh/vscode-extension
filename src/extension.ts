@@ -189,6 +189,7 @@ export async function activate(context: ExtensionContext) {
 	);
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.enable, async () => {
+			await initApp();
 			sidebarController?.enable();
 			tabsManager?.enable();
 			await AppStateHandler.set(true);
@@ -237,70 +238,74 @@ export async function activate(context: ExtensionContext) {
 	let sidebarView = new SidebarView();
 	let isOrganizationsSidebar = false;
 
-	if (authenticationToken) {
-		const {
-			organizations: organizationsList,
-			selectedOrganizationId,
-			userAuthenticated,
-		} = await userAuthorizedWithOrganization();
-		if (!userAuthenticated) {
-			sidebarController = new SidebarController(sidebarView);
-			sidebarController?.displayError(translate().t("organizations.userNotFound"));
-			return;
-		}
-		if (!selectedOrganizationId) {
+	const initApp = async () => {
+		if (authenticationToken) {
+			const {
+				organizations: organizationsList,
+				selectedOrganizationId,
+				userAuthenticated,
+			} = await userAuthorizedWithOrganization();
+			if (!userAuthenticated) {
+				sidebarController = new SidebarController(sidebarView);
+				sidebarController?.displayError(translate().t("organizations.userNotFound"));
+				return;
+			}
+			if (!selectedOrganizationId) {
+				await resetOrganization();
+				organizations = organizationsList;
+				isOrganizationsSidebar = true;
+			}
+		} else {
 			await resetOrganization();
-			organizations = organizationsList;
-			isOrganizationsSidebar = true;
+			await resetUser();
+			organizationId = undefined;
+			organizationName = undefined;
 		}
-	} else {
-		await resetOrganization();
-		await resetUser();
-		organizationId = undefined;
-		organizationName = undefined;
-	}
-	sidebarView.setIsOrganizations(isOrganizationsSidebar);
-	sidebarController = new SidebarController(sidebarView, organizationId, organizationName, organizations);
-	sidebarController?.fetchData(isOrganizationsSidebar);
+		sidebarView.setIsOrganizations(isOrganizationsSidebar);
+		sidebarController = new SidebarController(sidebarView, organizationId, organizationName, organizations);
+		sidebarController?.fetchData(isOrganizationsSidebar);
 
-	tabsManager = new TabsManagerController(context);
+		tabsManager = new TabsManagerController(context);
 
-	context.subscriptions.push(sidebarView);
-	context.subscriptions.push(sidebarController);
+		context.subscriptions.push(sidebarView);
+		context.subscriptions.push(sidebarController);
 
-	if (sidebarController && tabsManager) {
-		window.registerUriHandler({
-			async handleUri(uri) {
-				const params = new URLSearchParams(uri.query);
-				const connectionId = params.get("cid");
-				const error = params.get("error");
+		if (sidebarController && tabsManager) {
+			window.registerUriHandler({
+				async handleUri(uri) {
+					const params = new URLSearchParams(uri.query);
+					const connectionId = params.get("cid");
+					const error = params.get("error");
 
-				if (error) {
-					LoggerService.error(namespaces.connectionsController, error);
-					commands.executeCommand(vsCommands.showErrorMessage, error);
+					if (error) {
+						LoggerService.error(namespaces.connectionsController, error);
+						commands.executeCommand(vsCommands.showErrorMessage, error);
 
-					return;
-				}
+						return;
+					}
 
-				if (!connectionId) {
-					return;
-				}
+					if (!connectionId) {
+						return;
+					}
 
-				eventEmitter.emit(`connection.${connectionId}.updated`, () =>
-					LoggerService.debug(
-						namespaces.connectionsController,
-						translate().t("connections.connectionInitInProgress", { connectionId })
-					)
-				);
-			},
-		});
-	}
+					eventEmitter.emit(`connection.${connectionId}.updated`, () =>
+						LoggerService.debug(
+							namespaces.connectionsController,
+							translate().t("connections.connectionInitInProgress", { connectionId })
+						)
+					);
+				},
+			});
+		}
+		commands.executeCommand(vsCommands.enable);
+	};
 
 	const isAppOn = await AppStateHandler.get();
 
-	if (isAppOn) {
-		commands.executeCommand(vsCommands.enable);
+	if (!isAppOn) {
+		return;
 	}
+	initApp();
 }
 export function deactivate() {
 	if (sidebarController) {
