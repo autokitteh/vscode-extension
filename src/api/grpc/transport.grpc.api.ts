@@ -21,7 +21,7 @@ export const errorInterceptor: Interceptor = (next) => async (req) => {
 		return response;
 	} catch (error) {
 		if (error instanceof ConnectError) {
-			if ([5, 16].includes(error.code)) {
+			if (error.code === 16) {
 				await commands.executeCommand(vsCommands.setContext, "userId", "");
 			}
 		}
