@@ -115,7 +115,6 @@ export async function activate(context: ExtensionContext) {
 					})
 				);
 				await resetUser();
-				await resetOrganization();
 
 				return { userAuthenticated: false };
 			}
@@ -137,7 +136,6 @@ export async function activate(context: ExtensionContext) {
 		if (!organizations?.length) {
 			await commands.executeCommand(vsCommands.showErrorMessage, translate().t("organizations.noOrganizationsFound"));
 			LoggerService.error(namespaces.authentication, translate().t("organizations.noOrganizationsFoundExtended"));
-			await resetUser();
 			await resetOrganization();
 
 			return { userAuthenticated: true };
