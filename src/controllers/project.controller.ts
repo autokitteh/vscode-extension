@@ -45,13 +45,6 @@ export class ProjectController {
 		this.view.delegate = this;
 	}
 
-	private updateViewWithCountdown(countdown: string | number) {
-		this.view.update({
-			type: MessageType.setRetryCountdown,
-			payload: countdown,
-		});
-	}
-
 	reveal(): void {
 		this.startLoader();
 		this.view.reveal(this.project!.name);

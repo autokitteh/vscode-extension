@@ -179,12 +179,12 @@
 				{
 					"command": "autokitteh.reloadProjects",
 					"group": "navigation",
-					"when": "view == autokittehSidebarTree && config.autokitteh.authToken && config.autokitteh.organizationId && config.autokitteh.serviceEnabled"
+					"when": "view == autokittehSidebarTree && ((config.autokitteh.authToken && config.autokitteh.organizationId) || !config.autokitteh.authToken) && config.autokitteh.serviceEnabled"
 				},
 				{
 					"command": "autokitteh.changeOrganization",
 					"group": "navigation",
-					"when": "view == autokittehSidebarTree && config.autokitteh.authToken && config.autokitteh.organizationId && config.autokitteh.serviceEnabled"
+					"when": "view == autokittehSidebarTree && ((config.autokitteh.authToken && config.autokitteh.organizationId) || !config.autokitteh.authToken) && config.autokitteh.serviceEnabled"
 				},
 				{
 					"command": "autokitteh.enable",
