@@ -77,6 +77,12 @@ export class ProjectController {
 		const successMessage = translate().t("projects.deleteSucceed", { projectName: this.project?.name });
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 		LoggerService.info(namespaces.projectController, successMessage);
+
+		const organizationId =
+			((await commands.executeCommand(vsCommands.getContext, "organizationId")) as string) || undefined;
+		const organizationName =
+			((await commands.executeCommand(vsCommands.getContext, "organizationName")) as string) || undefined;
+		await commands.executeCommand(vsCommands.reloadProjects, organizationId, organizationName);
 		this.onProjectDeleteCB?.(this.projectId);
 	}
 
