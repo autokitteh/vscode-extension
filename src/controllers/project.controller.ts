@@ -1066,6 +1066,13 @@ export class ProjectController {
 		}
 	}
 
+	private updateViewWithCountdown(countdown: string | number) {
+		this.view.update({
+			type: MessageType.setRetryCountdown,
+			payload: countdown,
+		});
+	}
+
 	async checkServerHealth(): Promise<boolean> {
 		const { error } = await ProjectsService.get(this.projectId);
 		if (!error) {

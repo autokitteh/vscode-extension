@@ -36,26 +36,30 @@ export class SidebarController {
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
 	}
 
-	public fetchData = async (isOrganizations?: boolean, organizationId?: string, organizationName?: string) => {
+	public fetchData = async (
+		isOrganizations?: boolean,
+		organizationId?: string,
+		organizationName?: string,
+		force: boolean = false
+	) => {
 		this.view.setIsOrganizations(!!isOrganizations);
+		this.retryScheduler?.stopTimers();
+
 		if (isOrganizations) {
 			this.fetchOrganizations(this.organizations || []);
 		} else {
-			this.retryScheduler?.stopTimers();
-
 			const organization = {
 				name: organizationName || this.organizationName,
 				organizationId: organizationId || this.organizationId,
 			};
 			this.retryScheduler = new RetryScheduler(
 				INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL,
-				() => this.refreshProjects(true, organization.organizationId, organization.name, true),
+				() => this.refreshProjects(true, organization.organizationId, organization.name, force),
 				(countdown) =>
 					this.updateViewWithCountdown(
 						translate().t("general.reconnecting", {
 							countdown,
 						}),
-						organization.organizationId,
 						organization.name
 					)
 			);
@@ -165,11 +169,13 @@ export class SidebarController {
 		this.view.displayError(error);
 	};
 
-	private updateViewWithCountdown(countdown: string, organizationId?: string, organizationName?: string) {
+	private updateViewWithCountdown(countdown: string, organizationName?: string) {
+		let organizationNameToDisplay = organizationName ? `- ${organizationName}` : "";
+
 		this.view.refresh(
 			[
 				{
-					label: `🔴 ${countdown} on ${this.strippedBaseURL} - ${organizationName}`,
+					label: `🔴 ${countdown} on ${this.strippedBaseURL} ${organizationNameToDisplay}`,
 					key: undefined,
 				},
 			],

@@ -47,7 +47,7 @@ function App() {
 							<div className="flex">
 								<LottieLoader animationData={retryLoader} className="size-48" />
 							</div>
-							<div className="flex text-sm font-light text-white">Reconnecting in {retryCountdown}</div>
+							<div className="flex text-sm font-light text-white">{retryCountdown}</div>
 							<div className="flex text-sm text-white">Retry Now</div>
 						</div>
 					</div>

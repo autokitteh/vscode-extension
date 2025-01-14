@@ -148,7 +148,7 @@ export async function activate(context: ExtensionContext) {
 		commands.registerCommand(vsCommands.openOrganization, async (organization: SidebarTreeItem) => {
 			if (organization) {
 				await commands.executeCommand(vsCommands.setContext, "organizationId", organization.key);
-				sidebarController?.fetchData(false, organization.key, organization.label);
+				sidebarController?.fetchData(false, organization.key, organization.label, true);
 			}
 		})
 	);
@@ -170,7 +170,7 @@ export async function activate(context: ExtensionContext) {
 			if (organizationPick) {
 				await commands.executeCommand(vsCommands.setContext, "organizationId", organizationPick.description);
 				await commands.executeCommand(vsCommands.setContext, "organizationName", organizationPick.label);
-				sidebarController?.fetchData(false, organizationPick.description, organizationPick.label);
+				sidebarController?.fetchData(false, organizationPick.description, organizationPick.label, true);
 			}
 		})
 	);
@@ -295,7 +295,6 @@ export async function activate(context: ExtensionContext) {
 				},
 			});
 		}
-		commands.executeCommand(vsCommands.enable);
 	};
 
 	const isAppOn = await AppStateHandler.get();
@@ -303,7 +302,7 @@ export async function activate(context: ExtensionContext) {
 	if (!isAppOn) {
 		return;
 	}
-	initApp();
+	commands.executeCommand(vsCommands.enable);
 }
 export function deactivate() {
 	if (sidebarController) {
