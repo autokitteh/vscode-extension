@@ -146,10 +146,11 @@ export async function activate(context: ExtensionContext) {
 
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openOrganization, async (organization: SidebarTreeItem) => {
-			if (organization) {
-				await commands.executeCommand(vsCommands.setContext, "organizationId", organization.key);
-				sidebarController?.fetchData(false, organization.key, organization.label, true);
+			if (!organization) {
+				return;
 			}
+			await commands.executeCommand(vsCommands.setContext, "organizationId", organization.key);
+			await sidebarController?.fetchData(false, organization.key, organization.label, true);
 		})
 	);
 
@@ -222,14 +223,15 @@ export async function activate(context: ExtensionContext) {
 
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {
-			if (project) {
-				if (project.label.indexOf("Reconnecting") !== -1 && project.key === undefined) {
-					sidebarController?.refreshProjects(false);
-					tabsManager?.reconnect();
-					return;
-				}
-				tabsManager?.openWebview(project);
+			if (!project) {
+				return;
 			}
+			if (project.label.indexOf("Reconnecting") !== -1 && project.key === undefined) {
+				sidebarController?.refreshProjects(false);
+				tabsManager?.reconnect();
+				return;
+			}
+			tabsManager?.openWebview(project);
 		})
 	);
 

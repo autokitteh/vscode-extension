@@ -46,25 +46,25 @@ export class SidebarController {
 		this.retryScheduler?.stopTimers();
 
 		if (isOrganizations) {
-			this.fetchOrganizations(this.organizations || []);
-		} else {
-			const organization = {
-				name: organizationName || this.organizationName,
-				organizationId: organizationId || this.organizationId,
-			};
-			this.retryScheduler = new RetryScheduler(
-				INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL,
-				() => this.refreshProjects(true, organization.organizationId, organization.name, force),
-				(countdown) =>
-					this.updateViewWithCountdown(
-						translate().t("general.reconnecting", {
-							countdown,
-						}),
-						organization.name
-					)
-			);
-			this.retryScheduler?.startFetchInterval();
+			this.updateViewOrganizationsList(this.organizations || []);
+			return;
 		}
+		const organization = {
+			name: organizationName || this.organizationName,
+			organizationId: organizationId || this.organizationId,
+		};
+		this.retryScheduler = new RetryScheduler(
+			INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL,
+			() => this.refreshProjects(true, organization.organizationId, organization.name, force),
+			(countdown) =>
+				this.updateViewWithCountdown(
+					translate().t("general.reconnecting", {
+						countdown,
+					}),
+					organization.name
+				)
+		);
+		this.retryScheduler?.startFetchInterval();
 	};
 
 	public reconnect = () => {
@@ -76,7 +76,7 @@ export class SidebarController {
 	};
 
 	private fetchProjects = async (
-		resetCountdown: boolean = true,
+		resetCountdown = true,
 		organizationId?: string,
 		organizationName?: string
 	): Promise<SidebarTreeItem[] | undefined> => {
@@ -145,7 +145,7 @@ export class SidebarController {
 		}
 	}
 
-	private fetchOrganizations = (organizations: Organization[]) => {
+	private updateViewOrganizationsList = (organizations: Organization[]) => {
 		if (!organizations!.length) {
 			this.view.refresh([
 				{
@@ -153,6 +153,7 @@ export class SidebarController {
 					key: undefined,
 				},
 			]);
+			return;
 		}
 		const sidebarOrganizationsItems = organizations!.map((organization) => ({
 			label: organization.name,
