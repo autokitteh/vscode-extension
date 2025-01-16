@@ -6,7 +6,11 @@
 	"userNotFoundExtended": "Invalid token, user not found, validate your token and reload the workspace, error: {{error}}",
 	"tokenNotFound": "API token not found",
 	"organizationNotFound": "Organization not found",
-	"organizationNotFoundExtended": "Organization not found, organization ID: {{id}}",
+	"organizationNotFoundExtended": "Organization not found, organization ID: {{id}}, error: {{error}}",
+	"organizationMemberNotFound": "Organization member not found",
+	"organizationMemberNotFoundExtended": "Organization member not found, organization ID: {{id}}, error: {{error}}",
+	"organizationFetchFailedMemberErrorExtended": "Couldn't fetch organization since there was a problem getting authenticated user member, user ID: {{userId}}, organization ID: {{organizationID}}, error: {{error}}",
+	"organizationFetchFailedMemberError": "Couldn't fetch organization since there was a problem getting authenticated user member",
 	"pickOrganization": "Pick organization on {{hostUrl}}",
 	"openOrganizationName": "Open organization: {{name}}"
 }

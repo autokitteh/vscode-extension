@@ -155,10 +155,12 @@ export class SidebarController {
 			]);
 			return;
 		}
-		const sidebarOrganizationsItems = organizations!.map((organization) => ({
-			label: organization.name,
-			key: organization.organizationId,
-		}));
+		const sidebarOrganizationsItems = organizations!
+			.filter((organization) => organization.name && organization.organizationId && organization.isActive)
+			.map((organization) => ({
+				label: organization.name,
+				key: organization.organizationId,
+			}));
 		if (isEqual(sidebarOrganizationsItems, this.organizations)) {
 			return;
 		}

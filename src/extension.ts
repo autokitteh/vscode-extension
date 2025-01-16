@@ -122,7 +122,7 @@ export async function activate(context: ExtensionContext) {
 			await commands.executeCommand(vsCommands.setContext, "userId", user!.userId);
 		}
 		if (organizationId && onInit) {
-			const { error } = await OrganizationsService.get(organizationId);
+			const { error } = await OrganizationsService.get(organizationId, currentUserId);
 			if (error) {
 				await commands.executeCommand(vsCommands.showErrorMessage, error);
 				await resetOrganization();
@@ -146,7 +146,7 @@ export async function activate(context: ExtensionContext) {
 
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openOrganization, async (organization: SidebarTreeItem) => {
-			if (!organization) {
+			if (!organization?.key || !organization?.label) {
 				return;
 			}
 			await commands.executeCommand(vsCommands.setContext, "organizationId", organization.key);
