@@ -9,7 +9,7 @@ import { Organization, OrganizationMember } from "@type/models";
 export class OrganizationsService {
 	static async list(userId: string): Promise<ServiceResponse<Organization[]>> {
 		try {
-			const { orgs, members } = await organizationsClient.getOrgsForUser({ userId, includeOrgs: true });
+			const { orgs, members } = await organizationsClient.getOrgsForUser({ userId });
 
 			const convertedMembers = members.map(convertMemberProtoToModel);
 
