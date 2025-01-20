@@ -7,3 +7,5 @@ export { SessionLogRecord } from "@models/sessionLogRecord.model";
 export { convertErrorProtoToModel } from "@models/error.model";
 export { convertConnectionProtoToModel } from "@models/connection.model";
 export { convertIntegrationProtoToModel } from "@models/integration.model";
+export { convertOrganizationProtoToModel, convertMemberProtoToModel } from "@models/organization.model";
+export { convertUserProtoToModel } from "@models/user.model";

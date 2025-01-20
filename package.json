@@ -32,6 +32,10 @@
 				"title": "Build autokitteh"
 			},
 			{
+				"command": "autokitteh.changeOrganization",
+				"title": "autokitteh: Change organization"
+			},
+			{
 				"command": "autokitteh.enable",
 				"icon": "resources/sidebar/top-panel-connect.svg",
 				"title": "autokitteh: Enable"
@@ -40,6 +44,22 @@
 				"command": "autokitteh.disable",
 				"icon": "resources/sidebar/top-panel-disconnect.svg",
 				"title": "autokitteh: Disable"
+			},
+			{
+				"command": "autokitteh.reloadProjects",
+				"icon": {
+					"light": "resources/sidebar/top-panel-reload-light.svg",
+					"dark": "resources/sidebar/top-panel-reload-dark.svg"
+				},
+				"title": "autokitteh: Reload Projects"
+			},
+			{
+				"command": "autokitteh.changeOrganization",
+				"icon": {
+					"light": "resources/sidebar/icons/light/organizations.svg",
+					"dark": "resources/sidebar/icons/dark/organizations.svg"
+				},
+				"title": "autokitteh: Change Organization"
 			},
 			{
 				"command": "autokitteh.buildProject",
@@ -60,16 +80,34 @@
 		],
 		"configuration": {
 			"properties": {
+				"autokitteh.baseURL": {
+					"default": "http://localhost:9980",
+					"description": "Server URL",
+					"type": "string",
+					"scope": "machine"
+				},
 				"autokitteh.authToken": {
 					"default": "",
 					"description": "Authentication token",
 					"type": "string",
 					"scope": "machine"
 				},
-				"autokitteh.baseURL": {
-					"default": "http://localhost:9980",
-					"description": "Server URL",
-					"type": "string",
+				"autokitteh.userId": {
+					"default": "",
+					"description": "User ID",
+					"type": "hidden",
+					"scope": "machine"
+				},
+				"autokitteh.organizationId": {
+					"default": "",
+					"description": "Organization ID",
+					"type": "hidden",
+					"scope": "machine"
+				},
+				"autokitteh.organizationName": {
+					"default": "",
+					"description": "Organization Name",
+					"type": "hidden",
 					"scope": "machine"
 				},
 				"autokitteh.projectsPaths": {
@@ -108,6 +146,9 @@
 					"when": "false"
 				},
 				{
+					"command": "autokitteh.changeOrganization"
+				},
+				{
 					"command": "autokitteh.buildProject",
 					"when": "false"
 				},
@@ -136,9 +177,19 @@
 			],
 			"view/title": [
 				{
+					"command": "autokitteh.reloadProjects",
+					"group": "navigation",
+					"when": "view == autokittehSidebarTree && ((config.autokitteh.authToken && config.autokitteh.organizationId) || !config.autokitteh.authToken) && config.autokitteh.serviceEnabled"
+				},
+				{
+					"command": "autokitteh.changeOrganization",
+					"group": "navigation",
+					"when": "view == autokittehSidebarTree && config.autokitteh.authToken && config.autokitteh.organizationId && config.autokitteh.serviceEnabled"
+				},
+				{
 					"command": "autokitteh.enable",
 					"group": "navigation",
-					"when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
+					"when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled!==true"
 				},
 				{
 					"command": "autokitteh.disable",

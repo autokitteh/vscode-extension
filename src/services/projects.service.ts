@@ -15,7 +15,8 @@ export class ProjectsService {
 
 				return { data: undefined, error: translate().t("errors.projectNotFound") };
 			}
-			return { data: project, error: undefined };
+			const convertedProject = convertProjectProtoToModel(project);
+			return { data: convertedProject, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.projectService, (error as Error).message);
 			return { data: undefined, error };
@@ -30,9 +31,19 @@ export class ProjectsService {
 		}
 	}
 
-	static async list(): Promise<ServiceResponse<Project[]>> {
+	static async list(organizationId?: string): Promise<ServiceResponse<Project[]>> {
 		try {
-			const projects = (await projectsClient.list({})).projects.map(convertProjectProtoToModel);
+			const projects = (await projectsClient.list({ orgId: organizationId })).projects.map(convertProjectProtoToModel);
+			return { data: projects, error: undefined };
+		} catch (error) {
+			LoggerService.error(namespaces.projectService, (error as Error).message);
+			return { data: undefined, error };
+		}
+	}
+
+	static async listByOrganization(organizationId: string): Promise<ServiceResponse<Project[]>> {
+		try {
+			const projects = (await projectsClient.list({ orgId: organizationId })).projects.map(convertProjectProtoToModel);
 			return { data: projects, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.projectService, (error as Error).message);

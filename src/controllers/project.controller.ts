@@ -45,13 +45,6 @@ export class ProjectController {
 		this.view.delegate = this;
 	}
 
-	private updateViewWithCountdown(countdown: string | number) {
-		this.view.update({
-			type: MessageType.setRetryCountdown,
-			payload: countdown,
-		});
-	}
-
 	reveal(): void {
 		this.startLoader();
 		this.view.reveal(this.project!.name);
@@ -84,6 +77,12 @@ export class ProjectController {
 		const successMessage = translate().t("projects.deleteSucceed", { projectName: this.project?.name });
 		commands.executeCommand(vsCommands.showInfoMessage, successMessage);
 		LoggerService.info(namespaces.projectController, successMessage);
+
+		const organizationId =
+			((await commands.executeCommand(vsCommands.getContext, "organizationId")) as string) || undefined;
+		const organizationName =
+			((await commands.executeCommand(vsCommands.getContext, "organizationName")) as string) || undefined;
+		await commands.executeCommand(vsCommands.reloadProjects, organizationId, organizationName);
 		this.onProjectDeleteCB?.(this.projectId);
 	}
 
@@ -1071,6 +1070,13 @@ export class ProjectController {
 		} catch (error) {
 			console.log(error);
 		}
+	}
+
+	private updateViewWithCountdown(countdown: string | number) {
+		this.view.update({
+			type: MessageType.setRetryCountdown,
+			payload: countdown,
+		});
 	}
 
 	async checkServerHealth(): Promise<boolean> {

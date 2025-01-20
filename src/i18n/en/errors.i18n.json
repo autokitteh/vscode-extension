@@ -55,5 +55,6 @@
 	"showProjectDetails": "Click on a project to show its details",
 	"unexpectedSessionStateType": "Unexpected session state type - {{error}}",
 	"unsupportedArchiveType": "Unsupported archive type: {{type}}",
-	"walkthrough.badBaseURL": "It seems that the host address in the configuration is wrong.\nRe-enter the host again or go to Settings->autokitteh and set the BaseURL in the following format: http://URL:PORT"
+	"walkthrough.badBaseURL": "It seems that the host address in the configuration is wrong.\nRe-enter the host again or go to Settings->autokitteh and set the BaseURL in the following format: http://URL:PORT",
+	"userFetchErrorExtended": "Couldn't fetch user details, error: {{error}}"
 }

@@ -10,43 +10,81 @@ import { getLocalResources } from "@controllers/utilities";
 import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import { translate } from "@i18n";
 import { LoggerService, ProjectsService } from "@services";
+import { Organization } from "@type/models";
 import { SidebarTreeItem } from "@type/views";
 
 export class SidebarController {
 	private view: ISidebarView;
-	private projects?: SidebarTreeItem[];
-	private retryScheduler: RetryScheduler;
+	private projectsSidebarItems?: SidebarTreeItem[];
+	private retryScheduler?: RetryScheduler;
 	private projectsRetryStarted: boolean = false;
 	private strippedBaseURL = BASE_URL.replace(/^https?\:\/\/|\/$/g, "");
+	private organizationName?: string = "";
+	private organizationId?: string = "";
+	private organizations?: Organization[];
 
-	constructor(sidebarView: ISidebarView) {
+	constructor(
+		sidebarView: ISidebarView,
+		organizationId?: string,
+		organizationName?: string,
+		organizations?: Organization[]
+	) {
 		this.view = sidebarView;
+		this.organizationName = organizationName;
+		this.organizationId = organizationId;
+		this.organizations = organizations;
 		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
+	}
+
+	public fetchData = async (
+		isOrganizations?: boolean,
+		organizationId?: string,
+		organizationName?: string,
+		force: boolean = false
+	) => {
+		this.view.setIsOrganizations(!!isOrganizations);
+		this.retryScheduler?.stopTimers();
+
+		if (isOrganizations) {
+			this.updateViewOrganizationsList(this.organizations || []);
+			return;
+		}
+		const organization = {
+			name: organizationName || this.organizationName,
+			organizationId: organizationId || this.organizationId,
+		};
 		this.retryScheduler = new RetryScheduler(
 			INITIAL_PROJECTS_RETRY_SCHEDULE_INTERVAL,
-			() => this.refreshProjects(),
+			() => this.refreshProjects(true, organization.organizationId, organization.name, force),
 			(countdown) =>
 				this.updateViewWithCountdown(
 					translate().t("general.reconnecting", {
 						countdown,
-					})
+					}),
+					organization.name
 				)
 		);
-	}
+		this.retryScheduler?.startFetchInterval();
+	};
 
 	public reconnect = () => {
 		this.refreshProjects(false);
 	};
 
 	public enable = async () => {
-		this.retryScheduler.startFetchInterval();
+		this.retryScheduler?.startFetchInterval();
 	};
 
-	private fetchProjects = async (resetCountdown: boolean = true): Promise<SidebarTreeItem[] | undefined> => {
-		const { data: projects, error } = await ProjectsService.list();
+	private fetchProjects = async (
+		resetCountdown = true,
+		organizationId?: string,
+		organizationName?: string
+	): Promise<SidebarTreeItem[] | undefined> => {
+		const { data: projects, error } = await ProjectsService.list(organizationId);
+		let organizationNameToDisplay = organizationName ? `on ${organizationName}` : "";
 
 		if (error) {
-			this.projects = undefined;
+			this.projectsSidebarItems = undefined;
 			LoggerService.error(
 				namespaces.projectSidebarController,
 				translate().t("projects.fetchProjectsFailedError", { error: (error as Error).message })
@@ -55,7 +93,7 @@ export class SidebarController {
 			if ((error as ConnectError).code === Code.Unavailable || (error as ConnectError).code === Code.Aborted) {
 				if (resetCountdown) {
 					this.projectsRetryStarted = true;
-					this.retryScheduler.startCountdown();
+					this.retryScheduler?.startCountdown();
 					return;
 				}
 
@@ -63,7 +101,7 @@ export class SidebarController {
 			} else {
 				return [
 					{
-						label: `🔴 ${translate().t("general.internalError")} on ${this.strippedBaseURL}`,
+						label: `🔴 ${translate().t("general.internalError")} ${organizationNameToDisplay} at ${this.strippedBaseURL}`,
 						key: undefined,
 					},
 				];
@@ -72,41 +110,80 @@ export class SidebarController {
 
 		if (this.projectsRetryStarted) {
 			this.projectsRetryStarted = false;
-			this.retryScheduler.resetCountdown();
+			this.retryScheduler?.resetCountdown();
 		}
 
 		if (projects!.length) {
-			return projects!.map((project) => ({
-				label: project.name,
-				key: project.projectId,
-			}));
+			return projects!
+				.sort((a, b) => a.name.localeCompare(b.name))
+				.map((project) => ({
+					label: project.name,
+					key: project.projectId,
+				}));
 		}
 
 		return [
 			{
-				label: `${translate().t("projects.noProjectsFound")} on ${this.strippedBaseURL}`,
+				label: `${translate().t("projects.noProjectsFound")} ${organizationNameToDisplay} at ${this.strippedBaseURL}`,
 				key: undefined,
 			},
 		];
 	};
 
-	public async refreshProjects(resetCountdown: boolean = true) {
-		const projects = await this.fetchProjects(resetCountdown);
-		if (projects) {
-			if (!isEqual(projects, this.projects)) {
-				this.projects = projects;
-				this.view.refresh(this.projects);
-			}
+	public async refreshProjects(
+		resetCountdown: boolean = true,
+		organizationId?: string,
+		organizationName?: string,
+		force?: boolean
+	) {
+		const refreshOrganizationName = organizationName || this.organizationName;
+		const refreshOrganizationId = organizationId || this.organizationId;
+		const projects = await this.fetchProjects(resetCountdown, refreshOrganizationId, refreshOrganizationName);
+		if (!isEqual(projects, this.projectsSidebarItems) || force) {
+			this.projectsSidebarItems = projects;
+			this.view.refresh(projects!, refreshOrganizationName);
 		}
 	}
 
-	private updateViewWithCountdown(countdown: string) {
-		this.view.refresh([
-			{
-				label: `🔴 ${countdown} on ${this.strippedBaseURL}`,
-				key: undefined,
-			},
-		]);
+	private updateViewOrganizationsList = (organizations: Organization[]) => {
+		if (!organizations!.length) {
+			this.view.refresh([
+				{
+					label: `${translate().t("organizations.noOrganizationsFound")} at ${this.strippedBaseURL}`,
+					key: undefined,
+				},
+			]);
+			return;
+		}
+		const sidebarOrganizationsItems = organizations!
+			.filter((organization) => organization.name && organization.organizationId && organization.isActive)
+			.map((organization) => ({
+				label: organization.name,
+				key: organization.organizationId,
+			}));
+		if (isEqual(sidebarOrganizationsItems, this.organizations)) {
+			return;
+		}
+
+		this.view.refresh(sidebarOrganizationsItems);
+	};
+
+	public displayError = (error: string) => {
+		this.view.displayError(error);
+	};
+
+	private updateViewWithCountdown(countdown: string, organizationName?: string) {
+		let organizationNameToDisplay = organizationName ? `- ${organizationName}` : "";
+
+		this.view.refresh(
+			[
+				{
+					label: `🔴 ${countdown} on ${this.strippedBaseURL} ${organizationNameToDisplay}`,
+					key: undefined,
+				},
+			],
+			organizationName
+		);
 		commands.executeCommand(vsCommands.displayProjectCountdown, countdown);
 	}
 
@@ -178,8 +255,8 @@ export class SidebarController {
 	}
 
 	public resetSidebar = () => {
-		this.projects = [];
-		this.view.refresh([]);
+		this.projectsSidebarItems = [];
+		this.view.refresh([], this.organizationName);
 	};
 
 	public disable = () => {
@@ -187,6 +264,6 @@ export class SidebarController {
 	};
 
 	public dispose() {
-		this.retryScheduler.stopTimers();
+		this.retryScheduler?.stopTimers();
 	}
 }

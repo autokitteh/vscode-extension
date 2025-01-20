@@ -6,3 +6,5 @@ export { LoggerService } from "@services/logger.service";
 export { BuildsService } from "@services/builds.service";
 export { ConnectionsService } from "@services/connections.service";
 export { IntegrationsService } from "@services/integrations.service";
+export { OrganizationsService } from "@services/organizations.service";
+export { AuthService } from "@services/auth.service";
