@@ -188,9 +188,9 @@ export async function activate(context: ExtensionContext) {
 	);
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.enable, async () => {
-			await initApp();
 			sidebarController?.enable();
 			tabsManager?.enable();
+			await initApp();
 			await AppStateHandler.set(true);
 		})
 	);
@@ -203,7 +203,12 @@ export async function activate(context: ExtensionContext) {
 
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.disable, async () => {
+			const isEnabled = await AppStateHandler.get();
+			if (!isEnabled) {
+				return;
+			}
 			sidebarController?.disable();
+			sidebarController?.dispose();
 			tabsManager?.disable();
 			await AppStateHandler.set(false);
 		})
@@ -262,40 +267,46 @@ export async function activate(context: ExtensionContext) {
 			organizationName = undefined;
 		}
 		sidebarView.setIsOrganizations(isOrganizationsSidebar);
-		sidebarController = new SidebarController(sidebarView, organizationId, organizationName, organizations);
+		let shouldSkipPushToContext;
+		if (!sidebarController) {
+			sidebarController = new SidebarController(sidebarView, organizationId, organizationName, organizations);
+			shouldSkipPushToContext = true;
+		}
 		sidebarController?.fetchData(isOrganizationsSidebar);
 
 		tabsManager = new TabsManagerController(context);
-
-		context.subscriptions.push(sidebarView);
-		context.subscriptions.push(sidebarController);
+		if (shouldSkipPushToContext) {
+			context.subscriptions.push(sidebarView);
+			context.subscriptions.push(sidebarController);
+		}
 
 		if (sidebarController && tabsManager) {
-			window.registerUriHandler({
-				async handleUri(uri) {
-					const params = new URLSearchParams(uri.query);
-					const connectionId = params.get("cid");
-					const error = params.get("error");
+			if (!window.registerUriHandler) {
+				window.registerUriHandler({
+					async handleUri(uri) {
+						const params = new URLSearchParams(uri.query);
+						const connectionId = params.get("cid");
+						const error = params.get("error");
 
-					if (error) {
-						LoggerService.error(namespaces.connectionsController, error);
-						commands.executeCommand(vsCommands.showErrorMessage, error);
+						if (error) {
+							LoggerService.error(namespaces.connectionsController, error);
+							commands.executeCommand(vsCommands.showErrorMessage, error);
+							return;
+						}
 
-						return;
-					}
+						if (!connectionId) {
+							return;
+						}
 
-					if (!connectionId) {
-						return;
-					}
-
-					eventEmitter.emit(`connection.${connectionId}.updated`, () =>
-						LoggerService.debug(
-							namespaces.connectionsController,
-							translate().t("connections.connectionInitInProgress", { connectionId })
-						)
-					);
-				},
-			});
+						eventEmitter.emit(`connection.${connectionId}.updated`, () =>
+							LoggerService.debug(
+								namespaces.connectionsController,
+								translate().t("connections.connectionInitInProgress", { connectionId })
+							)
+						);
+					},
+				});
+			}
 		}
 	};
 

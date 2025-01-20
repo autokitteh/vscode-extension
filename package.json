@@ -189,7 +189,7 @@
 				{
 					"command": "autokitteh.enable",
 					"group": "navigation",
-					"when": "view == autokittehSidebarTree && !config.autokitteh.serviceEnabled"
+					"when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled!==true"
 				},
 				{
 					"command": "autokitteh.disable",
