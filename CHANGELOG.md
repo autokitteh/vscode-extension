@@ -1,3 +1,10 @@
+## [0.20.13](https://github.com/autokitteh/vscode-extension/compare/v0.20.12...v0.20.13) (2025-01-21)
+
+
+### Features
+
+* **UI-1082:** add users & organizations feature to the extension ([#393](https://github.com/autokitteh/vscode-extension/issues/393)) ([72ca77c](https://github.com/autokitteh/vscode-extension/commit/72ca77c892cb964356c695e1974bd6eb12347c5c))
+
 ## [0.20.12](https://github.com/autokitteh/vscode-extension/compare/v0.20.11...v0.20.12) (2024-12-19)
 
 
