@@ -389,7 +389,7 @@
 		"format": "prettier --write \"src/**/*.{ts,tsx}\"",
 		"format:check": "prettier --check \"src/**/*.{ts,tsx}\""
 	},
-	"version": "0.20.13",
+	"version": "0.20.14",
 	"workspaces": [
 		"vscode-react"
 	]

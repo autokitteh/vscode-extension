@@ -1,3 +1,5 @@
+## [0.20.14](https://github.com/autokitteh/vscode-extension/compare/v0.20.13...v0.20.14) (2025-01-28)
+
 ## [0.20.13](https://github.com/autokitteh/vscode-extension/compare/v0.20.12...v0.20.13) (2025-01-21)
 
 
