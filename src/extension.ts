@@ -134,7 +134,9 @@ export async function activate(context: ExtensionContext) {
 			await commands.executeCommand(vsCommands.showErrorMessage, translate().t("organizations.noOrganizationsFound"));
 			LoggerService.error(
 				namespaces.authentication,
-				translate().t("organizations.noOrganizationsFoundExtended", { error })
+				error
+					? translate().t("organizations.noOrganizationsFoundExtended", { error })
+					: translate().t("organizations.noOrganizationsFound")
 			);
 			await resetUser();
 			await resetOrganization();
