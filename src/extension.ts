@@ -64,8 +64,10 @@ export async function activate(context: ExtensionContext) {
 			if (userResponseOnWindowReload === translate().t("general.dismiss")) {
 				return;
 			}
+
+			resetUser();
+			resetOrganization();
 			commands.executeCommand("workbench.action.reloadWindow");
-			return;
 		}
 		if (event.affectsConfiguration("autokitteh.authToken")) {
 			const userResponseOnWindowReload = await window.showInformationMessage(
@@ -76,12 +78,8 @@ export async function activate(context: ExtensionContext) {
 			if (userResponseOnWindowReload === translate().t("general.dismiss")) {
 				return;
 			}
-			const authToken = await commands.executeCommand(vsCommands.getContext, "authToken");
-
-			if (!authToken) {
-				await resetUser();
-				await resetOrganization();
-			}
+			await resetUser();
+			await resetOrganization();
 			commands.executeCommand("workbench.action.reloadWindow");
 		}
 	});
@@ -95,16 +93,9 @@ export async function activate(context: ExtensionContext) {
 	const authenticationToken = await commands.executeCommand(vsCommands.getContext, "authToken");
 	const userId = await commands.executeCommand(vsCommands.getContext, "userId");
 
-	const userAuthorizedWithOrganization = async (
-		onInit: boolean = true
-	): Promise<{
-		organizations?: Organization[];
-		userAuthenticated?: boolean;
-		organizationChosen?: boolean;
-		selectedOrganizationId?: string;
-	}> => {
+	const userAuthorizedWithOrganization = async (onInit: boolean = true) => {
 		let currentUserId = userId as string;
-		if (!userId) {
+		if (!currentUserId) {
 			const { data: user, error } = await AuthService.whoAmI();
 			if (error || !user?.userId) {
 				await commands.executeCommand(vsCommands.showErrorMessage, translate().t("organizations.userNotFound"));
@@ -115,29 +106,38 @@ export async function activate(context: ExtensionContext) {
 					})
 				);
 				await resetUser();
-
+				await resetOrganization();
 				return { userAuthenticated: false };
 			}
-			currentUserId = user!.userId;
-			await commands.executeCommand(vsCommands.setContext, "userId", user!.userId);
+			currentUserId = user.userId;
+			await commands.executeCommand(vsCommands.setContext, "userId", currentUserId);
 		}
+
 		if (organizationId && onInit) {
 			const { error } = await OrganizationsService.get(organizationId, currentUserId);
 			if (error) {
 				await commands.executeCommand(vsCommands.showErrorMessage, error);
+				await resetUser();
 				await resetOrganization();
+				commands.executeCommand("workbench.action.reloadWindow");
 				return { userAuthenticated: true };
 			}
-
-			return { selectedOrganizationId: organizationId, organizationChosen: true, userAuthenticated: true };
+			return {
+				selectedOrganizationId: organizationId,
+				organizationChosen: true,
+				userAuthenticated: true,
+			};
 		}
 
-		const { data: organizations } = await OrganizationsService.list(currentUserId);
-		if (!organizations?.length) {
+		const { data: organizations, error } = await OrganizationsService.list(currentUserId);
+		if (error || !organizations?.length) {
 			await commands.executeCommand(vsCommands.showErrorMessage, translate().t("organizations.noOrganizationsFound"));
-			LoggerService.error(namespaces.authentication, translate().t("organizations.noOrganizationsFoundExtended"));
+			LoggerService.error(
+				namespaces.authentication,
+				translate().t("organizations.noOrganizationsFoundExtended", { error })
+			);
+			await resetUser();
 			await resetOrganization();
-
 			return { userAuthenticated: true };
 		}
 
@@ -245,11 +245,21 @@ export async function activate(context: ExtensionContext) {
 
 	const initApp = async () => {
 		if (authenticationToken) {
+			const currentBaseUrl = workspace.getConfiguration().get("autokitteh.baseURL");
+			const storedBaseUrl = context.globalState.get("lastBaseUrl");
+
+			if (currentBaseUrl !== storedBaseUrl) {
+				await resetUser();
+				await resetOrganization();
+				await context.globalState.update("lastBaseUrl", currentBaseUrl);
+			}
+
 			const {
 				organizations: organizationsList,
 				selectedOrganizationId,
 				userAuthenticated,
 			} = await userAuthorizedWithOrganization();
+
 			if (!userAuthenticated) {
 				sidebarController = new SidebarController(sidebarView);
 				sidebarController?.displayError(translate().t("organizations.userNotFound"));
