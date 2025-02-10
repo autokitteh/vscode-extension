@@ -1,3 +1,10 @@
+## [0.20.15](https://github.com/autokitteh/vscode-extension/compare/v0.20.14...v0.20.15) (2025-02-10)
+
+
+### Bug Fixes
+
+* **UI-1320:** fix host change ([#396](https://github.com/autokitteh/vscode-extension/issues/396)) ([1d9ad7d](https://github.com/autokitteh/vscode-extension/commit/1d9ad7dab16c5400d81f22af21dda6e6e5e344bf))
+
 ## [0.20.14](https://github.com/autokitteh/vscode-extension/compare/v0.20.13...v0.20.14) (2025-01-28)
 
 ## [0.20.13](https://github.com/autokitteh/vscode-extension/compare/v0.20.12...v0.20.13) (2025-01-21)
