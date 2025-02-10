@@ -65,8 +65,8 @@ export async function activate(context: ExtensionContext) {
 				return;
 			}
 
-			resetUser();
-			resetOrganization();
+			await resetUser();
+			await resetOrganization();
 			commands.executeCommand("workbench.action.reloadWindow");
 		}
 		if (event.affectsConfiguration("autokitteh.authToken")) {
