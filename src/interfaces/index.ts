@@ -2,3 +2,4 @@ export type { IProjectView, ProjectViewDelegate, ConnectionsViewDelegate } from 
 export type { ISidebarView } from "@interfaces/sidebar.interface";
 export type { IOrganizationsSidebarView } from "@interfaces/organizationsSidebar.interface";
 export type { MemberStatusKeyType } from "@interfaces/organizationMember.interface";
+export type { SessionOutputLog } from "@interfaces/sessions.interface";

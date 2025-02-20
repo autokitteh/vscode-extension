@@ -2,6 +2,7 @@
 	"callstack": "Callstack",
 	"callstackNoPrints": "No callstack to display",
 	"emptyHistory": "Session history states are empty",
+	"emptyPrintsHistory": "Session history prints are empty",
 	"errors": "Errors",
 	"executionFailed": "Session execution failed",
 	"executionFailedError": "Session execution failed - {{error}}",

@@ -50,6 +50,8 @@
 	"sessionLogMissingOnErrorType": "Session History - No error",
 	"sessionLogRecordFetchFailed": "Session log fetch failed for deployment ID: {{deploymentId}}, error: {{error}}",
 	"sessionLogRecordFetchFailedShort": "Session log fetch failed for deployment ID: {{deploymentId}}",
+	"sessionLogPrintsFetchFailed": "Session log prints fetch failed for deployment ID: {{deploymentId}}, error: {{error}}",
+	"sessionLogPrintsFetchFailedShort": "Session log prints fetch failed for deployment ID: {{deploymentId}}",
 	"sessionLogRecordTypeNotFound": "Session log record type not found: {{props}}",
 	"sessionStartFailedExtended": "Error running session execution: {{error}} for build id: {{buildId}}",
 	"showProjectDetails": "Click on a project to show its details",
