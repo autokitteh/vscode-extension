@@ -8,4 +8,4 @@ export const AK_FRONTEND_URL = "http://localhost:9980/i/";
 export const SUPPORTED_MANUAL_RUN_PROGRAMMING_LANGUAGES = [".py", ".star"];
 export const SUPPORTED_MANUAL_RUN_RUNTIMES = ["python", "starlark"];
 export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
-export const MAX_INT32_VALUE = 2147483647;
+export const SESSIONS_LOGS_PAGE_SIZE = 100;

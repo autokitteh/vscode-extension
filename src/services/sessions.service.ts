@@ -5,7 +5,7 @@ import {
 } from "@ak-proto-ts/sessions/v1/session_pb";
 import { StartRequest } from "@ak-proto-ts/sessions/v1/svc_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
-import { DEFAULT_SESSIONS_VISIBLE_PAGE_SIZE, MAX_INT32_VALUE, namespaces } from "@constants";
+import { DEFAULT_SESSIONS_VISIBLE_PAGE_SIZE, SESSIONS_LOGS_PAGE_SIZE, namespaces } from "@constants";
 import { translate } from "@i18n";
 import { SessionOutputLog } from "@interfaces";
 import { SessionLogRecord, convertSessionLogProtoToModel, convertSessionProtoToModel } from "@models";
@@ -46,11 +46,18 @@ export class SessionsService {
 		}
 	}
 
-	static async getOutputsBySessionId(sessionId: string): Promise<ServiceResponse<SessionOutputLog[]>> {
-		const { prints } = await sessionsClient.getPrints({ sessionId, pageSize: MAX_INT32_VALUE });
+	static async getOutputsBySessionId(
+		sessionId: string,
+		nextPageToken?: string
+	): Promise<ServiceResponse<{ outputs: SessionOutputLog[]; nextPageToken?: string }>> {
+		const { prints, nextPageToken: newNextPageToken } = await sessionsClient.getPrints({
+			sessionId,
+			pageSize: SESSIONS_LOGS_PAGE_SIZE,
+			pageToken: nextPageToken,
+		});
 		const processedPrints = prints?.map((print) => convertSessionLogProtoToModel(print)) || [];
 		return {
-			data: processedPrints,
+			data: { outputs: processedPrints, nextPageToken: newNextPageToken },
 			error: undefined,
 		};
 	}
@@ -59,7 +66,7 @@ export class SessionsService {
 		try {
 			const response = await sessionsClient.getLog({
 				sessionId,
-				pageSize: MAX_INT32_VALUE,
+				pageSize: SESSIONS_LOGS_PAGE_SIZE,
 				types: SessionLogRecord_Type.STATE,
 			});
 			const sessionHistory = response.log?.records.map((state: ProtoSessionLogRecord) => new SessionLogRecord(state));
