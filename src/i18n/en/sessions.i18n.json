@@ -13,7 +13,6 @@
 	"historyPrint": "Print",
 	"historyResult": "Result",
 	"historyTime": "Time",
-	"lastPrintForSessionLog": "Session finished with {{sessionState}} state",
 	"logs": "Logs",
 	"noErrors": "No errors to display",
 	"noLogs": "No logs to display",

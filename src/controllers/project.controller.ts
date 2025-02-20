@@ -4,7 +4,7 @@ import isEqual from "lodash.isequal";
 import * as path from "path";
 import { commands, env, OpenDialogOptions, Uri, window } from "vscode";
 
-import { channels, namespaces, vsCommands, WEB_UI_URL } from "@constants";
+import { namespaces, vsCommands, WEB_UI_URL } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { MessageType, ProjectRecurringErrorMessages, SessionStateType } from "@enums";
 import { translate } from "@i18n";
@@ -121,11 +121,9 @@ export class ProjectController {
 			return { sessionHistoryStates: [], sessionOutputs: [] };
 		}
 		if (!sessionHistoryStates?.length) {
-			LoggerService.sessionLog(translate().t("sessions.emptyHistory"));
 			return { sessionHistoryStates: [], sessionOutputs: [] };
 		}
 		if (!sessionOutputs?.length || !sessionOutputs) {
-			LoggerService.sessionLog(translate().t("sessions.emptyPrintsHistory"));
 			return { sessionHistoryStates, sessionOutputs: [] };
 		}
 		return { sessionHistoryStates, sessionOutputs, nextPageToken: newNextPageToken };
@@ -137,7 +135,6 @@ export class ProjectController {
 		await this.loadAndDisplayDeployments();
 		await this.loadSingleshotArgs(true);
 
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		this.sessions = undefined;
 		this.fetchSessions();
 	};
@@ -272,7 +269,6 @@ export class ProjectController {
 			return;
 		}
 		this.filterSessionsState = filterState;
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		await this.fetchSessions();
 	}
 
@@ -356,62 +352,7 @@ export class ProjectController {
 		return;
 	}
 
-	printFinishedSessionLogs(lastState: SessionLogRecord) {
-		if (lastState.isError()) {
-			this.outputErrorDetails(lastState);
-			this.outputCallstackDetails(lastState);
-		}
-
-		LoggerService.sessionLog(
-			translate().t("sessions.lastPrintForSessionLog", {
-				sessionState: lastState.getStateName() || "unknown",
-			})
-		);
-	}
-
-	async displaySessionsHistory(sessionsData: {
-		sessionHistoryStates?: SessionLogRecord[];
-		sessionOutputs?: SessionOutputLog[];
-		nextPageToken?: string;
-	}): Promise<void> {
-		const { sessionHistoryStates, sessionOutputs } = sessionsData;
-
-		this.outputSessionLogs(sessionOutputs);
-
-		const completedState = sessionHistoryStates?.find((state) => state.isFinished());
-
-		if (completedState) {
-			this.printFinishedSessionLogs(completedState);
-			return;
-		}
-	}
-
-	private outputSessionLogs(sessionOutputs?: SessionOutputLog[]) {
-		this.view.update({
-			type: MessageType.setOutputs,
-			payload: sessionOutputs,
-		});
-	}
-
-	private outputErrorDetails(state: SessionLogRecord) {
-		LoggerService.sessionLog(`${translate().t("sessions.errors")}:`);
-		const errorMessage = state.isError() ? state.getError() : "";
-		LoggerService.sessionLog(`	${errorMessage}`);
-	}
-
-	private outputCallstackDetails(state: SessionLogRecord) {
-		LoggerService.sessionLog(`${translate().t("sessions.callstack")}:`);
-		if (!state.getCallstack().length) {
-			return;
-		}
-		state.getCallstack().forEach(({ location: { col, name, path, row } }) => {
-			LoggerService.sessionLog(`\t${path}: ${row}.${col}: ${name}`);
-		});
-	}
-
 	async displaySessionLogs(sessionId: string, stopSessionsInterval: boolean = false): Promise<void> {
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
-
 		this.initSessionLogsDisplay(sessionId);
 
 		if (!this.selectedDeploymentId) {
@@ -451,15 +392,10 @@ export class ProjectController {
 		this.sessionOutputs = sessionOutputs;
 		this.sessionOutputsNextPageToken = nextPageToken;
 
-		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
-
-		this.sessionHistoryStates = [];
-
-		if (lastState.isFinished()) {
-			this.outputSessionLogs(sessionOutputs);
-			this.printFinishedSessionLogs(lastState);
-		}
-		this.displaySessionsHistory({ sessionHistoryStates, sessionOutputs, nextPageToken });
+		this.view.update({
+			type: MessageType.setOutputs,
+			payload: sessionOutputs,
+		});
 	}
 
 	async loadMoreSessionsOutputs() {
@@ -471,21 +407,22 @@ export class ProjectController {
 		}
 
 		if (isEqual(this.sessionHistoryStates, sessionHistoryStates) && isEqual(this.sessionOutputs, sessionOutputs)) {
+			if (!nextPageToken) {
+				this.view.update({
+					type: MessageType.setOutputs,
+					payload: sessionOutputs,
+				});
+			}
 			return;
 		}
 		this.sessionHistoryStates = sessionHistoryStates;
-		this.sessionOutputs = [...this.sessionOutputs, ...sessionOutputs];
+		this.sessionOutputs = [...sessionOutputs, ...this.sessionOutputs];
 		this.sessionOutputsNextPageToken = nextPageToken;
 
-		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
-
-		this.sessionHistoryStates = [];
-
-		if (lastState.isFinished()) {
-			this.outputSessionLogs(sessionOutputs);
-			this.printFinishedSessionLogs(lastState);
-		}
-		this.displaySessionsHistory({ sessionHistoryStates, sessionOutputs: this.sessionOutputs, nextPageToken });
+		this.view.update({
+			type: MessageType.setOutputs,
+			payload: this.sessionOutputs,
+		});
 	}
 
 	public async openProject(onProjectDisposeCB: Callback<string>, onProjectDeleteCB: Callback<string>) {
@@ -509,7 +446,6 @@ export class ProjectController {
 		this.view.show(project!.name);
 		this.setProjectNameInView();
 		this.sessions = undefined;
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 	}
 
 	displayErrorWithoutActionButton(errorMessage: string) {
@@ -863,7 +799,6 @@ export class ProjectController {
 		}
 
 		this.selectedDeploymentId = undefined;
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
 		this.resetView();
 
@@ -1017,7 +952,6 @@ export class ProjectController {
 
 		const sessionsBeforeRemove = this.sessions;
 
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		const sessionIndex = sessionsBeforeRemove.findIndex((session) => session.sessionId === sessionId);
 
 		sessionsBeforeRemove.splice(sessionIndex, 1);

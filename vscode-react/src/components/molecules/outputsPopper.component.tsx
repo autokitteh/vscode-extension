@@ -11,6 +11,7 @@ export const OutputsPopper = () => {
 	const parentRef = useRef<HTMLDivElement>(null);
 	const [outputs, setOutputs] = useState<SessionOutputLog[]>([]);
 	const [, dispatch] = useAppState();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const virtualizer = useVirtualizer({
 		count: outputs.length,
@@ -19,7 +20,10 @@ export const OutputsPopper = () => {
 	});
 
 	useIncomingMessageHandler({
-		setOutputs,
+		setOutputs: (newOutputs) => {
+			setOutputs(newOutputs);
+			setIsLoading(false);
+		},
 	});
 
 	const items = virtualizer.getVirtualItems();
@@ -29,6 +33,7 @@ export const OutputsPopper = () => {
 			const { clientHeight, scrollHeight, scrollTop } = parentRef.current;
 
 			if (scrollTop + clientHeight >= scrollHeight - 50) {
+				setIsLoading(true);
 				sendMessage(MessageType.loadMoreSessionsOutputs);
 			}
 		}
@@ -61,9 +66,15 @@ export const OutputsPopper = () => {
 					width: "100%",
 				}}
 			>
-				<Button classes="absolute top-2 right-2 z-40" onClick={() => close()}>
-					X
-				</Button>
+				<div className="flex justify-end">
+					<Button classes="fixed top-2 right-2 z-40" onClick={() => close()}>
+						X
+					</Button>
+				</div>
+				<div className="font-lg bg-vscode-editor-background fixed left-2 top-2 font-bold">Session Logs:</div>
+				{isLoading ? (
+					<div className="font-lg bg-vscode-editor-background fixed bottom-2 m-auto font-bold">Loading...</div>
+				) : null}
 				<div
 					style={{
 						left: 0,
@@ -77,7 +88,7 @@ export const OutputsPopper = () => {
 					{items.map((virtualRow) => (
 						<div data-index={virtualRow.index} key={virtualRow.key} ref={virtualizer.measureElement}>
 							<div className="flex w-full" style={{ padding: "10px 0" }}>
-								<div>[{outputs[virtualRow.index].time}]:</div>
+								<div className="w-[160px] shrink-0">[{outputs[virtualRow.index].time}]:</div>
 								<div>{outputs[virtualRow.index].print}</div>
 							</div>
 						</div>
