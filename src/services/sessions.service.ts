@@ -87,9 +87,7 @@ export class SessionsService {
 
 			const sessionAsStartRequest = {
 				session: sessionToStart,
-				jsonInputs: Object.fromEntries(
-					Object.entries(startSessionArgs?.jsonInputs || {}).map(([key, value]) => [key, `"${value}"`])
-				),
+				jsonObjectInput: JSON.stringify(startSessionArgs?.jsonInputs || {}),
 			} as unknown as StartRequest;
 			const { sessionId } = await sessionsClient.start(sessionAsStartRequest);
 			return { data: sessionId, error: undefined };
