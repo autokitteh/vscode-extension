@@ -29,7 +29,7 @@ export enum MessageType {
 	startLoader = "START_LOADER",
 	stopLoader = "STOP_LOADER",
 	loadMoreSessions = "LOAD_MORE_SESSIONS",
-	loadMoreSessionsOutputs = "LOAD_MORE_SESSIONS_Outputs",
+	loadMoreSessionsOutputs = "LOAD_MORE_SESSIONS_OUTPUTS",
 	setRetryCountdown = "SET_RETRY_COUNTDOWN",
 	tryToReconnect = "TRY_TO_RECONNECT",
 	setConnections = "SET_CONNECTIONS",

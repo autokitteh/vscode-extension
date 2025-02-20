@@ -119,7 +119,6 @@ export async function activate(context: ExtensionContext) {
 				await commands.executeCommand(vsCommands.showErrorMessage, error);
 				await resetUser();
 				await resetOrganization();
-				commands.executeCommand("workbench.action.reloadWindow");
 				return { userAuthenticated: true };
 			}
 			return {

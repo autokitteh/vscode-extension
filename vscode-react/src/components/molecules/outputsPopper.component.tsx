@@ -51,19 +51,11 @@ export const OutputsPopper = () => {
 	const close = () => dispatch({ payload: "", type: "SET_MODAL_NAME" });
 
 	return (
-		<div
-			ref={parentRef}
-			style={{
-				height: "100%",
-				overflow: "auto",
-				position: "relative",
-			}}
-		>
+		<div className="relative h-full overflow-auto" ref={parentRef}>
 			<div
+				className="relative w-full"
 				style={{
 					height: virtualizer.getTotalSize(),
-					position: "relative",
-					width: "100%",
 				}}
 			>
 				<div className="flex justify-end">
@@ -76,13 +68,9 @@ export const OutputsPopper = () => {
 					<div className="font-lg bg-vscode-editor-background fixed bottom-2 m-auto font-bold">Loading...</div>
 				) : null}
 				<div
+					className="absolute left-0 top-0 mt-1 w-full"
 					style={{
-						left: 0,
-						marginTop: "50px",
-						position: "absolute",
-						top: 0,
 						transform: `translateY(${items[0]?.start ?? 0}px)`,
-						width: "100%",
 					}}
 				>
 					{items.map((virtualRow) => (
