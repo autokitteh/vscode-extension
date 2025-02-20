@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Theme } from "@enums";
+import { SessionOutputLog } from "@interfaces";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
 import { Connection } from "@type/models";
 
 export interface IIncomingMessagesHandler {
 	setConnections?: (connections: Connection[]) => void;
+	setOutputs?: (outputs: SessionOutputLog[]) => void;
 	setDeploymentsSection?: (value?: DeploymentSectionViewModel) => void;
 	setEntrypoints?: (value?: string[]) => void;
 	setPathResponse?: (pathResponse: boolean) => void;

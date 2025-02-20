@@ -59,6 +59,7 @@ export const SessionsTableBody = ({
 
 	const displaySessionLogs = (sessionId: string) => {
 		sendMessage(MessageType.displaySessionLogsAndStop, sessionId);
+		setModalName("sessionOutputs");
 		setSelectedSession(sessionId);
 	};
 
