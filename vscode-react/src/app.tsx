@@ -14,6 +14,7 @@ import SplitPane from "split-pane-react";
 import "./app.css";
 
 import "split-pane-react/esm/themes/default.css";
+import { SessionLogView } from "@react-components/sessions/organisms";
 
 function App() {
 	const [sizes, setSizes] = useState<(number | string)[]>([]);
@@ -52,7 +53,6 @@ function App() {
 						</div>
 					</div>
 				) : null}
-
 				<div className="flex w-full flex-col">
 					<Header />
 					<div className="h-[calc(100vh-6vh)]">
@@ -73,6 +73,7 @@ function App() {
 					</div>
 				</div>
 			</main>
+			<SessionLogView />
 		</AppStateProvider>
 	);
 }

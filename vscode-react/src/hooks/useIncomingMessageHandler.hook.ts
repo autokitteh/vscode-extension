@@ -1,4 +1,5 @@
 import { MessageType, Theme } from "@enums";
+import { SessionOutputLog } from "@interfaces";
 import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
 import { IIncomingMessagesHandler } from "@react-interfaces";
 import { Message } from "@type";
@@ -46,6 +47,9 @@ export const useIncomingMessageHandler = (handlers: IIncomingMessagesHandler) =>
 					break;
 				case MessageType.setRetryCountdown:
 					handlers.setRetryCountdown?.(payload as string);
+					break;
+				case MessageType.setOutputs:
+					handlers.setOutputs?.(payload as SessionOutputLog[]);
 					break;
 				default:
 			}

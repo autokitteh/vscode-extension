@@ -44,10 +44,6 @@ export class SessionLogRecord {
 			case SessionLogRecordType.state:
 				this.handleStateRecord(logRecord);
 				break;
-			case SessionLogRecordType.print:
-				this.type = SessionLogRecordType.print;
-				this.logs = `${translate().t("sessions.historyPrint")}: ${logRecord.print!.text}`;
-				break;
 		}
 
 		if (logRecordType !== SessionLogRecordType.callAttemptStart) {
@@ -140,10 +136,6 @@ export class SessionLogRecord {
 
 	isRunning(): boolean {
 		return this.state === SessionStateType.running;
-	}
-
-	isPrint(): boolean {
-		return this.type === SessionLogRecordType.print;
 	}
 
 	isFinished(): boolean {

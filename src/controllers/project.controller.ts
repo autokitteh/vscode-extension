@@ -4,12 +4,11 @@ import isEqual from "lodash.isequal";
 import * as path from "path";
 import { commands, env, OpenDialogOptions, Uri, window } from "vscode";
 
-import { channels, INITIAL_SESSION_LOG_RETRY_SCHEDULE_INTERVAL, namespaces, vsCommands, WEB_UI_URL } from "@constants";
+import { namespaces, vsCommands, WEB_UI_URL } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
-import { RetryScheduler } from "@controllers/utilities/retryScheduler.util";
 import { MessageType, ProjectRecurringErrorMessages, SessionStateType } from "@enums";
 import { translate } from "@i18n";
-import { IProjectView } from "@interfaces";
+import { IProjectView, SessionOutputLog } from "@interfaces";
 import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
 import { reverseSessionStateConverter } from "@models/utils";
 import { BuildsService, DeploymentsService, LoggerService, ProjectsService, SessionsService } from "@services";
@@ -26,17 +25,17 @@ export class ProjectController {
 	public project?: Project;
 	private sessions?: Session[] = [];
 	private sessionHistoryStates: SessionLogRecord[] = [];
-	private cachedSessionHistoryStates: Map<string, SessionLogRecord[]> = new Map();
-	private sessionLogOutputCursor: number = 0;
+	private sessionOutputs: SessionOutputLog[] = [];
+	private sessionOutputsNextPageToken?: string;
 	private deployments?: Deployment[];
 	private selectedDeploymentId?: string;
+	private selectedSessionId?: string;
 	private filterSessionsState?: string;
 	private hasDisplayedError: Map<ProjectRecurringErrorMessages, boolean> = new Map();
 	private selectedSessionPerDeployment: Map<string, string> = new Map();
 	private loadingRequestsCounter: number = 0;
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
-	private sessionLogRetryScheduler?: RetryScheduler;
 	private lastDeploymentId?: string;
 
 	constructor(projectView: IProjectView, projectId: string) {
@@ -86,13 +85,26 @@ export class ProjectController {
 		this.onProjectDeleteCB?.(this.projectId);
 	}
 
-	async getSessionHistory(sessionId: string) {
+	async getSessionHistory(
+		sessionId: string,
+		nextPageToken?: string
+	): Promise<
+		| { sessionHistoryStates?: SessionLogRecord[]; sessionOutputs?: SessionOutputLog[]; nextPageToken?: string }
+		| undefined
+	> {
 		this.startLoader();
 		const { data: sessionHistoryStates, error: sessionsError } =
 			await SessionsService.getLogRecordsBySessionId(sessionId);
+
+		const { data, error: sessionOutputsError } = await SessionsService.getOutputsBySessionId(sessionId, nextPageToken);
+		if (!data) {
+			return;
+		}
+		const { outputs: sessionOutputs, nextPageToken: newNextPageToken } = data;
+
 		this.stopLoader();
 
-		if (sessionsError) {
+		if (sessionsError || sessionOutputsError) {
 			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionLogs)) {
 				const notificationErrorMessage = translate().t("errors.sessionLogRecordFetchFailedShort", {
 					deploymentId: this.selectedDeploymentId,
@@ -103,16 +115,18 @@ export class ProjectController {
 
 			const logErrorMessage = translate().t("errors.sessionLogRecordFetchFailed", {
 				deploymentId: this.selectedDeploymentId,
-				error: (sessionsError as Error).message,
+				error: ((sessionsError as Error) || (sessionOutputsError as Error)).message,
 			});
 			LoggerService.error(namespaces.projectController, logErrorMessage);
-			return;
+			return { sessionHistoryStates: [], sessionOutputs: [] };
 		}
-		if (!sessionHistoryStates?.length || !sessionHistoryStates) {
-			LoggerService.sessionLog(translate().t("sessions.emptyHistory"));
-			return;
+		if (!sessionHistoryStates?.length) {
+			return { sessionHistoryStates: [], sessionOutputs: [] };
 		}
-		return sessionHistoryStates;
+		if (!sessionOutputs?.length || !sessionOutputs) {
+			return { sessionHistoryStates, sessionOutputs: [] };
+		}
+		return { sessionHistoryStates, sessionOutputs, nextPageToken: newNextPageToken };
 	}
 
 	public enable = async () => {
@@ -121,8 +135,6 @@ export class ProjectController {
 		await this.loadAndDisplayDeployments();
 		await this.loadSingleshotArgs(true);
 
-		this.sessionLogRetryScheduler?.stopTimers();
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		this.sessions = undefined;
 		this.fetchSessions();
 	};
@@ -136,7 +148,6 @@ export class ProjectController {
 	};
 
 	public disable = async () => {
-		this.sessionLogRetryScheduler?.stopTimers();
 		this.deployments = undefined;
 		this.sessions = undefined;
 		this.hasDisplayedError = new Map();
@@ -258,7 +269,6 @@ export class ProjectController {
 			return;
 		}
 		this.filterSessionsState = filterState;
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		await this.fetchSessions();
 	}
 
@@ -342,78 +352,7 @@ export class ProjectController {
 		return;
 	}
 
-	printFinishedSessionLogs(lastState: SessionLogRecord) {
-		if (lastState.isError()) {
-			this.outputErrorDetails(lastState);
-			this.outputCallstackDetails(lastState);
-		}
-
-		LoggerService.sessionLog(
-			translate().t("sessions.lastPrintForSessionLog", {
-				sessionState: lastState.getStateName() || "unknown",
-			})
-		);
-
-		this.sessionLogOutputCursor = 0;
-
-		this.sessionLogRetryScheduler?.stopTimers();
-	}
-
-	async displaySessionsHistory(sessionId: string): Promise<void> {
-		const sessionHistoryStates = await this.getSessionHistory(sessionId);
-
-		if (!sessionHistoryStates) {
-			return;
-		}
-
-		if (isEqual(this.sessionHistoryStates, sessionHistoryStates)) {
-			return;
-		}
-		this.sessionHistoryStates = sessionHistoryStates;
-
-		this.outputSessionLogs(sessionHistoryStates);
-
-		const completedState = sessionHistoryStates.find((state) => state.isFinished());
-
-		if (completedState) {
-			this.printFinishedSessionLogs(completedState);
-			return;
-		}
-	}
-
-	private outputSessionLogs(sessionStates: SessionLogRecord[]) {
-		const hasLogs = sessionStates.some((state) => state.getLogs());
-		if (!hasLogs) {
-			return;
-		}
-		for (let i = this.sessionLogOutputCursor; i < sessionStates.length; i++) {
-			if (!sessionStates[i].isFinished() && sessionStates[i].getLogs()) {
-				LoggerService.sessionLog(`${sessionStates[i].dateTime?.toISOString()}\t${sessionStates[i].getLogs()}`);
-			}
-		}
-		this.sessionLogOutputCursor = sessionStates.length - 1;
-	}
-
-	private outputErrorDetails(state: SessionLogRecord) {
-		LoggerService.sessionLog(`${translate().t("sessions.errors")}:`);
-		const errorMessage = state.isError() ? state.getError() : "";
-		LoggerService.sessionLog(`	${errorMessage}`);
-	}
-
-	private outputCallstackDetails(state: SessionLogRecord) {
-		LoggerService.sessionLog(`${translate().t("sessions.callstack")}:`);
-		if (!state.getCallstack().length) {
-			return;
-		}
-		state.getCallstack().forEach(({ location: { col, name, path, row } }) => {
-			LoggerService.sessionLog(`\t${path}: ${row}.${col}: ${name}`);
-		});
-	}
-
 	async displaySessionLogs(sessionId: string, stopSessionsInterval: boolean = false): Promise<void> {
-		this.sessionLogRetryScheduler?.stopTimers();
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
-
 		this.initSessionLogsDisplay(sessionId);
 
 		if (!this.selectedDeploymentId) {
@@ -435,43 +374,55 @@ export class ProjectController {
 	}
 
 	async displaySessionLogsAndStop(sessionId: string) {
+		this.selectedSessionId = sessionId;
 		this.displaySessionLogs(sessionId, true);
 	}
 
 	async initSessionLogsDisplay(sessionId: string) {
-		if (this.cachedSessionHistoryStates.has(sessionId)) {
-			const sessionHistoryStates = this.cachedSessionHistoryStates.get(sessionId);
-			const lastState = sessionHistoryStates![sessionHistoryStates!.length - 1];
-			this.outputSessionLogs(sessionHistoryStates!);
-			this.printFinishedSessionLogs(lastState);
-			return;
-		}
-		const sessionHistoryStates = await this.getSessionHistory(sessionId);
-		if (!sessionHistoryStates) {
-			return;
-		}
-		const lastState = sessionHistoryStates[sessionHistoryStates.length - 1];
+		const { sessionHistoryStates, sessionOutputs, nextPageToken } = (await this.getSessionHistory(sessionId)) || {};
 
-		this.sessionLogOutputCursor = 0;
-		this.sessionHistoryStates = [];
-
-		if (lastState.isFinished()) {
-			this.outputSessionLogs(sessionHistoryStates);
-			this.printFinishedSessionLogs(lastState);
-			this.cachedSessionHistoryStates.set(sessionId, sessionHistoryStates);
+		if (!sessionHistoryStates || !sessionOutputs) {
 			return;
 		}
 
-		this.sessionLogRetryScheduler?.stopTimers();
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
+		if (isEqual(this.sessionHistoryStates, sessionHistoryStates) && isEqual(this.sessionOutputs, sessionOutputs)) {
+			return;
+		}
+		this.sessionHistoryStates = sessionHistoryStates;
+		this.sessionOutputs = sessionOutputs;
+		this.sessionOutputsNextPageToken = nextPageToken;
 
-		this.sessionLogRetryScheduler = new RetryScheduler(
-			INITIAL_SESSION_LOG_RETRY_SCHEDULE_INTERVAL,
-			() => this.displaySessionsHistory(sessionId),
-			() => {}
-		);
+		this.view.update({
+			type: MessageType.setOutputs,
+			payload: sessionOutputs,
+		});
+	}
 
-		this.sessionLogRetryScheduler.startFetchInterval();
+	async loadMoreSessionsOutputs() {
+		const { sessionHistoryStates, sessionOutputs, nextPageToken } =
+			(await this.getSessionHistory(this.selectedSessionId || "", this.sessionOutputsNextPageToken)) || {};
+
+		if (!sessionHistoryStates || !sessionOutputs) {
+			return;
+		}
+
+		if (isEqual(this.sessionHistoryStates, sessionHistoryStates) && isEqual(this.sessionOutputs, sessionOutputs)) {
+			if (!nextPageToken) {
+				this.view.update({
+					type: MessageType.setOutputs,
+					payload: sessionOutputs,
+				});
+			}
+			return;
+		}
+		this.sessionHistoryStates = sessionHistoryStates;
+		this.sessionOutputs = [...sessionOutputs, ...this.sessionOutputs];
+		this.sessionOutputsNextPageToken = nextPageToken;
+
+		this.view.update({
+			type: MessageType.setOutputs,
+			payload: this.sessionOutputs,
+		});
 	}
 
 	public async openProject(onProjectDisposeCB: Callback<string>, onProjectDeleteCB: Callback<string>) {
@@ -495,7 +446,6 @@ export class ProjectController {
 		this.view.show(project!.name);
 		this.setProjectNameInView();
 		this.sessions = undefined;
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 	}
 
 	displayErrorWithoutActionButton(errorMessage: string) {
@@ -587,7 +537,6 @@ export class ProjectController {
 	}
 
 	onClose() {
-		this.sessionLogRetryScheduler?.stopTimers();
 		this.onProjectDisposeCB?.(this.projectId);
 		this.hasDisplayedError = new Map();
 		if (this.selectedDeploymentId) {
@@ -850,7 +799,6 @@ export class ProjectController {
 		}
 
 		this.selectedDeploymentId = undefined;
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 
 		this.resetView();
 
@@ -1004,7 +952,6 @@ export class ProjectController {
 
 		const sessionsBeforeRemove = this.sessions;
 
-		LoggerService.clearOutputChannel(channels.appOutputSessionsLogName);
 		const sessionIndex = sessionsBeforeRemove.findIndex((session) => session.sessionId === sessionId);
 
 		sessionsBeforeRemove.splice(sessionIndex, 1);

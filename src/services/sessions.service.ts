@@ -1,12 +1,14 @@
 import {
 	SessionLogRecord as ProtoSessionLogRecord,
 	Session as ProtoSession,
+	SessionLogRecord_Type,
 } from "@ak-proto-ts/sessions/v1/session_pb";
 import { StartRequest } from "@ak-proto-ts/sessions/v1/svc_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
-import { DEFAULT_SESSIONS_VISIBLE_PAGE_SIZE, namespaces } from "@constants";
+import { DEFAULT_SESSIONS_VISIBLE_PAGE_SIZE, SESSIONS_LOGS_PAGE_SIZE, namespaces } from "@constants";
 import { translate } from "@i18n";
-import { SessionLogRecord, convertSessionProtoToModel } from "@models";
+import { SessionOutputLog } from "@interfaces";
+import { SessionLogRecord, convertSessionLogProtoToModel, convertSessionProtoToModel } from "@models";
 import { LoggerService } from "@services";
 import { ServiceResponse, StartSessionArgsType } from "@type";
 import { Session, SessionFilter } from "@type/models";
@@ -44,9 +46,29 @@ export class SessionsService {
 		}
 	}
 
+	static async getOutputsBySessionId(
+		sessionId: string,
+		nextPageToken?: string
+	): Promise<ServiceResponse<{ outputs: SessionOutputLog[]; nextPageToken?: string }>> {
+		const { prints, nextPageToken: newNextPageToken } = await sessionsClient.getPrints({
+			sessionId,
+			pageSize: SESSIONS_LOGS_PAGE_SIZE,
+			pageToken: nextPageToken,
+		});
+		const processedPrints = prints?.map((print) => convertSessionLogProtoToModel(print)) || [];
+		return {
+			data: { outputs: processedPrints, nextPageToken: newNextPageToken },
+			error: undefined,
+		};
+	}
+
 	static async getLogRecordsBySessionId(sessionId: string): Promise<ServiceResponse<Array<SessionLogRecord>>> {
 		try {
-			const response = await sessionsClient.getLog({ sessionId });
+			const response = await sessionsClient.getLog({
+				sessionId,
+				pageSize: SESSIONS_LOGS_PAGE_SIZE,
+				types: SessionLogRecord_Type.STATE,
+			});
 			const sessionHistory = response.log?.records.map((state: ProtoSessionLogRecord) => new SessionLogRecord(state));
 			return { data: sessionHistory, error: undefined };
 		} catch (error) {
@@ -65,9 +87,7 @@ export class SessionsService {
 
 			const sessionAsStartRequest = {
 				session: sessionToStart,
-				jsonInputs: Object.fromEntries(
-					Object.entries(startSessionArgs?.jsonInputs || {}).map(([key, value]) => [key, `"${value}"`])
-				),
+				jsonObjectInput: JSON.stringify(startSessionArgs?.jsonInputs || {}),
 			} as unknown as StartRequest;
 			const { sessionId } = await sessionsClient.start(sessionAsStartRequest);
 			return { data: sessionId, error: undefined };

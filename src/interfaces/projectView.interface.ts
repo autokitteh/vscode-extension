@@ -28,6 +28,7 @@ export interface ProjectViewDelegate {
 	refreshUI?: Callback;
 	openTriggersWebUI?: Callback;
 	openConnectionsWebUI?: Callback;
+	loadMoreSessionsOutputs?: Callback<string>;
 }
 export interface ConnectionsViewDelegate {
 	openConnectionInitURL?: Callback<{
