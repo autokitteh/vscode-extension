@@ -1,3 +1,10 @@
+## [0.20.16](https://github.com/autokitteh/vscode-extension/compare/v0.20.15...v0.20.16) (2025-02-21)
+
+
+### Features
+
+* **UI-1366:** outputs re-write ([#397](https://github.com/autokitteh/vscode-extension/issues/397)) ([2c614e4](https://github.com/autokitteh/vscode-extension/commit/2c614e409ccb9e122d8c6756dc4dfadc7e1df2b9))
+
 ## [0.20.15](https://github.com/autokitteh/vscode-extension/compare/v0.20.14...v0.20.15) (2025-02-10)
 
 
