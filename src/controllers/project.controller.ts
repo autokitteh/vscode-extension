@@ -132,6 +132,7 @@ export class ProjectController {
 	public enable = async () => {
 		this.setProjectNameInView();
 		await this.notifyViewResourcesPathChanged();
+		this.deployments = undefined;
 		await this.loadAndDisplayDeployments();
 		await this.loadSingleshotArgs(true);
 
