@@ -37,6 +37,7 @@ export class ProjectController {
 	private sessionsNextPageToken?: string;
 	private deploymentsWithLiveTail: Map<string, boolean> = new Map();
 	private lastDeploymentId?: string;
+	private isNewPageInstance: boolean = true;
 
 	constructor(projectView: IProjectView, projectId: string) {
 		this.view = projectView;
@@ -1039,13 +1040,12 @@ export class ProjectController {
 	}
 
 	async loadInitialDataOnceViewReady() {
-		this.loadAndDisplayDeployments();
-
-		const isResourcesPathExist = await this.getResourcesPathFromContext();
-		if (isResourcesPathExist) {
-			this.notifyViewResourcesPathChanged();
+		if (!this.isNewPageInstance) {
 			return;
 		}
+		this.isNewPageInstance = false;
+		this.loadAndDisplayDeployments();
+		this.notifyViewResourcesPathChanged();
 	}
 
 	async refreshUI() {
