@@ -1,3 +1,11 @@
+## [0.20.17](https://github.com/autokitteh/vscode-extension/compare/v0.20.16...v0.20.17) (2025-03-02)
+
+
+### Bug Fixes
+
+* **UI-1318:** fix deployments stuck on loading on tab focus ([#398](https://github.com/autokitteh/vscode-extension/issues/398)) ([5f02428](https://github.com/autokitteh/vscode-extension/commit/5f024289100d9f1103113aa9f8ed0e995bbc927d))
+* **UI-1412:** deployments fetch optimization on project tab focus ([#399](https://github.com/autokitteh/vscode-extension/issues/399)) ([afeab58](https://github.com/autokitteh/vscode-extension/commit/afeab5856ac9452b67d1e90d33b4910dcb145956))
+
 ## [0.20.16](https://github.com/autokitteh/vscode-extension/compare/v0.20.15...v0.20.16) (2025-02-21)
 
 
