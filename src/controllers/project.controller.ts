@@ -122,7 +122,7 @@ export class ProjectController {
 			return { sessionHistoryStates: [], sessionOutputs: [] };
 		}
 		if (!sessionHistoryStates?.length) {
-			return { sessionHistoryStates: [], sessionOutputs: [] };
+			return { sessionHistoryStates: [], sessionOutputs: sessionOutputs || [] };
 		}
 		if (!sessionOutputs?.length || !sessionOutputs) {
 			return { sessionHistoryStates, sessionOutputs: [] };
@@ -355,6 +355,7 @@ export class ProjectController {
 	}
 
 	async displaySessionLogs(sessionId: string, stopSessionsInterval: boolean = false): Promise<void> {
+		console.log("displaySessionLogs", sessionId);
 		this.initSessionLogsDisplay(sessionId);
 
 		if (!this.selectedDeploymentId) {
@@ -381,6 +382,7 @@ export class ProjectController {
 	}
 
 	async initSessionLogsDisplay(sessionId: string) {
+		console.log("initSessionLogsDisplay", sessionId);
 		const { sessionHistoryStates, sessionOutputs, nextPageToken } = (await this.getSessionHistory(sessionId)) || {};
 
 		if (!sessionHistoryStates || !sessionOutputs) {
@@ -393,7 +395,7 @@ export class ProjectController {
 		this.sessionHistoryStates = sessionHistoryStates;
 		this.sessionOutputs = sessionOutputs;
 		this.sessionOutputsNextPageToken = nextPageToken;
-
+		console.log("sessionOutputs2", sessionOutputs);
 		this.view.update({
 			type: MessageType.setOutputs,
 			payload: sessionOutputs,

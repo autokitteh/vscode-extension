@@ -1,8 +1,4 @@
-import {
-	SessionLogRecord as ProtoSessionLogRecord,
-	Session as ProtoSession,
-	SessionLogRecord_Type,
-} from "@ak-proto-ts/sessions/v1/session_pb";
+import { Session as ProtoSession, SessionLogRecord_Type } from "@ak-proto-ts/sessions/v1/session_pb";
 import { StartRequest } from "@ak-proto-ts/sessions/v1/svc_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { DEFAULT_SESSIONS_VISIBLE_PAGE_SIZE, SESSIONS_LOGS_PAGE_SIZE, namespaces } from "@constants";
@@ -67,10 +63,17 @@ export class SessionsService {
 			const response = await sessionsClient.getLog({
 				sessionId,
 				pageSize: SESSIONS_LOGS_PAGE_SIZE,
+				jsonValues: true,
+				ascending: false,
 				types: SessionLogRecord_Type.STATE,
 			});
-			const sessionHistory = response.log?.records.map((state: ProtoSessionLogRecord) => new SessionLogRecord(state));
-			return { data: sessionHistory, error: undefined };
+
+			const logRecords = (response as any)?.log?.records;
+			const directRecords = response.records;
+
+			const records = logRecords || directRecords || [];
+
+			return { data: records, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.sessionsService, (error as Error).message);
 
