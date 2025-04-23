@@ -1,10 +1,10 @@
-import { Session as ProtoSession, SessionLogRecord_Type } from "@ak-proto-ts/sessions/v1/session_pb";
+import { Session as ProtoSession, SessionLogRecord, SessionLogRecord_Type } from "@ak-proto-ts/sessions/v1/session_pb";
 import { StartRequest } from "@ak-proto-ts/sessions/v1/svc_pb";
 import { sessionsClient } from "@api/grpc/clients.grpc.api";
 import { DEFAULT_SESSIONS_VISIBLE_PAGE_SIZE, SESSIONS_LOGS_PAGE_SIZE, namespaces } from "@constants";
 import { translate } from "@i18n";
 import { SessionOutputLog } from "@interfaces";
-import { SessionLogRecord, convertSessionLogProtoToModel, convertSessionProtoToModel } from "@models";
+import { convertSessionLogProtoToModel, convertSessionProtoToModel } from "@models";
 import { LoggerService } from "@services";
 import { ServiceResponse, StartSessionArgsType } from "@type";
 import { Session, SessionFilter } from "@type/models";

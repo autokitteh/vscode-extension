@@ -4,12 +4,13 @@ import isEqual from "lodash.isequal";
 import * as path from "path";
 import { commands, env, OpenDialogOptions, Uri, window } from "vscode";
 
+import { SessionLogRecord } from "@ak-proto-ts/sessions/v1/session_pb";
 import { namespaces, vsCommands, WEB_UI_URL } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { MessageType, ProjectRecurringErrorMessages, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView, SessionOutputLog } from "@interfaces";
-import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
+import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
 import { reverseSessionStateConverter } from "@models/utils";
 import { BuildsService, DeploymentsService, LoggerService, ProjectsService, SessionsService } from "@services";
 import { UIStartSessionArgsType } from "@type";
@@ -24,7 +25,6 @@ export class ProjectController {
 	public projectId: string;
 	public project?: Project;
 	private sessions?: Session[] = [];
-	private sessionHistoryStates: SessionLogRecord[] = [];
 	private sessionOutputs: SessionOutputLog[] = [];
 	private sessionOutputsNextPageToken?: string;
 	private deployments?: Deployment[];
@@ -355,7 +355,6 @@ export class ProjectController {
 	}
 
 	async displaySessionLogs(sessionId: string, stopSessionsInterval: boolean = false): Promise<void> {
-		console.log("displaySessionLogs", sessionId);
 		this.initSessionLogsDisplay(sessionId);
 
 		if (!this.selectedDeploymentId) {
@@ -382,20 +381,14 @@ export class ProjectController {
 	}
 
 	async initSessionLogsDisplay(sessionId: string) {
-		console.log("initSessionLogsDisplay", sessionId);
 		const { sessionHistoryStates, sessionOutputs, nextPageToken } = (await this.getSessionHistory(sessionId)) || {};
 
 		if (!sessionHistoryStates || !sessionOutputs) {
 			return;
 		}
 
-		if (isEqual(this.sessionHistoryStates, sessionHistoryStates) && isEqual(this.sessionOutputs, sessionOutputs)) {
-			return;
-		}
-		this.sessionHistoryStates = sessionHistoryStates;
 		this.sessionOutputs = sessionOutputs;
 		this.sessionOutputsNextPageToken = nextPageToken;
-		console.log("sessionOutputs2", sessionOutputs);
 		this.view.update({
 			type: MessageType.setOutputs,
 			payload: sessionOutputs,
@@ -410,16 +403,6 @@ export class ProjectController {
 			return;
 		}
 
-		if (isEqual(this.sessionHistoryStates, sessionHistoryStates) && isEqual(this.sessionOutputs, sessionOutputs)) {
-			if (!nextPageToken) {
-				this.view.update({
-					type: MessageType.setOutputs,
-					payload: sessionOutputs,
-				});
-			}
-			return;
-		}
-		this.sessionHistoryStates = sessionHistoryStates;
 		this.sessionOutputs = [...sessionOutputs, ...this.sessionOutputs];
 		this.sessionOutputsNextPageToken = nextPageToken;
 
