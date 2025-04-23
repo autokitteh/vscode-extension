@@ -365,7 +365,7 @@
 		"url": "https://github.com/autokitteh/vscode-extension"
 	},
 	"scripts": {
-		"predebug": "rimraf dist && npm run build && npm run compile",
+		"predebug": "rimraf dist && npm run build:all && npm run compile",
 		"build": "npm run esbuild-base -- --sourcemap",
 		"build:all": "npm run build --workspace=vscode-react && npm run build",
 		"build:vscode-react": "npm run build --workspace=vscode-react",
