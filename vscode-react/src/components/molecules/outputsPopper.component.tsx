@@ -10,13 +10,13 @@ import { useEffect, useRef, useState } from "react";
 
 export const OutputsPopper = () => {
 	const parentRef = useRef<HTMLDivElement>(null);
-	const [outputs, setOutputs] = useState<SessionOutputLog[]>([]);
+	const [outputs, setOutputs] = useState<SessionOutputLog[] | undefined>();
 	const [, dispatch] = useAppState();
 	const [isLoading, setIsLoading] = useState(false);
 	const [isLoadingOverlay, setIsLoadingOverlay] = useState(true);
 
 	const virtualizer = useVirtualizer({
-		count: outputs.length,
+		count: outputs?.length || 0,
 		estimateSize: () => 30,
 		getScrollElement: () => parentRef.current,
 	});
@@ -28,10 +28,7 @@ export const OutputsPopper = () => {
 	}, []);
 
 	useIncomingMessageHandler({
-		setOutputs: (newOutputs) => {
-			setOutputs(newOutputs);
-			setIsLoading(false);
-		},
+		setOutputs,
 	});
 
 	const items = virtualizer.getVirtualItems();
@@ -78,7 +75,7 @@ export const OutputsPopper = () => {
 						<Loader isCenter />
 					</div>
 				) : null}
-				{!outputs.length && !isLoading ? (
+				{outputs?.length === 0 ? (
 					<div className="font-lg bg-vscode-editor-background fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-bold">
 						Logs not found
 					</div>
@@ -92,8 +89,8 @@ export const OutputsPopper = () => {
 						{items.map((virtualRow) => (
 							<div data-index={virtualRow.index} key={virtualRow.key} ref={virtualizer.measureElement}>
 								<div className="flex w-full" style={{ padding: "10px 0" }}>
-									<div className="w-[160px] shrink-0">[{outputs[virtualRow.index].time}]:</div>
-									<div>{outputs[virtualRow.index].print}</div>
+									<div className="w-[160px] shrink-0">[{outputs?.[virtualRow.index].time}]:</div>
+									<div>{outputs?.[virtualRow.index].print}</div>
 								</div>
 							</div>
 						))}
