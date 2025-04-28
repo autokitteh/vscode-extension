@@ -381,9 +381,18 @@ export class ProjectController {
 	}
 
 	async initSessionLogsDisplay(sessionId: string) {
-		const { sessionHistoryStates, sessionOutputs, nextPageToken } = (await this.getSessionHistory(sessionId)) || {};
+		const { sessionOutputs, nextPageToken } = (await this.getSessionHistory(sessionId)) || {};
 
-		if (!sessionHistoryStates || !sessionOutputs) {
+		if (!sessionOutputs) {
+			return;
+		}
+
+		if (isEqual(this.sessionOutputs, sessionOutputs)) {
+			this.view.update({
+				type: MessageType.setOutputs,
+				payload: sessionOutputs,
+			});
+
 			return;
 		}
 
@@ -396,10 +405,20 @@ export class ProjectController {
 	}
 
 	async loadMoreSessionsOutputs() {
-		const { sessionHistoryStates, sessionOutputs, nextPageToken } =
+		const { sessionOutputs, nextPageToken } =
 			(await this.getSessionHistory(this.selectedSessionId || "", this.sessionOutputsNextPageToken)) || {};
 
-		if (!sessionHistoryStates || !sessionOutputs) {
+		if (!sessionOutputs) {
+			return;
+		}
+
+		if (isEqual(this.sessionOutputs, sessionOutputs)) {
+			if (!nextPageToken) {
+				this.view.update({
+					type: MessageType.setOutputs,
+					payload: sessionOutputs,
+				});
+			}
 			return;
 		}
 

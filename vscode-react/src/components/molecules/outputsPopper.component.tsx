@@ -6,7 +6,7 @@ import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export const OutputsPopper = () => {
 	const parentRef = useRef<HTMLDivElement>(null);
@@ -14,6 +14,8 @@ export const OutputsPopper = () => {
 	const [, dispatch] = useAppState();
 	const [isLoading, setIsLoading] = useState(false);
 	const [isLoadingOverlay, setIsLoadingOverlay] = useState(true);
+	const [showArrowDown, setShowArrowDown] = useState(false);
+	const [lastScrollTop, setLastScrollTop] = useState(0);
 
 	const virtualizer = useVirtualizer({
 		count: outputs?.length || 0,
@@ -27,8 +29,24 @@ export const OutputsPopper = () => {
 		}, 500);
 	}, []);
 
+	const checkIfScrollable = useCallback(() => {
+		if (parentRef.current) {
+			const { clientHeight, scrollHeight } = parentRef.current;
+
+			return scrollHeight > clientHeight;
+		}
+
+		return false;
+	}, [parentRef]);
+
 	useIncomingMessageHandler({
-		setOutputs,
+		setOutputs: (newOutputs) => {
+			setOutputs(newOutputs);
+			setIsLoading(false);
+			if (checkIfScrollable()) {
+				setShowArrowDown(true);
+			}
+		},
 	});
 
 	const items = virtualizer.getVirtualItems();
@@ -36,6 +54,11 @@ export const OutputsPopper = () => {
 	const handleScroll = () => {
 		if (parentRef.current) {
 			const { clientHeight, scrollHeight, scrollTop } = parentRef.current;
+
+			if (checkIfScrollable() && showArrowDown) {
+				setShowArrowDown(false);
+			}
+			setLastScrollTop(scrollTop);
 
 			if (scrollTop + clientHeight >= scrollHeight - 50) {
 				setIsLoading(true);
@@ -51,7 +74,8 @@ export const OutputsPopper = () => {
 
 			return () => currentRef.removeEventListener("scroll", handleScroll);
 		}
-	}, []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [lastScrollTop, showArrowDown]);
 
 	const close = () => dispatch({ payload: "", type: "SET_MODAL_NAME" });
 
@@ -64,14 +88,12 @@ export const OutputsPopper = () => {
 					height: virtualizer.getTotalSize(),
 				}}
 			>
-				<div className="flex justify-end">
-					<Button classes="fixed top-2 right-2 z-[60]" onClick={() => close()}>
-						X
-					</Button>
+				<div className="bg-vscode-editor-background fixed left-0 top-0 z-50 flex w-full justify-between border border-b-0 border-gray-300 p-4">
+					<div className="text-base font-bold">Session Logs:</div>
+					<Button onClick={() => close()}>X</Button>
 				</div>
-				<div className="font-lg fixed left-4 top-2 font-bold">Session Logs:</div>
 				{isLoading ? (
-					<div className="bg-vscode-editor-background fixed bottom-3 left-0 w-full">
+					<div className="bg-vscode-editor-background absolute bottom-2 left-0 w-full">
 						<Loader isCenter />
 					</div>
 				) : null}
@@ -81,19 +103,25 @@ export const OutputsPopper = () => {
 					</div>
 				) : (
 					<div
-						className="absolute left-0 top-0 mt-1 w-full"
+						className="absolute left-0 top-0 mt-10 w-full"
 						style={{
 							transform: `translateY(${items[0]?.start ?? 0}px)`,
 						}}
 					>
 						{items.map((virtualRow) => (
 							<div data-index={virtualRow.index} key={virtualRow.key} ref={virtualizer.measureElement}>
-								<div className="flex w-full" style={{ padding: "10px 0" }}>
+								<div className="flex w-full text-sm">
 									<div className="w-[160px] shrink-0">[{outputs?.[virtualRow.index].time}]:</div>
 									<div>{outputs?.[virtualRow.index].print}</div>
 								</div>
 							</div>
 						))}
+
+						{showArrowDown && (
+							<div className="absolute bottom-0 right-10 animate-bounce">
+								<div className="codicon codicon-arrow-down text-vscode-foreground text-2xl" />
+							</div>
+						)}
 					</div>
 				)}
 			</div>
