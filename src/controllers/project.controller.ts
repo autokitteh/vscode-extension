@@ -390,14 +390,12 @@ export class ProjectController {
 		this.sessionOutputs = sessionOutputs;
 		this.sessionOutputsNextPageToken = nextPageToken;
 
-		this.view.update({
-			type: MessageType.setOutputs,
-			payload: sessionOutputs,
-		});
+		this.updateSessionOutputsView();
 	}
 
 	async loadMoreSessionsOutputs() {
 		if (!this.sessionOutputsNextPageToken) {
+			this.updateSessionOutputsView();
 			return;
 		}
 
@@ -405,6 +403,7 @@ export class ProjectController {
 			(await this.getSessionHistory(this.selectedSessionId || "", this.sessionOutputsNextPageToken)) || {};
 
 		if (!sessionOutputs || sessionOutputs.length === 0) {
+			this.updateSessionOutputsView();
 			return;
 		}
 
@@ -415,6 +414,10 @@ export class ProjectController {
 		this.sessionOutputs = [...this.sessionOutputs, ...sessionOutputs];
 		this.sessionOutputsNextPageToken = nextPageToken;
 
+		this.updateSessionOutputsView();
+	}
+
+	private updateSessionOutputsView() {
 		this.view.update({
 			type: MessageType.setOutputs,
 			payload: this.sessionOutputs,
