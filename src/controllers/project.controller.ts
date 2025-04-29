@@ -387,17 +387,9 @@ export class ProjectController {
 			return;
 		}
 
-		if (isEqual(this.sessionOutputs, sessionOutputs)) {
-			this.view.update({
-				type: MessageType.setOutputs,
-				payload: sessionOutputs,
-			});
-
-			return;
-		}
-
 		this.sessionOutputs = sessionOutputs;
 		this.sessionOutputsNextPageToken = nextPageToken;
+
 		this.view.update({
 			type: MessageType.setOutputs,
 			payload: sessionOutputs,
@@ -405,24 +397,22 @@ export class ProjectController {
 	}
 
 	async loadMoreSessionsOutputs() {
+		if (!this.sessionOutputsNextPageToken) {
+			return;
+		}
+
 		const { sessionOutputs, nextPageToken } =
 			(await this.getSessionHistory(this.selectedSessionId || "", this.sessionOutputsNextPageToken)) || {};
 
-		if (!sessionOutputs) {
+		if (!sessionOutputs || sessionOutputs.length === 0) {
 			return;
 		}
 
-		if (isEqual(this.sessionOutputs, sessionOutputs)) {
-			if (!nextPageToken) {
-				this.view.update({
-					type: MessageType.setOutputs,
-					payload: sessionOutputs,
-				});
-			}
+		if (!nextPageToken) {
 			return;
 		}
 
-		this.sessionOutputs = [...sessionOutputs, ...this.sessionOutputs];
+		this.sessionOutputs = [...this.sessionOutputs, ...sessionOutputs];
 		this.sessionOutputsNextPageToken = nextPageToken;
 
 		this.view.update({
