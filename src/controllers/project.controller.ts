@@ -4,7 +4,6 @@ import isEqual from "lodash.isequal";
 import * as path from "path";
 import { commands, env, OpenDialogOptions, Uri, window } from "vscode";
 
-import { SessionLogRecord } from "@ak-proto-ts/sessions/v1/session_pb";
 import { namespaces, vsCommands, WEB_UI_URL } from "@constants";
 import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controllers/utilities";
 import { MessageType, ProjectRecurringErrorMessages, SessionStateType } from "@enums";
@@ -89,13 +88,8 @@ export class ProjectController {
 	async getSessionHistory(
 		sessionId: string,
 		nextPageToken?: string
-	): Promise<
-		| { sessionHistoryStates?: SessionLogRecord[]; sessionOutputs?: SessionOutputLog[]; nextPageToken?: string }
-		| undefined
-	> {
+	): Promise<{ sessionOutputs?: SessionOutputLog[]; nextPageToken?: string } | undefined> {
 		this.startLoader();
-		const { data: sessionHistoryStates, error: sessionsError } =
-			await SessionsService.getLogRecordsBySessionId(sessionId);
 
 		const { data, error: sessionOutputsError } = await SessionsService.getOutputsBySessionId(sessionId, nextPageToken);
 		if (!data) {
@@ -105,7 +99,7 @@ export class ProjectController {
 
 		this.stopLoader();
 
-		if (sessionsError || sessionOutputsError) {
+		if (sessionOutputsError) {
 			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionLogs)) {
 				const notificationErrorMessage = translate().t("errors.sessionLogRecordFetchFailedShort", {
 					deploymentId: this.selectedDeploymentId,
@@ -116,18 +110,15 @@ export class ProjectController {
 
 			const logErrorMessage = translate().t("errors.sessionLogRecordFetchFailed", {
 				deploymentId: this.selectedDeploymentId,
-				error: ((sessionsError as Error) || (sessionOutputsError as Error)).message,
+				error: ((sessionOutputsError as Error) || (sessionOutputsError as Error)).message,
 			});
 			LoggerService.error(namespaces.projectController, logErrorMessage);
-			return { sessionHistoryStates: [], sessionOutputs: [] };
+			return { sessionOutputs: [] };
 		}
-		if (!sessionHistoryStates?.length) {
-			return { sessionHistoryStates: [], sessionOutputs: sessionOutputs || [] };
+		if (!sessionOutputs.length) {
+			return { sessionOutputs: [] };
 		}
-		if (!sessionOutputs?.length || !sessionOutputs) {
-			return { sessionHistoryStates, sessionOutputs: [] };
-		}
-		return { sessionHistoryStates, sessionOutputs, nextPageToken: newNextPageToken };
+		return { sessionOutputs, nextPageToken: newNextPageToken };
 	}
 
 	public enable = async () => {
