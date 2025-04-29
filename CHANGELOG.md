@@ -1,3 +1,10 @@
+## [0.20.18](https://github.com/autokitteh/vscode-extension/compare/v0.20.17...v0.20.18) (2025-04-29)
+
+
+### Bug Fixes
+
+* **UI-1474)(UI-1482:** fix session outputs logs ([#400](https://github.com/autokitteh/vscode-extension/issues/400)) ([499537b](https://github.com/autokitteh/vscode-extension/commit/499537bfafb801e82069c6f901f6ff0d857f50b5))
+
 ## [0.20.17](https://github.com/autokitteh/vscode-extension/compare/v0.20.16...v0.20.17) (2025-03-02)
 
 
