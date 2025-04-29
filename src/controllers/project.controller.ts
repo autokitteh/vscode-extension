@@ -9,7 +9,7 @@ import { convertBuildRuntimesToViewTriggers, getLocalResources } from "@controll
 import { MessageType, ProjectRecurringErrorMessages, SessionStateType } from "@enums";
 import { translate } from "@i18n";
 import { IProjectView, SessionOutputLog } from "@interfaces";
-import { DeploymentSectionViewModel, SessionLogRecord, SessionSectionViewModel } from "@models";
+import { DeploymentSectionViewModel, SessionSectionViewModel } from "@models";
 import { reverseSessionStateConverter } from "@models/utils";
 import { BuildsService, DeploymentsService, LoggerService, ProjectsService, SessionsService } from "@services";
 import { UIStartSessionArgsType } from "@type";
@@ -24,7 +24,6 @@ export class ProjectController {
 	public projectId: string;
 	public project?: Project;
 	private sessions?: Session[] = [];
-	private sessionHistoryStates: SessionLogRecord[] = [];
 	private sessionOutputs: SessionOutputLog[] = [];
 	private sessionOutputsNextPageToken?: string;
 	private deployments?: Deployment[];
@@ -89,13 +88,8 @@ export class ProjectController {
 	async getSessionHistory(
 		sessionId: string,
 		nextPageToken?: string
-	): Promise<
-		| { sessionHistoryStates?: SessionLogRecord[]; sessionOutputs?: SessionOutputLog[]; nextPageToken?: string }
-		| undefined
-	> {
+	): Promise<{ sessionOutputs?: SessionOutputLog[]; nextPageToken?: string } | undefined> {
 		this.startLoader();
-		const { data: sessionHistoryStates, error: sessionsError } =
-			await SessionsService.getLogRecordsBySessionId(sessionId);
 
 		const { data, error: sessionOutputsError } = await SessionsService.getOutputsBySessionId(sessionId, nextPageToken);
 		if (!data) {
@@ -105,7 +99,7 @@ export class ProjectController {
 
 		this.stopLoader();
 
-		if (sessionsError || sessionOutputsError) {
+		if (sessionOutputsError) {
 			if (!this.hasDisplayedError.get(ProjectRecurringErrorMessages.sessionLogs)) {
 				const notificationErrorMessage = translate().t("errors.sessionLogRecordFetchFailedShort", {
 					deploymentId: this.selectedDeploymentId,
@@ -116,18 +110,15 @@ export class ProjectController {
 
 			const logErrorMessage = translate().t("errors.sessionLogRecordFetchFailed", {
 				deploymentId: this.selectedDeploymentId,
-				error: ((sessionsError as Error) || (sessionOutputsError as Error)).message,
+				error: ((sessionOutputsError as Error) || (sessionOutputsError as Error)).message,
 			});
 			LoggerService.error(namespaces.projectController, logErrorMessage);
-			return { sessionHistoryStates: [], sessionOutputs: [] };
+			return { sessionOutputs: [] };
 		}
-		if (!sessionHistoryStates?.length) {
-			return { sessionHistoryStates: [], sessionOutputs: [] };
+		if (!sessionOutputs.length) {
+			return { sessionOutputs: [] };
 		}
-		if (!sessionOutputs?.length || !sessionOutputs) {
-			return { sessionHistoryStates, sessionOutputs: [] };
-		}
-		return { sessionHistoryStates, sessionOutputs, nextPageToken: newNextPageToken };
+		return { sessionOutputs, nextPageToken: newNextPageToken };
 	}
 
 	public enable = async () => {
@@ -381,46 +372,43 @@ export class ProjectController {
 	}
 
 	async initSessionLogsDisplay(sessionId: string) {
-		const { sessionHistoryStates, sessionOutputs, nextPageToken } = (await this.getSessionHistory(sessionId)) || {};
+		const { sessionOutputs, nextPageToken } = (await this.getSessionHistory(sessionId)) || {};
 
-		if (!sessionHistoryStates || !sessionOutputs) {
+		if (!sessionOutputs) {
 			return;
 		}
 
-		if (isEqual(this.sessionHistoryStates, sessionHistoryStates) && isEqual(this.sessionOutputs, sessionOutputs)) {
-			return;
-		}
-		this.sessionHistoryStates = sessionHistoryStates;
 		this.sessionOutputs = sessionOutputs;
 		this.sessionOutputsNextPageToken = nextPageToken;
 
-		this.view.update({
-			type: MessageType.setOutputs,
-			payload: sessionOutputs,
-		});
+		this.updateSessionOutputsView();
 	}
 
 	async loadMoreSessionsOutputs() {
-		const { sessionHistoryStates, sessionOutputs, nextPageToken } =
+		if (!this.sessionOutputsNextPageToken) {
+			this.updateSessionOutputsView();
+			return;
+		}
+
+		const { sessionOutputs, nextPageToken } =
 			(await this.getSessionHistory(this.selectedSessionId || "", this.sessionOutputsNextPageToken)) || {};
 
-		if (!sessionHistoryStates || !sessionOutputs) {
+		if (!sessionOutputs || sessionOutputs.length === 0) {
+			this.updateSessionOutputsView();
 			return;
 		}
 
-		if (isEqual(this.sessionHistoryStates, sessionHistoryStates) && isEqual(this.sessionOutputs, sessionOutputs)) {
-			if (!nextPageToken) {
-				this.view.update({
-					type: MessageType.setOutputs,
-					payload: sessionOutputs,
-				});
-			}
+		if (!nextPageToken) {
 			return;
 		}
-		this.sessionHistoryStates = sessionHistoryStates;
-		this.sessionOutputs = [...sessionOutputs, ...this.sessionOutputs];
+
+		this.sessionOutputs = [...this.sessionOutputs, ...sessionOutputs];
 		this.sessionOutputsNextPageToken = nextPageToken;
 
+		this.updateSessionOutputsView();
+	}
+
+	private updateSessionOutputsView() {
 		this.view.update({
 			type: MessageType.setOutputs,
 			payload: this.sessionOutputs,

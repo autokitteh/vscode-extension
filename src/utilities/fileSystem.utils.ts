@@ -1,11 +1,10 @@
+import spawn from "cross-spawn";
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
 import * as winattr from "winattr";
 
 import { translate } from "@i18n";
-
-const spawn = require("cross-spawn");
 
 export const createDirectory = async (outputPath: string): Promise<void> => {
 	try {
