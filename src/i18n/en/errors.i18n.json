@@ -40,6 +40,7 @@
 	"notSupportedPlatform": "Unsupported platform for opening file explorer",
 	"pathExist": "Path exists but is not a directory",
 	"projectNotFound": "Couldn't fetch the project details",
+	"projectNotCreated": "Couldn't create the project",
 	"projectNotFoundWithID": "Couldn't fetch the project details, project ID: {{id}}",
 	"projectPathCopiedError": "Error copying project path to clipboard for project: {{projectName}}",
 	"projectPathCopiedErrorEnriched": "Error copying project path to clipboard - project: {{projectName}}, error: {{error}}",
