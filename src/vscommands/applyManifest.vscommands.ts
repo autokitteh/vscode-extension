@@ -1,8 +1,9 @@
 import { commands, window } from "vscode";
+import * as yaml from "yaml";
 
 import { namespaces, vsCommands } from "@constants";
 import { translate } from "@i18n";
-import { LoggerService, ManifestService } from "@services";
+import { LoggerService, ManifestService, ProjectsService } from "@services";
 import { getDirectoryOfFile } from "@utilities";
 
 export const applyManifest = async () => {
@@ -17,38 +18,58 @@ export const applyManifest = async () => {
 		return;
 	}
 
-	const mainfestYaml = document.getText();
+	const manifestYaml = document.getText();
 	const filePath = document.uri.fsPath;
 
 	const organizationId =
 		((await commands.executeCommand(vsCommands.getContext, "organizationId")) as string) || undefined;
 
-	const { data: manifestResponse, error } = await ManifestService.applyManifest(mainfestYaml, filePath, organizationId);
-	if (error) {
-		commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (error as Error).message);
+	const parsedYaml = yaml.parse(manifestYaml);
+	const projectName = parsedYaml.project.name;
+
+	const { error: createError } = await ProjectsService.create({
+		name: projectName,
+		organizationId,
+	});
+
+	if (createError) {
+		commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (createError as Error).message);
 		return;
 	}
 
-	const manifestDirectory = getDirectoryOfFile(filePath);
+	try {
+		const { data: manifestResponse, error } = await ManifestService.applyManifest(
+			manifestYaml,
+			filePath,
+			organizationId
+		);
+		if (error) {
+			throw error;
+		}
+		const manifestDirectory = getDirectoryOfFile(filePath);
 
-	const { logs, projectIds } = manifestResponse!;
-	if (projectIds.length > 0) {
-		const currentProjectPaths = (await commands.executeCommand(
-			vsCommands.getContext,
-			"projectsPaths"
-		)) as unknown as string;
+		const { logs, projectIds } = manifestResponse!;
+		if (projectIds.length > 0) {
+			const currentProjectPaths = (await commands.executeCommand(
+				vsCommands.getContext,
+				"projectsPaths"
+			)) as unknown as string;
 
-		const vscodeProjectsPaths = JSON.parse(currentProjectPaths);
-		vscodeProjectsPaths[projectIds[0]] = manifestDirectory;
+			const vscodeProjectsPaths = JSON.parse(currentProjectPaths);
+			vscodeProjectsPaths[projectIds[0]] = manifestDirectory;
 
-		await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
+			await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
 
-		const organizationName =
-			((await commands.executeCommand(vsCommands.getContext, "organizationName")) as string) || undefined;
-		await commands.executeCommand(vsCommands.reloadProjects, organizationId, organizationName);
+			const organizationName =
+				((await commands.executeCommand(vsCommands.getContext, "organizationName")) as string) || undefined;
+			await commands.executeCommand(vsCommands.reloadProjects, organizationId, organizationName);
+		}
+
+		(logs || []).forEach((log) => LoggerService.info(namespaces.applyManifest, `${log}`));
+		commands.executeCommand(vsCommands.showInfoMessage, translate().t("manifest.appliedSuccessfully"));
+		setTimeout(() => commands.executeCommand(vsCommands.refreshSidebar), 2500);
+	} catch (error) {
+		commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (error as Error).message);
+		return;
 	}
-
-	(logs || []).forEach((log) => LoggerService.info(namespaces.applyManifest, `${log}`));
-	commands.executeCommand(vsCommands.showInfoMessage, translate().t("manifest.appliedSuccessfully"));
-	setTimeout(() => commands.executeCommand(vsCommands.refreshSidebar), 2500);
 };

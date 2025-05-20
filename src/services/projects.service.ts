@@ -22,6 +22,24 @@ export class ProjectsService {
 			return { data: undefined, error };
 		}
 	}
+	static async create(project: Omit<Project, "projectId">): Promise<ServiceResponse<string>> {
+		try {
+			const { projectId } = await projectsClient.create({
+				project: { name: project.name, orgId: project.organizationId },
+			});
+			if (!projectId) {
+				LoggerService.error(namespaces.projectService, translate().t("errors.projectNotCreated"));
+
+				return { data: undefined, error: new Error(translate().t("errors.projectNotCreated")) };
+			}
+
+			return { data: projectId, error: undefined };
+		} catch (error) {
+			LoggerService.error(`${namespaces.projectService} - Create: `, (error as Error).message);
+
+			return { data: undefined, error };
+		}
+	}
 	static async delete(projectId: string): Promise<ServiceResponse<undefined>> {
 		try {
 			await projectsClient.delete({ projectId });
