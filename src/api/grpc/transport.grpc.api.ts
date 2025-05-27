@@ -1,9 +1,10 @@
-import { commands } from "vscode";
+import { commands, window } from "vscode";
 
 import { Interceptor, ConnectError } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-node";
-import { vsCommands } from "@constants";
-import { BASE_URL } from "@constants/api.constants";
+import { vsCommands, namespaces, BASE_URL } from "@constants";
+import { translate } from "@i18n";
+import { LoggerService } from "@services";
 import { WorkspaceConfig } from "@utilities";
 
 export const jwtInterceptor: Interceptor = (next) => (req) => {
@@ -15,6 +16,12 @@ export const jwtInterceptor: Interceptor = (next) => (req) => {
 	return next(req);
 };
 
+const handleErrorWithMessage = async (translationKey: string) => {
+	const message = translate().t(translationKey);
+	LoggerService.info(namespaces.serverRequests, message);
+	await window.showErrorMessage(message);
+};
+
 export const errorInterceptor: Interceptor = (next) => async (req) => {
 	try {
 		const response = await next(req);
@@ -23,6 +30,16 @@ export const errorInterceptor: Interceptor = (next) => async (req) => {
 		if (error instanceof ConnectError) {
 			if (error.code === 16) {
 				await commands.executeCommand(vsCommands.setContext, "userId", "");
+			}
+
+			if (error.code === 6) {
+				await handleErrorWithMessage("errors.projectAlreadyExists");
+				throw error;
+			}
+
+			if (error.code === 8) {
+				await handleErrorWithMessage("errors.rateLimitExceeded");
+				throw error;
 			}
 		}
 		throw error;
