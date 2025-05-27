@@ -1,4 +1,5 @@
 {
 	"appliedSuccessfully": "Manifest applied successfully",
-	"onlyYamlFiles": "This command can only be run on YAML files"
+	"onlyYamlFiles": "This command can only be run on YAML files",
+	"projectAlreadyExists": "Project \"{{projectName}}\" already exists"
 }
