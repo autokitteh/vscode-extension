@@ -4,8 +4,7 @@ import { Interceptor, ConnectError, Code } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-node";
 import { vsCommands, SUPPORT_EMAIL, namespaces } from "@constants";
 import { translate } from "@i18n";
-import { WorkspaceConfig, errorMessageWithLog } from "@utilities";
-import { getBaseURL, getOrganizationId } from "@utilities/url.utilities";
+import { WorkspaceConfig, errorMessageWithLog, getBaseURL, getOrganizationId } from "@utilities";
 
 export const jwtInterceptor: Interceptor = (next) => (req) => {
 	const authToken = WorkspaceConfig.getFromWorkspace<string>("authToken", "");
