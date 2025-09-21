@@ -92,6 +92,12 @@
 					"type": "string",
 					"scope": "machine"
 				},
+				"autokitteh.autoSaveFilesToAkOnEditorSave": {
+					"default": false,
+					"description": "Automatically build project when files are saved",
+					"type": "boolean",
+					"scope": "resource"
+				},
 				"autokitteh.userId": {
 					"default": "",
 					"description": "User ID",

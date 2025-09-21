@@ -76,6 +76,18 @@ export class ProjectsService {
 		}
 	}
 
+	static async setResources(
+		projectId: string,
+		resources: Record<string, Uint8Array>
+	): Promise<ServiceResponse<undefined>> {
+		try {
+			await projectsClient.setResources({ projectId, resources });
+			return { data: undefined, error: undefined };
+		} catch (error) {
+			return { data: undefined, error: (error as Error).message };
+		}
+	}
+
 	static async getResources(projectId: string): Promise<ServiceResponse<Record<string, Uint8Array>>> {
 		try {
 			const { resources } = await projectsClient.downloadResources({ projectId });

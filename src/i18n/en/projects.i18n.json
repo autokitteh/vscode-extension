@@ -28,5 +28,13 @@
 	"setResourcesDirectorGetPathFromDialogFailure": "Changing project resources directory failed on getting the new path for project in user dialog: {{projectName}}, error: {{error}}",
 	"setResourcesDirectoryFailureShort": "Changing project resources directory failed for project: {{projectName}}",
 	"connectedTo": "Connected to {{baseURL}}",
-	"connectingTo": "Connecting to {{baseURL}}"
+	"connectingTo": "Connecting to {{baseURL}}",
+	"autoSaveNoActiveEditor": "No active text editor found. Please open a file in the editor to auto-save to AutoKitteh.",
+	"autoSaveNoProjectsFound": "No AutoKitteh projects found",
+	"autoSaveFileNotInProject": "Current file is not part of any AutoKitteh project",
+	"autoSaveCollectResourcesFailed": "Auto-save failed to collect resources: {{error}}",
+	"autoSaveFailed": "Auto-save failed: {{error}}",
+	"autoSaveResourcesSetSuccess": "Resources set successfully for project: {{projectId}}",
+	"autoSaveResourcesUpdatedSuccess": "Resources updated for project: {{projectId}}",
+	"autoSaveError": "Auto-save error: {{error}}"
 }

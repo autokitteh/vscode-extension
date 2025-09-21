@@ -6,9 +6,10 @@ import { commands, ExtensionContext, window, workspace, ConfigurationTarget } fr
 import { BASE_URL, namespaces, vsCommands } from "@constants";
 import { SidebarController, TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
+import { getLocalResources } from "@controllers/utilities/resources.util";
 import eventEmitter from "@eventEmitter";
 import { translate } from "@i18n";
-import { AuthService, LoggerService, OrganizationsService } from "@services";
+import { AuthService, LoggerService, OrganizationsService, ProjectsService } from "@services";
 import { Organization } from "@type/models";
 import { SidebarTreeItem } from "@type/views";
 import { ValidateURL, WorkspaceConfig } from "@utilities";
@@ -83,6 +84,112 @@ export async function activate(context: ExtensionContext) {
 			commands.executeCommand("workbench.action.reloadWindow");
 		}
 	});
+
+	context.subscriptions.push(
+		workspace.onDidSaveTextDocument(async (document) => {
+			const autoSaveFilesToAk = workspace
+				.getConfiguration("autokitteh", document.uri)
+				.get<boolean>("autoSaveFilesToAkOnEditorSave", false);
+			if (!autoSaveFilesToAk) {
+				return;
+			}
+
+			const workspaceFolder = workspace.getWorkspaceFolder(document.uri);
+			if (!workspaceFolder) {
+				return;
+			}
+
+			try {
+				if (!window.activeTextEditor) {
+					const errorMsg = translate().t("projects.autoSaveNoActiveEditor");
+					LoggerService.error(namespaces.projectService, errorMsg);
+					commands.executeCommand(vsCommands.showErrorMessage, errorMsg);
+					return;
+				}
+
+				const { document } = window.activeTextEditor;
+				const filePath = document.uri.fsPath;
+
+				const currentProjectPaths = (await commands.executeCommand(
+					vsCommands.getContext,
+					"projectsPaths"
+				)) as unknown as string;
+
+				if (!currentProjectPaths) {
+					LoggerService.error(namespaces.projectService, translate().t("projects.autoSaveNoProjectsFound"));
+					return;
+				}
+
+				const projectPathsMap = JSON.parse(currentProjectPaths);
+				let projectId: string | undefined;
+
+				for (const [projId, projPath] of Object.entries(projectPathsMap)) {
+					if (filePath.startsWith(projPath as string)) {
+						projectId = projId;
+						break;
+					}
+				}
+
+				if (!projectId) {
+					const errorMsg = translate().t("projects.autoSaveFileNotInProject");
+					LoggerService.error(namespaces.projectService, errorMsg);
+					return;
+				}
+				const org1 = workspace.getConfiguration().get("autokitteh.organizationId");
+				console.log("org1", org1);
+				const organizationId =
+					((await commands.executeCommand(vsCommands.getContext, "organizationId")) as string) || undefined;
+				console.log("organizationId", organizationId);
+				if (!organizationId) {
+					console.log("organizationId is undefined");
+					const authToken = WorkspaceConfig.getFromWorkspace<string>("authToken", "");
+
+					if (authToken) {
+						await commands.executeCommand(vsCommands.changeOrganization);
+						return;
+					}
+				}
+
+				const projectPath = projectPathsMap[projectId] as string;
+				const { data: resources, error } = await getLocalResources(projectPath, projectId);
+
+				if (error || !resources) {
+					LoggerService.error(
+						namespaces.projectService,
+						translate().t("projects.autoSaveCollectResourcesFailed", { error: error?.message })
+					);
+					return;
+				}
+
+				const { error: setResourcesError } = await ProjectsService.setResources(projectId, resources);
+
+				if (setResourcesError) {
+					LoggerService.error(
+						namespaces.projectService,
+						translate().t("projects.autoSaveFailed", { error: setResourcesError })
+					);
+					commands.executeCommand(
+						vsCommands.showErrorMessage,
+						translate().t("projects.autoSaveFailed", { error: setResourcesError })
+					);
+				} else {
+					LoggerService.info(
+						namespaces.projectService,
+						translate().t("projects.autoSaveResourcesSetSuccess", { projectId })
+					);
+					commands.executeCommand(
+						vsCommands.showInfoMessage,
+						translate().t("projects.autoSaveResourcesUpdatedSuccess", { projectId })
+					);
+				}
+			} catch (error) {
+				LoggerService.error(
+					namespaces.projectService,
+					translate().t("projects.autoSaveError", { error: (error as Error).message })
+				);
+			}
+		})
+	);
 
 	context.subscriptions.push(commands.registerCommand(vsCommands.showErrorMessage, MessageHandler.errorMessage));
 	let organizationId =
