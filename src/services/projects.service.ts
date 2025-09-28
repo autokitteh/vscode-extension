@@ -53,10 +53,7 @@ export class ProjectsService {
 
 	static async build(projectId: string, resources: Record<string, Uint8Array>): Promise<ServiceResponse<string>> {
 		try {
-			await projectsClient.setResources({
-				projectId,
-				resources,
-			});
+			await this.setResources(projectId, resources);
 			const { buildId, error } = await projectsClient.build({ projectId });
 			if (error) {
 				LoggerService.error(
