@@ -4,7 +4,8 @@ import { Interceptor, ConnectError, Code } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-node";
 import { vsCommands, SUPPORT_EMAIL, namespaces } from "@constants";
 import { translate } from "@i18n";
-import { WorkspaceConfig, errorMessageWithLog, getBaseURL, getOrganizationId } from "@utilities";
+import { LoggerService } from "@services";
+import { WorkspaceConfig, getBaseURL, getOrganizationId } from "@utilities";
 
 export const jwtInterceptor: Interceptor = (next) => (req) => {
 	const authToken = WorkspaceConfig.getFromWorkspace<string>("authToken", "");
@@ -24,12 +25,44 @@ export const errorInterceptor: Interceptor = (next) => async (req) => {
 		return response;
 	} catch (error) {
 		if (error instanceof ConnectError) {
-			if ([Code.Unauthenticated, Code.PermissionDenied].includes(error.code)) {
+			const userId = WorkspaceConfig.getFromWorkspace<string>("userId", "");
+			const requestPath = req.url;
+
+			if (error.code === Code.Unauthenticated) {
+				LoggerService.error(
+					namespaces.authentication,
+					translate().t("errors.unauthenticatedLog", {
+						userId: userId || "unknown",
+						request: requestPath,
+					})
+				);
+				await commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.unauthenticated"));
 				await commands.executeCommand(vsCommands.setContext, "userId", "");
+				throw error;
+			}
+
+			if (error.code === Code.PermissionDenied) {
+				LoggerService.error(
+					namespaces.authentication,
+					translate().t("errors.permissionDeniedLog", {
+						userId: userId || "unknown",
+						request: requestPath,
+					})
+				);
+				await commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.permissionDenied"));
+				await commands.executeCommand(vsCommands.setContext, "userId", "");
+				throw error;
 			}
 
 			if (error.code === Code.AlreadyExists) {
-				await errorMessageWithLog(namespaces.authentication, translate().t("errors.projectAlreadyExists"));
+				LoggerService.error(
+					namespaces.authentication,
+					translate().t("errors.projectAlreadyExistsLog", {
+						userId: userId || "unknown",
+						request: requestPath,
+					})
+				);
+				await commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.projectAlreadyExists"));
 				throw error;
 			}
 
@@ -41,16 +74,32 @@ export const errorInterceptor: Interceptor = (next) => async (req) => {
 
 			switch (responseErrorType) {
 				case "rate_limit_exceeded":
-					await errorMessageWithLog(namespaces.authentication, translate().t("errors.rateLimitExceeded"));
-
+					LoggerService.error(
+						namespaces.authentication,
+						translate().t("errors.rateLimitExceededLog", {
+							userId: userId || "unknown",
+							request: requestPath,
+						})
+					);
+					await commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.rateLimitExceeded"));
 					throw error;
 				case "quota_limit_exceeded": {
 					const quotaLimit = error?.metadata?.get("x-quota-limit") || "";
 					const quotaLimitUsed = error?.metadata?.get("x-quota-used") || "";
 					const quotaLimitResource = error?.metadata?.get("x-quota-resource") || "";
 
-					await errorMessageWithLog(
+					LoggerService.error(
 						namespaces.authentication,
+						translate().t("errors.quotaLimitExceededLog", {
+							userId: userId || "unknown",
+							request: requestPath,
+							resource: quotaLimitResource,
+							used: quotaLimitUsed,
+							limit: quotaLimit,
+						})
+					);
+					await commands.executeCommand(
+						vsCommands.showErrorMessage,
 						translate().t("errors.quotaLimitExceeded", {
 							limit: quotaLimit,
 							used: quotaLimitUsed,
@@ -58,7 +107,6 @@ export const errorInterceptor: Interceptor = (next) => async (req) => {
 							email: SUPPORT_EMAIL,
 						})
 					);
-
 					throw error;
 				}
 				default:

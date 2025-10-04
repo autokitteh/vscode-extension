@@ -1,5 +1,5 @@
 import { commands, window } from "vscode";
-import * as yaml from "yaml";
+import { parse as parseYaml } from "yaml";
 
 import { Code, ConnectError } from "@connectrpc/connect";
 import { namespaces, vsCommands } from "@constants";
@@ -26,7 +26,7 @@ export const applyManifest = async () => {
 	const organizationId =
 		((await commands.executeCommand(vsCommands.getContext, "organizationId")) as string) || undefined;
 
-	const parsedYaml = yaml.parse(manifestYaml);
+	const parsedYaml = parseYaml(manifestYaml);
 	const projectName = parsedYaml.project.name;
 
 	const { error: createError } = await ProjectsService.create({
