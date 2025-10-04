@@ -6,7 +6,9 @@ import { LoggerLevel } from "@enums";
 
 export class LoggerService {
 	private static outputChannels: { [key: string]: OutputChannel } = {};
-	private static defaultChannelName: string = channels.appOutputLogName;
+	private static get defaultChannelName(): string {
+		return channels.appOutputLogName;
+	}
 
 	private static initializeOutputChannel(channelName: string = LoggerService.defaultChannelName) {
 		if (!this.outputChannels[channelName]) {
