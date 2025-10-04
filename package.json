@@ -298,7 +298,8 @@
 		"react-lottie-loader": "^1.1.0",
 		"tar": "^7.1.0",
 		"tar-fs": "^3.0.6",
-		"winattr": "^3.0.0"
+		"winattr": "^3.0.0",
+		"yaml": "^2.8.1"
 	},
 	"description": "Simplify the process of automating tasks",
 	"devDependencies": {
