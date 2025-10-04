@@ -40,6 +40,7 @@
 	"notSupportedPlatform": "Unsupported platform for opening file explorer",
 	"pathExist": "Path exists but is not a directory",
 	"projectNotFound": "Couldn't fetch the project details",
+	"projectNotCreated": "Couldn't create the project",
 	"projectNotFoundWithID": "Couldn't fetch the project details, project ID: {{id}}",
 	"projectPathCopiedError": "Error copying project path to clipboard for project: {{projectName}}",
 	"projectPathCopiedErrorEnriched": "Error copying project path to clipboard - project: {{projectName}}, error: {{error}}",
@@ -58,5 +59,8 @@
 	"unexpectedSessionStateType": "Unexpected session state type - {{error}}",
 	"unsupportedArchiveType": "Unsupported archive type: {{type}}",
 	"walkthrough.badBaseURL": "It seems that the host address in the configuration is wrong.\nRe-enter the host again or go to Settings->autokitteh and set the BaseURL in the following format: http://URL:PORT",
-	"userFetchErrorExtended": "Couldn't fetch user details, error: {{error}}"
+	"userFetchErrorExtended": "Couldn't fetch user details, error: {{error}}",
+	"rateLimitExceeded": "Rate limit exceeded. Please try again later.",
+	"quotaLimitExceeded": "Quota limit exceeded. Used {{used}} of {{limit}} {{resource}}. Contact Support at: {{email}}",
+	"projectAlreadyExists": "Project already exists"
 }
