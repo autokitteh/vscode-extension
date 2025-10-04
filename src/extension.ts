@@ -9,6 +9,7 @@ import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import eventEmitter from "@eventEmitter";
 import { translate } from "@i18n";
 import { AuthService, LoggerService, OrganizationsService } from "@services";
+import { AutoSaveService, DebounceManager, ProjectMapper } from "@services/autoSave";
 import { Organization } from "@type/models";
 import { SidebarTreeItem } from "@type/views";
 import { ValidateURL, WorkspaceConfig } from "@utilities";
@@ -19,6 +20,7 @@ import { openBaseURLInputDialog, openWalkthrough } from "@vscommands/walkthrough
 let sidebarController: SidebarController | null = null;
 let tabsManager: TabsManagerController | null = null;
 let organizations: Organization[] | undefined = undefined;
+let autoSaveService: AutoSaveService | null = null;
 
 export async function activate(context: ExtensionContext) {
 	context.subscriptions.push(
@@ -327,6 +329,43 @@ export async function activate(context: ExtensionContext) {
 		return;
 	}
 	commands.executeCommand(vsCommands.enable);
+
+	const debounceManager = new DebounceManager(10);
+	const projectMapper = new ProjectMapper();
+	const statusBar = window.createStatusBarItem();
+	const outputChannel = window.createOutputChannel("AutoKitteh Auto-Save");
+
+	autoSaveService = new AutoSaveService(debounceManager, projectMapper, statusBar, outputChannel);
+
+	context.subscriptions.push(
+		commands.registerCommand("autokitteh.autoSave.enable", async () => {
+			await workspace.getConfiguration("autokitteh.autoSave").update("enabled", true, ConfigurationTarget.Workspace);
+		})
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand("autokitteh.autoSave.disable", async () => {
+			await workspace.getConfiguration("autokitteh.autoSave").update("enabled", false, ConfigurationTarget.Workspace);
+		})
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand("autokitteh.autoSave.cancelPending", async () => {
+			await autoSaveService?.cancelPending();
+		})
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand("autokitteh.autoSave.flushAll", async () => {
+			await autoSaveService?.flushAll();
+		})
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand("autokitteh.autoSave.showLogs", () => {
+			autoSaveService?.showLogs();
+		})
+	);
 }
 export function deactivate() {
 	if (sidebarController) {
@@ -334,5 +373,8 @@ export function deactivate() {
 	}
 	if (tabsManager) {
 		tabsManager.dispose();
+	}
+	if (autoSaveService) {
+		autoSaveService.dispose();
 	}
 }

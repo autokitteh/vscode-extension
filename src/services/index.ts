@@ -8,3 +8,4 @@ export { ConnectionsService } from "@services/connections.service";
 export { IntegrationsService } from "@services/integrations.service";
 export { OrganizationsService } from "@services/organizations.service";
 export { AuthService } from "@services/auth.service";
+export { AutoSaveService, DebounceManager, ProjectMapper } from "@services/autoSave";

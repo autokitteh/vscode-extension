@@ -15,7 +15,9 @@
 		"@views": "dist/src/views",
 		"@vscommands": "dist/src/vscommands"
 	},
-	"activationEvents": [],
+	"activationEvents": [
+		"onStartupFinished"
+	],
 	"contributes": {
 		"commands": [
 			{
@@ -76,6 +78,26 @@
 					"light": "resources/sidebar/icons/light/rocket.svg"
 				},
 				"title": "autokitteh: Run Project"
+			},
+			{
+				"command": "autokitteh.autoSave.enable",
+				"title": "AutoKitteh: Enable Auto-Save"
+			},
+			{
+				"command": "autokitteh.autoSave.disable",
+				"title": "AutoKitteh: Disable Auto-Save"
+			},
+			{
+				"command": "autokitteh.autoSave.cancelPending",
+				"title": "AutoKitteh: Cancel Pending Saves"
+			},
+			{
+				"command": "autokitteh.autoSave.flushAll",
+				"title": "AutoKitteh: Flush All Saves"
+			},
+			{
+				"command": "autokitteh.autoSave.showLogs",
+				"title": "AutoKitteh: Show Auto-Save Logs"
 			}
 		],
 		"configuration": {
@@ -135,6 +157,58 @@
 					"default": false,
 					"description": "Is extension ON",
 					"type": "hidden"
+				},
+				"autokitteh.autoSave.enabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enable AutoKitteh auto-save for workspace files."
+				},
+				"autokitteh.autoSave.mode": {
+					"type": "string",
+					"enum": [
+						"inherit",
+						"afterDelay",
+						"onFocusChange",
+						"onWindowChange"
+					],
+					"default": "afterDelay",
+					"description": "Auto-save mode."
+				},
+				"autokitteh.autoSave.delayMs": {
+					"type": "number",
+					"minimum": 100,
+					"maximum": 10000,
+					"default": 750,
+					"description": "Debounce delay in milliseconds for afterDelay mode."
+				},
+				"autokitteh.autoSave.includeGlobs": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [],
+					"description": "Glob patterns to include for auto-save scope."
+				},
+				"autokitteh.autoSave.excludeGlobs": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [
+						"**/.git/**",
+						"**/node_modules/**",
+						"**/.next/**",
+						"**/dist/**",
+						"**/.cache/**"
+					],
+					"description": "Glob patterns to exclude from auto-save."
+				},
+				"autokitteh.autoSave.maxFileSizeKb": {
+					"type": "number",
+					"minimum": 1,
+					"maximum": 8192,
+					"default": 49,
+					"description": "Skip or adjust debounce for files larger than this size."
 				}
 			},
 			"title": "autokitteh"
@@ -293,6 +367,7 @@
 		"cross-spawn": "^7.0.3",
 		"i18next": "^23.11.4",
 		"lodash.isequal": "^4.5.0",
+		"minimatch": "^9.0.3",
 		"module-alias": "^2.2.3",
 		"moment": "^2.30.1",
 		"react-lottie-loader": "^1.1.0",
