@@ -1,6 +1,7 @@
 import { commands, window } from "vscode";
 import * as yaml from "yaml";
 
+import { Code, ConnectError } from "@connectrpc/connect";
 import { namespaces, vsCommands } from "@constants";
 import { translate } from "@i18n";
 import { LoggerService, ManifestService, ProjectsService } from "@services";
@@ -27,14 +28,21 @@ export const applyManifest = async () => {
 	const parsedYaml = yaml.parse(manifestYaml);
 	const projectName = parsedYaml.project.name;
 
+	// Try to create project, but continue if it already exists
 	const { error: createError } = await ProjectsService.create({
 		name: projectName,
 		organizationId,
 	});
 
+	// Only return early if error is NOT "project already exists"
+	// The interceptor already showed the error message for AlreadyExists, so we just continue
 	if (createError) {
-		commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (createError as Error).message);
-		return;
+		const isAlreadyExists = createError instanceof ConnectError && createError.code === Code.AlreadyExists;
+		if (!isAlreadyExists) {
+			commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (createError as Error).message);
+			return;
+		}
+		// Project already exists, continue to apply manifest
 	}
 
 	try {
