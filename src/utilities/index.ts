@@ -16,3 +16,4 @@ export {
 	openFileExplorer,
 } from "@utilities/fileSystem.utils";
 export { omit } from "@utilities/omit.utils";
+export { errorMessageWithLog } from "@utilities/messages.utils";

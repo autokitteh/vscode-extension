@@ -61,5 +61,6 @@
 	"walkthrough.badBaseURL": "It seems that the host address in the configuration is wrong.\nRe-enter the host again or go to Settings->autokitteh and set the BaseURL in the following format: http://URL:PORT",
 	"userFetchErrorExtended": "Couldn't fetch user details, error: {{error}}",
 	"rateLimitExceeded": "Rate limit exceeded. Please try again later.",
+	"quotaLimitExceeded": "Quota limit exceeded. Used {{used}} of {{limit}} {{resource}}. Contact Support at: {{email}}",
 	"projectAlreadyExists": "Project already exists"
 }
