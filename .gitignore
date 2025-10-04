@@ -32,3 +32,10 @@ dist
 # IDE
 .idea
 src/.vscode/
+
+# AI MCPs and settings
+.serena/
+.cursor/
+.taskmaster/
+.claude/
+.kiro/
