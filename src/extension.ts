@@ -3,7 +3,8 @@ require("module-alias/register");
 
 import { commands, ExtensionContext, window, workspace, ConfigurationTarget } from "vscode";
 
-import { BASE_URL, namespaces, vsCommands } from "@constants";
+import { namespaces, vsCommands } from "@constants";
+import { BASE_URL } from "@constants/api.constants";
 import { SidebarController, TabsManagerController } from "@controllers";
 import { AppStateHandler } from "@controllers/utilities/appStateHandler";
 import eventEmitter from "@eventEmitter";
@@ -110,7 +111,9 @@ export async function activate(context: ExtensionContext) {
 				return { userAuthenticated: false };
 			}
 			currentUserId = user.userId;
+			organizationId = user.orgId;
 			await commands.executeCommand(vsCommands.setContext, "userId", currentUserId);
+			await commands.executeCommand(vsCommands.setContext, "organizationId", organizationId);
 		}
 
 		if (organizationId && onInit) {
