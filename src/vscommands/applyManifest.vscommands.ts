@@ -63,10 +63,9 @@ export const applyManifest = async () => {
 		return;
 	}
 
-	const projectPathsMap = JSON.parse(vscodeProjectsPaths);
 	let projectId: string | undefined;
 
-	for (const [projId, projPath] of Object.entries(projectPathsMap)) {
+	for (const [projId, projPath] of Object.entries(vscodeProjectsPaths)) {
 		if (manifestDirectory === projPath) {
 			projectId = projId;
 			break;
@@ -90,7 +89,7 @@ export const applyManifest = async () => {
 		}
 	}
 
-	const projectPath = projectPathsMap[projectId] as string;
+	const projectPath = vscodeProjectsPaths[projectId] as string;
 	const { data: resources, error: resourcesError } = await getLocalResources(projectPath, projectId);
 
 	if (resourcesError || !resources) {
