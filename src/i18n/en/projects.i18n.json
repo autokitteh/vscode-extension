@@ -28,5 +28,12 @@
 	"setResourcesDirectorGetPathFromDialogFailure": "Changing project resources directory failed on getting the new path for project in user dialog: {{projectName}}, error: {{error}}",
 	"setResourcesDirectoryFailureShort": "Changing project resources directory failed for project: {{projectName}}",
 	"connectedTo": "Connected to {{baseURL}}",
-	"connectingTo": "Connecting to {{baseURL}}"
+	"connectingTo": "Connecting to {{baseURL}}",
+	"collectResourcesFailed": "Failed to collect project resources: {{error}}",
+	"setResourcesFailed": "Failed to upload files to project: {{error}}",
+	"resourcesSetSuccess": "Files successfully uploaded to project: {{projectId}}",
+	"resourcesUpdatedSuccess": "Files successfully uploaded to project: {{projectId}}",
+	"uploadResourcesError": "Error uploading files to project: {{error}}",
+	"notInProject": "Current directory is not part of any AutoKitteh project: {{dirPath}}",
+	"noOrganizationSelected": "No organization selected in VSCode AutoKitteh's settings"
 }
