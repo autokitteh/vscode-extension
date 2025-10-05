@@ -3,10 +3,9 @@ import { parse as parseYaml } from "yaml";
 
 import { Code, ConnectError } from "@connectrpc/connect";
 import { namespaces, vsCommands } from "@constants";
-import { getLocalResources } from "@controllers/utilities";
 import { translate } from "@i18n";
 import { LoggerService, ManifestService, ProjectsService } from "@services";
-import { getDirectoryOfFile, WorkspaceConfig } from "@utilities";
+import { getDirectoryOfFile } from "@utilities";
 
 export const applyManifest = async () => {
 	if (!window.activeTextEditor) {
