@@ -2,5 +2,5 @@
 	"appliedSuccessfully": "Manifest applied successfully",
 	"onlyYamlFiles": "This command can only be run on YAML files",
 	"applyNoProjects": "Manifest applied but no projects were returned. Please ensure the manifest defines a project.",
-	"noProjectSavedInVSCodeSettings": "No project saved in VSCode AutoKitteh's settings"
+	"noProjectSavedInVSCodeSettings": "No project saved in VSCode AutoKitteh's settings, try again later"
 }

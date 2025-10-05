@@ -60,6 +60,7 @@ export const applyManifest = async () => {
 
 	if (!Object.keys(vscodeProjectsPaths || {}).length) {
 		LoggerService.error(namespaces.projectService, translate().t("projects.noProjectSavedInVSCodeSettings"));
+		commands.executeCommand(vsCommands.showErrorMessage, translate().t("projects.noProjectSavedInVSCodeSettings"));
 		return;
 	}
 
@@ -114,11 +115,8 @@ export const applyManifest = async () => {
 			vsCommands.showErrorMessage,
 			translate().t("projects.setResourcesFailed", { error: setResourcesError || "Unknown error" })
 		);
-	} else {
-		LoggerService.info(namespaces.projectService, translate().t("projects.resourcesSetSuccess", { projectId }));
-		commands.executeCommand(
-			vsCommands.showInfoMessage,
-			translate().t("projects.resourcesUpdatedSuccess", { projectId })
-		);
+		return;
 	}
+	LoggerService.info(namespaces.projectService, translate().t("projects.resourcesSetSuccess", { projectId }));
+	commands.executeCommand(vsCommands.showInfoMessage, translate().t("projects.resourcesUpdatedSuccess", { projectId }));
 };
