@@ -9,6 +9,7 @@ export {
 	SUPPORTED_MANUAL_RUN_RUNTIMES,
 	DATE_TIME_FORMAT,
 	SESSIONS_LOGS_PAGE_SIZE,
+	SUPPORT_EMAIL,
 } from "@constants/extensionConfiguration.constants";
 export { BASE_URL, WEB_UI_URL } from "@constants/api.constants";
 export { vsCommands } from "@constants/vsCommands.constants";

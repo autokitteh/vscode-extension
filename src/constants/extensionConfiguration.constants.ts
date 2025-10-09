@@ -9,3 +9,4 @@ export const SUPPORTED_MANUAL_RUN_PROGRAMMING_LANGUAGES = [".py", ".star"];
 export const SUPPORTED_MANUAL_RUN_RUNTIMES = ["python", "starlark"];
 export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 export const SESSIONS_LOGS_PAGE_SIZE = 100;
+export const SUPPORT_EMAIL = "support@autokitteh.com";
