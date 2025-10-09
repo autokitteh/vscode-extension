@@ -1,3 +1,15 @@
+## [0.20.21](https://github.com/autokitteh/vscode-extension/compare/v0.20.20...v0.20.21) (2025-10-09)
+
+
+### Bug Fixes
+
+* **UI-1883:** only set resources when creating new projects on applyManifest ([#407](https://github.com/autokitteh/vscode-extension/issues/407)) ([f1f8119](https://github.com/autokitteh/vscode-extension/commit/f1f81190a9526ff0fb6c513a835e3f1b4fac2fda))
+
+
+### Features
+
+* **UI-1883:** update files on server when user runs apply-manifest ([#404](https://github.com/autokitteh/vscode-extension/issues/404)) ([09c2540](https://github.com/autokitteh/vscode-extension/commit/09c25400f24b454b365a2730f7193a47f5e51fd3))
+
 ## [0.20.20](https://github.com/autokitteh/vscode-extension/compare/v0.20.19...v0.20.20) (2025-10-03)
 
 ## [0.20.19](https://github.com/autokitteh/vscode-extension/compare/v0.20.18...v0.20.19) (2025-04-29)
