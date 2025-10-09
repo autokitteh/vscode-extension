@@ -36,15 +36,12 @@ export const applyManifest = async () => {
 	});
 
 	if (createError) {
-		// Handle specific error types with custom messages
 		if (createError instanceof ConnectError) {
 			const errorType = getFirstMetadataValue(createError, "x-error-type");
 
-			// Don't show error for AlreadyExists - it's handled silently
 			if (createError.code === Code.AlreadyExists) {
 				// Project already exists, continue to apply manifest
 			} else if (errorType === "quota_limit_exceeded") {
-				// Show quota exceeded error with details
 				const quotaLimit = getFirstMetadataValue(createError, "x-quota-limit");
 				const quotaLimitUsed = getFirstMetadataValue(createError, "x-quota-used");
 				const quotaLimitResource = getFirstMetadataValue(createError, "x-quota-resource");
@@ -60,26 +57,21 @@ export const applyManifest = async () => {
 				);
 				return;
 			} else if (errorType === "rate_limit_exceeded") {
-				// Show rate limit error
 				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.rateLimitExceeded"));
 				return;
 			} else if (createError.code === Code.ResourceExhausted) {
-				// Generic resource exhausted error
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
 					translate().t("errors.resourceExhausted", { email: SUPPORT_EMAIL })
 				);
 				return;
 			} else if (createError.code === Code.Unauthenticated) {
-				// Show auth error
 				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.unauthenticated"));
 				return;
 			} else if (createError.code === Code.PermissionDenied) {
-				// Show permission error
 				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.permissionDenied"));
 				return;
 			} else {
-				// Show generic error
 				commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, createError.message);
 				return;
 			}

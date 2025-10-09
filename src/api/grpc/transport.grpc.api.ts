@@ -48,7 +48,6 @@ export const errorInterceptor: Interceptor = (next) => async (req) => {
 		const userId = WorkspaceConfig.getFromWorkspace<string>("userId", "");
 		const requestPath = req.url;
 
-		// Log only - let callers handle UI messages to avoid duplicates
 		if (error.code === Code.Unauthenticated) {
 			LoggerService.error(
 				namespaces.authentication,
