@@ -69,5 +69,7 @@
 	"unauthenticated": "Authentication required. Please set your authentication token.",
 	"unauthenticatedLog": "User unauthenticated - User ID: {{userId}}, Request: {{request}}",
 	"permissionDenied": "Access denied. You don't have permission to perform this action.",
-	"permissionDeniedLog": "Permission denied - User ID: {{userId}}, Request: {{request}}"
+	"permissionDeniedLog": "Permission denied - User ID: {{userId}}, Request: {{request}}",
+	"resourceExhausted": "Resource limit reached. Please contact our support at {{email}} for assistance.",
+	"resourceExhaustedLog": "Resource exhausted error for user {{userId}} on request {{request}}"
 }

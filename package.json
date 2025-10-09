@@ -285,6 +285,7 @@
 		]
 	},
 	"dependencies": {
+		"@autokitteh/vscode-react": "^0.0.1",
 		"@connectrpc/connect": "^1.4.0",
 		"@connectrpc/connect-node": "^1.4.0",
 		"@types/cross-spawn": "^6.0.6",

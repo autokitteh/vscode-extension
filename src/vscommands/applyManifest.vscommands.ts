@@ -1,8 +1,9 @@
 import { commands, window } from "vscode";
 import { parse as parseYaml } from "yaml";
 
+import { getFirstMetadataValue } from "@api";
 import { Code, ConnectError } from "@connectrpc/connect";
-import { namespaces, vsCommands } from "@constants";
+import { namespaces, vsCommands, SUPPORT_EMAIL } from "@constants";
 import { getLocalResources } from "@controllers/utilities";
 import { translate } from "@i18n";
 import { LoggerService, ManifestService, ProjectsService } from "@services";
@@ -35,22 +36,56 @@ export const applyManifest = async () => {
 	});
 
 	if (createError) {
-		const isAlreadyExists = createError instanceof ConnectError && createError.code === Code.AlreadyExists;
-		if (!isAlreadyExists) {
-			const isQuotaExceeded =
-				createError instanceof ConnectError &&
-				(createError.code === Code.ResourceExhausted ||
-					(createError.code === Code.Unavailable && createError.rawMessage.includes("HTTP 429")));
+		// Handle specific error types with custom messages
+		if (createError instanceof ConnectError) {
+			const errorType = getFirstMetadataValue(createError, "x-error-type");
 
-			if (isQuotaExceeded) {
+			// Don't show error for AlreadyExists - it's handled silently
+			if (createError.code === Code.AlreadyExists) {
+				// Project already exists, continue to apply manifest
+			} else if (errorType === "quota_limit_exceeded") {
+				// Show quota exceeded error with details
+				const quotaLimit = getFirstMetadataValue(createError, "x-quota-limit");
+				const quotaLimitUsed = getFirstMetadataValue(createError, "x-quota-used");
+				const quotaLimitResource = getFirstMetadataValue(createError, "x-quota-resource");
+
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
-					namespaces.applyManifest,
-					"Quota limit exceeded. Please upgrade your plan or wait before creating more resources."
+					translate().t("errors.quotaLimitExceeded", {
+						limit: quotaLimit,
+						used: quotaLimitUsed,
+						resource: quotaLimitResource,
+						email: SUPPORT_EMAIL,
+					})
 				);
+				return;
+			} else if (errorType === "rate_limit_exceeded") {
+				// Show rate limit error
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.rateLimitExceeded"));
+				return;
+			} else if (createError.code === Code.ResourceExhausted) {
+				// Generic resource exhausted error
+				commands.executeCommand(
+					vsCommands.showErrorMessage,
+					translate().t("errors.resourceExhausted", { email: SUPPORT_EMAIL })
+				);
+				return;
+			} else if (createError.code === Code.Unauthenticated) {
+				// Show auth error
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.unauthenticated"));
+				return;
+			} else if (createError.code === Code.PermissionDenied) {
+				// Show permission error
+				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.permissionDenied"));
+				return;
 			} else {
-				commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (createError as Error).message);
+				// Show generic error
+				commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, createError.message);
+				return;
 			}
+		} else {
+			// Non-ConnectError
+			commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (createError as Error).message);
 			return;
 		}
 	}
