@@ -25,6 +25,8 @@ export const errorInterceptor: Interceptor = (next) => async (req) => {
 		return response;
 	} catch (error) {
 		if (error instanceof ConnectError) {
+			console.error("gRPC Error:", error);
+			console.error("gRPC Error code:", error?.code);
 			const userId = WorkspaceConfig.getFromWorkspace<string>("userId", "");
 			const requestPath = req.url;
 
@@ -72,6 +74,8 @@ export const errorInterceptor: Interceptor = (next) => async (req) => {
 
 			const responseErrorType = error?.metadata?.get("x-error-type");
 
+			console.log("responseErrorType", responseErrorType);
+
 			switch (responseErrorType) {
 				case "rate_limit_exceeded":
 					LoggerService.error(
@@ -117,8 +121,21 @@ export const errorInterceptor: Interceptor = (next) => async (req) => {
 	}
 };
 
-export const grpcTransport = createConnectTransport({
-	baseUrl: getBaseURL() || "http://localhost:8080",
-	httpVersion: "1.1",
-	interceptors: [jwtInterceptor, errorInterceptor],
+let _grpcTransport: ReturnType<typeof createConnectTransport> | null = null;
+
+export function getGrpcTransport() {
+	if (!_grpcTransport) {
+		_grpcTransport = createConnectTransport({
+			baseUrl: getBaseURL() || "http://localhost:8080",
+			httpVersion: "1.1",
+			interceptors: [jwtInterceptor, errorInterceptor],
+		});
+	}
+	return _grpcTransport;
+}
+
+export const grpcTransport = new Proxy({} as ReturnType<typeof createConnectTransport>, {
+	get(target, prop) {
+		return getGrpcTransport()[prop as keyof ReturnType<typeof createConnectTransport>];
+	},
 });

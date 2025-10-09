@@ -37,7 +37,20 @@ export const applyManifest = async () => {
 	if (createError) {
 		const isAlreadyExists = createError instanceof ConnectError && createError.code === Code.AlreadyExists;
 		if (!isAlreadyExists) {
-			commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (createError as Error).message);
+			const isQuotaExceeded =
+				createError instanceof ConnectError &&
+				(createError.code === Code.ResourceExhausted ||
+					(createError.code === Code.Unavailable && createError.rawMessage.includes("HTTP 429")));
+
+			if (isQuotaExceeded) {
+				commands.executeCommand(
+					vsCommands.showErrorMessage,
+					namespaces.applyManifest,
+					"Quota limit exceeded. Please upgrade your plan or wait before creating more resources."
+				);
+			} else {
+				commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (createError as Error).message);
+			}
 			return;
 		}
 	}
