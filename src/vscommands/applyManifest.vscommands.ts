@@ -90,6 +90,10 @@ export const applyManifest = async () => {
 		}
 	}
 
+	if (!projectIds.length) {
+		return;
+	}
+
 	const projectPath = vscodeProjectsPaths[projectId] as string;
 	const { data: resources, error: resourcesError } = await getLocalResources(projectPath, projectId);
 
