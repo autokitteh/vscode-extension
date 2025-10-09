@@ -1,13 +1,12 @@
 import { commands, window } from "vscode";
 import { parse as parseYaml } from "yaml";
 
-import { getFirstMetadataValue } from "@api";
-import { Code, ConnectError } from "@connectrpc/connect";
-import { namespaces, vsCommands, SUPPORT_EMAIL } from "@constants";
+import { ConnectError } from "@connectrpc/connect";
+import { namespaces, vsCommands } from "@constants";
 import { getLocalResources } from "@controllers/utilities";
 import { translate } from "@i18n";
 import { LoggerService, ManifestService, ProjectsService } from "@services";
-import { getDirectoryOfFile, WorkspaceConfig } from "@utilities";
+import { getDirectoryOfFile, WorkspaceConfig, handleConnectError } from "@utilities";
 
 export const applyManifest = async () => {
 	if (!window.activeTextEditor) {
@@ -37,44 +36,11 @@ export const applyManifest = async () => {
 
 	if (createError) {
 		if (createError instanceof ConnectError) {
-			const errorType = getFirstMetadataValue(createError, "x-error-type");
-
-			if (createError.code === Code.AlreadyExists) {
-				// Project already exists, continue to apply manifest
-			} else if (errorType === "quota_limit_exceeded") {
-				const quotaLimit = getFirstMetadataValue(createError, "x-quota-limit");
-				const quotaLimitUsed = getFirstMetadataValue(createError, "x-quota-used");
-				const quotaLimitResource = getFirstMetadataValue(createError, "x-quota-resource");
-
-				commands.executeCommand(
-					vsCommands.showErrorMessage,
-					translate().t("errors.quotaLimitExceeded", {
-						limit: quotaLimit,
-						used: quotaLimitUsed,
-						resource: quotaLimitResource,
-						email: SUPPORT_EMAIL,
-					})
-				);
-				return;
-			} else if (errorType === "rate_limit_exceeded") {
-				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.rateLimitExceeded"));
-				return;
-			} else if (createError.code === Code.ResourceExhausted) {
-				commands.executeCommand(
-					vsCommands.showErrorMessage,
-					translate().t("errors.resourceExhausted", { email: SUPPORT_EMAIL })
-				);
-				return;
-			} else if (createError.code === Code.Unauthenticated) {
-				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.unauthenticated"));
-				return;
-			} else if (createError.code === Code.PermissionDenied) {
-				commands.executeCommand(vsCommands.showErrorMessage, translate().t("errors.permissionDenied"));
-				return;
-			} else {
-				commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, createError.message);
+			const shouldReturn = handleConnectError(createError, namespaces.applyManifest);
+			if (shouldReturn) {
 				return;
 			}
+			// If handleConnectError returns false, it means Code.AlreadyExists - continue to apply manifest
 		} else {
 			// Non-ConnectError
 			commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (createError as Error).message);
