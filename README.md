@@ -68,4 +68,5 @@ We appreciate contributions from everyone!
 
 1.  [Extension Commands](docs/extension-commands.md)
 2.  [Extension Structure](docs/extension-structure.md)
+3.  [Apply Manifest Command Flows](docs/commands/apply-manifest-flows.md)
 
