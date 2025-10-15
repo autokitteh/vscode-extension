@@ -6,7 +6,7 @@ import { namespaces, vsCommands } from "@constants";
 import { getLocalResources } from "@controllers/utilities";
 import { translate } from "@i18n";
 import { LoggerService, ManifestService, ProjectsService } from "@services";
-import { getDirectoryOfFile, WorkspaceConfig, handleConnectError } from "@utilities";
+import { getDirectoryOfFile, handleConnectError } from "@utilities";
 
 export const applyManifest = async () => {
 	if (!window.activeTextEditor) {
@@ -95,58 +95,65 @@ export const applyManifest = async () => {
 		)) as unknown as string;
 
 		let vscodeProjectsPaths = JSON.parse(currentProjectPaths);
-
-		if (projectIds.length > 0) {
-			vscodeProjectsPaths[projectIds[0]] = manifestDirectory;
-			await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
-
-			const organizationName =
-				((await commands.executeCommand(vsCommands.getContext, "organizationName")) as string) || undefined;
-			await commands.executeCommand(vsCommands.reloadProjects, organizationId, organizationName);
-
-			(logs || []).forEach((log) => LoggerService.info(namespaces.applyManifest, `${log}`));
-			commands.executeCommand(vsCommands.showInfoMessage, translate().t("manifest.appliedSuccessfully"));
-			setTimeout(() => commands.executeCommand(vsCommands.refreshSidebar), 2500);
-		}
-
-		if (!Object.keys(vscodeProjectsPaths || {}).length) {
-			LoggerService.error(namespaces.applyManifest, translate().t("projects.noProjectSavedInVSCodeSettings"));
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("projects.noProjectSavedInVSCodeSettings"));
+		if (!projectIds.length) {
+			commands.executeCommand(vsCommands.showErrorMessage, translate().t("manifest.ProjectCreationFailed"));
+			LoggerService.error(
+				namespaces.applyManifest,
+				translate().t("manifest.ProjectCreationFailedLog", {
+					request: "applyManifest",
+					error: (createError as Error).message,
+				})
+			);
 			return;
 		}
 
-		let projectId: string | undefined;
+		if (Object.keys(vscodeProjectsPaths || {}).length) {
+			let projectLocallyExists;
 
-		for (const [projId, projPath] of Object.entries(vscodeProjectsPaths)) {
-			if (manifestDirectory === projPath) {
-				projectId = projId;
-				break;
+			for (const [projId, projPath] of Object.entries(vscodeProjectsPaths)) {
+				if (manifestDirectory === projPath) {
+					projectLocallyExists = projId;
+					break;
+				}
 			}
-		}
 
-		if (!projectId) {
-			const errorMsg = translate().t("projects.notInProject", { dirPath: manifestDirectory });
-			LoggerService.error(namespaces.projectService, errorMsg);
-			return;
-		}
-		const currentOrganizationId =
-			((await commands.executeCommand(vsCommands.getContext, "organizationId")) as string) || undefined;
-		if (!currentOrganizationId) {
-			const authToken = WorkspaceConfig.getFromWorkspace<string>("authToken", "");
+			if (projectLocallyExists) {
+				commands.executeCommand(
+					vsCommands.showErrorMessage,
+					namespaces.applyManifest,
+					translate().t("projects.projectLocallyExistsFilesNotUpdated", {
+						projectId: projectIds[0],
+						directory: manifestDirectory,
+					})
+				);
 
-			if (authToken) {
-				LoggerService.error(namespaces.projectService, translate().t("projects.noOrganizationSelected"));
-				await commands.executeCommand(vsCommands.changeOrganization);
+				LoggerService.error(
+					namespaces.applyManifest,
+					translate().t("projects.projectLocallyExistsFilesNotUpdatedLog", {
+						projectId: projectIds[0],
+						directory: manifestDirectory,
+					})
+				);
 				return;
 			}
 		}
+		const projectId = projectIds[0];
+		vscodeProjectsPaths[projectId] = manifestDirectory;
+		await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
 
-		const projectPath = vscodeProjectsPaths[projectId] as string;
-		const { data: resources, error: resourcesError } = await getLocalResources(projectPath, projectId);
+		const organizationName =
+			((await commands.executeCommand(vsCommands.getContext, "organizationName")) as string) || undefined;
+		await commands.executeCommand(vsCommands.reloadProjects, organizationId, organizationName);
+
+		(logs || []).forEach((log) => LoggerService.info(namespaces.applyManifest, `${log}`));
+		commands.executeCommand(vsCommands.showInfoMessage, translate().t("manifest.appliedSuccessfully"));
+		setTimeout(() => commands.executeCommand(vsCommands.refreshSidebar), 2500);
+
+		const { data: resources, error: resourcesError } = await getLocalResources(manifestDirectory, projectId);
 
 		if (resourcesError || !resources) {
 			LoggerService.error(
-				namespaces.projectService,
+				namespaces.applyManifest,
 				translate().t("projects.collectResourcesFailed", { error: resourcesError?.message || "Unknown error" })
 			);
 			return;
@@ -159,7 +166,7 @@ export const applyManifest = async () => {
 
 		if (setResourcesError) {
 			LoggerService.error(
-				namespaces.projectService,
+				namespaces.applyManifest,
 				translate().t("projects.setResourcesFailed", { error: setResourcesError || "Unknown error" })
 			);
 			commands.executeCommand(
@@ -168,7 +175,7 @@ export const applyManifest = async () => {
 			);
 			return;
 		}
-		LoggerService.info(namespaces.projectService, translate().t("projects.resourcesSetSuccess", { projectId }));
+		LoggerService.info(namespaces.applyManifest, translate().t("projects.resourcesSetSuccess", { projectId }));
 		commands.executeCommand(
 			vsCommands.showInfoMessage,
 			translate().t("projects.resourcesUpdatedSuccess", { projectId })
