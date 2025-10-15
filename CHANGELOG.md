@@ -1,3 +1,10 @@
+## [0.20.22](https://github.com/autokitteh/vscode-extension/compare/v0.20.21...v0.20.22) (2025-10-15)
+
+
+### Features
+
+* **UI-1541:** improve project creation from yml ([#401](https://github.com/autokitteh/vscode-extension/issues/401)) ([881359b](https://github.com/autokitteh/vscode-extension/commit/881359ba920e7471ceac153b6d64c3e49ca6396a))
+
 ## [0.20.21](https://github.com/autokitteh/vscode-extension/compare/v0.20.20...v0.20.21) (2025-10-09)
 
 
