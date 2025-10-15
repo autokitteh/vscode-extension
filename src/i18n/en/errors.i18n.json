@@ -40,6 +40,8 @@
 	"notSupportedPlatform": "Unsupported platform for opening file explorer",
 	"pathExist": "Path exists but is not a directory",
 	"projectNotFound": "Couldn't fetch the project details",
+	"projectNotFoundWithNameAndIdBadMissingIdAndName": "Couldn't fetch the project details, project name: {{name}}, project ID: {{id}}. Missing ID and Name",
+	"projectNotCreated": "Couldn't create the project",
 	"projectNotFoundWithID": "Couldn't fetch the project details, project ID: {{id}}",
 	"projectPathCopiedError": "Error copying project path to clipboard for project: {{projectName}}",
 	"projectPathCopiedErrorEnriched": "Error copying project path to clipboard - project: {{projectName}}, error: {{error}}",
@@ -58,5 +60,18 @@
 	"unexpectedSessionStateType": "Unexpected session state type - {{error}}",
 	"unsupportedArchiveType": "Unsupported archive type: {{type}}",
 	"walkthrough.badBaseURL": "It seems that the host address in the configuration is wrong.\nRe-enter the host again or go to Settings->autokitteh and set the BaseURL in the following format: http://URL:PORT",
-	"userFetchErrorExtended": "Couldn't fetch user details, error: {{error}}"
+	"userFetchErrorExtended": "Couldn't fetch user details, error: {{error}}",
+	"rateLimitExceeded": "Rate limit exceeded. Please try again later.",
+	"rateLimitExceededLog": "Rate limit exceeded - User ID: {{userId}}, Request: {{request}}",
+	"quotaLimitExceeded": "Quota limit exceeded. Used {{used}} of {{limit}} {{resource}}. Contact Support at: {{email}}",
+	"quotaLimitExceededLog": "Quota limit exceeded - User ID: {{userId}}, Request: {{request}}, Resource: {{resource}}, Used: {{used}}, Limit: {{limit}}",
+	"projectAlreadyExists": "Project already exists",
+	"projectAlreadyExistsLog": "Project already exists - User ID: {{userId}}, Request: {{request}}",
+	"applyManifestNoProjectsLog": "Manifest applied but no projects were returned. Please ensure the manifest defines a project. - Request: {{request}}",
+	"unauthenticated": "Authentication required. Please set your authentication token.",
+	"unauthenticatedLog": "User unauthenticated - User ID: {{userId}}, Request: {{request}}",
+	"permissionDenied": "Access denied. You don't have permission to perform this action.",
+	"permissionDeniedLog": "Permission denied - User ID: {{userId}}, Request: {{request}}",
+	"resourceExhausted": "Resource limit reached. Please contact our support at {{email}} for assistance.",
+	"resourceExhaustedLog": "Resource exhausted error for user {{userId}} on request {{request}}"
 }

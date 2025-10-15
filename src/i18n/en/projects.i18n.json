@@ -34,6 +34,5 @@
 	"resourcesSetSuccess": "Files successfully uploaded to project: {{projectId}}",
 	"resourcesUpdatedSuccess": "Files successfully uploaded to project: {{projectId}}",
 	"uploadResourcesError": "Error uploading files to project: {{error}}",
-	"notInProject": "Current directory is not part of any AutoKitteh project: {{dirPath}}",
 	"noOrganizationSelected": "No organization selected in VSCode AutoKitteh's settings"
 }

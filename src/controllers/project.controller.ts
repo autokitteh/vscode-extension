@@ -420,7 +420,7 @@ export class ProjectController {
 		this.onProjectDeleteCB = onProjectDeleteCB;
 
 		this.startLoader();
-		const { data: project, error } = await ProjectsService.get(this.projectId);
+		const { data: project, error } = await ProjectsService.get({ projectId: this.projectId });
 		const log = translate().t("errors.projectNotFoundWithID", { id: this.projectId });
 		this.stopLoader();
 
@@ -488,7 +488,7 @@ export class ProjectController {
 			const fullPath: string = path.join(savePath!, resource);
 			const data: Uint8Array = existingResources[resource] as Uint8Array;
 			try {
-				await fsPromises.writeFile(fullPath, Buffer.from(data));
+				await fsPromises.writeFile(fullPath, data);
 			} catch (error) {
 				LoggerService.error(
 					namespaces.projectController,
@@ -1005,7 +1005,7 @@ export class ProjectController {
 				payload: sessionsViewObject,
 			});
 		} catch (error) {
-			console.log(error);
+			// Silently handle error
 		}
 	}
 
@@ -1017,7 +1017,7 @@ export class ProjectController {
 	}
 
 	async checkServerHealth(): Promise<boolean> {
-		const { error } = await ProjectsService.get(this.projectId);
+		const { error } = await ProjectsService.get({ projectId: this.projectId });
 		if (!error) {
 			this.view.update({
 				type: MessageType.setRetryCountdown,

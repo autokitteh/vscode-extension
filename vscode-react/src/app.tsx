@@ -7,7 +7,7 @@ import { SessionsSection } from "@react-components/sessions/pages";
 import { AppStateProvider } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import LottieLoader from "react-lottie-loader";
 import SplitPane from "split-pane-react";
 
@@ -28,9 +28,9 @@ function App() {
 		}
 	}, []);
 
-	useIncomingMessageHandler({
-		setRetryCountdown,
-	});
+	const handlers = useMemo(() => ({ setRetryCountdown }), []); // setState is stable
+
+	useIncomingMessageHandler(handlers);
 
 	const reconnect = () => {
 		sendMessage(MessageType.tryToReconnect);

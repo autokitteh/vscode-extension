@@ -9,7 +9,7 @@ import { useAppState } from "@react-context/appState.context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { getTimePassed, sendMessage } from "@react-utilities";
 import { Deployment } from "@type/models";
-import React, { MouseEvent, useEffect, useRef, useState } from "react";
+import React, { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment[] }) => {
@@ -38,7 +38,9 @@ export const DeploymentsTableBody = ({ deployments }: { deployments?: Deployment
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedDeploymentId]);
 
-	useIncomingMessageHandler({ setEntrypoints, setSelectedDeploymentId });
+	const handlers = useMemo(() => ({ setEntrypoints, setSelectedDeploymentId }), []);
+
+	useIncomingMessageHandler(handlers);
 
 	const showPopper = (event: MouseEvent<HTMLElement>, popperId: string) => {
 		event.stopPropagation();

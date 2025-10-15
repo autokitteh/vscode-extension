@@ -19,16 +19,20 @@ export const Header = () => {
 	const [isRefreshing, setIsRefreshing] = useState(false);
 	const [settingsPopperVisible, setSettingsPopperVisible] = useState<boolean>(false);
 	const pathPopperElementRef = useRef<HTMLDivElement | null>(null);
-	const { startLoader, stopLoader } = useAppDispatch();
-	const { setTheme } = useAppDispatch();
+	const { setTheme, startLoader, stopLoader } = useAppDispatch();
 
-	useIncomingMessageHandler({
-		setProjectName,
-		setResourcesDir,
-		setTheme,
-		startLoader,
-		stopLoader,
-	});
+	const handlers = useMemo(
+		() => ({
+			setProjectName,
+			setResourcesDir,
+			setTheme,
+			startLoader,
+			stopLoader,
+		}),
+		[setTheme, startLoader, stopLoader]
+	);
+
+	useIncomingMessageHandler(handlers);
 
 	const refreshUI = () => {
 		setIsRefreshing(true);

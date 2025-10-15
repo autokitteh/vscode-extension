@@ -4,5 +4,6 @@ import { User } from "@type/models";
 export function convertUserProtoToModel(protoUser: ProtoUser): User {
 	return {
 		userId: protoUser.userId,
+		orgId: protoUser.defaultOrgId,
 	};
 }

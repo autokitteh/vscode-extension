@@ -51,7 +51,7 @@ export class SessionsService {
 			pageSize: SESSIONS_LOGS_PAGE_SIZE,
 			pageToken: nextPageToken,
 		});
-		const processedPrints = prints?.map((print) => convertSessionLogProtoToModel(print)) || [];
+		const processedPrints = prints?.map(convertSessionLogProtoToModel) || [];
 		return {
 			data: { outputs: processedPrints, nextPageToken: newNextPageToken },
 			error: undefined,

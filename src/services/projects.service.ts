@@ -7,9 +7,17 @@ import { ServiceResponse } from "@type";
 import { Project } from "@type/models";
 
 export class ProjectsService {
-	static async get(projectId: string): Promise<ServiceResponse<Project>> {
+	static async get({ projectId, name }: { projectId: string; name?: string }): Promise<ServiceResponse<Project>> {
 		try {
-			const { project } = await projectsClient.get({ projectId });
+			if (!projectId && !name) {
+				LoggerService.error(
+					namespaces.projectService,
+					translate().t("errors.projectNotFoundWithNameAndIdBadMissingIdAndName", { name, id: projectId })
+				);
+
+				return { data: undefined, error: translate().t("errors.projectNotFound") };
+			}
+			const { project } = await projectsClient.get({ projectId, name });
 			if (!project) {
 				LoggerService.error(namespaces.projectService, translate().t("errors.projectNotFound"));
 
@@ -19,6 +27,24 @@ export class ProjectsService {
 			return { data: convertedProject, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.projectService, (error as Error).message);
+			return { data: undefined, error };
+		}
+	}
+	static async create(project: Omit<Project, "projectId">): Promise<ServiceResponse<string>> {
+		try {
+			const { projectId } = await projectsClient.create({
+				project: { name: project.name, orgId: project.organizationId },
+			});
+			if (!projectId) {
+				LoggerService.error(namespaces.projectService, translate().t("errors.projectNotCreated"));
+
+				return { data: undefined, error: new Error(translate().t("errors.projectNotCreated")) };
+			}
+
+			return { data: projectId, error: undefined };
+		} catch (error) {
+			LoggerService.error(`${namespaces.projectService} - Create: `, (error as Error).message);
+
 			return { data: undefined, error };
 		}
 	}

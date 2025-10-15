@@ -6,7 +6,7 @@ import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export const OutputsPopper = () => {
 	const parentRef = useRef<HTMLDivElement>(null);
@@ -29,12 +29,17 @@ export const OutputsPopper = () => {
 		}, 500);
 	}, []);
 
-	useIncomingMessageHandler({
-		setOutputs: (newOutputs) => {
-			setOutputs(newOutputs);
-			setIsLoading(false);
-		},
-	});
+	const handlers = useMemo(
+		() => ({
+			setOutputs: (newOutputs: SessionOutputLog[]) => {
+				setOutputs(newOutputs);
+				setIsLoading(false);
+			},
+		}),
+		[]
+	);
+
+	useIncomingMessageHandler(handlers);
 
 	const items = virtualizer.getVirtualItems();
 

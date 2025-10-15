@@ -1,6 +1,12 @@
 {
 	"appliedSuccessfully": "Manifest applied successfully",
 	"onlyYamlFiles": "This command can only be run on YAML files",
+	"onlyYamlFilesLog": "This command can only be run on YAML files - Request: {{request}}",
 	"applyNoProjects": "Manifest applied but no projects were returned. Please ensure the manifest defines a project.",
-	"noProjectSavedInVSCodeSettings": "No project saved in VSCode AutoKitteh's settings, try again later"
+	"projectAlreadyExists": "Project \"{{projectName}}\" already exists, set another name or delete the existing project",
+	"projectAlreadyExistsLog": "Project \"{{projectName}}\" already exists, set another name or delete the existing project - Request: {{request}} - Project Name: {{projectName}}",
+	"ProjectCreationFailed": "Project creation failed",
+	"ProjectCreationFailedLog": "Project creation failed - error: {{error}} - Request: {{request}}",
+	"projectLocallyExistsFilesNotUpdated": "Project locally exists the files won't be updated",
+	"projectLocallyExistsFilesNotUpdatedLog": "Project locally exists the files won't be updated - project id: {{projectId}}, directory: {{directory}} - Request: {{request}}"
 }

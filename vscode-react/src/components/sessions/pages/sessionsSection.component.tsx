@@ -3,9 +3,9 @@ import { translate } from "@i18n";
 import { SessionSectionViewModel } from "@models/views";
 import { TableMessage } from "@react-components/atoms/table";
 import { SessionsTableBody } from "@react-components/sessions/organisms";
-import { useForceRerender, useIncomingMessageHandler } from "@react-hooks";
+import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export const SessionsSection = ({ height }: { height: string | number }) => {
 	const [sessionsSection, setSessionsSection] = useState<SessionSectionViewModel | undefined>();
@@ -13,12 +13,15 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 	const [stateFilter, setStateFilter] = useState<string>();
 	const { lastDeployment, sessions } = sessionsSection || {};
 
-	useIncomingMessageHandler({
-		setSelectedSession,
-		setSessionsSection,
-	});
+	const handlers = useMemo(
+		() => ({
+			setSelectedSession,
+			setSessionsSection,
+		}),
+		[]
+	);
 
-	useForceRerender();
+	useIncomingMessageHandler(handlers);
 
 	const capitalizeFirstLetter = (str: string) => {
 		return str.charAt(0).toUpperCase() + str.slice(1);
@@ -39,11 +42,20 @@ export const SessionsSection = ({ height }: { height: string | number }) => {
 	const [divWidth, setDivWidth] = useState(0);
 	const ref = useRef<HTMLDivElement>(null);
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => {
-		setDivHeight(ref?.current?.clientHeight || 0);
-		setDivWidth(ref?.current?.clientWidth || 0);
-	});
+		const updateDimensions = () => {
+			if (ref?.current) {
+				setDivHeight(ref.current.clientHeight);
+				setDivWidth(ref.current.clientWidth);
+			}
+		};
+
+		updateDimensions();
+
+		window.addEventListener("resize", updateDimensions);
+
+		return () => window.removeEventListener("resize", updateDimensions);
+	}, []);
 
 	return (
 		<div ref={ref} style={{ height: `${parseInt(height as string, 10) * 0.85}px` }}>

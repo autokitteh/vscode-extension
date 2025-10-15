@@ -285,6 +285,7 @@
 		]
 	},
 	"dependencies": {
+		"@autokitteh/vscode-react": "^0.0.1",
 		"@connectrpc/connect": "^1.4.0",
 		"@connectrpc/connect-node": "^1.4.0",
 		"@types/cross-spawn": "^6.0.6",
@@ -298,7 +299,8 @@
 		"react-lottie-loader": "^1.1.0",
 		"tar": "^7.1.0",
 		"tar-fs": "^3.0.6",
-		"winattr": "^3.0.0"
+		"winattr": "^3.0.0",
+		"yaml": "^2.8.1"
 	},
 	"description": "Simplify the process of automating tasks",
 	"devDependencies": {
@@ -365,7 +367,7 @@
 		"url": "https://github.com/autokitteh/vscode-extension"
 	},
 	"scripts": {
-		"predebug": "rimraf dist && npm run build:all && npm run compile",
+		"predebug": "rimraf dist && rm -rf dist && npm run build:all && npm run compile",
 		"build": "npm run esbuild-base -- --sourcemap",
 		"build:all": "npm run build --workspace=vscode-react && npm run build",
 		"build:vscode-react": "npm run build --workspace=vscode-react",
