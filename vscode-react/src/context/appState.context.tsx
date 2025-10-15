@@ -1,6 +1,6 @@
 import { Theme } from "@enums";
 import { Action } from "@react-types";
-import React, { ReactNode, createContext, useContext, useReducer } from "react";
+import React, { ReactNode, createContext, useCallback, useContext, useMemo, useReducer } from "react";
 
 type State = {
 	loading: boolean;
@@ -36,7 +36,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
 
 	const [state, dispatch] = useReducer(appStateReducer, initialState);
 
-	const value: [State, React.Dispatch<Action>] = [{ ...state }, dispatch];
+	const value = useMemo<[State, React.Dispatch<Action>]>(() => [state, dispatch], [state]);
 
 	return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
 };
@@ -52,23 +52,36 @@ export const useAppState = () => {
 
 export const useAppDispatch = () => {
 	const [, dispatch] = useAppState();
-	const stopLoader = () => {
-		dispatch({ payload: false, type: "SET_LOADER" });
-	};
-	const startLoader = () => {
-		dispatch({ payload: true, type: "SET_LOADER" });
-	};
-	const setModalName = (modalName: string) => {
-		dispatch({ payload: modalName, type: "SET_MODAL_NAME" });
-	};
-	const setTheme = (themeType: Theme) => {
-		dispatch({ payload: themeType, type: "SET_THEME" });
-	};
 
-	return {
-		setModalName,
-		setTheme,
-		startLoader,
-		stopLoader,
-	};
+	const stopLoader = useCallback(() => {
+		dispatch({ payload: false, type: "SET_LOADER" });
+	}, [dispatch]);
+
+	const startLoader = useCallback(() => {
+		dispatch({ payload: true, type: "SET_LOADER" });
+	}, [dispatch]);
+
+	const setModalName = useCallback(
+		(modalName: string) => {
+			dispatch({ payload: modalName, type: "SET_MODAL_NAME" });
+		},
+		[dispatch]
+	);
+
+	const setTheme = useCallback(
+		(themeType: Theme) => {
+			dispatch({ payload: themeType, type: "SET_THEME" });
+		},
+		[dispatch]
+	);
+
+	return useMemo(
+		() => ({
+			setModalName,
+			setTheme,
+			startLoader,
+			stopLoader,
+		}),
+		[setModalName, setTheme, startLoader, stopLoader]
+	);
 };

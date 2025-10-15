@@ -7,9 +7,17 @@ import { ServiceResponse } from "@type";
 import { Project } from "@type/models";
 
 export class ProjectsService {
-	static async get(projectId: string): Promise<ServiceResponse<Project>> {
+	static async get({ projectId, name }: { projectId: string; name?: string }): Promise<ServiceResponse<Project>> {
 		try {
-			const { project } = await projectsClient.get({ projectId });
+			if (!projectId && !name) {
+				LoggerService.error(
+					namespaces.projectService,
+					translate().t("errors.projectNotFoundWithNameAndIdBadMissingIdAndName", { name, id: projectId })
+				);
+
+				return { data: undefined, error: translate().t("errors.projectNotFound") };
+			}
+			const { project } = await projectsClient.get({ projectId, name });
 			if (!project) {
 				LoggerService.error(namespaces.projectService, translate().t("errors.projectNotFound"));
 

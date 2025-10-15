@@ -17,6 +17,10 @@ export const applyManifest = async () => {
 	const fileExtension = document.uri.fsPath.split(".").pop();
 	if (fileExtension !== "yaml" && fileExtension !== "yml") {
 		commands.executeCommand(vsCommands.showErrorMessage, translate().t("manifest.onlyYamlFiles"));
+		LoggerService.error(
+			namespaces.applyManifest,
+			translate().t("manifest.onlyYamlFilesLog", { request: "applyManifest" })
+		);
 		return;
 	}
 
@@ -29,6 +33,23 @@ export const applyManifest = async () => {
 	const parsedYaml = parseYaml(manifestYaml);
 	const projectName = parsedYaml.project.name;
 
+	const { data: project } = await ProjectsService.get({ name: projectName, projectId: "" });
+	if (project) {
+		commands.executeCommand(
+			vsCommands.showErrorMessage,
+			translate().t("manifest.projectAlreadyExists", { projectName })
+		);
+
+		LoggerService.error(
+			namespaces.applyManifest,
+			translate().t("manifest.projectAlreadyExistsLog", {
+				request: "applyManifest",
+				projectName,
+			})
+		);
+		return;
+	}
+
 	const { error: createError } = await ProjectsService.create({
 		name: projectName,
 		organizationId,
@@ -40,9 +61,7 @@ export const applyManifest = async () => {
 			if (shouldReturn) {
 				return;
 			}
-			// If handleConnectError returns false, it means Code.AlreadyExists - continue to apply manifest
 		} else {
-			// Non-ConnectError
 			commands.executeCommand(vsCommands.showErrorMessage, namespaces.applyManifest, (createError as Error).message);
 			return;
 		}
@@ -58,6 +77,16 @@ export const applyManifest = async () => {
 			throw error;
 		}
 		const manifestDirectory = getDirectoryOfFile(filePath);
+
+		if (!manifestResponse?.projectIds.length) {
+			LoggerService.error(
+				namespaces.applyManifest,
+				translate().t("errors.applyManifestNoProjectsLog", {
+					request: "applyManifest",
+				})
+			);
+			return;
+		}
 
 		const { logs, projectIds } = manifestResponse!;
 		const currentProjectPaths = (await commands.executeCommand(
@@ -81,12 +110,8 @@ export const applyManifest = async () => {
 		}
 
 		if (!Object.keys(vscodeProjectsPaths || {}).length) {
-			LoggerService.error(namespaces.projectService, translate().t("projects.noProjectSavedInVSCodeSettings"));
+			LoggerService.error(namespaces.applyManifest, translate().t("projects.noProjectSavedInVSCodeSettings"));
 			commands.executeCommand(vsCommands.showErrorMessage, translate().t("projects.noProjectSavedInVSCodeSettings"));
-			return;
-		}
-
-		if (!projectIds.length) {
 			return;
 		}
 

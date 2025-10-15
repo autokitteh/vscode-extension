@@ -10,7 +10,7 @@ import { useAppState } from "@react-context";
 import { useIncomingMessageHandler } from "@react-hooks";
 import { sendMessage } from "@react-utilities";
 import { Deployment } from "@type/models";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export const DeploymentsSection = ({ height }: { height: string | number }) => {
 	const [deploymentsSection, setDeploymentsSection] = useState<DeploymentSectionViewModel>();
@@ -19,9 +19,9 @@ export const DeploymentsSection = ({ height }: { height: string | number }) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [, dispatch] = useAppState();
 
-	useIncomingMessageHandler({
-		setDeploymentsSection,
-	});
+	const handlers = useMemo(() => ({ setDeploymentsSection }), []);
+
+	useIncomingMessageHandler(handlers);
 
 	useEffect(() => {
 		sendMessage(MessageType.loadInitialDataOnceViewReady);
