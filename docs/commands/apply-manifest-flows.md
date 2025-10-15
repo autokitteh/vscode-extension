@@ -17,16 +17,21 @@ flowchart TD
     ShowYAMLError --> Exit2([Exit])
 
     CheckYAML -->|Yes| ParseYAML[Parse YAML to<br/>extract project name]
-    ParseYAML --> CreateProject[Create project via<br/>ProjectsService.create]
+    ParseYAML --> CheckProjectExists{Project with<br/>name exists?}
+
+    CheckProjectExists -->|Yes| ShowExistsError[Show error:<br/>'Project already exists']
+    ShowExistsError --> Exit3([Exit])
+
+    CheckProjectExists -->|No| CreateProject[Create project via<br/>ProjectsService.create]
 
     CreateProject --> CreateSuccess{Creation<br/>successful?}
 
     CreateSuccess -->|ConnectError| HandleError{handleConnectError<br/>should return?}
-    HandleError -->|Yes| Exit3([Exit])
-    HandleError -->|No<br/>AlreadyExists| ApplyManifest
+    HandleError -->|Yes| Exit4([Exit])
+    HandleError -->|No| ApplyManifest
 
     CreateSuccess -->|Other Error| ShowCreateError[Show error message]
-    ShowCreateError --> Exit4([Exit])
+    ShowCreateError --> Exit5([Exit])
 
     CreateSuccess -->|Success| ApplyManifest[Apply manifest via<br/>ManifestService.applyManifest]
 
@@ -34,11 +39,11 @@ flowchart TD
 
     ApplySuccess -->|Error| CatchBlock[Caught in catch block]
     CatchBlock --> ShowApplyError[Show error message]
-    ShowApplyError --> Exit5([Exit])
+    ShowApplyError --> Exit6([Exit])
 
     ApplySuccess -->|Success| CheckProjectIds{projectIds<br/>length > 0?}
 
-    CheckProjectIds -->|No| Exit6([Exit silently])
+    CheckProjectIds -->|No| Exit7([Exit silently])
 
     CheckProjectIds -->|Yes| UpdateSettings[Update VSCode settings<br/>with project path mapping]
     UpdateSettings --> ReloadProjects[Reload projects in sidebar]
@@ -49,19 +54,14 @@ flowchart TD
     ScheduleRefresh --> CheckPaths{VSCode project<br/>paths empty?}
 
     CheckPaths -->|Yes| ShowPathError[Show error:<br/>'No projects saved']
-    ShowPathError --> Exit7([Exit])
+    ShowPathError --> Exit8([Exit])
 
     CheckPaths -->|No| FindProjectPath{Find project path<br/>in settings?}
 
     FindProjectPath -->|Not found| LogPathError[Log error:<br/>'Not in project']
-    LogPathError --> Exit8([Exit])
+    LogPathError --> Exit9([Exit])
 
-    FindProjectPath -->|Found| CheckOrg{Organization<br/>selected?}
-
-    CheckOrg -->|No & Auth token exists| PromptOrg[Execute changeOrganization<br/>command]
-    PromptOrg --> Exit9([Exit - retry after<br/>org selection])
-
-    CheckOrg -->|Yes| CollectResources[Collect local resources<br/>via getLocalResources]
+    FindProjectPath -->|Found| CollectResources[Collect local resources<br/>via getLocalResources]
 
     CollectResources --> ResourcesCollected{Resources<br/>collected?}
 
@@ -90,7 +90,7 @@ flowchart TD
     style Exit6 fill:#f8d7da
     style Exit7 fill:#f8d7da
     style Exit8 fill:#f8d7da
-    style Exit9 fill:#fff3cd
+    style Exit9 fill:#f8d7da
     style Exit10 fill:#f8d7da
     style Exit11 fill:#f8d7da
 ```
@@ -133,22 +133,37 @@ if (!window.activeTextEditor) {
 ---
 
 ### Path 2: Invalid File Type
-**Lines**: 16-21
+**Lines**: 16-25
 **Trigger**: Non-YAML file open
 **Steps**:
 1. Extract file extension
 2. Check if NOT `.yaml` or `.yml`
 3. Show error: "manifest.onlyYamlFiles"
+4. Log error with request context
 
 **Outcome**: Error displayed, exit
 
 ---
 
-### Path 3: Project Creation Fails (Non-ConnectError)
-**Lines**: 32-48
-**Trigger**: Network timeout or unexpected error during project creation
+### Path 3: Project Already Exists
+**Lines**: 36-51
+**Trigger**: Project with same name already exists
 **Steps**:
 1. Parse YAML for project name
+2. Call `ProjectsService.get()` to check if project exists
+3. Project found with matching name
+4. Show error: "manifest.projectAlreadyExists"
+5. Log error with project name
+
+**Outcome**: Cannot create duplicate project, exit
+
+---
+
+### Path 4: Project Creation Fails (Non-ConnectError)
+**Lines**: 53-68
+**Trigger**: Network timeout or unexpected error during project creation
+**Steps**:
+1. Project existence check passed
 2. Attempt `ProjectsService.create()`
 3. Non-ConnectError thrown
 4. Show error message
@@ -157,8 +172,8 @@ if (!window.activeTextEditor) {
 
 ---
 
-### Path 4: Project Creation Fails (ConnectError - Should Return)
-**Lines**: 38-42
+### Path 5: Project Creation Fails (ConnectError)
+**Lines**: 58-63
 **Trigger**: ConnectError that requires stopping (auth error, permission denied)
 **Steps**:
 1. Attempt project creation
@@ -170,21 +185,8 @@ if (!window.activeTextEditor) {
 
 ---
 
-### Path 5: Project Already Exists (Continues)
-**Lines**: 38-43
-**Trigger**: Project with same name exists
-**Steps**:
-1. Attempt project creation
-2. ConnectError with `Code.AlreadyExists`
-3. `handleConnectError()` returns `false`
-4. Continue to manifest application
-
-**Outcome**: Proceeds with existing project
-
----
-
 ### Path 6: Manifest Application Fails
-**Lines**: 51-59, 151-154
+**Lines**: 70-79, 176-179
 **Trigger**: Backend error during manifest application
 **Steps**:
 1. Project created/exists
@@ -197,49 +199,48 @@ if (!window.activeTextEditor) {
 ---
 
 ### Path 7: No Projects Created
-**Lines**: 89-91
+**Lines**: 81-89
 **Trigger**: Manifest returns empty `projectIds` array
 **Steps**:
 1. Manifest applied successfully
 2. `projectIds.length === 0`
-3. Silent return
+3. Log error and silent return
 
 **Outcome**: No actionable projects, exit
 
 ---
 
-### Path 8: No Project Path in Settings
-**Lines**: 102-106
+### Path 8: No Projects in VSCode Settings
+**Lines**: 112-116
+**Trigger**: VSCode settings have no saved project paths
+**Steps**:
+1. Manifest applied
+2. `vscodeProjectsPaths` is empty
+3. Log error: "projects.noProjectSavedInVSCodeSettings"
+4. Show error message
+
+**Outcome**: Cannot proceed, exit
+
+---
+
+### Path 9: No Project Path in Settings
+**Lines**: 118-131
 **Trigger**: Manifest directory not in saved project paths
 **Steps**:
 1. Manifest applied, project ID exists
 2. Loop through `vscodeProjectsPaths`
-3. No match found
+3. No match found for manifest directory
 4. Log error: "projects.notInProject"
 
 **Outcome**: Cannot upload resources, exit
 
 ---
 
-### Path 9: No Organization Selected
-**Lines**: 107-116
-**Trigger**: User authenticated but no organization selected
-**Steps**:
-1. Project path found
-2. Organization ID undefined
-3. Auth token exists
-4. Execute `changeOrganization` command
-5. Log error: "projects.noOrganizationSelected"
-
-**Outcome**: User prompted for organization selection, exit
-
----
-
 ### Path 10: Getting Local Resources Fails
-**Lines**: 120-128
+**Lines**: 144-153
 **Trigger**: Filesystem error or no resources found
 **Steps**:
-1. Has project path and organization
+1. Has project path
 2. `getLocalResources()` fails or returns null
 3. Log error: "projects.collectResourcesFailed"
 
@@ -248,7 +249,7 @@ if (!window.activeTextEditor) {
 ---
 
 ### Path 11: Setting Resources Fails
-**Lines**: 133-145
+**Lines**: 158-170
 **Trigger**: Backend error during resource upload
 **Steps**:
 1. Local resources collected
@@ -261,47 +262,36 @@ if (!window.activeTextEditor) {
 ---
 
 ### Path 12: Complete Success ✅
-**Lines**: 51-150 (full flow)
+**Lines**: 11-175 (full flow)
 **Trigger**: Everything works correctly
 
 **Steps**:
 1. ✅ YAML file open in editor
 2. ✅ File extension is `.yaml` or `.yml`
-3. ✅ Project created OR already exists
-4. ✅ Manifest applied successfully
-5. ✅ Project IDs returned
-6. ✅ Update VSCode settings with project path mapping
-7. ✅ Reload projects in sidebar
-8. ✅ Log manifest application
-9. ✅ Show success message: "manifest.appliedSuccessfully"
-10. ✅ Schedule sidebar refresh (2.5s delay)
-11. ✅ Find project ID from path mapping
-12. ✅ Organization is selected
-13. ✅ Collect local resources
-14. ✅ Filter out `autokitteh.yaml`
-15. ✅ Upload resources to backend
-16. ✅ Log success: "projects.resourcesSetSuccess"
-17. ✅ Show success: "projects.resourcesUpdatedSuccess"
+3. ✅ Parse YAML for project name
+4. ✅ Project does NOT already exist
+5. ✅ Project created successfully
+6. ✅ Manifest applied successfully
+7. ✅ Project IDs returned
+8. ✅ Update VSCode settings with project path mapping
+9. ✅ Reload projects in sidebar
+10. ✅ Log manifest application
+11. ✅ Show success message: "manifest.appliedSuccessfully"
+12. ✅ Schedule sidebar refresh (2.5s delay)
+13. ✅ VSCode project paths exist
+14. ✅ Find project ID from path mapping
+15. ✅ Collect local resources
+16. ✅ Filter out `autokitteh.yaml`
+17. ✅ Upload resources to backend
+18. ✅ Log success: "projects.resourcesSetSuccess"
+19. ✅ Show success: "projects.resourcesUpdatedSuccess"
 
-**Outcome**: Project created/updated, manifest applied, resources uploaded, UI updated
-
----
-
-### Path 13: No Projects in VSCode Settings
-**Lines**: 83-87
-**Trigger**: VSCode settings have no saved project paths
-**Steps**:
-1. Manifest applied
-2. `vscodeProjectsPaths` is empty
-3. Log error: "projects.noProjectSavedInVSCodeSettings"
-4. Show error message
-
-**Outcome**: Cannot proceed, exit
+**Outcome**: Project created, manifest applied, resources uploaded, UI updated
 
 ---
 
-### Path 14: Unexpected Exception
-**Lines**: 151-154
+### Path 13: Unexpected Exception
+**Lines**: 176-179
 **Trigger**: Any unexpected error in try block
 **Steps**:
 1. Operation throws error
@@ -350,42 +340,43 @@ stateDiagram-v2
 |------|----------|-------------------|
 | 12 | Active editor? | Exit / Continue |
 | 18 | YAML file? | Error / Continue |
-| 37 | Create error? | Exit / Handle error / Continue |
-| 38-39 | ConnectError type? | Exit / Continue (AlreadyExists) |
-| 57 | Manifest error? | Throw error / Continue |
-| 70 | Has project IDs? | Exit / Continue |
-| 83 | Has project paths? | Error / Continue |
-| 89 | Project IDs exist? | Exit / Continue |
-| 102 | Project path found? | Error / Continue |
-| 109 | Organization selected? | Prompt user / Continue |
-| 122 | Resources collected? | Error / Continue |
-| 135 | Resources uploaded? | Error / Success |
+| 36 | Project already exists? | Error / Continue |
+| 58 | Create error? | Exit / Handle error / Continue |
+| 59-60 | ConnectError type? | Exit / Continue |
+| 76 | Manifest error? | Throw error / Continue |
+| 81 | Has project IDs? | Exit / Continue |
+| 112 | Has project paths? | Error / Continue |
+| 120 | Project path found? | Error / Continue |
+| 147 | Resources collected? | Error / Continue |
+| 160 | Resources uploaded? | Error / Success |
 
 ## Data Flow
 
 ```mermaid
 flowchart LR
     A[YAML File] --> B[Parse Project Name]
-    B --> C[Create/Get Project]
-    C --> D[Apply Manifest]
-    D --> E[Store Path Mapping]
-    E --> F[Collect Local Resources]
-    F --> G[Filter Resources]
-    G --> H[Upload to Backend]
-    H --> I[Update UI]
+    B --> C[Check Project Exists]
+    C --> D[Create Project]
+    D --> E[Apply Manifest]
+    E --> F[Store Path Mapping]
+    F --> G[Collect Local Resources]
+    G --> H[Filter Resources]
+    H --> I[Upload to Backend]
+    I --> J[Update UI]
 
     style A fill:#e1f5ff
-    style I fill:#d4edda
+    style J fill:#d4edda
 ```
 
 ## Error Handling Strategy
 
 The command uses a layered error handling approach:
 
-1. **Early Validation** (lines 12-21): Validates prerequisites before any operations
-2. **Operation-Level Errors** (lines 37-42): Handles specific operation failures with context
-3. **ConnectError Handling** (lines 38-42): Special handling for gRPC connection errors
-4. **Catch-All Handler** (lines 151-154): Catches unexpected exceptions
+1. **Early Validation** (lines 12-25): Validates prerequisites before any operations
+2. **Existence Check** (lines 36-51): Prevents duplicate project creation
+3. **Operation-Level Errors** (lines 58-68): Handles specific operation failures with context
+4. **ConnectError Handling** (lines 59-63): Special handling for gRPC connection errors
+5. **Catch-All Handler** (lines 176-179): Catches unexpected exceptions
 
 ## Success Criteria
 
@@ -393,18 +384,18 @@ For the command to complete successfully, ALL of the following must be true:
 
 - ✅ Active text editor exists
 - ✅ Open file is `.yaml` or `.yml`
-- ✅ Project can be created OR already exists
+- ✅ Project with same name does NOT already exist
+- ✅ Project can be created successfully
 - ✅ Manifest can be applied to backend
 - ✅ At least one project ID is returned
 - ✅ Project path can be stored in VSCode settings
-- ✅ Organization is selected (if authenticated)
+- ✅ Project path mapping can be found
 - ✅ Local resources can be collected from filesystem
 - ✅ Resources can be uploaded to backend
 
-**Total Possible Paths**: 14
+**Total Possible Paths**: 13
 **Error Exit Points**: 11
 **Success Paths**: 1
-**Warning/Prompt Paths**: 1 (organization selection)
 
 ## Related Code References
 
