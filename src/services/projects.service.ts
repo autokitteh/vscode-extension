@@ -59,7 +59,9 @@ export class ProjectsService {
 
 	static async list(organizationId?: string): Promise<ServiceResponse<Project[]>> {
 		try {
-			const projects = (await projectsClient.list({ orgId: organizationId })).projects.map(convertProjectProtoToModel);
+			const response = await projectsClient.list({ orgId: organizationId });
+			const projects = response.projects.map(convertProjectProtoToModel);
+
 			return { data: projects, error: undefined };
 		} catch (error) {
 			LoggerService.error(namespaces.projectService, (error as Error).message);

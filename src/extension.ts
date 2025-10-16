@@ -1,6 +1,3 @@
-/* eslint-disable import/first */
-require("module-alias/register");
-
 import { commands, ExtensionContext, window, workspace, ConfigurationTarget } from "vscode";
 
 import { namespaces, vsCommands } from "@constants";
@@ -22,6 +19,8 @@ let tabsManager: TabsManagerController | null = null;
 let organizations: Organization[] | undefined = undefined;
 
 export async function activate(context: ExtensionContext) {
+	await commands.executeCommand("setContext", "autokitteh.isLoading", false);
+
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.setContext, (key: string, value: any) => {
 			workspace.getConfiguration().update(`autokitteh.${key}`, value, ConfigurationTarget.Global);
@@ -192,29 +191,45 @@ export async function activate(context: ExtensionContext) {
 	);
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.enable, async () => {
-			sidebarController?.enable();
-			tabsManager?.enable();
-			await initApp();
-			await AppStateHandler.set(true);
+			try {
+				await commands.executeCommand("setContext", "autokitteh.isLoading", true);
+				sidebarView.displayLoading();
+				sidebarController?.enable();
+				tabsManager?.enable();
+				await initApp();
+				await AppStateHandler.set(true);
+			} finally {
+				await commands.executeCommand("setContext", "autokitteh.isLoading", false);
+			}
 		})
 	);
 
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.refreshSidebar, async () => {
+			sidebarView.displayLoading();
 			sidebarController?.enable();
 		})
 	);
 
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.disable, async () => {
+			await commands.executeCommand("setContext", "autokitteh.isLoading", false);
+
 			const isEnabled = await AppStateHandler.get();
-			if (!isEnabled) {
-				return;
+
+			if (sidebarController) {
+				sidebarController.disable();
+				sidebarController.dispose();
 			}
-			sidebarController?.disable();
-			sidebarController?.dispose();
-			tabsManager?.disable();
-			await AppStateHandler.set(false);
+			if (tabsManager) {
+				tabsManager.disable();
+			}
+
+			sidebarView.refresh([]);
+
+			if (isEnabled) {
+				await AppStateHandler.set(false);
+			}
 		})
 	);
 
@@ -230,8 +245,15 @@ export async function activate(context: ExtensionContext) {
 		})
 	);
 
+	let sidebarView = new SidebarView();
+	let isOrganizationsSidebar = false;
+
+	window.registerTreeDataProvider("autokittehSidebarTree", sidebarView);
+	context.subscriptions.push(sidebarView);
+
 	context.subscriptions.push(
 		commands.registerCommand(vsCommands.openWebview, async (project: SidebarTreeItem) => {
+			LoggerService.info("ProjectLoader", `openWebview command called with project: ${JSON.stringify(project)}`);
 			if (!project) {
 				return;
 			}
@@ -240,12 +262,19 @@ export async function activate(context: ExtensionContext) {
 				tabsManager?.reconnect();
 				return;
 			}
-			tabsManager?.openWebview(project);
+
+			if (project.key) {
+				sidebarView.setLoadingProject(project.key);
+			}
+
+			try {
+				const openPromise = tabsManager?.openWebview(project) || Promise.resolve();
+				await Promise.all([openPromise, new Promise((resolve) => setTimeout(resolve, 300))]);
+			} finally {
+				sidebarView.setLoadingProject(undefined);
+			}
 		})
 	);
-
-	let sidebarView = new SidebarView();
-	let isOrganizationsSidebar = false;
 
 	const initApp = async () => {
 		if (authenticationToken) {
@@ -290,7 +319,6 @@ export async function activate(context: ExtensionContext) {
 
 		tabsManager = new TabsManagerController(context);
 		if (shouldSkipPushToContext) {
-			context.subscriptions.push(sidebarView);
 			context.subscriptions.push(sidebarController);
 		}
 

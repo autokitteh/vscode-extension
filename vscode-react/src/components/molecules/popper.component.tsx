@@ -26,7 +26,9 @@ export const Popper = ({ children, className, referenceRef, visible }: PopperPro
 
 	useEffect(() => {
 		if (visible && update) {
-			update().catch((error) => console.error(error));
+			update().catch(() => {
+				// Silently handle popper update errors
+			});
 		}
 	}, [visible, update]);
 

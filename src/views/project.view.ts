@@ -11,11 +11,18 @@ import { getUri } from "@utilities/getUri.utils";
 export class ProjectView implements IProjectView {
 	private panel?: vscode.WebviewPanel;
 	public delegate?: ProjectViewDelegate;
+	private webviewReadyPromise?: Promise<void>;
+	private webviewReadyResolver?: () => void;
+	private initialDataLoadedResolver?: () => void;
 
 	constructor(private context: vscode.ExtensionContext) {}
 
 	public update(data: any): void {
 		this.panel?.webview.postMessage(data);
+		if (data.type === MessageType.initialDataLoaded && this.initialDataLoadedResolver) {
+			this.initialDataLoadedResolver();
+			this.initialDataLoadedResolver = undefined;
+		}
 	}
 	public reveal(projectName: string): void {
 		this.panel?.reveal();
@@ -122,7 +129,14 @@ export class ProjectView implements IProjectView {
 		this.delegate?.onBlur?.();
 	}
 
-	public show(projectName: string) {
+	public show(projectName: string): Promise<void> {
+		this.webviewReadyPromise = new Promise<void>((resolve) => {
+			this.initialDataLoadedResolver = resolve;
+			setTimeout(() => {
+				resolve();
+				this.initialDataLoadedResolver = undefined;
+			}, 10000);
+		});
 		this.panel = vscode.window.createWebviewPanel(
 			"project",
 			`${translate().t("general.companyName")}: ${projectName}`,
@@ -156,6 +170,8 @@ export class ProjectView implements IProjectView {
 		this.changeTheme(themeKind);
 		this.addThemeListener();
 		this.setThemeByEditor();
+
+		return this.webviewReadyPromise;
 	}
 
 	setThemeByEditor = () => {

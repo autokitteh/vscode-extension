@@ -19,7 +19,7 @@ export class TabsManagerController {
 				const newView = new ProjectView(this.context);
 
 				const newController = new ProjectController(newView, project.key);
-				newController.openProject(
+				await newController.openProject(
 					() => this.onProjectDispose(project.key as string),
 					() => this.onProjectDelete(project.key as string)
 				);
