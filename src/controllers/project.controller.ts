@@ -433,7 +433,7 @@ export class ProjectController {
 			LoggerService.error(namespaces.projectController, log);
 		}
 		this.project = project;
-		this.view.show(project!.name);
+		await this.view.show(project!.name);
 		this.setProjectNameInView();
 		this.sessions = undefined;
 	}
@@ -1028,12 +1028,17 @@ export class ProjectController {
 	}
 
 	async loadInitialDataOnceViewReady() {
+		LoggerService.info(namespaces.projectController, "loadInitialDataOnceViewReady called");
 		if (!this.isNewPageInstance) {
+			LoggerService.info(namespaces.projectController, "Not a new page instance, skipping");
 			return;
 		}
 		this.isNewPageInstance = false;
-		this.loadAndDisplayDeployments();
-		this.notifyViewResourcesPathChanged();
+
+		this.view.update({ type: MessageType.initialDataLoaded });
+
+		await this.loadAndDisplayDeployments();
+		await this.notifyViewResourcesPathChanged();
 	}
 
 	async refreshUI() {

@@ -26,6 +26,7 @@ export enum MessageType {
 	deleteProject = "DELETE_PROJECT",
 	setSessionsStateFilter = "SET_SESSIONS_STATE_FILTER",
 	loadInitialDataOnceViewReady = "LOAD_INITIAL_DATA_ONCE_VIEW_READY",
+	initialDataLoaded = "INITIAL_DATA_LOADED",
 	startLoader = "START_LOADER",
 	stopLoader = "STOP_LOADER",
 	loadMoreSessions = "LOAD_MORE_SESSIONS",

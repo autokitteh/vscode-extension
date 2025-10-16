@@ -5,6 +5,7 @@
 	"companyName": "autokitteh",
 	"dismiss": "Dismiss",
 	"internalError": "Internal error",
+	"loading": "Loading...",
 	"reconnecting": "Reconnecting in {{countdown}}",
 	"reload": "Reload"
 }

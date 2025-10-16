@@ -14,6 +14,7 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 	private childNodeMap?: Map<TreeItem, TreeItem[]>;
 	private strippedBaseURL = BASE_URL.replace(/^https?\:\/\/|\/$/g, "");
 	private isOrganizations: boolean = false;
+	private loadingProjectKey?: string;
 	constructor(isOrganizations?: boolean) {
 		this.isOrganizations = !!isOrganizations;
 	}
@@ -49,6 +50,9 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 		childItems = children.map((child: SidebarTreeItem) => {
 			const treeItem = new TreeItem(child.label);
 			treeItem.contextValue = child.key;
+			if (this.loadingProjectKey && child.key === this.loadingProjectKey) {
+				treeItem.iconPath = new ThemeIcon("loading~spin");
+			}
 			return treeItem;
 		});
 
@@ -73,6 +77,12 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 				title,
 				arguments: [{ label: element.label, key: element.contextValue }],
 			};
+
+			if (this.loadingProjectKey && element.contextValue === this.loadingProjectKey) {
+				element.iconPath = new ThemeIcon("loading~spin");
+			} else {
+				element.iconPath = undefined;
+			}
 		}
 		return element;
 	}
@@ -91,6 +101,7 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 
 	refresh(children: SidebarTreeItem[], organizationName?: string) {
 		this.load(children, organizationName);
+		this.loadingProjectKey = undefined;
 		this._onDidChangeTreeData.fire();
 	}
 
@@ -101,6 +112,29 @@ export class SidebarView implements TreeDataProvider<TreeItem> {
 
 		this.rootNode = errorItem;
 		this.childNodeMap = new Map();
+		this.loadingProjectKey = undefined;
+		this._onDidChangeTreeData.fire();
+	}
+
+	displayLoading(message?: string) {
+		const loadingMessage = message || translate().t("general.loading");
+		const loadingItem = new TreeItem(loadingMessage, TreeItemCollapsibleState.None);
+		loadingItem.contextValue = "loading";
+		loadingItem.iconPath = new ThemeIcon("loading~spin");
+
+		this.rootNode = loadingItem;
+		this.childNodeMap = new Map();
+		this.loadingProjectKey = undefined;
+		this._onDidChangeTreeData.fire();
+	}
+
+	public setLoadingProject(projectKey?: string) {
+		if (this.loadingProjectKey === projectKey) {
+			return;
+		}
+
+		this.loadingProjectKey = projectKey;
+
 		this._onDidChangeTreeData.fire();
 	}
 

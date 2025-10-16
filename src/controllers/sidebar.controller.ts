@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import isEqual from "lodash.isequal";
-import { commands, window } from "vscode";
+import { commands } from "vscode";
 
 import { ISidebarView } from "interfaces";
 
@@ -33,7 +33,6 @@ export class SidebarController {
 		this.organizationName = organizationName;
 		this.organizationId = organizationId;
 		this.organizations = organizations;
-		window.registerTreeDataProvider("autokittehSidebarTree", this.view);
 	}
 
 	public fetchData = async (
@@ -49,6 +48,11 @@ export class SidebarController {
 			this.updateViewOrganizationsList(this.organizations || []);
 			return;
 		}
+
+		if (!this.projectsSidebarItems) {
+			this.view.displayLoading();
+		}
+
 		const organization = {
 			name: organizationName || this.organizationName,
 			organizationId: organizationId || this.organizationId,
@@ -72,6 +76,7 @@ export class SidebarController {
 	};
 
 	public enable = async () => {
+		this.view.displayLoading();
 		this.retryScheduler?.startFetchInterval();
 	};
 
@@ -114,14 +119,13 @@ export class SidebarController {
 		}
 
 		if (projects!.length) {
-			return projects!
-				.sort((a, b) => a.name.localeCompare(b.name))
-				.map((project) => ({
-					label: project.name,
-					key: project.projectId,
-				}));
+			const sorted = projects!.sort((a, b) => a.name.localeCompare(b.name));
+			const result = sorted.map((project) => ({
+				label: project.name,
+				key: project.projectId,
+			}));
+			return result;
 		}
-
 		return [
 			{
 				label: `${translate().t("projects.noProjectsFound")} ${organizationNameToDisplay} at ${this.strippedBaseURL}`,
@@ -138,10 +142,17 @@ export class SidebarController {
 	) {
 		const refreshOrganizationName = organizationName || this.organizationName;
 		const refreshOrganizationId = organizationId || this.organizationId;
+
+		if (!this.projectsSidebarItems || force) {
+			this.view.displayLoading();
+		}
+
 		const projects = await this.fetchProjects(resetCountdown, refreshOrganizationId, refreshOrganizationName);
-		if (!isEqual(projects, this.projectsSidebarItems) || force) {
+		const shouldUpdate = !isEqual(projects, this.projectsSidebarItems) || force;
+		if (shouldUpdate) {
 			this.projectsSidebarItems = projects;
 			this.view.refresh(projects!, refreshOrganizationName);
+		} else {
 		}
 	}
 

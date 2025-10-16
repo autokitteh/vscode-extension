@@ -40,7 +40,7 @@ export interface ConnectionsViewDelegate {
 }
 
 export interface IProjectView {
-	show(projectName: string): void;
+	show(projectName: string): Promise<void>;
 	reveal(projectName: string): void;
 	update(data: any): void;
 	dispose(): void;

@@ -189,12 +189,12 @@
 				{
 					"command": "autokitteh.enable",
 					"group": "navigation",
-					"when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled!==true"
+					"when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled!==true && !autokitteh.isLoading"
 				},
 				{
 					"command": "autokitteh.disable",
 					"group": "navigation",
-					"when": "view == autokittehSidebarTree && config.autokitteh.serviceEnabled"
+					"when": "view == autokittehSidebarTree && (config.autokitteh.serviceEnabled || autokitteh.isLoading)"
 				}
 			]
 		},
@@ -355,7 +355,7 @@
 	"homepage": "https://autokitteh.com",
 	"icon": "resources/extensions-marketplace/ak-extension-icon.png",
 	"license": "SEE LICENSE IN LICENSE.md",
-	"main": "./dist/src/extension.js",
+	"main": "./dist/main.js",
 	"name": "autokitteh",
 	"optionalDependencies": {
 		"@rollup/rollup-linux-x64-gnu": "4.17.2"
@@ -367,9 +367,13 @@
 		"url": "https://github.com/autokitteh/vscode-extension"
 	},
 	"scripts": {
-		"predebug": "rimraf dist && rm -rf dist && npm run build:all && npm run compile",
+		"rebuild-install": "npm run predebug && vsce package && code --install-extension autokitteh-$npm_package_version.vsix",
+		"predebug": "rimraf dist && rm -rf dist && npm run build:all",
 		"build": "npm run esbuild-base -- --sourcemap",
+		"build:prod": "npm run esbuild-base -- --production",
 		"build:all": "npm run build --workspace=vscode-react && npm run build",
+		"build:all:prod": "npm run build --workspace=vscode-react && npm run build:prod",
+		"build:all:prod:clean": "rimraf dist && rm -rf dist && npm run build:all:prod",
 		"build:vscode-react": "npm run build --workspace=vscode-react",
 		"build:webview": "cd vscode-react && npm run build",
 		"check-format:staged": "prettier . --check",
@@ -378,7 +382,7 @@
 		"compile": "tsc -p ./",
 		"compile:all": "npm run compile --workspace=vscode-react && npm run compile",
 		"compile:vscode-react": "npm run compile --workspace=vscode-react",
-		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --external:fswin",
+		"esbuild-base": "node esbuild.config.js",
 		"fix-eslint:staged": "npm run lint --fix",
 		"lint": "eslint src --ext .ts,.tsx .",
 		"package": "vsce package",
