@@ -1,3 +1,10 @@
+## [0.20.23](https://github.com/autokitteh/vscode-extension/compare/v0.20.22...v0.20.23) (2025-10-16)
+
+
+### Bug Fixes
+
+* extension build and loading states ([#408](https://github.com/autokitteh/vscode-extension/issues/408)) ([fa53b85](https://github.com/autokitteh/vscode-extension/commit/fa53b85899cfbc2f973d5ee3c514309ad83f297a))
+
 ## [0.20.22](https://github.com/autokitteh/vscode-extension/compare/v0.20.21...v0.20.22) (2025-10-15)
 
 
