@@ -292,6 +292,7 @@
 		"@vscode/codicons": "^0.0.36",
 		"adm-zip": "^0.5.12",
 		"cross-spawn": "^7.0.3",
+		"fast-glob": "^3.3.3",
 		"i18next": "^23.11.4",
 		"lodash.isequal": "^4.5.0",
 		"module-alias": "^2.2.3",

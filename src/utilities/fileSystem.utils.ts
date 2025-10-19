@@ -1,8 +1,8 @@
 import spawn from "cross-spawn";
+import fg from "fast-glob";
 import * as fs from "fs";
 import * as fsPromises from "fs/promises";
 import * as path from "path";
-import * as winattr from "winattr";
 
 import { translate } from "@i18n";
 
@@ -86,43 +86,14 @@ export const listFilesInDirectory = async (dirPath: string, includeDirectories: 
 	return files;
 };
 
-const isUnixHiddenPath = function (path: string) {
-	return /(^|\/)\.[^\/\.]/g.test(path);
-};
-
-const isWinHiddenPath = function (path: string) {
-	const pathAttrs = winattr.getSync(path);
-	return pathAttrs.hidden;
-};
-
 export const readDirectoryRecursive = async (directoryPath: string): Promise<string[]> => {
-	let files: string[] = [];
-	const isWin = process.platform === "win32";
+	const files = await fg("**/*", {
+		cwd: directoryPath,
+		absolute: true,
+		dot: false,
+		onlyFiles: true,
+	});
 
-	const readDirRecursive = async (dirPath: string): Promise<void> => {
-		const entries = fs.readdirSync(dirPath);
-
-		for (const file of entries) {
-			const fullPath = path.join(dirPath, file);
-
-			if (isWin && isWinHiddenPath(fullPath)) {
-				continue;
-			}
-
-			if (!isWin && isUnixHiddenPath(fullPath)) {
-				continue;
-			}
-
-			const stats = fs.statSync(fullPath);
-			if (stats.isDirectory()) {
-				await readDirRecursive(fullPath);
-			} else if (stats.isFile()) {
-				files.push(fullPath);
-			}
-		}
-	};
-
-	await readDirRecursive(directoryPath);
 	return files;
 };
 
