@@ -99,28 +99,30 @@ export const readDirectoryRecursive = async (directoryPath: string): Promise<str
 	let files: string[] = [];
 	const isWin = process.platform === "win32";
 
-	const readDirSync = (dirPath: string) => {
-		fs.readdirSync(dirPath).forEach(async (file) => {
+	const readDirRecursive = async (dirPath: string): Promise<void> => {
+		const entries = fs.readdirSync(dirPath);
+
+		for (const file of entries) {
 			const fullPath = path.join(dirPath, file);
 
 			if (isWin && isWinHiddenPath(fullPath)) {
-				return;
+				continue;
 			}
 
 			if (!isWin && isUnixHiddenPath(fullPath)) {
-				return;
+				continue;
 			}
 
 			const stats = fs.statSync(fullPath);
 			if (stats.isDirectory()) {
-				files = files.concat(await readDirectoryRecursive(fullPath));
+				await readDirRecursive(fullPath);
 			} else if (stats.isFile()) {
 				files.push(fullPath);
 			}
-		});
+		}
 	};
 
-	readDirSync(directoryPath);
+	await readDirRecursive(directoryPath);
 	return files;
 };
 

@@ -50,7 +50,7 @@ export const applyManifest = async () => {
 		return;
 	}
 
-	const { error: createError } = await ProjectsService.create({
+	const { data: projectId, error: createError } = await ProjectsService.create({
 		name: projectName,
 		organizationId,
 	});
@@ -78,34 +78,13 @@ export const applyManifest = async () => {
 		}
 		const manifestDirectory = getDirectoryOfFile(filePath);
 
-		if (!manifestResponse?.projectIds.length) {
-			LoggerService.error(
-				namespaces.applyManifest,
-				translate().t("errors.applyManifestNoProjectsLog", {
-					request: "applyManifest",
-				})
-			);
-			return;
-		}
-
-		const { logs, projectIds } = manifestResponse!;
+		const { logs } = manifestResponse!;
 		const currentProjectPaths = (await commands.executeCommand(
 			vsCommands.getContext,
 			"projectsPaths"
 		)) as unknown as string;
 
 		let vscodeProjectsPaths = JSON.parse(currentProjectPaths);
-		if (!projectIds.length) {
-			commands.executeCommand(vsCommands.showErrorMessage, translate().t("manifest.ProjectCreationFailed"));
-			LoggerService.error(
-				namespaces.applyManifest,
-				translate().t("manifest.ProjectCreationFailedLog", {
-					request: "applyManifest",
-					error: (createError as Error).message,
-				})
-			);
-			return;
-		}
 
 		if (Object.keys(vscodeProjectsPaths || {}).length) {
 			let projectLocallyExists;
@@ -122,7 +101,7 @@ export const applyManifest = async () => {
 					vsCommands.showErrorMessage,
 					namespaces.applyManifest,
 					translate().t("projects.projectLocallyExistsFilesNotUpdated", {
-						projectId: projectIds[0],
+						projectId,
 						directory: manifestDirectory,
 					})
 				);
@@ -130,15 +109,14 @@ export const applyManifest = async () => {
 				LoggerService.error(
 					namespaces.applyManifest,
 					translate().t("projects.projectLocallyExistsFilesNotUpdatedLog", {
-						projectId: projectIds[0],
+						projectId,
 						directory: manifestDirectory,
 					})
 				);
 				return;
 			}
 		}
-		const projectId = projectIds[0];
-		vscodeProjectsPaths[projectId] = manifestDirectory;
+		vscodeProjectsPaths[projectId!] = manifestDirectory;
 		await commands.executeCommand(vsCommands.setContext, "projectsPaths", JSON.stringify(vscodeProjectsPaths));
 
 		const organizationName =
@@ -149,7 +127,7 @@ export const applyManifest = async () => {
 		commands.executeCommand(vsCommands.showInfoMessage, translate().t("manifest.appliedSuccessfully"));
 		setTimeout(() => commands.executeCommand(vsCommands.refreshSidebar), 2500);
 
-		const { data: resources, error: resourcesError } = await getLocalResources(manifestDirectory, projectId);
+		const { data: resources, error: resourcesError } = await getLocalResources(manifestDirectory, projectId!);
 
 		if (resourcesError || !resources) {
 			LoggerService.error(
@@ -162,7 +140,7 @@ export const applyManifest = async () => {
 		const filteredResources = { ...resources };
 		delete filteredResources["autokitteh.yaml"];
 
-		const { error: setResourcesError } = await ProjectsService.setResources(projectId, filteredResources);
+		const { error: setResourcesError } = await ProjectsService.setResources(projectId!, filteredResources);
 
 		if (setResourcesError) {
 			LoggerService.error(
