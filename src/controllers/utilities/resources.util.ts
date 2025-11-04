@@ -24,15 +24,22 @@ export const getLocalResources = async (
 		const fileName = path.basename(resourcesPath);
 		try {
 			const fileBuffer = fs.readFileSync(resourcesPath);
-			const mappedResources = { [fileName]: fileBuffer };
+			const mappedResources = { [fileName]: new Uint8Array(fileBuffer) };
 			return { data: mappedResources };
 		} catch (error) {
 			return { error: error as Error };
 		}
 	}
-	const mappedResources = stats.isFile()
-		? await mapFilesToContentInBytes(resourcesPath, [resourcesPath])
-		: await mapFilesToContentInBytes(resourcesPath, await readDirectoryRecursive(resourcesPath));
 
-	return { data: mappedResources };
+	try {
+		const allFiles = await readDirectoryRecursive(resourcesPath);
+		const mappedBuffers = await mapFilesToContentInBytes(resourcesPath, allFiles);
+		const mappedResources: Record<string, Uint8Array> = {};
+		for (const [key, buffer] of Object.entries(mappedBuffers)) {
+			mappedResources[key] = new Uint8Array(buffer);
+		}
+		return { data: mappedResources };
+	} catch (error) {
+		return { error: error as Error };
+	}
 };
