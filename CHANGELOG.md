@@ -1,3 +1,10 @@
+## [0.20.24](https://github.com/autokitteh/vscode-extension/compare/v0.20.23...v0.20.24) (2025-11-05)
+
+
+### Bug Fixes
+
+* apply manifest should appload the whole directory recursively ([#409](https://github.com/autokitteh/vscode-extension/issues/409)) ([90e3dbf](https://github.com/autokitteh/vscode-extension/commit/90e3dbf8db89f3b6d61ad7a96aefb856e1fd318d))
+
 ## [0.20.23](https://github.com/autokitteh/vscode-extension/compare/v0.20.22...v0.20.23) (2025-10-16)
 
 
