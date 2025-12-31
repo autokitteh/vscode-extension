@@ -100,7 +100,7 @@ export const applyManifest = async () => {
 				commands.executeCommand(
 					vsCommands.showErrorMessage,
 					namespaces.applyManifest,
-					translate().t("projects.projectLocallyExistsFilesNotUpdated", {
+					translate().t("manifest.projectLocallyExistsFilesNotUpdated", {
 						projectId,
 						directory: manifestDirectory,
 					})
@@ -108,7 +108,7 @@ export const applyManifest = async () => {
 
 				LoggerService.error(
 					namespaces.applyManifest,
-					translate().t("projects.projectLocallyExistsFilesNotUpdatedLog", {
+					translate().t("manifest.projectLocallyExistsFilesNotUpdatedLog", {
 						projectId,
 						directory: manifestDirectory,
 					})
